@@ -9,7 +9,7 @@
 import type { ToolSchema } from './api.catalog';
 
 /** sha256 of the manifest operation catalog these schemas were generated from. */
-export const GENERATED_TOOL_SCHEMAS_SHA256 = 'b5fbdf87781923e447bb215b149defe495c13670b8fc46704d3530f1e48f9ae7';
+export const GENERATED_TOOL_SCHEMAS_SHA256 = '5f5d6e353e8ff089bc44e04ba0d90aec9b7a4b0ef02ba31217c369566defec27';
 
 export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
   "evolith-adr-create": {
@@ -8711,6 +8711,13 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
         "ruleset": {
           "type": "string",
           "description": "Optional ID of a specific ruleset to load"
+        },
+        "select": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Canonical ruleset refs to evaluate against, as published by GET /api/v1/reference/rulesets. Absent => the whole corpus."
         },
         "corePath": {
           "type": "string",

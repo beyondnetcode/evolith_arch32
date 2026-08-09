@@ -31,7 +31,10 @@ describe('ValidateSatelliteUseCase', () => {
       });
 
       expect(result).toBe(mockResult);
-      expect(mockValidator.validate).toHaveBeenCalledWith('/satellite', undefined);
+      // GT-659 — the third argument is the ruleset SELECTION, and `undefined` is
+      // the additive guarantee this assertion now pins: a caller that names no
+      // ruleset is evaluated against the whole corpus, exactly as before.
+      expect(mockValidator.validate).toHaveBeenCalledWith('/satellite', undefined, undefined);
     });
 
     it('should validate with custom core path', async () => {
@@ -40,7 +43,7 @@ describe('ValidateSatelliteUseCase', () => {
         corePath: '/custom-core',
       });
 
-      expect(mockValidator.validate).toHaveBeenCalledWith('/satellite', '/custom-core');
+      expect(mockValidator.validate).toHaveBeenCalledWith('/satellite', '/custom-core', undefined);
     });
 
     it('should load specific ruleset when rulesetId provided', async () => {

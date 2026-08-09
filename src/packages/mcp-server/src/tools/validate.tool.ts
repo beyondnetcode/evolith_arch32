@@ -25,6 +25,17 @@ export class ValidateTool implements McpTool {
           default: 'json',
         },
         ruleset: { type: 'string', description: 'Optional ID of a specific ruleset to load' },
+        // GT-659 — the catalogue-based selection, alongside `ruleset` above.
+        // `ruleset` resolves fifteen hand-written aliases and cannot name a
+        // ruleset the reference catalogue publishes; this takes the published id.
+        // A ref that matches nothing does not evaluate zero rules quietly — the
+        // Core reports it and the verdict blocks.
+        select: {
+          type: 'array',
+          items: { type: 'string' },
+          description:
+            'Canonical ruleset refs to evaluate against, as published by GET /api/v1/reference/rulesets. Absent => the whole corpus.',
+        },
         corePath: {
           type: 'string',
           description: 'Optional explicit path to the Evolith core repository',
@@ -86,7 +97,16 @@ export class ValidateTool implements McpTool {
       };
     }
 
-    const result = await this.validator.validate(path, corePath);
+    // Absent => undefined, never []: "named nothing" and "named an empty set"
+    // must not collapse into the same request.
+    const select = Array.isArray(args.select)
+      ? (args.select as unknown[]).filter((x): x is string => typeof x === 'string' && x.trim() !== '')
+      : [];
+    const result = await this.validator.validate(
+      path,
+      corePath,
+      select.length ? { policyRefs: select } : undefined,
+    );
 
     if (format === 'summary') return formatSummary(result);
     if (format === 'table') return formatTable(result);

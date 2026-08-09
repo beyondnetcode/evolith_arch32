@@ -69,6 +69,25 @@ const INLINE_WORKSPACE_REF = 'inline';
  * absent and `satellitePath` is present, the previous satellite-path evaluation
  * is used.
  */
+/**
+ * GT-659 — the refs a caller named, from the context it already sends.
+ *
+ * `EvaluationContextDto` has declared `rulesetRef` and `policyRefs` since the
+ * contract was written and the result echoed `rulesetRef` back as provenance,
+ * while every evaluation ran the whole corpus regardless. Reading them here is
+ * what makes the field mean what its name says.
+ *
+ * Returns `undefined` when the caller named nothing — NOT an empty array. The two
+ * must not collapse: an empty selection treated as a selection would evaluate
+ * zero rules and report a pass.
+ */
+function selectionFrom(body: { rulesetRef?: string; policyRefs?: readonly string[] }): string[] | undefined {
+  const refs = [body.rulesetRef, ...(body.policyRefs ?? [])].filter(
+    (x): x is string => typeof x === 'string' && x.trim() !== '',
+  );
+  return refs.length ? [...new Set(refs.map((x) => x.trim()))] : undefined;
+}
+
 @Controller({ path: 'evaluate', version: '1' })
 export class EvaluationController {
   constructor(
@@ -148,6 +167,7 @@ export class EvaluationController {
         {
           satellitePath: body.satellitePath,
           corePath: body.corePath,
+          rulesetRefs: selectionFrom(body),
           manifest: {
             satellitePath: body.satellitePath,
             corePath: body.corePath,
@@ -223,6 +243,7 @@ export class EvaluationController {
           corePath: manifest.corePath,
           manifest,
           plan,
+          rulesetRefs: selectionFrom(body),
         });
         if (!out.evaluationVerdict) {
           throw new Error('Inline evaluation pipeline produced no verdict');

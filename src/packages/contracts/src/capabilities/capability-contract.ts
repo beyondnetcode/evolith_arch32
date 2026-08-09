@@ -65,8 +65,12 @@ export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.free
   engines: Object.freeze(['native', 'opa', 'enforcer']),
   surfaces: Object.freeze(['rest', 'cli', 'mcp']),
   supportedConsumers: Object.freeze([...SUPPORTED_CONSUMER_IDS]),
-  operationsSha256: 'b5fbdf87781923e447bb215b149defe495c13670b8fc46704d3530f1e48f9ae7',
-  sha256: '259a257b7a54c26d9dd8fbb1195279acf067a781aa7201e12b4da23ddb20d8b4',
+  // GT-659 — bumped deliberately: `evolith-validate` gained a `select` argument
+  // (the catalogue-based ruleset selection), which changes the per-operation
+  // schema catalog and therefore this fingerprint. A pinned hash exists so that a
+  // surface contract cannot move without somebody saying so in a commit.
+  operationsSha256: '5f5d6e353e8ff089bc44e04ba0d90aec9b7a4b0ef02ba31217c369566defec27',
+  sha256: 'f592980416ac91ee1db652eff1af28aa368449a9b7af26322c89edea794b6939',
 }) as CapabilityManifestShape;
 
 /**

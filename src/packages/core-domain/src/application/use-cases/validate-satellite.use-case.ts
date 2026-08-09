@@ -13,6 +13,15 @@ export interface ValidateSatelliteInput {
   satellitePath: string;
   corePath?: string;
   rulesetId?: string;
+  /**
+   * GT-659 — canonical ruleset refs to evaluate against, from the reference
+   * catalogue's `$id` space. Absent ⇒ the whole corpus, unchanged.
+   *
+   * Distinct from `rulesetId` above, which resolves fifteen hand-written
+   * aliases down a separate path and cannot name a ruleset the catalogue
+   * publishes.
+   */
+  rulesetRefs?: readonly string[];
   engine?: 'native' | 'opa';
   /**
    * Optional manifest to trigger the end-to-end evaluation pipeline.
@@ -52,7 +61,7 @@ export class ValidateSatelliteUseCase {
   }
 
   async execute(input: ValidateSatelliteInput): Promise<ValidateSatelliteOutput> {
-    const { satellitePath, corePath, rulesetId, engine, manifest, plan } = input;
+    const { satellitePath, corePath, rulesetId, rulesetRefs, engine, manifest, plan } = input;
 
     // If a manifest was provided, run the end-to-end evaluation pipeline
     if (manifest) {
@@ -86,7 +95,7 @@ export class ValidateSatelliteUseCase {
         timestamp: new Date().toISOString(),
       };
     } else {
-      result = await activeValidator.validate(satellitePath, corePath);
+      result = await activeValidator.validate(satellitePath, corePath, rulesetRefs?.length ? { policyRefs: rulesetRefs } : undefined);
     }
 
     return { result };

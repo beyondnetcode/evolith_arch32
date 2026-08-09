@@ -28,6 +28,7 @@ Command: `evolith-cli validate`
 | `-o, --output [string]` | Ruta para guardar el reporte JSON |
 | `-s, --satellite [path]` | Ruta al repositorio satélite (default: cwd) |
 | `-c, --core [path]` | Ruta al repositorio Evolith Core (default: auto-detect) |
+| `--select <ref>` | Evaluar SOLO el/los ruleset(s) indicados, por el id que publica el catalogo  |
 | `-r, --ruleset [id]` | Validar ruleset específico (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability) |
 | `-a, --arch` | Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas) |
 | `-t, --topology [id]` | Topología canónica a validar (repetible): modular-monolith, distributed-modules,  |
@@ -114,6 +115,7 @@ Tool: `evolith-validate`
 | `path` | string | ✓ | Path to the satellite repository |
 | `format` | string |  | Output format (json, summary, table) |
 | `ruleset` | string |  | Optional ID of a specific ruleset to load |
+| `select` | array |  | Canonical ruleset refs to evaluate against, as published by GET /api/v1/reference/rulesets. Absent => the whole corpus. |
 | `corePath` | string |  | Optional explicit path to the Evolith core repository |
 | `topology` | string |  | Topology to target (auto-detects from manifest if omitted). Triggers end-to-end pipeline. |
 | `phase` | string |  | SDLC phase to evaluate: discovery|design|construction|qa|release. Triggers end-to-end pipeline. |
@@ -292,6 +294,7 @@ Command: `evolith-cli validate --composable`
 | `-o, --output [string]` | Ruta para guardar el reporte JSON |
 | `-s, --satellite [path]` | Ruta al repositorio satélite (default: cwd) |
 | `-c, --core [path]` | Ruta al repositorio Evolith Core (default: auto-detect) |
+| `--select <ref>` | Evaluar SOLO el/los ruleset(s) indicados, por el id que publica el catalogo  |
 | `-r, --ruleset [id]` | Validar ruleset específico (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability) |
 | `-a, --arch` | Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas) |
 | `-t, --topology [id]` | Topología canónica a validar (repetible): modular-monolith, distributed-modules,  |

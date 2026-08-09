@@ -8711,3 +8711,37 @@ The lesson is the board's own, and this time the measurer paid it: a `contains` 
 
 **What slice 1 deliberately does NOT do:** score, and drop out-of-scope findings. A count of weaknesses is not a compliance verdict, and the standard's scoring is a policy decision belonging to a tenant's selected ruleset. Findings whose CWEs the standard does not name are returned with empty measures rather than discarded, because «this scan found nothing ISO 5055 cares about» and «this scan found nothing» are different reports and only one is about the code.
 
+#### GT-663
+
+**Title:** The ISO/IEC 5055 measurement had no denominator — «found none» read the same as «looks for none»
+
+- **Purpose:** Make an ISO/IEC 5055 verdict legible by publishing what it is a fraction OF.
+- **Evidence:** `GT-662` made the measurement real: this repository's CodeQL findings map to **34 violations across 10 distinct weaknesses**. What the report could not say is *of how many*. The standard names **138**, so a run that finds nothing reads identically whether the analyser looks for all 138 or for none of them — **and the second is the common case**, because coverage here is the ANALYSER's and never the standard's. This is the exact shape `GT-569` fixed for rule coverage one level down: a count without its denominator silently redefines what it counts.
+- **Impact:** A green ISO/IEC 5055 verdict is the single most quotable output this engine produces for the ICP in §11.2 of the positioning. Shipped without a denominator it is an assurance nobody earned.
+- **Affected files:** `src/packages/core-domain/src/application/validators/standards/iso-5055-coverage.ts`
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Acceptance criteria:**
+  - [x] Every ISO/IEC 5055 report carries the number of distinct weaknesses observed AND the 138 the standard names, per measure as well as overall.
+  - [x] The number is labelled a FLOOR in the text that travels with it, and never claims the unobserved weaknesses are absent.
+  - [x] «Outside the standard» and «the analyser tagged nothing» are counted separately, because they mean different things.
+  - [x] Measured against this repository's real findings, not a fixture.
+- **Status:** `DONE` (2026-08-09)
+
+**DELIVERED 2026-08-09.** `iso5055CoverageFromSarif` reports **observed / 138**, per measure, alongside the findings; `describeIso5055Coverage` writes the one sentence all surfaces share, so the caveat cannot be dropped by whoever renders it.
+
+**Measured on this repository's live CodeQL findings — and the result is a product finding, not just a test:**
+
+| measure | observed / total | findings |
+|---|---|---|
+| Security | **10 / 74** | 34 |
+| Reliability | **0 / 74** | 0 |
+| Performance Efficiency | **0 / 18** | 0 |
+| Maintainability | **2 / 31** | 2 |
+
+**Two of the four measures are at zero, and nothing said so before.** CodeQL does not look for Reliability or Performance Efficiency weaknesses at all — which is the concrete, evidenced argument for adding a second analyser, and it was invisible while the report had no denominator. Also surfaced: **28 findings carried a CWE outside the standard and 13 carried none at all**, both counted separately because «not in ISO/IEC 5055» and «the analyser told us nothing we could map» are different facts and only one of them is about the code.
+
+**The advisory is emitted ONLY on a clean run, and once.** That is when the denominator matters and when the report used to be silent; when there are findings the reader already has something concrete to act on, and repeating the caveat per finding would train them to skip it. Non-blocking by construction — the pack's rules are `blocking: false` — so it informs a verdict and never decides one.
+
+**What it deliberately refuses to compute:** what the analyser COULD have found. That needs the scanner's own rule catalogue — a vendor call for CodeQL, a registry fetch for semgrep — and a «could have» number derived from anything less would invent the very assurance this row exists to withhold. So `observed` is a floor and is labelled one.
+

@@ -8617,3 +8617,37 @@ La lección es la del propio tablero y esta vez la pagó quien medía: un `conta
 
 **Lo que la rebanada 1 deliberadamente NO hace:** puntuar, ni descartar hallazgos fuera de alcance. Un conteo de debilidades no es un veredicto de cumplimiento, y la puntuación del estándar es una decisión de política que pertenece al ruleset que el tenant seleccione. Los hallazgos cuyos CWE el estándar no nombra se devuelven con medidas vacías en vez de descartarse, porque «este escaneo no encontró nada que a ISO 5055 le importe» y «este escaneo no encontró nada» son reportes distintos y solo uno habla del código.
 
+#### GT-663
+
+**Title:** La medición ISO/IEC 5055 no tenía denominador — «no encontró ninguna» se leía igual que «no busca ninguna»
+
+- **Purpose:** Hacer legible un veredicto ISO/IEC 5055 publicando de qué es fracción.
+- **Evidence:** `GT-662` hizo real la medición: los hallazgos de CodeQL de este repositorio mapean a **34 violaciones sobre 10 debilidades distintas**. Lo que el reporte no podía decir es *de cuántas*. El estándar nombra **138**, así que una corrida que no encuentra nada se lee idéntica tanto si el analizador busca las 138 como si no busca ninguna — **y lo segundo es el caso común**, porque la cobertura aquí es la del ANALIZADOR y nunca la del estándar. Es la forma exacta que `GT-569` arregló para la cobertura de reglas un nivel más abajo: un conteo sin su denominador redefine en silencio lo que cuenta.
+- **Impact:** Un veredicto ISO/IEC 5055 verde es la salida más citable que produce este motor para el ICP de la §11.2 del posicionamiento. Enviado sin denominador es una garantía que nadie se ganó.
+- **Affected files:** `src/packages/core-domain/src/application/validators/standards/iso-5055-coverage.ts`
+- **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Acceptance criteria:**
+  - [x] Todo reporte ISO/IEC 5055 lleva el número de debilidades distintas observadas Y las 138 que nombra el estándar, por medida y en total.
+  - [x] El número se etiqueta como SUELO en el texto que viaja con él, y nunca afirma que las no observadas estén ausentes.
+  - [x] «Fuera del estándar» y «el analizador no etiquetó nada» se cuentan por separado, porque significan cosas distintas.
+  - [x] Medido contra los hallazgos reales de este repositorio, no contra un fixture.
+- **Status:** `COMPLETADO` (2026-08-09)
+
+**ENTREGADO el 2026-08-09.** `iso5055CoverageFromSarif` reporta **observadas / 138**, por medida, junto a los hallazgos; `describeIso5055Coverage` escribe la única frase que comparten todas las superficies, para que el matiz no lo pueda quitar quien renderice.
+
+**Medido sobre los hallazgos vivos de CodeQL de este repositorio — y el resultado es un hallazgo de producto, no solo de test:**
+
+| medida | observadas / total | hallazgos |
+|---|---|---|
+| Security | **10 / 74** | 34 |
+| Reliability | **0 / 74** | 0 |
+| Performance Efficiency | **0 / 18** | 0 |
+| Maintainability | **2 / 31** | 2 |
+
+**Dos de las cuatro medidas están en cero, y nada lo decía antes.** CodeQL no busca debilidades de Reliability ni de Performance Efficiency en absoluto — que es el argumento concreto y con evidencia para añadir un segundo analizador, y era invisible mientras el reporte no tenía denominador. También sale a la luz: **28 hallazgos llevaban un CWE fuera del estándar y 13 no llevaban ninguno**, contados por separado porque «no está en ISO/IEC 5055» y «el analizador no nos dijo nada mapeable» son hechos distintos y solo uno habla del código.
+
+**El aviso se emite SOLO en una corrida limpia, y una vez.** Es cuando el denominador importa y cuando el reporte antes callaba; cuando hay hallazgos el lector ya tiene algo concreto que hacer, y repetir el matiz por hallazgo le enseñaría a saltárselo. No bloqueante por construcción —las reglas del pack son `blocking: false`— así que informa un veredicto y nunca lo decide.
+
+**Lo que se niega a calcular deliberadamente:** qué PODRÍA haber encontrado el analizador. Eso necesita el catálogo de reglas del propio escáner —una llamada al proveedor para CodeQL, una al registro para semgrep— y un número de «podría» derivado de menos que eso inventaría justo la garantía que esta ficha existe para no dar. Por eso `observed` es un suelo y está etiquetado como tal.
+

@@ -1,4 +1,10 @@
-import { NormalizedRule } from './rule-evaluation-engine';
+// GT-660 — the type comes from the DOMAIN model, not from the engine.
+//
+// Importing it from `rule-evaluation-engine` created a runtime import cycle
+// (engine -> catalog -> engine) that `54-validate-import-cycles` caught. The
+// cycle was also a design smell pointing the same way: the catalogue describes
+// a corpus, and a corpus is a domain fact, not something the engine owns.
+import type { NormalizedRule } from '../../domain/models/normalized-rule';
 import { ruleMatchesRef } from './ruleset-selection';
 
 /**

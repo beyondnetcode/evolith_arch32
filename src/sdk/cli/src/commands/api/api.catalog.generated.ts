@@ -154,6 +154,10 @@ export const GENERATED_TOOLS: ApiEntry[] = [
     "description": "Measure downstream-phase artifact completeness for a confirmed topology composition (advisory, ADR-0104 / DN-06 / GT-434). Stateless and non-binding: for a downstream phase (construction/quality/deployment) it compares the declared artifacts against the UNION of the universal per-phase artifacts and each topology's spec.phaseProfiles. Returns required/present/missing artifacts + completeness in the ADR-0073 success envelope. Produces the same result as POST /api/v1/architecture/evaluate-phase-artifacts and `evolith topology phase-artifacts`."
   },
   {
+    "name": "evolith-ruleset-list",
+    "description": "List the ruleset packs this Core can evaluate. Returns the canonical refs accepted by `evolith-validate`'s `select` argument, with the rule count and — per pack — how many of those rules can FAIL a run. Read this before selecting: a ref this Core does not carry is a blocking failure, never a quiet pass."
+  },
+  {
     "name": "evolith-satellite-adopt",
     "description": "Adopt an existing GitHub repository as an Evolith satellite. Returns an ADR-0073 output envelope."
   },

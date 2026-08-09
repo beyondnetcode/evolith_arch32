@@ -1,6 +1,6 @@
 import { buildRulesetCatalog } from './ruleset-catalog';
 import { selectRules } from './ruleset-selection';
-import { NormalizedRule } from './rule-evaluation-engine';
+import type { NormalizedRule } from '../../domain/models/normalized-rule';
 
 /**
  * GT-660 — the catalogue is only worth anything if every ref it publishes

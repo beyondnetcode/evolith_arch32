@@ -9912,7 +9912,7 @@
     {
       "id": "GT-663",
       "closedAt": "2026-08-09",
-      "closureCommit": "a514f3df",
+      "closureCommit": "059c8772",
       "evidence": [
         "src/packages/core-domain/src/application/validators/standards/iso-5055-coverage.ts",
         "src/packages/core-domain/src/application/validators/standards/iso-5055-coverage.spec.ts",

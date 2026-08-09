@@ -65,10 +65,14 @@ const DOTNET_FAILURE = [
 describe('createEnforcerAdapters — one adapter per validated runtime', () => {
   it('registers one adapter per validated runtime (node/dotnet/python/iac — GT-515/524/521)', () => {
     const adapters = createEnforcerAdapters(new StubProcessRunner());
+    // GT-662 adds `iso-5055`, which is NOT a sixth scanner: it translates the
+    // SARIF a free analyser already produces into the four ISO/IEC 5055
+    // measures. It registers under `node` because that is how semgrep is
+    // invoked when the tenant has not pointed it at an existing SARIF log.
     expect(adapters.map((a) => a.tool).sort()).toEqual(
-      ['Checkov', 'NetArchTest', 'Trivy', 'dependency-cruiser', 'import-linter'],
+      ['Checkov', 'NetArchTest', 'Trivy', 'dependency-cruiser', 'import-linter', 'iso-5055'],
     );
-    expect(adapters.map((a) => a.runtime).sort()).toEqual(['dotnet', 'iac', 'iac', 'node', 'python']);
+    expect(adapters.map((a) => a.runtime).sort()).toEqual(['dotnet', 'iac', 'iac', 'node', 'node', 'python']);
   });
 });
 

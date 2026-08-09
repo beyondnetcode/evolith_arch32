@@ -409,11 +409,26 @@ export class ValidateCommand extends BaseEvolithCommand {
     // Scope to the DEFAULT full validation: a targeted --ruleset/--adr/--file/
     // --topology/--phase/--manifest run legitimately reports "0 issues" (no
     // violations of that specific check) without incrementing rulesChecked.
+    //
+    // GT-662: `--select` belongs on that list, and the omission was not
+    // theoretical — selecting the ISO/IEC 5055 pack on a machine without the
+    // analyser installed produced `GOV-CORE-UNRESOLVED`, telling the operator to
+    // pass `--core` when they already had. The Core had resolved perfectly: 406
+    // rules in the corpus, 4 selected, 0 executed because the tool was absent.
+    // A red pointing at the wrong file is worse than no red.
+    //
+    // The distinction is now checked rather than inferred. GT-661 published
+    // `selection.corpusTotal`, so "the Core resolved nothing" and "the caller
+    // narrowed to rules that did not run" are separable facts: a corpus of ZERO
+    // is still a hard failure under any selection, which keeps GT-474's
+    // guarantee intact.
     const targetedRun = Boolean(
       options?.ruleset || options?.adr || options?.file ||
       options?.topology?.length || options?.phase || options?.manifest,
     );
-    if (!targetedRun && result.rulesChecked === 0) {
+    const narrowedByCaller =
+      result.selection?.source === 'caller' && (result.selection?.corpusTotal ?? 0) > 0;
+    if (!targetedRun && !narrowedByCaller && result.rulesChecked === 0) {
       const unresolvedIssue: ValidationIssue = {
         ruleId: 'GOV-CORE-UNRESOLVED',
         severity: 'MUST',

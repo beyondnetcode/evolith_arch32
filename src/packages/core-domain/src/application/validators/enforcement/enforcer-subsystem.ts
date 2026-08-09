@@ -18,6 +18,7 @@ import { createDependencyCruiserAdapter } from './adapters/dependency-cruiser-ad
 import { createNetArchTestAdapter } from './adapters/netarchtest-adapter';
 import { createImportLinterAdapter } from './adapters/import-linter-adapter';
 import { createCheckovAdapter, createTrivyAdapter } from './adapters/sarif-security-adapter';
+import { createIso5055Adapter } from './adapters/iso-5055-adapter';
 import { CompositeRuleEvaluator } from './composite-rule-evaluator';
 import { EnforcerEvaluator } from './enforcer-evaluator';
 import type { IEnforcerMetrics } from './enforcer-metrics';
@@ -43,6 +44,10 @@ export function createEnforcerAdapters(runner: IProcessRunner): IEnforcerAdapter
     createImportLinterAdapter(runner), // Python (GT-521)
     createCheckovAdapter(runner), // IaC/security → category=security (GT-521)
     createTrivyAdapter(runner), // vuln/IaC security → category=security (GT-521)
+    // GT-662: NOT a scanner of its own — it translates whatever SARIF a free
+    // analyser produces into the four ISO/IEC 5055 measures. Evolith supplies
+    // the CWE mapping; the tenant supplies the analyser.
+    createIso5055Adapter(runner),
   ];
 }
 

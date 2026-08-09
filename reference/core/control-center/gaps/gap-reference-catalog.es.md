@@ -8589,9 +8589,21 @@ La lección es la del propio tablero y esta vez la pagó quien medía: un `conta
   - [x] Un mapeo puro CWE→medida ISO/IEC 5055, construido desde el índice ENVIADO y no desde un fixture, que reporta su propio tamaño para que un índice que no cargó nunca se lea como cumplimiento.
   - [x] Los CWE se extraen de donde los ponen los productores reales — la **regla** SARIF en CodeQL, el **resultado** en semgrep — y cada grafía que esas herramientas emiten parsea al mismo número.
   - [x] Verificado contra los hallazgos REALES de CodeQL de este repositorio, no contra un log sintético.
-  - [ ] Un pack `iso-5055.rules.json` cuyas reglas lleven descriptores `enforce:` enrutados a un adaptador SARIF, con un bloque `notEvaluableHere` para lo que ningún analizador gratuito decide.
-  - [ ] El pack aparece en `evolith rulesets` y es seleccionable por tenant como cualquier otro.
-- **Status:** `EN-PROGRESO` (2026-08-09)
+  - [x] Un pack `iso-5055.rules.json` cuyas reglas lleven descriptores `enforce:` enrutados a un adaptador SARIF, con un bloque `notEvaluableHere` para lo que ningún analizador gratuito decide.
+  - [x] El pack aparece en `evolith rulesets` y es seleccionable por tenant como cualquier otro.
+- **Status:** `COMPLETADO` (2026-08-09)
+
+**REBANADA 2 ENTREGADA el 2026-08-09 — el pack, y dos defectos que sacó a la luz.**
+
+`iso-5055.rules.json` envía **cuatro reglas, una por medida**, enrutadas por `createIso5055Adapter` (`tool: iso-5055`). Verificado extremo a extremo contra los mismos hallazgos vivos de CodeQL que usó la rebanada 1: **entran 75 alertas, salen 36 violaciones — 34 en `ISO5055-SEC` y 2 en `ISO5055-MAINT`** — reproduciendo los números de la rebanada 1 por el camino real del adaptador. El pack lo publica `evolith rulesets` (**175 packs / 406 reglas**, `blocking: 0`) y se selecciona limpio: `--select …/iso-5055.rules.json` acota a **4 de 406**.
+
+**El escáner es gratuito y sigue siéndolo.** Por defecto `semgrep --config p/default`, deliberadamente NO `--config auto` — `auto` le pregunta al servicio del proveedor qué correr, así que necesita red y una sesión, y un check de gobernanza que dependa en silencio de una sesión de proveedor no es abierto ni gratuito. Un tenant cuyo CI ya emite SARIF apunta `enforce.config.sarif` a ese fichero y no se le obliga a escanear dos veces.
+
+**DEFECTO 1, sacado a la luz al seleccionar este pack.** Con el analizador ausente, `--select` sobre él producía un `GOV-CORE-UNRESOLVED` BLOQUEANTE —*«no se pudieron resolver los rulesets del Core, pasa `--core`»*— a un operador que ya había pasado `--core`. El Core había resuelto perfectamente: 406 reglas en el corpus, 4 seleccionadas, 0 ejecutadas porque faltaba la herramienta. El `selection.corpusTotal` de GT-661 hace separables ambos hechos, así que el guard ahora dispara con un CORPUS vacío y no con cero reglas ejecutadas. **Un corpus de cero sigue siendo fallo duro bajo cualquier selección**, así que la garantía de GT-474 queda intacta.
+
+**DEFECTO 2, encontrado al arreglar el primero.** Con `GOV-CORE-UNRESOLVED` correctamente fuera de en medio, la corrida reportaba **`passed` sobre 4 reglas omitidas** — cero evaluadas, cero violaciones, verde. Es exactamente la falsa garantía que este backlog sigue encontrando, entrando por una puerta que yo acababa de abrir. Las reglas del pack ahora son severidad `MUST` con `blocking: false`, y el par es funcional: **MUST** es lo que hace que GT-569 emita el aviso que convierte ese verde en `warning`; **blocking: false** es lo que impide que ese aviso rompa un build por una cobertura que este pack nunca reclamó. Medido tras el cambio: `status: warning`, 4 omitidas, 4 avisos nombrando cada medida.
+
+**La cobertura es la del analizador, no la del estándar, y el pack lo dice.** `notEvaluableHere` registra que un verde aquí significa que el analizador configurado no encontró ninguna debilidad ISO/IEC 5055 — **no** que el repositorio esté libre de ellas.
 
 **REBANADA 1 ENTREGADA el 2026-08-09 — la capa de traducción, medida contra la realidad.**
 

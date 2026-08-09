@@ -1,0 +1,100 @@
+{
+  "$id": "https://evolith.dev/rulesets/standards/iso-5055.rules.json",
+  "title": "ISO/IEC 5055:2021 \u2014 automated source code quality measures",
+  "description": "One rule per ISO/IEC 5055 measure, evaluated from the SARIF a free analyser produces. Evolith supplies the CWE\u2192measure translation; the analyser supplies the findings.",
+  "version": "1.0.0",
+  "standard": {
+    "id": "ISO/IEC 5055:2021",
+    "weaknessCount": 138
+  },
+  "notEvaluableHere": {
+    "why": "Evolith has no code parser. Every weakness in this standard is decided by an external analyser, so the COVERAGE of this pack is the coverage of whatever the tenant points it at \u2014 not of the 138 weaknesses the standard names. Publishing a per-weakness rule for each would advertise a check nothing performs.",
+    "consequence": "A green verdict here means the configured analyser found no ISO/IEC 5055 weakness. It does NOT mean the repository is free of them, and this pack is non-blocking for exactly that reason: the tenant decides what its own analyser coverage is worth.",
+    "dependsOn": [
+      "The analyser named in enforce.config (default semgrep p/default), or a SARIF log the tenant already produces."
+    ],
+    "severityNote": "The rules are MUST severity and blocking:false, and the pair is deliberate. MUST is what makes GT-569 emit an advisory when the analyser did not run: without it, a tenant whose scanner is not installed gets `passed` over zero evaluated rules \u2014 the exact false assurance this corpus keeps finding. blocking:false is what stops that advisory from failing a build over coverage this pack never claimed to have."
+  },
+  "rules": [
+    {
+      "id": "ISO5055-SEC",
+      "severity": "MUST",
+      "category": "iso-5055",
+      "blocking": false,
+      "title": "ISO/IEC 5055 \u2014 Security",
+      "description": "Weaknesses of the ISO/IEC 5055:2021 Security measure found in this repository by the analyser the tenant configured. The measure covers 74 CWE identifiers; how many of them an analyser can actually decide depends on which one is pointed at, so this rule reports what was FOUND and never claims coverage of the rest.",
+      "rationale": "ISO/IEC 5055:2021 names 138 structural weaknesses as CWE identifiers across four measures. Evolith does not parse code: it translates the findings of a free analyser (semgrep by default, or any SARIF the tenant already produces) into these measures. Verified on the Evolith Core repository itself, 34 of 75 open CodeQL alerts are weaknesses this standard names.",
+      "validationQuery": "SARIF findings whose CWE belongs to the ISO/IEC 5055 Security measure.",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "iso-5055",
+        "toolRuleId": "ISO5055-SEC",
+        "runtime": "node",
+        "mode": "warn",
+        "config": {
+          "semgrepConfig": "p/default"
+        }
+      }
+    },
+    {
+      "id": "ISO5055-REL",
+      "severity": "MUST",
+      "category": "iso-5055",
+      "blocking": false,
+      "title": "ISO/IEC 5055 \u2014 Reliability",
+      "description": "Weaknesses of the ISO/IEC 5055:2021 Reliability measure found in this repository by the analyser the tenant configured. The measure covers 74 CWE identifiers; how many of them an analyser can actually decide depends on which one is pointed at, so this rule reports what was FOUND and never claims coverage of the rest.",
+      "rationale": "ISO/IEC 5055:2021 names 138 structural weaknesses as CWE identifiers across four measures. Evolith does not parse code: it translates the findings of a free analyser (semgrep by default, or any SARIF the tenant already produces) into these measures. Verified on the Evolith Core repository itself, 34 of 75 open CodeQL alerts are weaknesses this standard names.",
+      "validationQuery": "SARIF findings whose CWE belongs to the ISO/IEC 5055 Reliability measure.",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "iso-5055",
+        "toolRuleId": "ISO5055-REL",
+        "runtime": "node",
+        "mode": "warn",
+        "config": {
+          "semgrepConfig": "p/default"
+        }
+      }
+    },
+    {
+      "id": "ISO5055-PERF",
+      "severity": "MUST",
+      "category": "iso-5055",
+      "blocking": false,
+      "title": "ISO/IEC 5055 \u2014 Performance Efficiency",
+      "description": "Weaknesses of the ISO/IEC 5055:2021 Performance Efficiency measure found in this repository by the analyser the tenant configured. The measure covers 18 CWE identifiers; how many of them an analyser can actually decide depends on which one is pointed at, so this rule reports what was FOUND and never claims coverage of the rest.",
+      "rationale": "ISO/IEC 5055:2021 names 138 structural weaknesses as CWE identifiers across four measures. Evolith does not parse code: it translates the findings of a free analyser (semgrep by default, or any SARIF the tenant already produces) into these measures. Verified on the Evolith Core repository itself, 34 of 75 open CodeQL alerts are weaknesses this standard names.",
+      "validationQuery": "SARIF findings whose CWE belongs to the ISO/IEC 5055 Performance Efficiency measure.",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "iso-5055",
+        "toolRuleId": "ISO5055-PERF",
+        "runtime": "node",
+        "mode": "warn",
+        "config": {
+          "semgrepConfig": "p/default"
+        }
+      }
+    },
+    {
+      "id": "ISO5055-MAINT",
+      "severity": "MUST",
+      "category": "iso-5055",
+      "blocking": false,
+      "title": "ISO/IEC 5055 \u2014 Maintainability",
+      "description": "Weaknesses of the ISO/IEC 5055:2021 Maintainability measure found in this repository by the analyser the tenant configured. The measure covers 31 CWE identifiers; how many of them an analyser can actually decide depends on which one is pointed at, so this rule reports what was FOUND and never claims coverage of the rest.",
+      "rationale": "ISO/IEC 5055:2021 names 138 structural weaknesses as CWE identifiers across four measures. Evolith does not parse code: it translates the findings of a free analyser (semgrep by default, or any SARIF the tenant already produces) into these measures. Verified on the Evolith Core repository itself, 34 of 75 open CodeQL alerts are weaknesses this standard names.",
+      "validationQuery": "SARIF findings whose CWE belongs to the ISO/IEC 5055 Maintainability measure.",
+      "enforce": {
+        "engine": "enforcer",
+        "tool": "iso-5055",
+        "toolRuleId": "ISO5055-MAINT",
+        "runtime": "node",
+        "mode": "warn",
+        "config": {
+          "semgrepConfig": "p/default"
+        }
+      }
+    }
+  ]
+}

@@ -9869,6 +9869,26 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The DEFAULT is deliberately not changed here and is registered as GT-661. With no selection this repository still reports 85 blocking issues of 113, so a tenant that adopted nothing receives a blocking verdict from rules it never chose - which contradicts 'the Core proposes'. It is left open because every current consumer, this repository's own CI included, depends on validate blocking with no flag: a default that stopped blocking would silently disarm gates that work today, a worse failure than the one being fixed. That is a decision with a migration, not a defect to patch in passing. Also NOT done: unifying REST's id field. REST keeps id and gains ref rather than having id corrected, because id is published and clients hold it; the additive field makes 183 of 183 selectable where id managed 166 of 183."
+    },
+    {
+      "id": "GT-661",
+      "closedAt": "2026-08-09",
+      "closureCommit": "7c380d2f",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/ruleset-validator.types.ts",
+        "src/packages/core-domain/src/application/validators/selection-report.spec.ts",
+        "src/sdk/cli/src/commands/validate/validate.selection-resolution.spec.ts",
+        "src/sdk/cli/src/infrastructure/config/config.service.ts"
+      ],
+      "validationCommands": [
+        "node src/sdk/cli/dist/main.js validate --core . --format json | jq .data.selection -> {source: core-default, requested: [], rulesSelected: 402, corpusTotal: 402} with status failed. The scope is now stated, so 85 blocking issues can be read as the Core's PROPOSAL rather than the tenant's choice.",
+        "node src/sdk/cli/dist/main.js validate --core . --select standards/ssdf-v1.1.rules.json --format json | jq .data.selection -> {source: caller, matched: [standards/ssdf-v1.1.rules.json], rulesSelected: 8, corpusTotal: 402} with status warning. Before this change both runs rendered the same red.",
+        "npx jest --config src/packages/core-domain/jest.config.js --testPathPatterns selection-report -> 5 passed, including the criterion-3 assertion that the default STILL evaluates the whole corpus.",
+        "npx jest --config src/sdk/cli/jest.config.js --testPathPatterns validate.selection-resolution -> 5 passed; the flag beats the profile, can widen it, and neither path can produce an empty selection.",
+        "npx jest --config src/sdk/cli/jest.config.js --testPathPatterns validate -> 64 passed across 5 suites, so no existing validate behaviour moved."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The DECISION is that 'no selection' keeps meaning the whole corpus. The owner's principle - the Core proposes, the client configures and selects - does not require the Core to stop blocking; it requires the Core not to be the one deciding what a tenant adopted. With no selection there is no tenant configuration to consult and the Core refuses to invent one, so it evaluates everything it has and LABELS that scope core-default. The alternative was considered and rejected on a measured basis: a default that stopped blocking would silently disarm every gate working today, this repository's own CI included, which is a worse failure than the one being fixed. Deliberately NOT done here: reading a tenant default on the MCP and REST surfaces. The CLI got ProfileConfig.select because the CLI is the surface with a profile; MCP and REST take their selection from the caller per request, and where a Tracker-side tenant default should live is a Tracker question rather than a Core one."
     }
   ]
 }

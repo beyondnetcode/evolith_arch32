@@ -8558,8 +8558,20 @@ La lección es la del propio tablero y esta vez la pagó quien medía: un `conta
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** M
 - **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
 - **Acceptance criteria:**
-  - [ ] Queda registrada una decisión sobre qué significa «sin selección» —el corpus completo, una selección vacía, o un default configurado por tenant que resuelve el cliente— y por qué, dado que el Core propone.
-  - [ ] Se elija lo que se elija, un llamador puede distinguir en el reporte qué reglas se evaluaron porque ÉL las pidió y cuáles porque el Core aplicó un default.
-  - [ ] Ningún consumidor existente queda desarmado en silencio: cualquier cambio del default se envía con la migración dicha, no insinuada.
-- **Status:** `PENDIENTE` (2026-08-09)
+  - [x] Queda registrada una decisión sobre qué significa «sin selección» —el corpus completo, una selección vacía, o un default configurado por tenant que resuelve el cliente— y por qué, dado que el Core propone.
+  - [x] Se elija lo que se elija, un llamador puede distinguir en el reporte qué reglas se evaluaron porque ÉL las pidió y cuáles porque el Core aplicó un default.
+  - [x] Ningún consumidor existente queda desarmado en silencio: cualquier cambio del default se envía con la migración dicha, no insinuada.
+- **Status:** `COMPLETADO` (2026-08-09)
+**RESUELTO el 2026-08-09 — la decisión, y el reporte que la hace legible.**
+
+**LA DECISIÓN: «sin selección» sigue significando el corpus completo, y el Core lo dice en voz alta.** El principio del dueño —*el Core PROPONE; el Tracker, el CLI y MCP configuran y seleccionan*— no exige que el Core deje de bloquear. Exige que el Core no sea quien decide qué adoptó un tenant. Sin selección el Core no tiene configuración de tenant que consultar y se niega a inventarla, así que evalúa todo lo que tiene y etiqueta ese alcance como `core-default`: una **propuesta**, no una elección del tenant. **La alternativa se midió y se descartó:** un default que dejara de bloquear desarmaría en silencio todos los gates que hoy funcionan, incluido el CI de este propio repositorio, lo que es un fallo peor que el que se arregla.
+
+**Lo que cambia es que el veredicto ya se puede LEER.** `ValidationResult.selection` publica `source` (`caller` | `core-default`), los refs `requested`, cuáles hicieron `matched`, cuáles `unmatched`, `rulesSelected` y `corpusTotal`. Medido extremo a extremo en el CLI: sin selección reporta `core-default · 402 de 402` y `status: failed`; con `--select standards/ssdf-v1.1.rules.json` reporta `caller · 8 de 402` y `status: warning`. Antes de esto, ambos renderizaban el mismo rojo. `unmatched` es un CAMPO y no texto de issue a propósito — un consumidor debe poder actuar sobre «pediste algo que no tengo» sin parsear prosa, porque cero reglas con cero violaciones es indistinguible de un repositorio limpio.
+
+**Faltaba la mitad del cliente y ya está construida.** `ProfileConfig.select` deja que un tenant configure sus packs adoptados UNA VEZ. Hasta que existió, la única forma de acotar una corrida era una bandera que alguien tenía que reescribir en cada invocación, lo que no es configuración — es algo que una persona olvida en la corrida que importaba. `--select` sigue ganando cuando se da, incluso para AMPLIAR un default guardado: un argumento explícito es un acto deliberado. Ambos caminos descartan blancos, así que `select: []` o `select: ['  ']` significa «este tenant no configuró nada», nunca «este tenant configuró un alcance vacío» — lo segundo evaluaría cero reglas, encontraría cero violaciones y reportaría un pase sobre un repositorio que nadie examinó.
+
+**Las cuatro superficies del CLI lo llevan** (humana, tabla, yaml/markdown y `--format json`), porque el lector que más necesita la distinción es el que mira una terminal en rojo, no el que parsea un envelope.
+
+**El criterio 3 se cumple por construcción: no se desarmó nada.** El reporte ganó un campo; la corrida no perdió una regla. Verificado en vez de afirmado — un spec fija que el default sigue evaluando el corpus completo.
+
 

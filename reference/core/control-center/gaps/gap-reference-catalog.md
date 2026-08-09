@@ -8652,8 +8652,20 @@ The lesson is the board's own, and this time the measurer paid it: a `contains` 
 - **Component:** `Evolith Core` · **Criticality:** P2 · **Complexity:** M
 - **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
 - **Acceptance criteria:**
-  - [ ] A decision records what «no selection» means — the full corpus, an empty selection, or a tenant-configured default resolved by the client — and why, given that the Core proposes.
-  - [ ] Whatever is chosen, a caller can tell from the report which rules were evaluated because IT asked and which because the Core defaulted.
-  - [ ] No existing consumer is silently disarmed: any change to the default ships with the migration stated, not implied.
-- **Status:** `PENDING` (2026-08-09)
+  - [x] A decision records what «no selection» means — the full corpus, an empty selection, or a tenant-configured default resolved by the client — and why, given that the Core proposes.
+  - [x] Whatever is chosen, a caller can tell from the report which rules were evaluated because IT asked and which because the Core defaulted.
+  - [x] No existing consumer is silently disarmed: any change to the default ships with the migration stated, not implied.
+- **Status:** `DONE` (2026-08-09)
+**RESOLVED 2026-08-09 — the decision, and the report that makes it legible.**
+
+**THE DECISION: «no selection» keeps meaning the whole corpus, and the Core says so out loud.** The owner's principle — *the Core PROPOSES; the Tracker, CLI and MCP configure and select* — does not require the Core to stop blocking. It requires the Core not to be the one deciding what a tenant adopted. With no selection the Core has no tenant configuration to consult and refuses to invent one, so it evaluates everything it has and labels that scope `core-default`: a **proposal**, not a tenant's choice. **The alternative was measured and rejected:** a default that stopped blocking would silently disarm every gate working today, including this repository's own CI, which is a worse failure than the one being fixed.
+
+**What changed is that the verdict can now be READ.** `ValidationResult.selection` publishes `source` (`caller` | `core-default`), the refs `requested`, which `matched`, which `unmatched`, `rulesSelected` and `corpusTotal`. Measured end to end on the CLI: no selection reports `core-default · 402 of 402` and `status: failed`; `--select standards/ssdf-v1.1.rules.json` reports `caller · 8 of 402` and `status: warning`. Before this, both rendered the same red. `unmatched` is a FIELD rather than issue text on purpose — a consumer must be able to act on «you asked for something I do not have» without parsing prose, because zero rules with zero violations is indistinguishable from a clean repository.
+
+**The client's half was missing and is now built.** `ProfileConfig.select` lets a tenant configure its adopted packs ONCE. Until it existed the only way to scope a run was a flag somebody had to retype on every invocation, which is not configuration — it is something a person forgets on the run that mattered. `--select` still wins when given, including to WIDEN a stored default: an explicit argument is a deliberate act. Both paths drop blanks, so `select: []` or `select: ['  ']` means «this tenant configured nothing», never «this tenant configured an empty scope» — the latter would evaluate zero rules, find zero violations and report a pass over a repository nobody examined.
+
+**All four CLI surfaces carry it** (human, table, yaml/markdown, `--format json`), because the reader who most needs the distinction is the one looking at a red terminal, not the one parsing an envelope.
+
+**Criterion 3 holds by construction: nothing was disarmed.** The report gained a field; the run did not lose a rule. Asserted rather than claimed — a spec pins that the default still evaluates the whole corpus.
+
 

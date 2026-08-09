@@ -310,7 +310,14 @@ export class ValidateCommand extends BaseEvolithCommand {
             // NOT passed as a selection: "the caller named nothing" and "the
             // caller named an empty set" must not collapse, or a typo in a flag
             // would evaluate zero rules and report a pass.
-            rulesetRefs: options?.select?.length ? options.select : undefined,
+            //
+            // GT-661 — the profile is consulted when the flag is absent, which
+            // is the CLI doing the job the principle assigns it: the Core
+            // proposes, the client configures and selects. `--select` still
+            // wins when given, including to WIDEN a stored default — an
+            // explicit argument is a deliberate act. `resolveSelection` keeps
+            // the empty-vs-absent distinction on both paths.
+            rulesetRefs: this.resolveSelection(options?.select),
           })).result;
         }
 
@@ -466,6 +473,11 @@ export class ValidateCommand extends BaseEvolithCommand {
           title: i.title,
           blocking: i.blocking ? 'YES' : 'no',
         })),
+        // GT-661 — the scope travels with the counts on THIS surface too.
+        // Without it a table showing 85 blocking issues reads the same whether
+        // the tenant selected those rules or the Core evaluated all 402 of its
+        // own opinions, and those are different facts.
+        selection: result.selection,
         coreRef: result.coreRef,
         timestamp: result.timestamp,
       };
@@ -600,6 +612,30 @@ export class ValidateCommand extends BaseEvolithCommand {
     this.promptService.showInfo(
       `\\nReglas: ${checked} verificadas / ${skipped} omitidas / ${errored} con error / ${total} en total`,
     );
+
+    // GT-661 — the SCOPE, next to the counts, because the human reader is the
+    // one who most needs to tell "the pack I adopted failed" from "the Core
+    // evaluated all of its opinions and something failed". Both render the same
+    // red without this line.
+    const selection = result.selection;
+    if (selection?.source === 'caller') {
+      this.promptService.showInfo(
+        `Alcance: seleccion del llamador — ${selection.rulesSelected} de ${selection.corpusTotal} regla(s), ` +
+        `ruleset(s): ${selection.matched.join(', ') || 'ninguno'}`,
+      );
+      if (selection.unmatched.length > 0) {
+        this.promptService.showError(
+          `  ${selection.unmatched.length} ruleset(s) pedidos que este Core NO tiene: ${selection.unmatched.join(', ')}. ` +
+          'Nada se evaluo contra ellos — este reporte no dice nada sobre ellos. Ver `evolith rulesets`.',
+        );
+      }
+    } else if (selection) {
+      this.promptService.showInfo(
+        `Alcance: sin seleccion — se evaluo el corpus completo (${selection.corpusTotal} regla(s)), que es la ` +
+        'PROPUESTA de este Core, no una eleccion del tenant. Configura `select` en el perfil o pasa ' +
+        '`--select` para acotarlo; `evolith rulesets` lista lo disponible.',
+      );
+    }
     if (skipped > 0) {
       this.promptService.showWarning(
         `  ${skipped} regla(s) NO se evaluaron — su resultado es DESCONOCIDO, no aprobado.`,
@@ -645,6 +681,27 @@ export class ValidateCommand extends BaseEvolithCommand {
   }
 
   /**
+   * GT-661 — the refs this run should be scoped to, flag first, profile second.
+   *
+   * Returns `undefined` for "the caller named nothing", which the engine turns
+   * into the whole corpus and reports as `selection.source: 'core-default'`.
+   * Every blank entry is dropped on BOTH paths: a profile carrying `select: []`
+   * or `select: ['  ']` means the tenant configured nothing, never that it
+   * configured an empty scope — the latter would evaluate zero rules, find zero
+   * violations and report a pass over a repository nobody examined.
+   */
+  private resolveSelection(fromFlag?: string[]): string[] | undefined {
+    const clean = (refs?: string[]): string[] =>
+      (refs ?? []).map((r) => String(r ?? '').trim()).filter((r) => r !== '');
+
+    const flag = clean(fromFlag);
+    if (flag.length) return flag;
+
+    const configured = clean(this.profile.select);
+    return configured.length ? configured : undefined;
+  }
+
+  /**
    * GT-659 — select by the ref the CATALOGUE publishes, repeatably.
    *
    * `--ruleset` above resolves fifteen hand-written aliases through
@@ -660,8 +717,10 @@ export class ValidateCommand extends BaseEvolithCommand {
   @Option({
     flags: '--select <ref>',
     description:
-      'Evaluar SOLO el/los ruleset(s) indicados, por el id que publica el catalogo ' +
-      '(repetible). Ausente ⇒ el corpus completo, como hasta ahora.',
+      'Evaluar SOLO el/los ruleset(s) indicados, por el ref que publica ' +
+      '`evolith rulesets` (repetible). Ausente ⇒ se usa `select` del perfil ' +
+      'del tenant; sin ninguno de los dos, el corpus completo, reportado como ' +
+      '`selection.source: core-default`.',
   })
   parseSelect(val: string, previous: string[] = []): string[] {
     return [...previous, val];

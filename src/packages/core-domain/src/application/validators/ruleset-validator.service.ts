@@ -9,7 +9,7 @@ import { createCompositeEnforcerStrategy } from './enforcement/enforcer-subsyste
 import { TopologyCatalogService } from '../services/topology-catalog.service';
 import {
   ArchitectureValidationResult, EvolithYaml, RULESET_VALIDATOR_OPTIONS,
-  RuleCoverage, RulesetValidatorOptions, ValidationIssue, ValidationResult,
+  RuleCoverage, RulesetValidatorOptions, SelectionReport, ValidationIssue, ValidationResult,
 } from './ruleset-validator.types';
 import { loadRulesetById } from './ruleset-id-loader';
 import type { RulesetSelection } from './ruleset-selection';
@@ -25,6 +25,7 @@ import {
 export {
   ValidationResult, ValidationIssue, EvolithYaml, ArchitectureValidationResult,
   RuleCoverage, RuleApplicabilitySummary, RulesetValidatorOptions, RULESET_VALIDATOR_OPTIONS,
+  SelectionReport,
 } from './ruleset-validator.types';
 
 @Injectable()
@@ -92,6 +93,14 @@ export class RulesetValidatorService {
     // GT-571: rules the corpus contains but that do not address this repository.
     // Deliberately NOT folded into `coverage` — see RuleApplicabilitySummary.
     let notApplicable: NotApplicableRule[] = [];
+    // GT-661 — the scope of this verdict, reported rather than left implicit.
+    // Seeded as `core-default` so a run that dies before the engine returns
+    // still says which scope it was attempting, instead of omitting the field
+    // and letting a reader assume the caller had asked for something.
+    let selectionReport: SelectionReport = {
+      source: 'core-default', requested: [], matched: [], unmatched: [],
+      rulesSelected: 0, corpusTotal: 0,
+    };
 
     const resolvedCorePath = corePath || this.findCorePath(satellitePath);
     const evolithYamlPath = path.join(satellitePath, 'evolith.yaml');
@@ -119,6 +128,25 @@ export class RulesetValidatorService {
       const { results: engineResults, notApplicable: excluded, selection: applied } =
         await this.engine.discoverAndEvaluate(satellitePath, resolvedCorePath, filter, selection);
       notApplicable = excluded;
+
+      // GT-661 — `applied` is present ONLY when the caller restricted the run
+      // (see `discoverAndEvaluate`), so its absence is exactly the
+      // `core-default` case and needs no separate flag.
+      selectionReport = applied
+        ? {
+            source: 'caller',
+            requested: [...applied.matched, ...applied.unmatched],
+            matched: [...applied.matched],
+            unmatched: [...applied.unmatched],
+            rulesSelected: applied.selected.length,
+            corpusTotal: applied.corpusTotal,
+          }
+        : {
+            source: 'core-default',
+            requested: [], matched: [], unmatched: [],
+            rulesSelected: engineResults.length + excluded.length,
+            corpusTotal: engineResults.length + excluded.length,
+          };
 
       // GT-659 — a ref that matched NOTHING is a caller asking for a ruleset this
       // Core does not have, and the one answer it must never receive is a clean
@@ -177,6 +205,8 @@ export class RulesetValidatorService {
       // without parsing issue text.
       blockingSkippedRuleIds: coverage.blockingSkippedRuleIds,
       perRuleset: coverage.perRuleset,
+      // GT-661 — WHY this scope, not just how much of it.
+      selection: selectionReport,
       issues,
       coreRef: { version: coreRefVersion, path: coreRefPath },
       timestamp: new Date().toISOString(),

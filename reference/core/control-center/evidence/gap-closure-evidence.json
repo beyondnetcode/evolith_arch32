@@ -9873,7 +9873,7 @@
     {
       "id": "GT-661",
       "closedAt": "2026-08-09",
-      "closureCommit": "7c380d2f",
+      "closureCommit": "34c20080",
       "evidence": [
         "src/packages/core-domain/src/application/validators/ruleset-validator.types.ts",
         "src/packages/core-domain/src/application/validators/selection-report.spec.ts",

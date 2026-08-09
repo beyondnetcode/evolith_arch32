@@ -68,7 +68,18 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // implemented yet. Every other class is unchanged, and that is the assertion:
   // an ADR is prose until someone writes its handler, and pinning both numbers is
   // what stops a new decision looking like new enforcement.
-  'native-handler': 158,
+  //
+  // 158 -> 166 on 2026-08-08: GT-600 shipped the first international standard as
+  // an evaluable ruleset — `src/rulesets/standards/ssdf-v1.1.rules.json`, eight
+  // SSDF v1.1 practices — and `SsdfRuleHandler` claims all eight, so the corpus
+  // grew by exactly eight rules that RUN. That equality is the assertion: a
+  // standards pack shipped as JSON alone would have landed all eight in
+  // `unimplemented-native` while reading, from outside, like standards coverage.
+  // The practices whose evidence is a repository SETTING rather than a file are
+  // deliberately NOT in the ruleset; they are named in its `notEvaluableHere`
+  // block, so the corpus did not grow by rules nothing can decide.
+
+  'native-handler': 166,
   'documentation-only': 137,
   'unimplemented-native': 48,
   'needs-external-system': 20,
@@ -115,7 +126,11 @@ describe('GT-595 · the corpus is fully classified', () => {
   it('loads a corpus of the expected size (guards the measurement itself)', () => {
     // If this moves, every number below moved with it — re-triage before editing.
     expect(CORPUS.length).toBeGreaterThanOrEqual(370);
-    expect(CORPUS.length).toBeLessThanOrEqual(400);
+    // 400 -> 410 on 2026-08-08: the corpus is 402 after GT-600's eight SSDF
+    // rules. The band is widened rather than pinned to the exact number, because
+    // its job is to catch a corpus that COLLAPSED — the failure this whole file
+    // exists to make impossible — not to be edited on every legitimate addition.
+    expect(CORPUS.length).toBeLessThanOrEqual(410);
   });
 
   it('assigns EVERY rule exactly one evaluability class', () => {

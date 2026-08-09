@@ -12,21 +12,21 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 177,
-    "rules": 396,
+    "rulesetFiles": 178,
+    "rules": 404,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 396,
+    "rules": 404,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 359,
-    "adoptedFraction": 0.0934,
+    "noInternationalEquivalent": 367,
+    "adoptedFraction": 0.0916,
     "analyserAdoptable": 42,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1061,
-    "analyserAdoptableFractionIncludingPartial": 0.1641,
+    "analyserAdoptableFraction": 0.104,
+    "analyserAdoptableFractionIncludingPartial": 0.1609,
     "byClass": {
       "architecture-decision": {
         "rules": 163,
@@ -49,7 +49,7 @@
         "adoptable": 0
       },
       "governance": {
-        "rules": 55,
+        "rules": 63,
         "mapped": 1,
         "adoptable": 0
       },
@@ -168,7 +168,7 @@
         "adoptablePartialRuleIds": []
       },
       "native-handler": {
-        "rules": 158,
+        "rules": 166,
         "mappedToIso5055": 19,
         "analyserAdoptable": 28,
         "analyserAdoptablePartial": 11,
@@ -6901,6 +6901,158 @@
       },
       "nativeEvaluability": "unimplemented-native",
       "note": "Same as SEC-TIMING-01; the early-length-rejection variant needs a bespoke pattern."
+    },
+    {
+      "ruleId": "SSDF-PO.3.1",
+      "sourceFile": "standards/ssdf-v1.1.rules.json",
+      "title": "PO.3.1 — the toolchain is specified as code, not as recollection",
+      "severity": "SHOULD",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SSDF-PS.3.2",
+      "sourceFile": "standards/ssdf-v1.1.rules.json",
+      "title": "PS.3.2 — an SBOM that is generated but never published satisfies nothing",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SSDF-PW.4.1",
+      "sourceFile": "standards/ssdf-v1.1.rules.json",
+      "title": "PW.4.1 — third-party components resolve to pinned versions in CI",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SSDF-PW.4.4",
+      "sourceFile": "standards/ssdf-v1.1.rules.json",
+      "title": "PW.4.4 — components are re-verified over their life cycle, not once at adoption",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SSDF-PW.6.1",
+      "sourceFile": "standards/ssdf-v1.1.rules.json",
+      "title": "PW.6.1 — build tooling is configured to improve executable security",
+      "severity": "SHOULD",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SSDF-PW.7.2",
+      "sourceFile": "standards/ssdf-v1.1.rules.json",
+      "title": "PW.7.2 — code is analysed by both a code scanner and a secret scanner",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SSDF-RV.1.2",
+      "sourceFile": "standards/ssdf-v1.1.rules.json",
+      "title": "RV.1.2 — the code scanner sees the whole change, not a filtered slice",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SSDF-RV.1.3",
+      "sourceFile": "standards/ssdf-v1.1.rules.json",
+      "title": "RV.1.3 — there is a disclosure policy that names how to report",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
       "ruleId": "AAI-R01",

@@ -1,0 +1,104 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/standards/ssdf-v1.1.rules.json",
+  "title": "NIST SP 800-218 (SSDF) v1.1 — the file-decidable practices, as evaluable rules",
+  "description": "GT-600. The first international standard shipped as something the Evolith engine EVALUATES rather than something a human reads. Its scope is deliberately narrow and the boundary is stated in `notEvaluableHere` below rather than left to be discovered: a native handler reads the workspace filesystem, so a practice whose evidence lives in a repository SETTING cannot be decided here, and pretending otherwise would produce a green verdict about a control nobody checked. Practice IDs and their retirements are taken from the SSDF v1.1 table; v1.1 retired PW.3.2, PW.4.5 and PW.5.2, and nothing here maps to them.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-08-08",
+  "standard": {
+    "name": "NIST SP 800-218",
+    "edition": "v1.1",
+    "title": "Secure Software Development Framework (SSDF)",
+    "mappingDocument": "reference/core/control-center/security/supply-chain-posture.md#3-ssdf-v11-mapping"
+  },
+  "notEvaluableHere": {
+    "why": "A native rule handler is given a filesystem, not a GitHub client. These practices are mapped and verified in the posture document by `gh api` calls against repository settings, which no amount of file reading can substitute for. They are named so that the absence of a rule reads as a declared boundary rather than as coverage.",
+    "practices": [
+      { "id": "PO.4.1", "evidence": "the required status-check set on main and develop" },
+      { "id": "PS.1.1", "evidence": "branch protection, enforce_admins, required approving reviews" },
+      { "id": "PW.7.1", "evidence": "required reviews and the repository ruleset requesting automated review" },
+      { "id": "RV.1.1", "evidence": "the dependabot_security_updates repository setting" },
+      { "id": "PO.1", "evidence": "organisational security requirements — not a repository artifact" },
+      { "id": "PO.2", "evidence": "roles and training — not a repository artifact" },
+      { "id": "PO.5.1", "evidence": "developer endpoints, which are outside this repository" }
+    ]
+  },
+  "rules": [
+    {
+      "id": "SSDF-PO.3.1",
+      "severity": "SHOULD",
+      "category": "ssdf-toolchain",
+      "title": "PO.3.1 — the toolchain is specified as code, not as recollection",
+      "description": "SSDF PO.3.1 asks which tools must be in each toolchain and how they integrate. The answer is only checkable if the toolchain IS code: CI workflows under .github/workflows, numbered guards under .harness/scripts/ci, and .harness/manifest.yaml as the discovery surface. A repository that has none of these has no specified toolchain, whatever a document says.",
+      "validationQuery": "Native handler: .github/workflows contains at least one workflow, .harness/scripts/ci contains at least one numbered guard, and .harness/manifest.yaml exists.",
+      "blocking": false
+    },
+    {
+      "id": "SSDF-PW.4.1",
+      "severity": "MUST",
+      "category": "ssdf-third-party",
+      "title": "PW.4.1 — third-party components resolve to pinned versions in CI",
+      "description": "SSDF PW.4.1 asks that well-secured third-party components be acquired and maintained. The file-decidable half is that builds are reproducible: a committed lockfile, and CI installing from it. A workflow that runs `npm install` resolves whatever the registry serves that minute, which is the opposite of the practice.",
+      "validationQuery": "Native handler: package-lock.json exists at the workspace root AND no workflow installs with bare `npm install` (`npm ci` throughout).",
+      "blocking": false
+    },
+    {
+      "id": "SSDF-PW.4.4",
+      "severity": "MUST",
+      "category": "ssdf-third-party",
+      "title": "PW.4.4 — components are re-verified over their life cycle, not once at adoption",
+      "description": "SSDF PW.4.4 asks for verification throughout the component life cycle. Two artifacts make that continuous rather than anecdotal: a dependency update configuration, and a vulnerability audit that runs in CI. Either alone leaves half the life cycle unwatched.",
+      "validationQuery": "Native handler: .github/dependabot.yml exists AND some workflow runs a vulnerability audit step.",
+      "blocking": false
+    },
+    {
+      "id": "SSDF-PW.6.1",
+      "severity": "SHOULD",
+      "category": "ssdf-build",
+      "title": "PW.6.1 — build tooling is configured to improve executable security",
+      "description": "SSDF PW.6.1 asks that build tools be configured to improve the security of the executable. For a TypeScript workspace the load-bearing setting is `strict`: without it the compiler stops asserting the invariants the rest of the toolchain assumes.",
+      "validationQuery": "Native handler: the base tsconfig declares compilerOptions.strict === true.",
+      "blocking": false
+    },
+    {
+      "id": "SSDF-PW.7.2",
+      "severity": "MUST",
+      "category": "ssdf-review",
+      "title": "PW.7.2 — code is analysed by both a code scanner and a secret scanner",
+      "description": "SSDF PW.7.2 asks for review or analysis against a secure coding standard. Two different classes of defect need two different instruments: a static analyser for code paths, and a secret scanner for credentials, which no code analyser finds. A repository running only one of them has covered one class and can say so.",
+      "validationQuery": "Native handler: some workflow runs a static analysis action AND some workflow runs a secret scanner.",
+      "blocking": false
+    },
+    {
+      "id": "SSDF-PS.3.2",
+      "severity": "MUST",
+      "category": "ssdf-provenance",
+      "title": "PS.3.2 — an SBOM that is generated but never published satisfies nothing",
+      "description": "SSDF PS.3.2 asks that provenance data for all components be collected AND SHARED — an SBOM is the named example. Generation is the cheap half and the half a repository can do without anyone benefiting: an SBOM written into a job's working directory and never uploaded, attached or published is discarded at the end of the run. This rule fails on generation without publication ON PURPOSE, because that state looks identical to compliance in a workflow file.",
+      "validationQuery": "Native handler: if any workflow generates an SBOM, some step in that same workflow must upload, attach or publish it.",
+      "blocking": false
+    },
+    {
+      "id": "SSDF-RV.1.2",
+      "severity": "MUST",
+      "category": "ssdf-vulnerability",
+      "title": "RV.1.2 — the code scanner sees the whole change, not a filtered slice",
+      "description": "SSDF RV.1.2 asks for review or analysis to find previously undetected vulnerabilities. A static analyser behind a `paths:` filter cannot see a change outside those paths, so the practice is satisfied for part of the repository and reported for all of it. The rule asserts the scanner runs on pull requests with no path filter narrowing what it may look at.",
+      "validationQuery": "Native handler: the workflow running static analysis triggers on pull_request and declares no `paths:` filter on that trigger.",
+      "blocking": false
+    },
+    {
+      "id": "SSDF-RV.1.3",
+      "severity": "MUST",
+      "category": "ssdf-vulnerability",
+      "title": "RV.1.3 — there is a disclosure policy that names how to report",
+      "description": "SSDF RV.1.3 asks for a vulnerability disclosure and remediation policy with the roles to support it. The file-decidable part is that the policy exists and tells a reporter where to go: a SECURITY.md that exists but names no channel is a document, not a policy.",
+      "validationQuery": "Native handler: SECURITY.md exists and names a reporting channel (an advisory URL or an email address).",
+      "blocking": false
+    }
+  ],
+  "references": [
+    "NIST SP 800-218 v1.1 — Secure Software Development Framework",
+    "reference/core/control-center/security/supply-chain-posture.md — the hand-verified mapping this ruleset mechanises a subset of"
+  ]
+}

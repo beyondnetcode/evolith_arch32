@@ -9995,6 +9995,31 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "The pack is authored against what a filesystem can decide and adds no dependency: no analyser, no registry client, no YAML parser. That last one is a choice with a stated cost — workflow YAML is read as TEXT, so SLSA-BUILD-L1 compares line order within one file and does not resolve the `needs:` job graph, and it says so in its own failure message rather than presenting a limitation as a verdict. A YAML parser inside the domain layer would cross the boundary the architecture lint defends, for questions that are 'does this step carry a flag'. Deliberately NOT done, and each recorded in the ruleset's notEvaluableHere block rather than left to be discovered: any rule requiring the live registry (the predicate type served, per-version attestation presence, signature verification), Build L3 in full (Provenance is Unforgeable and Isolated are properties of the build platform's control plane), and an action-pinning rule — which this repository would fail and which is an OpenSSF Scorecard check, not a SLSA Build-track requirement, since hermetic builds were deferred out of v1.0. Also NOT done: fixing the ISO/IEC 5055 mapping generator, whose CLASS_BY_FILE table has no `standards/` prefix and therefore labels all 16 standards-pack rules `governance` with a note denying they are international standards. That defect predates this row — it already applied to the SSDF and ISO packs — and correcting it needs a new rule class rather than a one-line edit, so it is registered separately instead of being smuggled into this diff."
+    },
+    {
+      "id": "GT-666",
+      "closedAt": "2026-08-09",
+      "closureCommit": "11b5e6f0",
+      "evidence": [
+        "src/rulesets/standards/build-iso-5055-mapping.mjs",
+        "src/rulesets/standards/iso-5055-mapping.json",
+        "src/rulesets/standards/iso-5055-mapping.csv",
+        "src/rulesets/standards/README.md",
+        "src/rulesets/standards/README.es.md"
+      ],
+      "validationCommands": [
+        "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs --check -> GT-598: native-evaluability-snapshot.json is a faithful capture - 410 rules. Re-run in write mode: Unchanged (native-handler 170, unimplemented-native 52, needs-runtime 17, needs-external-system 20, documentation-only 137, underspecified 14). Regenerated in the documented order: snapshot first, then mapping.",
+        "node src/rulesets/standards/build-iso-5055-mapping.mjs -> summary.byClass gains international-standard 16 and governance falls 71 -> 55; analyserAdoptable 42 -> 46; handlerBacklog.adoptableFromAnalyser 5 -> 9, remainderToAuthor 42 -> 38. adoptedFraction unchanged at 0.0898 and mappedToIso5055 unchanged at 37 - no CWE was added to any row.",
+        "Row-by-row diff of iso-5055-mapping.json against HEAD~1: EXACTLY 16 rows changed, all under standards/ (ssdf-v1.1 8, iso-5055 4, slsa-v1 4). No rule outside standards/ changed class, note, cwes or strength.",
+        "Negative fixture for the removed default: a probe ruleset written to src/rulesets/tmp-negative/probe.rules.json makes the generator exit non-zero with '1 ruleset file(s) match no prefix in CLASS_BY_FILE, so 1 rule(s) would be classified by guesswork: tmp-negative/probe.rules.json - TMP-01'. Before this change the same file would have been emitted silently as ruleClass governance. Probe removed after the run.",
+        "Pre-fix measurement, taken before editing the generator: of 412 rules, exactly 16 matched no CLASS_BY_FILE prefix - the three standards packs. The default was not a fallback in use; it was one wrong answer to one unclassified directory.",
+        "node src/rulesets/standards/iso-5055-mapping.test.mjs -> tests 9, pass 9, fail 0.",
+        "node .harness/scripts/ci/46-validate-derived-artifact-order.mjs -> the chain is current AND at a fixed point - replaying 8 link(s) in order changes nothing; 11 artifacts covered.",
+        "node .harness/scripts/ci/49-validate-gap-id-allocation.mjs -> 542 ids on HEAD, 1 newly allocated (GT-666), 0 collisions against origin/main.",
+        "node .harness/scripts/ci/08-validate-tracking.mjs, 04-check-bilingual-parity.mjs, 01-validate-docs.mjs -> pass."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Deliberately NOT changed: the 12 SSDF and SLSA rows keep analyser.adoptable 'no'. Evolith authored their handlers, which is exactly what 'no' asserts, and no off-the-shelf analyser decides 'every publishing step passes --provenance'; inventing analyser names for them would trade one false claim for another. Their nativeEvaluability is native-handler, so no backlog arithmetic depends on them. Also deliberately NOT done: no CWE was attached to any row. Listing a measure's 74 weaknesses on one ISO5055-* row would count one rule as dozens of mappings and move adoptedFraction, which measures how much of the corpus the standard reaches - it stays at 0.0898. The defect predates GT-665, which inherits it: it applied to the SSDF pack from GT-600 and to the ISO/IEC 5055 pack from GT-662. What is NOT claimed: the 12 SSDF and SLSA rows keep analyser.adoptable 'no', because Evolith authored their handlers and no off-the-shelf analyser decides 'every publishing step passes --provenance'; their nativeEvaluability is native-handler, so no backlog arithmetic depends on them. Both READMEs in the directory were stale before this change (391 rules / 175 files against the real 412 / 180) and their numbers now come from the regenerated artifact."
     }
   ]
 }

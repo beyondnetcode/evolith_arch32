@@ -30,7 +30,7 @@ node src/rulesets/standards/build-iso-5055-mapping.mjs                 # 2. mapp
 ```
 
 The order is not a preference. The generator stamps `nativeEvaluability` onto every row of the mapping
-from the snapshot, so rebuilding first launders a stale classification into a 391-row artifact and
+from the snapshot, so rebuilding first launders a stale classification into a 412-row artifact and
 overstates the handler backlog by however many rules Core has closed since the last capture.
 
 No text of ISO/IEC 5055 or ISO/IEC 25010 is reproduced here. Only CWE identifiers, MITRE CWE names and
@@ -46,58 +46,130 @@ makes the union smaller than the sum. The extraction date and method are recorde
 
 ## Result
 
-Against **391 rules** in 175 ruleset files:
+Against **412 rules** in 180 ruleset files:
 
 | Measure | Count | Share |
 |---|---|---|
-| Rules mapped to an ISO/IEC 5055 weakness | 37 | 9.5% |
+| Rules mapped to an ISO/IEC 5055 weakness | 37 | 9.0% |
 | — of which the mapping is direct | 8 | |
 | — of which the mapping is a partial / proxy | 29 | |
-| Rules with no international equivalent (each with a stated reason) | 354 | 90.5% |
-| Rules an existing analyser could decide outright | 42 | 10.7% |
-| Rules an analyser could decide partially | 23 | 5.9% |
+| Rules with no international equivalent (each with a stated reason) | 375 | 91.0% |
+| Rules an existing analyser could decide outright | 46 | 11.2% |
+| Rules an analyser could decide partially | 23 | 5.6% |
 
-**The adopted fraction is 9.5% of the corpus.** That is a real result and it is smaller than the gap's
+**The adopted fraction is 9.0% of the corpus.** That is a real result and it is smaller than the gap's
 premise implied, for a structural reason: ISO/IEC 5055 measures the internal structure of source code,
-and 313 of our 391 rules are not about source structure at all. They are ADR conformance (162),
-topology contracts (66), governance invariants (51) and development process (34). No international
+and 318 of our 412 rules are not about source structure at all. They are ADR conformance (163),
+topology contracts (66), governance invariants (55) and development process (34). No international
 standard models "did you honour ADR-0092", and none ever will.
 
 Where the standard does apply, it applies well: of the 26 rules classified `code-structure`, 18 map
 and 13 are analyser-decidable.
 
+### Rule classes, and the one that was missing
+
+`ruleClass` says what KIND of thing a rule constrains, and it is **derived, never enumerated**. Until
+GT-666 it was derived from a table of path prefixes with `governance` as the fallback, and the three
+international-standard packs matched no prefix. All **16** of their rules — NIST SP 800-218 (8),
+ISO/IEC 5055:2021 (4), SLSA v1.0 Build track (4) — were therefore published as `governance`, carrying
+the governance reason verbatim:
+
+> A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites,
+> evidence). No international structural equivalent.
+
+Every clause of that is false of an SSDF practice, and it was in the one document written to be
+checkable by a reader who does not trust us. The class `international-standard` now covers them, and
+it is derived from **the pack's own top-level `standard` block** rather than from its directory: a
+declaration travels with the file, so a fourth pack classifies correctly wherever it lands. The
+directory is the second signal and it is enforced in the other direction — a `*.rules.json` under
+`standards/` that carries rules without declaring a standard **fails the generator**, rather than
+falling through to the default. `65-validate-standards-rule-class.mjs` holds both directions in CI,
+with a negative fixture built from the pre-fix artifact itself.
+
+Each row's note is derived from that same declaration, so it names the standard the rule actually
+belongs to. A class-wide sentence would have been the same defect one level down: one text asserted
+over every standard, true of none of them in particular.
+
+### Adoptability, when the rule declares its own analyser
+
+`analyser.adoptable` was derived the same way in GT-667, and for the same reason: the four `ISO5055-*`
+rows were published as `no` — *"the predicate is repository- or product-specific and must be authored"*
+— when GT-662…GT-664 had already shipped that pack as an **adapter over a free analyser's SARIF**.
+Nothing had to be authored. The mapping asserted, of the four rules whose entire design is adoption,
+the opposite of what they are.
+
+The signal is the rule's own `enforce.config.analyser`, which **4 of the 412 rules carry** — all four of
+them these. `enforce.tool` was the wrong field and the corpus says why: 10 rules carry an `enforce`
+block, and 6 of them name `dependency-cruiser` while supplying the predicate themselves. `HXA-07`
+declares the tool and then writes the rule — `from: ^src/(domain|core)/.+\.(spec|test)\.ts$`,
+`to: node_modules/(@nestjs/testing|testcontainers)/`. There dependency-cruiser is the *engine* and the
+predicate is Evolith's, written against this repository's layout, which is `no` by the definition
+above. Deriving from `enforce.tool` would have flipped `HXA-06` and `HXA-07` on the strength of a
+third-party binary appearing in the clause. `enforce.config.analyser` names the other relationship, the
+one the ISO pack states in its own description: *Evolith supplies the CWE→measure translation; the
+analyser supplies the findings.*
+
+`yes` rather than `partial`, deliberately. The shipped ESLint path reaches only 11 of the 138
+weaknesses, but that is **coverage**, and the remainder is not ours to author — it is closed by a tenant
+pointing the same adapter at a better analyser. `adoptable` sizes handler work, and the handler work
+here is zero. Coverage is reported where it belongs: the pack's `notEvaluableHere` block and the GT-569
+advisory.
+
+`analyser.examples` now names the declared analyser (`eslint`, the shipped default) instead of sitting
+empty. An `adoptable: yes` row with no analyser named is exactly the unfalsifiable claim this artifact
+exists to remove; and because the value is read from the rule, a corpus configured for `semgrep`
+regenerates to say `semgrep`, where an enumerated list would go stale the moment the config changed.
+
+A rule that declares an analyser **and** carries a conflicting `adoptable` in the generator's `MAP`
+table fails the build. One of the two is wrong, and neither should win quietly.
+
+The eight SSDF and four SLSA rules stay at `no`, and that is a verdict rather than an omission — see
+[Reading a row](#reading-a-row).
+
 ## Re-scoping the handler backlog
 
 The gap statement sized the payoff against "~240 handlers to write". **That figure is already
-retired.** GT-595 triaged the corpus and the real, decidable-from-the-repository backlog is **48
-rules** — the `unimplemented-native` class. Of the 389 rules Core's triage loads, 154 already run and
-the other 187 are 136 documentation-only generator placeholders, 14 underspecified rules with no
+retired.** GT-595 triaged the corpus and the real, decidable-from-the-repository backlog is **52
+rules** — the `unimplemented-native` class. Of the 410 rules Core's triage loads, 170 already run and
+the other 188 are 137 documentation-only generator placeholders, 14 underspecified rules with no
 authored check, 20 that need an external system and 17 that need a running one.
 
-(389, not 391: the two single-rule infrastructure files carry their rule metadata at the document root,
+(410, not 412: the two single-rule infrastructure files carry their rule metadata at the document root,
 which Core's corpus loader does not read. They appear in the mapping as `not-in-snapshot`.)
 
 60 → 48 on 2026-07-29: eight config-shaped rules got handlers (GT-595) and four module-boundary rules
 turned out to already carry a complete `enforce` clause that normalization was dropping (GT-632).
 
+48 → 52 on 2026-08-09: the four ISO/IEC 5055 rules (GT-662). They are `unimplemented-native` because no
+NATIVE handler decides them, which is the design rather than a gap — they carry `enforce:` and are
+decided by an adapter over a free analyser's SARIF. The SLSA pack's four rules (GT-665) did NOT land
+here: `SlsaRuleHandler` claims them, so they are `native-handler`.
+
 Folding this mapping onto that class is the number that matters:
 
-| Of the 48-rule handler backlog | Count |
+| Of the 52-rule handler backlog | Count |
 |---|---|
-| Decidable today by an off-the-shelf analyser | 5 |
+| Decidable today by an off-the-shelf analyser | 9 |
 | Decidable partially (analyser gives a necessary-but-not-sufficient signal) | 5 |
 | Genuinely has to be authored | 38 |
 
-The 5 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
-`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries) and `SEC-TIMING-01` (timing-safe
-comparison). The 5 partials are listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON.
+The 9 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
+`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries), `SEC-TIMING-01` (timing-safe
+comparison) and the four `ISO5055-*` rules, which declare their analyser themselves. The 5 partials are
+listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON.
 
-So adoption is worth **10.4% of the backlog outright, 20.8% including partials** — 10 of 48 rules that
-do not need bespoke handlers. Both shares fell when the backlog shrank, and that is the right
-direction: the twelve rules closed on 2026-07-29 include `HXA-01`, `HXA-02`, `HXA-04` and `GIT-08`,
-which were four of the nine this table used to offer to an analyser. Evolith wrote the handler first.
-What is left leans further toward authoring, and the security rules still point at analysers better
-than anything we would write.
+So adoption is worth **17.3% of the backlog outright, 26.9% including partials** — 14 of 52 rules that
+do not need bespoke handlers.
+
+5 → 9 on 2026-08-09 (GT-667): the four ISO/IEC 5055 rules were counted as work to author while being
+decided by an analyser, so `remainderToAuthor` overstated the real backlog by four. **The share moved
+because the description was corrected, not because anything was adopted** — nothing shipped between the
+two figures, and reading this jump as progress would be reading a fixed measurement as a result.
+
+The direction before that was the other way. The twelve rules closed on 2026-07-29 include `HXA-01`,
+`HXA-02`, `HXA-04` and `GIT-08`, which were four of the nine this table used to offer to an analyser:
+Evolith wrote the handler first, and both shares fell when the backlog shrank. What is left still leans
+toward authoring, and the security rules still point at analysers better than anything we would write.
 
 ## Companion taxonomy: ISO/IEC 25010:2023
 
@@ -115,6 +187,20 @@ stale, and `iso-5055-mapping.test.mjs` fails the build if anything in this direc
 - `yes` — an off-the-shelf analyser already decides this predicate; the work is an adapter.
 - `partial` — an analyser yields a necessary-but-not-sufficient signal; the rest is ours.
 - `no` — the predicate is repository- or product-specific and must be authored.
+
+It is derived from the rule's own `enforce.config.analyser` when the rule declares one, and otherwise
+from the generator's `MAP` table. `analyser.examples` names concrete checks so the claim is falsifiable;
+for a declaring rule it is the analyser the rule names.
+
+**The SSDF and SLSA rules stay at `no`, and the twelve of them are the interesting case**, because
+`international-standard` is the same rule class as the four that moved. They carry no `enforce` block
+at all: `SsdfRuleHandler` and `SlsaRuleHandler` decide them natively. That is not an accident of who got
+around to writing what — no off-the-shelf analyser answers *"does this repository satisfy SSDF PW.4.1"*
+or *"is provenance distributed with every published artifact"*. Those predicates read this repository's
+own workflows, manifests and evidence, which is «repository-specific» verbatim, so the work genuinely
+had to be authored, and it was (`GT-659`, `GT-665`). `no` is the true verdict for them and `yes` is the
+true verdict for the four ISO/IEC 5055 rules, and the difference is visible in the corpus rather than
+argued here: one pack declares an analyser, the other two ship a handler.
 
 `nativeEvaluability` is copied from the Core triage snapshot. The authority for it is
 `src/packages/core-domain/src/application/validators/rule-evaluability.ts` and its pinned spec; if the

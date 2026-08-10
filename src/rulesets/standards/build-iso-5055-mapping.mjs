@@ -26,6 +26,38 @@
  * analyser yields a necessary-but-not-sufficient signal; `no` means the
  * predicate is repository- or product-specific and must be authored.
  *
+ * ADOPTABILITY, WHEN THE RULE DECLARES ITS OWN ANALYSER (GT-667)
+ * --------------------------------------------------------------
+ * Those three words are a definition, and until GT-667 the four `ISO5055-*`
+ * rules were published against it as `no` — «the predicate is repository- or
+ * product-specific and must be authored» — while `GT-662`…`GT-664` had already
+ * shipped that pack as an ADAPTER over a free analyser's SARIF. Nothing had to
+ * be authored; the analyser decides it today. So the mapping asserted, of rules
+ * whose whole design is adoption, that they were the opposite.
+ *
+ * The correction is DERIVED, following GT-666: a rule that names an analyser in
+ * `enforce.config.analyser` is stating in its own document that an off-the-shelf
+ * analyser produces its findings, which is the `yes` definition verbatim. See
+ * `declaredAnalyser` for why that field and not `enforce.tool`.
+ *
+ * RULE CLASSES (GT-666)
+ * ---------------------
+ * `ruleClass` says what KIND of thing a rule constrains, and it is derived, never
+ * enumerated. The class `international-standard` was added because the corpus
+ * acquired something none of the others describes: rulesets whose rules ARE the
+ * conformance controls of a standard published by somebody else (NIST SP 800-218,
+ * ISO/IEC 5055:2021, SLSA v1.0). Until GT-666 those 16 rules were classified
+ * `governance` and published with the governance reason attached — a sentence
+ * asserting they are Evolith invariants with «No international structural
+ * equivalent», which is the mapping making a false statement about the corpus in
+ * the one document written to be checked by a reader who does not trust us.
+ *
+ * Reusing `code-structure` or `supply-chain` would have hidden the same thing
+ * more quietly. The class is derived from the pack's own `standard` declaration
+ * (see `classify`), and its note is derived from that declaration too, so it
+ * names the standard the rule actually belongs to instead of a class-wide text
+ * that is true of none of them in particular.
+ *
  * USAGE
  *   node src/rulesets/standards/build-iso-5055-mapping.mjs           # write
  *   node src/rulesets/standards/build-iso-5055-mapping.mjs --check   # verify
@@ -59,18 +91,38 @@ function collectRulesetFiles(dir, out = []) {
 }
 
 /**
+ * The directory the international-standard packs live in. It is the SECOND
+ * signal, never the primary one — see `classify` for why, and for what the
+ * primary one is.
+ */
+const STANDARDS_DIR = 'standards/';
+
+/**
  * Normalise the four shapes a `*.rules.json` file takes in this corpus:
  *   - `{ rules: [...] }`           — the common case
  *   - `{ principles: [...] }`      — inheritance / manifesto style
  *   - `{ id, name, ... }`          — single-rule infrastructure files
  *   - gate / recommendation files  — no conformance rules at all
+ *
+ * Every row also carries the pack's own document-level `standard` block, when it
+ * has one. That block is what a standards pack DECLARES about itself, and it is
+ * the classification signal (GT-666); carrying it here is what stops the
+ * classifier from having to guess from a path.
+ *
+ * Each row additionally carries the analyser the RULE declares for itself, when
+ * it declares one (GT-667). Same principle one level down: it is a statement the
+ * rule makes about how it is decided, so adoptability is read from the corpus
+ * rather than asserted about it in a table over here.
  */
 function extractRules(file) {
   const rel = path.relative(RULESETS, file).split(path.sep).join('/');
   const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const declaredStandard = parsed.standard ?? null;
   const list = parsed.rules ?? parsed.principles;
+
+  let rows = [];
   if (Array.isArray(list)) {
-    return list
+    rows = list
       .filter((r) => r && r.id)
       .map((r) => ({
         ruleId: String(r.id),
@@ -78,20 +130,78 @@ function extractRules(file) {
         title: String(r.title ?? r.principle ?? r.name ?? r.id),
         severity: String(r.severity ?? ''),
         category: String(r.category ?? ''),
+        declaredStandard,
+        declaredAnalyser: declaredAnalyser(r),
       }));
-  }
-  // Single-rule file: the rule metadata sits at the document root.
-  if (parsed.id && (parsed.name || parsed.title)) {
-    return [{
+  } else if (parsed.id && (parsed.name || parsed.title)) {
+    // Single-rule file: the rule metadata sits at the document root.
+    rows = [{
       ruleId: String(parsed.id),
       sourceFile: rel,
       title: String(parsed.name ?? parsed.title),
       severity: String(parsed.severity ?? ''),
       category: String(parsed.category ?? ''),
+      declaredStandard,
+      declaredAnalyser: declaredAnalyser(parsed),
     }];
   }
-  // Gate definitions and topology recommendations are not conformance rules.
-  return [];
+  // Gate definitions and topology recommendations are not conformance rules,
+  // and contribute no rows at all.
+
+  // The two signals must agree, and disagreement is a HARD FAILURE rather than a
+  // silent fallback. A pack dropped into `standards/` without declaring what
+  // standard it implements is the exact shape of the defect GT-666 closed: it
+  // would fall through every prefix in CLASS_BY_FILE to the `governance`
+  // default and be published as an Evolith invariant. Refusing to build is the
+  // only outcome that cannot be mistaken for a classified corpus.
+  if (rows.length > 0 && rel.startsWith(STANDARDS_DIR) && !declaredStandard) {
+    throw new Error(
+      `${rel} sits in ${STANDARDS_DIR} and carries ${rows.length} rule(s), but declares no top-level ` +
+        '`standard` block. Add one — `{ "id": "…" }` or `{ "name": "…", "edition": "…" }` — so the pack ' +
+        'says which standard it implements. Without it the mapping would classify its rules as Evolith ' +
+        'governance invariants and attach a note denying they are international standards.',
+    );
+  }
+
+  return rows;
+}
+
+/**
+ * The analyser a rule declares as the thing that decides it, or `null`.
+ *
+ * WHY `enforce.config.analyser` AND NOT `enforce.tool` (GT-667)
+ * -------------------------------------------------------------
+ * Both fields name third-party software, and only one of them says who authored
+ * the predicate — which is the question `adoptable` asks. Measured over the
+ * whole corpus on 2026-08-09: 10 of 412 rules carry an `enforce` block, 6 of
+ * them `tool: dependency-cruiser` and 4 of them `config.analyser`.
+ *
+ * Those six are the counterexample that settles it. `HXA-07` declares
+ * dependency-cruiser and then supplies the rule itself —
+ * `from: ^src/(domain|core)/.+\.(spec|test)\.ts$`, `to:
+ * node_modules/(@nestjs/testing|testcontainers)/`. dependency-cruiser is the
+ * ENGINE; the predicate is Evolith's, written against this repository's own
+ * directory layout, and «repository-specific and must be authored» is exactly
+ * what it is. Deriving from `enforce.tool` would have flipped `HXA-06` and
+ * `HXA-07` to `yes` on the strength of a third-party binary appearing in the
+ * clause, which is not the claim.
+ *
+ * `enforce.config.analyser` is the other relationship. The ISO/IEC 5055 pack
+ * states it in its own description — «Evolith supplies the CWE→measure
+ * translation; the analyser supplies the findings» — so the analyser's OWN
+ * ruleset produces the verdict and Evolith writes no predicate at all. That is
+ * the `yes` definition, and the field is a declaration the rule makes about
+ * itself, so it travels with the rule the way GT-666's `standard` block travels
+ * with the pack.
+ *
+ * @param {object} rule a rule object as it appears in a `*.rules.json`
+ * @returns {string|null} the declared analyser, trimmed, or null
+ */
+function declaredAnalyser(rule) {
+  const declared = rule?.enforce?.config?.analyser;
+  if (typeof declared !== 'string') return null;
+  const trimmed = declared.trim();
+  return trimmed === '' ? null : trimmed;
 }
 
 // ---------------------------------------------------------------------------
@@ -103,6 +213,19 @@ function extractRules(file) {
  * structure of source code, so only `code-structure` is inside its scope by
  * construction; everything else is either code-adjacent hygiene an analyser can
  * still decide, or governance/process/architecture the standard does not model.
+ *
+ * This table classifies by PATH PREFIX and falls back to `governance`, and that
+ * fallback is what GT-666 fixed: the three international-standard packs under
+ * `standards/` matched no prefix, so all 16 of their rules were published as
+ * `governance` — carrying, verbatim, «A governance invariant over Evolith
+ * artifacts (inheritance, open-core boundary, satellites, evidence). No
+ * international structural equivalent.» Every clause of that sentence is false
+ * of a NIST SP 800-218 practice, and the mapping is the one document whose whole
+ * purpose is to be checkable by a reader who does not trust us.
+ *
+ * A `['standards/', 'international-standard']` row here would have made the
+ * symptom disappear and left the mechanism intact — the fourth pack, landing
+ * anywhere else, would fall through to `governance` again. See `classify`.
  */
 const CLASS_BY_FILE = [
   ['adr/adr-0002-hexagonal-architecture', 'code-structure'],
@@ -130,9 +253,86 @@ const CLASS_BY_FILE = [
   ['topologies/', 'topology'],
 ];
 
-function classify(sourceFile) {
+/**
+ * Classify a rule.
+ *
+ * The primary signal is the pack's OWN `standard` declaration, not its path. A
+ * ruleset that declares `standard` is stating, in its own document, that its
+ * rules are the conformance controls of a published standard — and that
+ * statement travels with the file. Move the pack, rename the directory, add a
+ * fourth one somewhere else entirely, and it still classifies correctly, because
+ * the classifier is reading what the pack says about itself rather than where it
+ * happens to sit.
+ *
+ * The directory is the second signal and it is enforced in the OTHER direction:
+ * `extractRules` refuses to build when a file under `standards/` yields rules
+ * without declaring a standard. So neither signal can silently miss a pack —
+ * a declared pack anywhere is classified by its declaration, and an undeclared
+ * pack in the standards directory fails the build instead of being defaulted.
+ * `65-validate-standards-rule-class.mjs` holds both directions in CI.
+ *
+ * @param {string} sourceFile corpus-relative path of the ruleset
+ * @param {object|null} declaredStandard the pack's document-level `standard` block
+ */
+function classify(sourceFile, declaredStandard) {
+  if (declaredStandard) return 'international-standard';
   for (const [prefix, kind] of CLASS_BY_FILE) if (sourceFile.startsWith(prefix)) return kind;
   return 'governance';
+}
+
+/**
+ * How a pack names its own standard. The three shipped packs use two shapes —
+ * `{ id }` (ISO/IEC 5055) and `{ name, edition }` (SSDF, SLSA) — so this reads
+ * both rather than assuming either.
+ *
+ * @param {object} std the pack's `standard` block
+ * @returns {string} a human label, e.g. `ISO/IEC 5055:2021`, `NIST SP 800-218 v1.1`
+ */
+function standardLabel(std) {
+  const id = typeof std?.id === 'string' ? std.id.trim() : '';
+  if (id) return id;
+  const name = typeof std?.name === 'string' ? std.name.trim() : '';
+  const edition = typeof std?.edition === 'string' ? std.edition.trim() : '';
+  const label = [name, edition].filter(Boolean).join(' ');
+  if (!label) {
+    throw new Error(
+      `A ruleset declares a \`standard\` block with neither \`id\` nor \`name\`: ${JSON.stringify(std)}. ` +
+        'The mapping states which standard each rule belongs to, and it cannot state one that is not named.',
+    );
+  }
+  return label;
+}
+
+/**
+ * The stated reason a rule of an international-standard pack carries no CWE.
+ *
+ * Derived per pack from the pack's own declaration, so a fourth pack gets a note
+ * that names ITS standard the day it lands, with nothing added here. The two
+ * branches are the two true things there are to say, and which one applies is
+ * itself derived — by comparing the pack's declared standard against the one
+ * this mapping measures against — rather than enumerated by file name.
+ *
+ * @param {object} std the pack's `standard` block
+ * @param {string} measuredStandard the standard the weakness index publishes
+ */
+function internationalStandardReason(std, measuredStandard) {
+  const label = standardLabel(std);
+
+  if (label === measuredStandard) {
+    return (
+      `A conformance control of ${label} itself — the standard this mapping measures against — stated at ` +
+      'MEASURE granularity rather than as one of the 138 weaknesses. It carries no single CWE because it ' +
+      'aggregates a whole measure, and what it reports is whatever weaknesses of that measure the analyser ' +
+      'a tenant configured actually found.'
+    );
+  }
+
+  return (
+    `A conformance control of ${label}, a published standard, and NOT an Evolith invariant. ` +
+    'ISO/IEC 5055 measures the internal structure of source code, so a control of a different standard is ' +
+    'not among its 138 weaknesses — it is measured against its own standard instead, by the pack that ' +
+    'declares it.'
+  );
 }
 
 /**
@@ -143,6 +343,11 @@ function classify(sourceFile) {
  *               `partial` the weakness is a proxy or covers part of the rule.
  * `adoptable` — `yes` / `partial` / `no` (see the header).
  * `analysers` — concrete, existing checks. Named so the claim is falsifiable.
+ *
+ * This table is the FALLBACK, not the authority: a rule that declares its own
+ * analyser in `enforce.config.analyser` is read from the corpus instead, and a
+ * MAP row that disagrees with such a declaration fails the build rather than
+ * losing quietly. See `adoptability`.
  */
 const MAP = {
   // --- security/ : the part of the corpus that is squarely inside 5055 -------
@@ -315,7 +520,82 @@ const NO_EQUIVALENT_REASON = {
   'supply-chain': 'Dependency-management hygiene. Covered by SCA tooling rather than by ISO/IEC 5055.',
   'code-hygiene': 'Code-adjacent convention with no ISO/IEC 5055 weakness, though a linter may still decide it.',
   'code-structure': 'Structural rule with no counterpart among the 138 weaknesses.',
+  // `international-standard` is deliberately ABSENT from this table: its reason
+  // names the pack's own standard and is therefore computed per pack by
+  // `internationalStandardReason`, not looked up by class. A single sentence
+  // here would be the same class of defect one level down — one text asserted
+  // over every standard, true of none of them in particular.
 };
+
+/**
+ * The note a row carries when the mapping table has nothing to say about it.
+ *
+ * Throws rather than returning `undefined`: a class with no stated reason would
+ * publish a row asserting "no international equivalent" with no argument behind
+ * it, which is the claim this whole artifact exists to remove.
+ */
+function statedReason(kind, declaredStandard, measuredStandard) {
+  if (kind === 'international-standard') {
+    return internationalStandardReason(declaredStandard, measuredStandard);
+  }
+  const reason = NO_EQUIVALENT_REASON[kind];
+  if (!reason) {
+    throw new Error(
+      `Rule class \`${kind}\` has no entry in NO_EQUIVALENT_REASON. Every unmapped rule must state why it ` +
+        'has no international equivalent; a class without a reason publishes the claim without the argument.',
+    );
+  }
+  return reason;
+}
+
+/**
+ * The `analyser` block of a row: can an off-the-shelf analyser decide this rule,
+ * and which one — named, so the claim is falsifiable.
+ *
+ * The rule's own declaration is the primary signal and the MAP table is the
+ * fallback, which is the same precedence GT-666 established for `ruleClass`: a
+ * statement the corpus makes about itself beats a statement made about the
+ * corpus from a table in the generator.
+ *
+ * WHY `yes` AND NOT `partial` FOR A DECLARING RULE. `partial` means «an analyser
+ * yields a necessary-but-not-sufficient signal; the rest is ours». It is
+ * tempting to reach for it here, because the shipped ESLint path attributes only
+ * 11 of the 138 weaknesses (`GT-664`) — but that is a statement about COVERAGE,
+ * and the remainder is not Evolith's to author. It is closed by a tenant
+ * pointing the same adapter at a better analyser. `adoptable` sizes handler
+ * work, and the handler work here is zero. Coverage is reported where it belongs:
+ * the pack's `notEvaluableHere` block and the `GT-569` advisory.
+ *
+ * WHY `examples` NAMES THE DECLARED ANALYSER. An `adoptable: yes` row with an
+ * empty `examples` is precisely the unfalsifiable claim this artifact exists to
+ * remove — the reader is told an analyser decides the rule and given no way to
+ * check which. The declared value is read from the rule rather than listed here,
+ * so it is the analyser that will actually run, and a corpus whose tenant has
+ * switched to `semgrep` regenerates to say `semgrep`. An enumerated alternatives
+ * list would be stale the moment the config changed, and would be this
+ * generator asserting over the corpus again.
+ *
+ * DISAGREEMENT IS A HARD FAILURE, never a silent winner. If a rule declares an
+ * analyser and MAP also claims an adoptability for it, one of the two is wrong
+ * and the build says so instead of quietly preferring one.
+ *
+ * @param {string} ruleId
+ * @param {object|undefined} mapEntry the rule's row in MAP, if it has one
+ * @param {string|null} declared the analyser the rule declares for itself
+ */
+function adoptability(ruleId, mapEntry, declared) {
+  if (declared) {
+    if (mapEntry?.adoptable && mapEntry.adoptable !== 'yes') {
+      throw new Error(
+        `${ruleId} declares \`enforce.config.analyser: "${declared}"\` — an off-the-shelf analyser decides it — ` +
+          `but MAP claims \`adoptable: '${mapEntry.adoptable}'\`. One of the two is wrong. Fix the rule's ` +
+          'declaration if the analyser does not decide it, or drop the `adoptable` claim from MAP if it does.',
+      );
+    }
+    return { adoptable: 'yes', examples: [declared] };
+  }
+  return { adoptable: mapEntry?.adoptable ?? 'no', examples: mapEntry?.analysers ?? [] };
+}
 
 // ---------------------------------------------------------------------------
 // 3. Build
@@ -378,6 +658,11 @@ function build() {
   const weaknessDoc = JSON.parse(fs.readFileSync(WEAKNESSES, 'utf8'));
   const evaluabilityDoc = JSON.parse(fs.readFileSync(EVALUABILITY, 'utf8'));
   const known = new Set(Object.keys(weaknessDoc.weaknesses).map(Number));
+  // The standard this mapping measures against, read from the weakness index
+  // rather than typed here — it is what tells a pack declaring ISO/IEC 5055
+  // apart from a pack declaring some other standard, and that distinction is
+  // what makes each note true of its own rules.
+  const measuredStandard = standardLabel(weaknessDoc.standard);
 
   const files = collectRulesetFiles(RULESETS);
   if (files.length === 0) {
@@ -396,7 +681,7 @@ function build() {
     if (seen.has(key)) continue;
     seen.add(key);
 
-    const kind = classify(r.sourceFile);
+    const kind = classify(r.sourceFile, r.declaredStandard);
     const m = MAP[r.ruleId];
     const cwes = m?.cwes ?? [];
     for (const c of cwes) {
@@ -418,10 +703,7 @@ function build() {
         measures,
         strength: m?.strength ?? 'none',
       },
-      analyser: {
-        adoptable: m?.adoptable ?? 'no',
-        examples: m?.analysers ?? [],
-      },
+      analyser: adoptability(r.ruleId, m, r.declaredAnalyser),
       // Why the rule does not run natively today, from the captured Core triage.
       // `not-in-snapshot` means the Core corpus loader does not see this rule at
       // all (single-rule infrastructure files), which is itself worth knowing.
@@ -429,7 +711,7 @@ function build() {
       // An unmapped rule must always carry a stated reason: "no international
       // equivalent" is a claim, and a claim without a reason is the thing this
       // whole exercise exists to remove.
-      note: m?.note ?? NO_EQUIVALENT_REASON[kind],
+      note: m?.note ?? statedReason(kind, r.declaredStandard, measuredStandard),
     });
   }
 

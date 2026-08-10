@@ -30,7 +30,7 @@ node src/rulesets/standards/build-iso-5055-mapping.mjs                 # 2. mapp
 ```
 
 The order is not a preference. The generator stamps `nativeEvaluability` onto every row of the mapping
-from the snapshot, so rebuilding first launders a stale classification into a 391-row artifact and
+from the snapshot, so rebuilding first launders a stale classification into a 412-row artifact and
 overstates the handler backlog by however many rules Core has closed since the last capture.
 
 No text of ISO/IEC 5055 or ISO/IEC 25010 is reproduced here. Only CWE identifiers, MITRE CWE names and
@@ -46,58 +46,85 @@ makes the union smaller than the sum. The extraction date and method are recorde
 
 ## Result
 
-Against **391 rules** in 175 ruleset files:
+Against **412 rules** in 180 ruleset files:
 
 | Measure | Count | Share |
 |---|---|---|
-| Rules mapped to an ISO/IEC 5055 weakness | 37 | 9.5% |
+| Rules mapped to an ISO/IEC 5055 weakness | 37 | 9.0% |
 | — of which the mapping is direct | 8 | |
 | — of which the mapping is a partial / proxy | 29 | |
-| Rules with no international equivalent (each with a stated reason) | 354 | 90.5% |
-| Rules an existing analyser could decide outright | 42 | 10.7% |
-| Rules an analyser could decide partially | 23 | 5.9% |
+| Rules with no international equivalent (each with a stated reason) | 375 | 91.0% |
+| Rules an existing analyser could decide outright | 46 | 11.2% |
+| Rules an analyser could decide partially | 23 | 5.6% |
 
-**The adopted fraction is 9.5% of the corpus.** That is a real result and it is smaller than the gap's
+**The adopted fraction is 9.0% of the corpus.** That is a real result and it is smaller than the gap's
 premise implied, for a structural reason: ISO/IEC 5055 measures the internal structure of source code,
-and 313 of our 391 rules are not about source structure at all. They are ADR conformance (162),
-topology contracts (66), governance invariants (51) and development process (34). No international
-standard models "did you honour ADR-0092", and none ever will.
+and 334 of our 412 rules are not about source structure at all. They are ADR conformance (163),
+topology contracts (66), governance invariants (55), development process (34) and other international
+standards whose shape ISO/IEC 5055 does not model (16). No international standard models "did you
+honour ADR-0092", and none ever will.
 
 Where the standard does apply, it applies well: of the 26 rules classified `code-structure`, 18 map
 and 13 are analyser-decidable.
 
+### The corpus now contains international standards, and says so
+
+GT-666. Sixteen rules mechanise a published standard rather than an Evolith invariant — NIST SP 800-218
+(SSDF), the SLSA Build track, and ISO/IEC 5055 itself. They are the `international-standard` class.
+Until that class existed they fell through the generator's default and every one of them was labelled a
+**governance invariant with "no international structural equivalent"** — the single claim about those
+rows that is not in question. The four `ISO5055-*` rules are the sharp case: each IS one of the four
+measures of the standard this whole table maps against, and each was being reported as having no
+counterpart in it.
+
+They still carry no CWE, and that is a different statement: SSDF and SLSA predicates are process and
+supply-chain declarations ISO/IEC 5055 does not model, and each `ISO5055-*` rule is a whole measure —
+an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them. Listing all 74 would count
+one rule as dozens of mappings and move `adoptedFraction`, which measures how much of the corpus the
+standard reaches.
+
+The generator no longer has a default class. A ruleset path that matches no prefix in `CLASS_BY_FILE`
+now fails the build, naming the rules it would have mislabelled.
+
 ## Re-scoping the handler backlog
 
 The gap statement sized the payoff against "~240 handlers to write". **That figure is already
-retired.** GT-595 triaged the corpus and the real, decidable-from-the-repository backlog is **48
-rules** — the `unimplemented-native` class. Of the 389 rules Core's triage loads, 154 already run and
-the other 187 are 136 documentation-only generator placeholders, 14 underspecified rules with no
-authored check, 20 that need an external system and 17 that need a running one.
+retired.** GT-595 triaged the corpus and the real, decidable-from-the-repository backlog is **52
+rules** — the `unimplemented-native` class. Of the 410 rules Core's triage loads, 170 already run and
+the other 240 are 137 documentation-only generator placeholders, 14 underspecified rules with no
+authored check, 20 that need an external system, 17 that need a running one, and the 52.
 
-(389, not 391: the two single-rule infrastructure files carry their rule metadata at the document root,
+(410, not 412: the two single-rule infrastructure files carry their rule metadata at the document root,
 which Core's corpus loader does not read. They appear in the mapping as `not-in-snapshot`.)
 
 60 → 48 on 2026-07-29: eight config-shaped rules got handlers (GT-595) and four module-boundary rules
 turned out to already carry a complete `enforce` clause that normalization was dropping (GT-632).
+48 → 52 on 2026-08-08, when GT-662 landed the four `ISO5055-*` measure rules: Core registers no native
+handler for them, because they are decided at the enforcer seam from an analyser's SARIF.
 
 Folding this mapping onto that class is the number that matters:
 
-| Of the 48-rule handler backlog | Count |
+| Of the 52-rule handler backlog | Count |
 |---|---|
-| Decidable today by an off-the-shelf analyser | 5 |
+| Decidable today by an off-the-shelf analyser | 9 |
 | Decidable partially (analyser gives a necessary-but-not-sufficient signal) | 5 |
 | Genuinely has to be authored | 38 |
 
-The 5 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
-`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries) and `SEC-TIMING-01` (timing-safe
-comparison). The 5 partials are listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON.
+The 9 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
+`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries), `SEC-TIMING-01` (timing-safe
+comparison) and the four `ISO5055-*` measures, which are an adapter over an analyser by construction —
+that is what GT-662…GT-664 built. The 5 partials are listed in `handlerBacklog.byEvaluabilityClass` in
+the mapping JSON.
 
-So adoption is worth **10.4% of the backlog outright, 20.8% including partials** — 10 of 48 rules that
-do not need bespoke handlers. Both shares fell when the backlog shrank, and that is the right
-direction: the twelve rules closed on 2026-07-29 include `HXA-01`, `HXA-02`, `HXA-04` and `GIT-08`,
-which were four of the nine this table used to offer to an analyser. Evolith wrote the handler first.
-What is left leans further toward authoring, and the security rules still point at analysers better
-than anything we would write.
+So adoption is worth **17.3% of the backlog outright, 26.9% including partials** — 14 of 52 rules that
+do not need bespoke handlers. **Nothing became easier to build.** The shares rose because the artifact
+had been counting the four `ISO5055-*` rules as work that must be authored (`remainderToAuthor` 42)
+while an analyser was already deciding them; GT-666 corrects that to 38 — the same 38 the 48-rule
+backlog had, which is the point: the four rules GT-662 added were never author-work. Earlier, both
+shares fell when the backlog shrank, and that was the right direction too: the twelve
+rules closed on 2026-07-29 include `HXA-01`, `HXA-02`, `HXA-04` and `GIT-08`, which were four of the
+nine this table used to offer to an analyser. Evolith wrote the handler first. What is left leans
+toward authoring, and the security rules still point at analysers better than anything we would write.
 
 ## Companion taxonomy: ISO/IEC 25010:2023
 
@@ -115,6 +142,10 @@ stale, and `iso-5055-mapping.test.mjs` fails the build if anything in this direc
 - `yes` — an off-the-shelf analyser already decides this predicate; the work is an adapter.
 - `partial` — an analyser yields a necessary-but-not-sufficient signal; the rest is ours.
 - `no` — the predicate is repository- or product-specific and must be authored.
+
+`ruleClass` is what the rule constrains, and it decides the "no international equivalent" reason a row
+carries when it maps to no CWE. It is assigned from the ruleset's path by an exhaustive table; there is
+no default, so an unclassified path fails the build rather than inheriting somebody else's verdict.
 
 `nativeEvaluability` is copied from the Core triage snapshot. The authority for it is
 `src/packages/core-domain/src/application/validators/rule-evaluability.ts` and its pinned spec; if the

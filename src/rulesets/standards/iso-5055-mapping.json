@@ -23,10 +23,10 @@
     "mappedPartial": 29,
     "noInternationalEquivalent": 375,
     "adoptedFraction": 0.0898,
-    "analyserAdoptable": 42,
+    "analyserAdoptable": 46,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1019,
-    "analyserAdoptableFractionIncludingPartial": 0.1578,
+    "analyserAdoptableFraction": 0.1117,
+    "analyserAdoptableFractionIncludingPartial": 0.1675,
     "byClass": {
       "architecture-decision": {
         "rules": 163,
@@ -49,9 +49,14 @@
         "adoptable": 0
       },
       "governance": {
-        "rules": 71,
+        "rules": 55,
         "mapped": 1,
         "adoptable": 0
+      },
+      "international-standard": {
+        "rules": 16,
+        "mapped": 0,
+        "adoptable": 4
       },
       "operations": {
         "rules": 4,
@@ -90,23 +95,27 @@
     ],
     "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, and the two adapter classes are closed by the enforcer seam rather than by a rule handler.",
     "realBacklogSize": 52,
-    "adoptableFromAnalyser": 5,
-    "adoptableFromAnalyserIncludingPartial": 10,
-    "adoptedFractionOfBacklog": 0.0962,
-    "adoptedFractionOfBacklogIncludingPartial": 0.1923,
-    "remainderToAuthor": 42,
+    "adoptableFromAnalyser": 9,
+    "adoptableFromAnalyserIncludingPartial": 14,
+    "adoptedFractionOfBacklog": 0.1731,
+    "adoptedFractionOfBacklogIncludingPartial": 0.2692,
+    "remainderToAuthor": 38,
     "byEvaluabilityClass": {
       "unimplemented-native": {
         "rules": 52,
         "mappedToIso5055": 6,
-        "analyserAdoptable": 5,
+        "analyserAdoptable": 9,
         "analyserAdoptablePartial": 5,
         "adoptableRuleIds": [
           "HXA-03",
           "SEC-INJ-01",
           "SEC-PATH-01",
           "SEC-PATH-02",
-          "SEC-TIMING-01"
+          "SEC-TIMING-01",
+          "ISO5055-MAINT",
+          "ISO5055-PERF",
+          "ISO5055-REL",
+          "ISO5055-SEC"
         ],
         "adoptablePartialRuleIds": [
           "CICD-01",
@@ -6907,7 +6916,7 @@
       "sourceFile": "standards/iso-5055.rules.json",
       "title": "ISO/IEC 5055 — Maintainability",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -6915,18 +6924,22 @@
         "strength": "none"
       },
       "analyser": {
-        "adoptable": "no",
-        "examples": []
+        "adoptable": "yes",
+        "examples": [
+          "CodeQL (SARIF)",
+          "Semgrep (SARIF)",
+          "ESLint via eslint-cwe-map.json"
+        ]
       },
       "nativeEvaluability": "unimplemented-native",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "This rule IS the ISO/IEC 5055 Maintainability measure — an aggregate over its 31 weaknesses, decided from an external analyser's SARIF. It names no single CWE because it corresponds to the whole measure."
     },
     {
       "ruleId": "ISO5055-PERF",
       "sourceFile": "standards/iso-5055.rules.json",
       "title": "ISO/IEC 5055 — Performance Efficiency",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -6934,18 +6947,22 @@
         "strength": "none"
       },
       "analyser": {
-        "adoptable": "no",
-        "examples": []
+        "adoptable": "yes",
+        "examples": [
+          "CodeQL (SARIF)",
+          "Semgrep (SARIF)",
+          "ESLint via eslint-cwe-map.json"
+        ]
       },
       "nativeEvaluability": "unimplemented-native",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "This rule IS the ISO/IEC 5055 Performance Efficiency measure — an aggregate over its 18 weaknesses, decided from an external analyser's SARIF. GT-664 measured 0/18 covered by the analysers wired today and said so rather than scoring it."
     },
     {
       "ruleId": "ISO5055-REL",
       "sourceFile": "standards/iso-5055.rules.json",
       "title": "ISO/IEC 5055 — Reliability",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -6953,18 +6970,22 @@
         "strength": "none"
       },
       "analyser": {
-        "adoptable": "no",
-        "examples": []
+        "adoptable": "yes",
+        "examples": [
+          "CodeQL (SARIF)",
+          "Semgrep (SARIF)",
+          "ESLint via eslint-cwe-map.json"
+        ]
       },
       "nativeEvaluability": "unimplemented-native",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "This rule IS the ISO/IEC 5055 Reliability measure — an aggregate over its 74 weaknesses, decided from an external analyser's SARIF. It names no single CWE because it corresponds to the whole measure."
     },
     {
       "ruleId": "ISO5055-SEC",
       "sourceFile": "standards/iso-5055.rules.json",
       "title": "ISO/IEC 5055 — Security",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -6972,18 +6993,22 @@
         "strength": "none"
       },
       "analyser": {
-        "adoptable": "no",
-        "examples": []
+        "adoptable": "yes",
+        "examples": [
+          "CodeQL security suite (SARIF)",
+          "Semgrep (SARIF)",
+          "ESLint via eslint-cwe-map.json"
+        ]
       },
       "nativeEvaluability": "unimplemented-native",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "This rule IS the ISO/IEC 5055 Security measure — an aggregate over its 74 weaknesses, decided from an external analyser's SARIF (GT-662…GT-664). It names no single CWE because it corresponds to the whole measure, not to any one weakness in it."
     },
     {
       "ruleId": "SLSA-AUTH-L2",
       "sourceFile": "standards/slsa-v1.rules.json",
       "title": "Build L2 — the PUBLISHING job can mint the identity that signs the provenance",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -6995,14 +7020,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SLSA-BUILD-L1",
       "sourceFile": "standards/slsa-v1.rules.json",
       "title": "Build L1 — the artifact is built by the run whose provenance describes it",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7014,14 +7039,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SLSA-HOSTED-L2",
       "sourceFile": "standards/slsa-v1.rules.json",
       "title": "Build L2 — nothing offers a way to publish from a workstation",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7033,14 +7058,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SLSA-PROV-L1",
       "sourceFile": "standards/slsa-v1.rules.json",
       "title": "Build L1 — EVERY publishing path generates provenance, not just the main one",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7052,14 +7077,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SSDF-PO.3.1",
       "sourceFile": "standards/ssdf-v1.1.rules.json",
       "title": "PO.3.1 — the toolchain is specified as code, not as recollection",
       "severity": "SHOULD",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7071,14 +7096,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SSDF-PS.3.2",
       "sourceFile": "standards/ssdf-v1.1.rules.json",
       "title": "PS.3.2 — an SBOM that is generated but never published satisfies nothing",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7090,14 +7115,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SSDF-PW.4.1",
       "sourceFile": "standards/ssdf-v1.1.rules.json",
       "title": "PW.4.1 — third-party components resolve to pinned versions in CI",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7109,14 +7134,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SSDF-PW.4.4",
       "sourceFile": "standards/ssdf-v1.1.rules.json",
       "title": "PW.4.4 — components are re-verified over their life cycle, not once at adoption",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7128,14 +7153,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SSDF-PW.6.1",
       "sourceFile": "standards/ssdf-v1.1.rules.json",
       "title": "PW.6.1 — build tooling is configured to improve executable security",
       "severity": "SHOULD",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7147,14 +7172,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SSDF-PW.7.2",
       "sourceFile": "standards/ssdf-v1.1.rules.json",
       "title": "PW.7.2 — code is analysed by both a code scanner and a secret scanner",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7166,14 +7191,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SSDF-RV.1.2",
       "sourceFile": "standards/ssdf-v1.1.rules.json",
       "title": "RV.1.2 — the code scanner sees the whole change, not a filtered slice",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7185,14 +7210,14 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "SSDF-RV.1.3",
       "sourceFile": "standards/ssdf-v1.1.rules.json",
       "title": "RV.1.3 — there is a disclosure policy that names how to report",
       "severity": "MUST",
-      "ruleClass": "governance",
+      "ruleClass": "international-standard",
       "iso5055": {
         "cwes": [],
         "weaknesses": [],
@@ -7204,7 +7229,7 @@
         "examples": []
       },
       "nativeEvaluability": "native-handler",
-      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+      "note": "Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them."
     },
     {
       "ruleId": "AAI-R01",

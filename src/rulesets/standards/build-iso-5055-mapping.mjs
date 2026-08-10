@@ -103,6 +103,15 @@ function extractRules(file) {
  * structure of source code, so only `code-structure` is inside its scope by
  * construction; everything else is either code-adjacent hygiene an analyser can
  * still decide, or governance/process/architecture the standard does not model.
+ *
+ * GT-666 — this table is exhaustive over the corpus and `classify` REFUSES an
+ * unlisted path. It used to fall through to `governance`, which is a real class
+ * with a real note ("a governance invariant over Evolith artifacts … no
+ * international structural equivalent"), so a directory nobody had classified
+ * did not read as unclassified: it read as a stated verdict. Every rule of the
+ * three standards packs carried that note, denying the one thing about them that
+ * is not in question. A default that is indistinguishable from an answer is not
+ * a default.
  */
 const CLASS_BY_FILE = [
   ['adr/adr-0002-hexagonal-architecture', 'code-structure'],
@@ -127,12 +136,14 @@ const CLASS_BY_FILE = [
   ['sdlc/dependency-pinning', 'supply-chain'],
   ['sdlc/quality-thresholds', 'code-hygiene'],
   ['security/', 'code-structure'],
+  ['standards/', 'international-standard'],
   ['topologies/', 'topology'],
 ];
 
+/** The class of a ruleset path, or `null` when the table does not cover it. */
 function classify(sourceFile) {
   for (const [prefix, kind] of CLASS_BY_FILE) if (sourceFile.startsWith(prefix)) return kind;
-  return 'governance';
+  return null;
 }
 
 /**
@@ -296,6 +307,27 @@ const MAP = {
   'NODE-0003-01': { cwes: [], strength: 'none', adoptable: 'yes', analysers: ['tsc --strict', 'typescript-eslint strict config'] },
   'NODE-0038-01': { cwes: [390, 703], strength: 'partial', adoptable: 'partial', analysers: ['SonarQube empty-catch / ignored-return rules'] },
   'DOT-0065-01': { cwes: [], strength: 'none', adoptable: 'partial', analysers: ['Semgrep PII-in-logs patterns'] },
+
+  // --- standards/iso-5055.rules.json : this standard, as rules ---------------
+  // These four are the awkward rows of the whole table: the corpus mapped
+  // AGAINST ISO/IEC 5055 now contains ISO/IEC 5055. The class note is true of
+  // them but too general to be useful here, so each says what it is. They cite
+  // no CWE deliberately — a measure is an aggregate over 74 / 74 / 18 / 31
+  // weaknesses, and listing all of them would count one rule as dozens of
+  // mappings and move `adoptedFraction`, which is a statement about how much of
+  // the corpus the standard reaches, not about how many CWEs a row can name.
+  'ISO5055-SEC': { cwes: [], strength: 'none', adoptable: 'yes',
+    analysers: ['CodeQL security suite (SARIF)', 'Semgrep (SARIF)', 'ESLint via eslint-cwe-map.json'],
+    note: 'This rule IS the ISO/IEC 5055 Security measure — an aggregate over its 74 weaknesses, decided from an external analyser\'s SARIF (GT-662…GT-664). It names no single CWE because it corresponds to the whole measure, not to any one weakness in it.' },
+  'ISO5055-REL': { cwes: [], strength: 'none', adoptable: 'yes',
+    analysers: ['CodeQL (SARIF)', 'Semgrep (SARIF)', 'ESLint via eslint-cwe-map.json'],
+    note: 'This rule IS the ISO/IEC 5055 Reliability measure — an aggregate over its 74 weaknesses, decided from an external analyser\'s SARIF. It names no single CWE because it corresponds to the whole measure.' },
+  'ISO5055-PERF': { cwes: [], strength: 'none', adoptable: 'yes',
+    analysers: ['CodeQL (SARIF)', 'Semgrep (SARIF)', 'ESLint via eslint-cwe-map.json'],
+    note: 'This rule IS the ISO/IEC 5055 Performance Efficiency measure — an aggregate over its 18 weaknesses, decided from an external analyser\'s SARIF. GT-664 measured 0/18 covered by the analysers wired today and said so rather than scoring it.' },
+  'ISO5055-MAINT': { cwes: [], strength: 'none', adoptable: 'yes',
+    analysers: ['CodeQL (SARIF)', 'Semgrep (SARIF)', 'ESLint via eslint-cwe-map.json'],
+    note: 'This rule IS the ISO/IEC 5055 Maintainability measure — an aggregate over its 31 weaknesses, decided from an external analyser\'s SARIF. It names no single CWE because it corresponds to the whole measure.' },
 };
 
 /** Why an unmapped rule is unmapped — by class, so the "no equivalent" claim is auditable. */
@@ -313,6 +345,8 @@ const NO_EQUIVALENT_REASON = {
   operations: 'An operational telemetry expectation, evaluated from runtime evidence rather than source structure.',
   deployment: 'A deployment / chart packaging invariant, outside the scope of a source-code measure.',
   'supply-chain': 'Dependency-management hygiene. Covered by SCA tooling rather than by ISO/IEC 5055.',
+  'international-standard':
+    'Mechanises a requirement of a published international standard (NIST SP 800-218 SSDF, SLSA Build track, ISO/IEC 5055 itself). International equivalence is not in question for these rows — the rule IS the equivalence. What the row does not carry is one of the 138 INDIVIDUAL structural weaknesses: SSDF and SLSA predicates are process and supply-chain declarations that ISO/IEC 5055 does not model, and the ISO/IEC 5055 rules are whole measures, each an aggregate over 74, 74, 18 or 31 weaknesses rather than any one of them.',
   'code-hygiene': 'Code-adjacent convention with no ISO/IEC 5055 weakness, though a linter may still decide it.',
   'code-structure': 'Structural rule with no counterpart among the 138 weaknesses.',
 };
@@ -387,6 +421,38 @@ function build() {
   const rules = files.flatMap(extractRules);
   if (rules.length === 0) {
     throw new Error(`Scanned ${files.length} ruleset files and extracted 0 rules — the extractor is wrong, not the corpus.`);
+  }
+
+  // GT-666 — a path the class table does not cover is a BUILD FAILURE, named
+  // with the rule ids it would have mislabelled. The silent `governance`
+  // fallback shipped 16 rows asserting "no international structural equivalent"
+  // about three packs that are international standards, and nothing anywhere
+  // could have flagged it, because the output was a valid class carrying a
+  // plausible note. The cost of this refusal is one table entry per new
+  // directory; the cost of the default was a wrong claim in an auditor-facing
+  // artifact, held for two releases.
+  const unclassified = new Map();
+  for (const r of rules) {
+    if (classify(r.sourceFile) === null) {
+      if (!unclassified.has(r.sourceFile)) unclassified.set(r.sourceFile, []);
+      unclassified.get(r.sourceFile).push(r.ruleId);
+    }
+  }
+  if (unclassified.size > 0) {
+    throw new Error(
+      `${unclassified.size} ruleset file(s) match no prefix in CLASS_BY_FILE, so ${[...unclassified.values()].flat().length} rule(s) ` +
+        'would be classified by guesswork:\n' +
+        [...unclassified].map(([file, ids]) => `  ${file} — ${ids.join(', ')}`).join('\n') +
+        '\nAdd a prefix to CLASS_BY_FILE. If the class is new, add its "no equivalent" reason to NO_EQUIVALENT_REASON too.',
+    );
+  }
+
+  const missingReason = [...new Set(CLASS_BY_FILE.map(([, kind]) => kind))].filter((k) => !NO_EQUIVALENT_REASON[k]);
+  if (missingReason.length > 0) {
+    throw new Error(
+      `Rule class(es) ${missingReason.join(', ')} have no entry in NO_EQUIVALENT_REASON. An unmapped rule in such a class ` +
+        'would be emitted with no stated reason, which is the one thing this table exists to prevent.',
+    );
   }
 
   const seen = new Set();

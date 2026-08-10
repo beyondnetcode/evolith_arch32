@@ -55,7 +55,7 @@ Sobre **412 reglas** en 180 archivos de ruleset:
 | — de ellas con mapeo directo | 8 | |
 | — de ellas con mapeo parcial / proxy | 29 | |
 | Reglas sin equivalente internacional (cada una con motivo declarado) | 375 | 91,0% |
-| Reglas que un analizador existente podría decidir por completo | 42 | 10,2% |
+| Reglas que un analizador existente podría decidir por completo | 46 | 11,2% |
 | Reglas que un analizador podría decidir parcialmente | 23 | 5,6% |
 
 **La fracción adoptada es el 9,0% del corpus.** Es un resultado real y es menor de lo que sugería la
@@ -115,21 +115,26 @@ Proyectar este mapeo sobre esa clase es la cifra que importa:
 
 | Del backlog de 52 handlers | Cantidad |
 |---|---|
-| Decidibles hoy por un analizador estándar | 5 |
+| Decidibles hoy por un analizador estándar | 9 |
 | Decidibles parcialmente (señal necesaria pero no suficiente) | 5 |
-| Que hay que escribir de verdad | 42 |
+| Que hay que escribir de verdad | 38 |
 
-Las 5 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
-`SEC-PATH-02` (consultas de inyección y path traversal de CodeQL/Semgrep) y `SEC-TIMING-01` (comparación
-en tiempo constante). Las 5 parciales están listadas en `handlerBacklog.byEvaluabilityClass` del JSON de
-mapeo.
+Las 9 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
+`SEC-PATH-02` (consultas de inyección y path traversal de CodeQL/Semgrep), `SEC-TIMING-01` (comparación
+en tiempo constante) y las cuatro medidas `ISO5055-*`, que son un adaptador sobre un analizador por
+construcción — es lo que construyeron GT-662…GT-664. Las 5 parciales están listadas en
+`handlerBacklog.byEvaluabilityClass` del JSON de mapeo.
 
-Es decir, adoptar vale **9,6% del backlog por completo, 19,2% incluyendo parciales** — 10 de 52 reglas
-que no necesitan handlers a medida. Ambas proporciones bajaron al encogerse el backlog, y esa es la
-dirección correcta: entre las doce reglas cerradas el 2026-07-29 están `HXA-01`, `HXA-02`, `HXA-04` y
-`GIT-08`, que eran cuatro de las nueve que esta tabla ofrecía a un analizador. Evolith escribió el
-handler primero. Lo que queda se inclina más hacia escribir, y las reglas de seguridad siguen apuntando
-a analizadores mejores que cualquier cosa que escribiéramos.
+Es decir, adoptar vale **17,3% del backlog por completo, 26,9% incluyendo parciales** — 14 de 52 reglas
+que no necesitan handlers a medida. **Nada se volvió más fácil de construir.** Las proporciones se
+movieron porque las cuatro reglas `ISO5055-*` se contaban como trabajo por escribir mientras un
+analizador ya las decidía; GT-667 corrige `remainderToAuthor` a 38 — las mismas 38 que llevaba el
+backlog de 48, y ese es el punto: las cuatro reglas que añadió GT-662 nunca fueron trabajo por escribir.
+Antes, ambas proporciones bajaron al encogerse el backlog, y esa era también la dirección correcta:
+entre las doce reglas cerradas el 2026-07-29 están `HXA-01`, `HXA-02`, `HXA-04` y `GIT-08`, que eran
+cuatro de las nueve que esta tabla ofrecía a un analizador. Evolith escribió el handler primero. Lo que
+queda se inclina hacia escribir, y las reglas de seguridad siguen apuntando a analizadores mejores que
+cualquier cosa que escribiéramos.
 
 ## Taxonomía compañera: ISO/IEC 25010:2023
 

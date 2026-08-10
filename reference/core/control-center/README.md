@@ -75,7 +75,7 @@ So the honest question is not "what does ATDM say this row costs" but "is an ATD
 | Input | Where it comes from | Status |
 |---|---|---|
 | rule linkage | a `- **Rules:** \`HXA-01\`, \`SEC-INJ-01\`` line in the row's catalog section | **declared by a human**; a rule merely mentioned in the prose is reported as a *candidate* and never priced |
-| rule → weakness + analyser | [`src/rulesets/standards/iso-5055-mapping.json`](../../../src/rulesets/standards/iso-5055-mapping.json) (GT-598) | present, 381 rules |
+| rule → weakness + analyser | [`src/rulesets/standards/iso-5055-mapping.json`](../../../src/rulesets/standards/iso-5055-mapping.json) (GT-598) | present, 412 rules |
 | occurrence counts | an analyser run scoped to the row (`--occurrences`) | absent — no analyser adapter is integrated yet |
 | repair-effort table | the OMG specification (`--effort-table`) | absent, and deliberately not vendored: the figures are the substance of a copyrighted spec, and a table of invented hours wearing an `atdm` label would be worse than no table |
 

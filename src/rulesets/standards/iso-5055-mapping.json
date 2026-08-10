@@ -23,10 +23,10 @@
     "mappedPartial": 29,
     "noInternationalEquivalent": 375,
     "adoptedFraction": 0.0898,
-    "analyserAdoptable": 42,
+    "analyserAdoptable": 46,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1019,
-    "analyserAdoptableFractionIncludingPartial": 0.1578,
+    "analyserAdoptableFraction": 0.1117,
+    "analyserAdoptableFractionIncludingPartial": 0.1675,
     "byClass": {
       "architecture-decision": {
         "rules": 163,
@@ -56,7 +56,7 @@
       "international-standard": {
         "rules": 16,
         "mapped": 0,
-        "adoptable": 0
+        "adoptable": 4
       },
       "operations": {
         "rules": 4,
@@ -95,23 +95,27 @@
     ],
     "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, and the two adapter classes are closed by the enforcer seam rather than by a rule handler.",
     "realBacklogSize": 52,
-    "adoptableFromAnalyser": 5,
-    "adoptableFromAnalyserIncludingPartial": 10,
-    "adoptedFractionOfBacklog": 0.0962,
-    "adoptedFractionOfBacklogIncludingPartial": 0.1923,
-    "remainderToAuthor": 42,
+    "adoptableFromAnalyser": 9,
+    "adoptableFromAnalyserIncludingPartial": 14,
+    "adoptedFractionOfBacklog": 0.1731,
+    "adoptedFractionOfBacklogIncludingPartial": 0.2692,
+    "remainderToAuthor": 38,
     "byEvaluabilityClass": {
       "unimplemented-native": {
         "rules": 52,
         "mappedToIso5055": 6,
-        "analyserAdoptable": 5,
+        "analyserAdoptable": 9,
         "analyserAdoptablePartial": 5,
         "adoptableRuleIds": [
           "HXA-03",
           "SEC-INJ-01",
           "SEC-PATH-01",
           "SEC-PATH-02",
-          "SEC-TIMING-01"
+          "SEC-TIMING-01",
+          "ISO5055-MAINT",
+          "ISO5055-PERF",
+          "ISO5055-REL",
+          "ISO5055-SEC"
         ],
         "adoptablePartialRuleIds": [
           "CICD-01",
@@ -6920,8 +6924,12 @@
         "strength": "none"
       },
       "analyser": {
-        "adoptable": "no",
-        "examples": []
+        "adoptable": "yes",
+        "examples": [
+          "CodeQL (SARIF)",
+          "Semgrep (SARIF)",
+          "ESLint via eslint-cwe-map.json"
+        ]
       },
       "nativeEvaluability": "unimplemented-native",
       "note": "A conformance control of ISO/IEC 5055:2021 itself — the standard this mapping measures against — stated at MEASURE granularity rather than as one of the 138 weaknesses. It carries no single CWE because it aggregates a whole measure, and what it reports is whatever weaknesses of that measure the analyser a tenant configured actually found."
@@ -6939,8 +6947,12 @@
         "strength": "none"
       },
       "analyser": {
-        "adoptable": "no",
-        "examples": []
+        "adoptable": "yes",
+        "examples": [
+          "CodeQL (SARIF)",
+          "Semgrep (SARIF)",
+          "ESLint via eslint-cwe-map.json"
+        ]
       },
       "nativeEvaluability": "unimplemented-native",
       "note": "A conformance control of ISO/IEC 5055:2021 itself — the standard this mapping measures against — stated at MEASURE granularity rather than as one of the 138 weaknesses. It carries no single CWE because it aggregates a whole measure, and what it reports is whatever weaknesses of that measure the analyser a tenant configured actually found."
@@ -6958,8 +6970,12 @@
         "strength": "none"
       },
       "analyser": {
-        "adoptable": "no",
-        "examples": []
+        "adoptable": "yes",
+        "examples": [
+          "CodeQL (SARIF)",
+          "Semgrep (SARIF)",
+          "ESLint via eslint-cwe-map.json"
+        ]
       },
       "nativeEvaluability": "unimplemented-native",
       "note": "A conformance control of ISO/IEC 5055:2021 itself — the standard this mapping measures against — stated at MEASURE granularity rather than as one of the 138 weaknesses. It carries no single CWE because it aggregates a whole measure, and what it reports is whatever weaknesses of that measure the analyser a tenant configured actually found."
@@ -6977,8 +6993,12 @@
         "strength": "none"
       },
       "analyser": {
-        "adoptable": "no",
-        "examples": []
+        "adoptable": "yes",
+        "examples": [
+          "CodeQL security suite (SARIF)",
+          "Semgrep (SARIF)",
+          "ESLint via eslint-cwe-map.json"
+        ]
       },
       "nativeEvaluability": "unimplemented-native",
       "note": "A conformance control of ISO/IEC 5055:2021 itself — the standard this mapping measures against — stated at MEASURE granularity rather than as one of the 138 weaknesses. It carries no single CWE because it aggregates a whole measure, and what it reports is whatever weaknesses of that measure the analyser a tenant configured actually found."

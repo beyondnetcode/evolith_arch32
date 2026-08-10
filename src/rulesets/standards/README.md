@@ -54,7 +54,7 @@ Against **412 rules** in 180 ruleset files:
 | — of which the mapping is direct | 8 | |
 | — of which the mapping is a partial / proxy | 29 | |
 | Rules with no international equivalent (each with a stated reason) | 375 | 91.0% |
-| Rules an existing analyser could decide outright | 42 | 10.2% |
+| Rules an existing analyser could decide outright | 46 | 11.2% |
 | Rules an analyser could decide partially | 23 | 5.6% |
 
 **The adopted fraction is 9.0% of the corpus.** That is a real result and it is smaller than the gap's
@@ -113,20 +113,25 @@ Folding this mapping onto that class is the number that matters:
 
 | Of the 52-rule handler backlog | Count |
 |---|---|
-| Decidable today by an off-the-shelf analyser | 5 |
+| Decidable today by an off-the-shelf analyser | 9 |
 | Decidable partially (analyser gives a necessary-but-not-sufficient signal) | 5 |
-| Genuinely has to be authored | 42 |
+| Genuinely has to be authored | 38 |
 
-The 5 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
-`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries) and `SEC-TIMING-01` (timing-safe
-comparison). The 5 partials are listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON.
+The 9 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
+`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries), `SEC-TIMING-01` (timing-safe
+comparison) and the four `ISO5055-*` measures, which are an adapter over an analyser by construction —
+that is what GT-662…GT-664 built. The 5 partials are listed in
+`handlerBacklog.byEvaluabilityClass` in the mapping JSON.
 
-So adoption is worth **9.6% of the backlog outright, 19.2% including partials** — 10 of 52 rules that
-do not need bespoke handlers. Both shares fell when the backlog shrank, and that is the right
-direction: the twelve rules closed on 2026-07-29 include `HXA-01`, `HXA-02`, `HXA-04` and `GIT-08`,
-which were four of the nine this table used to offer to an analyser. Evolith wrote the handler first.
-What is left leans further toward authoring, and the security rules still point at analysers better
-than anything we would write.
+So adoption is worth **17.3% of the backlog outright, 26.9% including partials** — 14 of 52 rules that
+do not need bespoke handlers. **Nothing became easier to build.** The shares moved because the four
+`ISO5055-*` rules had been counted as work that must be authored while an analyser was already deciding
+them; GT-667 corrects `remainderToAuthor` to 38 — the same 38 the 48-rule backlog carried, which is the
+point: the four rules GT-662 added were never author-work. Earlier, both shares fell when the backlog
+shrank, and that was the right direction too: the twelve rules closed on 2026-07-29 include `HXA-01`,
+`HXA-02`, `HXA-04` and `GIT-08`, which were four of the nine this table used to offer to an analyser.
+Evolith wrote the handler first. What is left leans toward authoring, and the security rules still
+point at analysers better than anything we would write.
 
 ## Companion taxonomy: ISO/IEC 25010:2023
 

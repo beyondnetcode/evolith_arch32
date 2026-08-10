@@ -437,6 +437,33 @@ const MAP = {
   'NODE-0003-01': { cwes: [], strength: 'none', adoptable: 'yes', analysers: ['tsc --strict', 'typescript-eslint strict config'] },
   'NODE-0038-01': { cwes: [390, 703], strength: 'partial', adoptable: 'partial', analysers: ['SonarQube empty-catch / ignored-return rules'] },
   'DOT-0065-01': { cwes: [], strength: 'none', adoptable: 'partial', analysers: ['Semgrep PII-in-logs patterns'] },
+
+  // --- standards/iso-5055.rules.json : decided BY an analyser, by design ----
+  // GT-667. `adoptable` answers "does an off-the-shelf analyser already decide
+  // this predicate", and for these four the answer is the pack's whole design:
+  // GT-662…GT-664 built them as an adapter over CodeQL, Semgrep and ESLint
+  // SARIF. Defaulting them to `no` — "the predicate is repository- or
+  // product-specific and must be authored" — put four rules into
+  // `remainderToAuthor` that nobody has to write, in the artifact whose entire
+  // job is sizing that backlog.
+  //
+  // No `note` here on purpose: GT-666 made the note DERIVED from the pack's own
+  // `standard` declaration, and re-enumerating it per rule would reintroduce
+  // exactly the hand-maintained text that change removed. Only the analyser
+  // claim is stated, because only the analyser claim is rule-specific.
+  //
+  // No `cwes` either: a measure aggregates 74 / 74 / 18 / 31 weaknesses, and
+  // listing them would count one rule as dozens of mappings and move
+  // `adoptedFraction`, which measures how much of the corpus the standard
+  // reaches. It stays at 9.0%.
+  'ISO5055-SEC': { cwes: [], strength: 'none', adoptable: 'yes',
+    analysers: ['CodeQL security suite (SARIF)', 'Semgrep (SARIF)', 'ESLint via eslint-cwe-map.json'] },
+  'ISO5055-REL': { cwes: [], strength: 'none', adoptable: 'yes',
+    analysers: ['CodeQL (SARIF)', 'Semgrep (SARIF)', 'ESLint via eslint-cwe-map.json'] },
+  'ISO5055-PERF': { cwes: [], strength: 'none', adoptable: 'yes',
+    analysers: ['CodeQL (SARIF)', 'Semgrep (SARIF)', 'ESLint via eslint-cwe-map.json'] },
+  'ISO5055-MAINT': { cwes: [], strength: 'none', adoptable: 'yes',
+    analysers: ['CodeQL (SARIF)', 'Semgrep (SARIF)', 'ESLint via eslint-cwe-map.json'] },
 };
 
 /** Why an unmapped rule is unmapped — by class, so the "no equivalent" claim is auditable. */

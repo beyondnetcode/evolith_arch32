@@ -75,7 +75,7 @@ Así que la pregunta honesta no es "cuánto dice ATDM que cuesta esta fila" sino
 | Insumo | De dónde sale | Estado |
 |---|---|---|
 | vínculo con reglas | una línea `- **Rules:** \`HXA-01\`, \`SEC-INJ-01\`` en la sección de la fila | **la declara una persona**; una regla solo mencionada en la prosa se reporta como *candidata* y nunca se costea |
-| regla → debilidad + analizador | [`src/rulesets/standards/iso-5055-mapping.json`](../../../src/rulesets/standards/iso-5055-mapping.json) (GT-598) | presente, 381 reglas |
+| regla → debilidad + analizador | [`src/rulesets/standards/iso-5055-mapping.json`](../../../src/rulesets/standards/iso-5055-mapping.json) (GT-598) | presente, 412 reglas |
 | conteo de ocurrencias | una corrida de analizador acotada a la fila (`--occurrences`) | ausente — todavía no hay adaptador de analizador integrado |
 | tabla de esfuerzo de reparación | la especificación de OMG (`--effort-table`) | ausente y deliberadamente no versionada: las cifras son la sustancia de una especificación con derechos de autor, y una tabla de horas inventadas con la etiqueta `atdm` sería peor que ninguna tabla |
 

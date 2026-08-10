@@ -12,21 +12,21 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 179,
-    "rules": 408,
+    "rulesetFiles": 180,
+    "rules": 412,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 408,
+    "rules": 412,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 371,
-    "adoptedFraction": 0.0907,
+    "noInternationalEquivalent": 375,
+    "adoptedFraction": 0.0898,
     "analyserAdoptable": 42,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1029,
-    "analyserAdoptableFractionIncludingPartial": 0.1593,
+    "analyserAdoptableFraction": 0.1019,
+    "analyserAdoptableFractionIncludingPartial": 0.1578,
     "byClass": {
       "architecture-decision": {
         "rules": 163,
@@ -49,7 +49,7 @@
         "adoptable": 0
       },
       "governance": {
-        "rules": 67,
+        "rules": 71,
         "mapped": 1,
         "adoptable": 0
       },
@@ -168,7 +168,7 @@
         "adoptablePartialRuleIds": []
       },
       "native-handler": {
-        "rules": 166,
+        "rules": 170,
         "mappedToIso5055": 19,
         "analyserAdoptable": 28,
         "analyserAdoptablePartial": 11,
@@ -6976,6 +6976,82 @@
         "examples": []
       },
       "nativeEvaluability": "unimplemented-native",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SLSA-AUTH-L2",
+      "sourceFile": "standards/slsa-v1.rules.json",
+      "title": "Build L2 — the PUBLISHING job can mint the identity that signs the provenance",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SLSA-BUILD-L1",
+      "sourceFile": "standards/slsa-v1.rules.json",
+      "title": "Build L1 — the artifact is built by the run whose provenance describes it",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SLSA-HOSTED-L2",
+      "sourceFile": "standards/slsa-v1.rules.json",
+      "title": "Build L2 — nothing offers a way to publish from a workstation",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
+    },
+    {
+      "ruleId": "SLSA-PROV-L1",
+      "sourceFile": "standards/slsa-v1.rules.json",
+      "title": "Build L1 — EVERY publishing path generates provenance, not just the main one",
+      "severity": "MUST",
+      "ruleClass": "governance",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "native-handler",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {

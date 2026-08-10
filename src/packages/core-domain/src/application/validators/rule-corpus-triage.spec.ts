@@ -85,7 +85,22 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // which is correct and is the whole design: they carry `enforce:` and are
   // decided by an adapter over a free analyser's SARIF. Counting them as
   // native-handler would claim a capability this Core does not have.
-  'native-handler': 166,
+  //
+  // 166 -> 170 on 2026-08-09 (GT-665): the SLSA v1 Build track pack, four rules,
+  // and `SlsaRuleHandler` claims all four. They land in `native-handler` and NOT
+  // in `unimplemented-native` — the opposite of the ISO/IEC 5055 rules directly
+  // above — because the two standards are different SHAPES, and the classes are
+  // where that difference has to be visible. ISO/IEC 5055 names 138 structural
+  // CWEs that only a code parser decides, so it is an adapter. The SLSA Build
+  // track asks what the PRODUCER declares — provenance generated on publish, the
+  // publishing job able to mint the identity that signs it, the artifact built by
+  // the run being attested, no route to the registry that bypasses CI — and a
+  // workflow file plus a package manifest answer all four. The half a filesystem
+  // cannot decide (Build L3's platform properties, the predicate type the
+  // registry serves, whether a signature verifies) is NOT in the pack at all; it
+  // is named in the ruleset's `notEvaluableHere` block, so the corpus did not
+  // grow by four rules and six promises.
+  'native-handler': 170,
   'documentation-only': 137,
   'unimplemented-native': 52,
   'needs-external-system': 20,
@@ -136,7 +151,15 @@ describe('GT-595 · the corpus is fully classified', () => {
     // rules. The band is widened rather than pinned to the exact number, because
     // its job is to catch a corpus that COLLAPSED — the failure this whole file
     // exists to make impossible — not to be edited on every legitimate addition.
-    expect(CORPUS.length).toBeLessThanOrEqual(410);
+    //
+    // 410 -> 420 on 2026-08-09: GT-665's four SLSA rules put the corpus at
+    // exactly 410, i.e. on the ceiling. Widened rather than left there, because a
+    // band whose upper bound equals the current value stops being a band: the
+    // next legitimate pack fails an assertion that has nothing to say about it,
+    // and an assertion that fails for the wrong reason gets raised reflexively
+    // until it means nothing. The floor is the half that catches a collapse and
+    // it is untouched.
+    expect(CORPUS.length).toBeLessThanOrEqual(420);
   });
 
   it('assigns EVERY rule exactly one evaluability class', () => {

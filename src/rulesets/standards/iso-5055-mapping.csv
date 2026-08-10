@@ -333,6 +333,10 @@ ISO5055-MAINT,standards/iso-5055.rules.json,governance,,,none,no,unimplemented-n
 ISO5055-PERF,standards/iso-5055.rules.json,governance,,,none,no,unimplemented-native
 ISO5055-REL,standards/iso-5055.rules.json,governance,,,none,no,unimplemented-native
 ISO5055-SEC,standards/iso-5055.rules.json,governance,,,none,no,unimplemented-native
+SLSA-AUTH-L2,standards/slsa-v1.rules.json,governance,,,none,no,native-handler
+SLSA-BUILD-L1,standards/slsa-v1.rules.json,governance,,,none,no,native-handler
+SLSA-HOSTED-L2,standards/slsa-v1.rules.json,governance,,,none,no,native-handler
+SLSA-PROV-L1,standards/slsa-v1.rules.json,governance,,,none,no,native-handler
 SSDF-PO.3.1,standards/ssdf-v1.1.rules.json,governance,,,none,no,native-handler
 SSDF-PS.3.2,standards/ssdf-v1.1.rules.json,governance,,,none,no,native-handler
 SSDF-PW.4.1,standards/ssdf-v1.1.rules.json,governance,,,none,no,native-handler

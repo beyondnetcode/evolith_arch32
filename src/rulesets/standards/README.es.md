@@ -55,7 +55,7 @@ Sobre **412 reglas** en 180 archivos de ruleset:
 | — de ellas con mapeo directo | 8 | |
 | — de ellas con mapeo parcial / proxy | 29 | |
 | Reglas sin equivalente internacional (cada una con motivo declarado) | 375 | 91,0% |
-| Reglas que un analizador existente podría decidir por completo | 42 | 10,2% |
+| Reglas que un analizador existente podría decidir por completo | 46 | 11,2% |
 | Reglas que un analizador podría decidir parcialmente | 23 | 5,6% |
 
 **La fracción adoptada es el 9,0% del corpus.** Es un resultado real y es menor de lo que sugería la
@@ -91,6 +91,43 @@ El motivo de cada fila se deriva de esa misma declaración, de modo que nombra e
 regla pertenece de verdad. Una frase por clase habría sido el mismo defecto un nivel más abajo: un
 texto afirmado sobre todos los estándares, cierto de ninguno en particular.
 
+### Adoptabilidad, cuando la regla declara su propio analizador
+
+`analyser.adoptable` se derivó igual en GT-667, y por el mismo motivo: las cuatro filas `ISO5055-*` se
+publicaban como `no` — *«el predicado es específico del repositorio o del producto y hay que
+escribirlo»* — cuando GT-662…GT-664 ya habían entregado ese pack como **adaptador sobre el SARIF de un
+analizador libre**. No había nada que escribir. El mapeo afirmaba, de las cuatro reglas cuyo diseño
+entero es adoptar, justo lo contrario de lo que son.
+
+La señal es el `enforce.config.analyser` de la propia regla, que llevan **4 de las 412 reglas** — esas
+cuatro. `enforce.tool` era el campo equivocado y el corpus dice por qué: 10 reglas llevan bloque
+`enforce`, y 6 de ellas nombran `dependency-cruiser` poniendo ellas mismas el predicado. `HXA-07`
+declara la herramienta y luego escribe la regla — `from: ^src/(domain|core)/.+\.(spec|test)\.ts$`,
+`to: node_modules/(@nestjs/testing|testcontainers)/`. Ahí dependency-cruiser es el *motor* y el
+predicado es de Evolith, escrito contra la disposición de este repositorio, que es `no` según la
+definición de arriba. Derivar de `enforce.tool` habría volteado `HXA-06` y `HXA-07` por el mero hecho de
+que un binario de terceros aparezca en la cláusula. `enforce.config.analyser` nombra la otra relación,
+la que el pack de ISO declara en su propia descripción: *Evolith aporta la traducción CWE→medida; el
+analizador aporta los hallazgos.*
+
+`yes` y no `partial`, deliberadamente. La ruta ESLint que se entrega alcanza solo 11 de las 138
+debilidades, pero eso es **cobertura**, y el resto no es nuestro para escribir — lo cierra un tenant
+apuntando el mismo adaptador a un analizador mejor. `adoptable` dimensiona trabajo de handler, y aquí
+ese trabajo es cero. La cobertura se reporta donde corresponde: el bloque `notEvaluableHere` del pack y
+el aviso de GT-569.
+
+`analyser.examples` nombra ahora el analizador declarado (`eslint`, el valor por defecto que se
+entrega) en vez de quedar vacío. Una fila `adoptable: yes` sin analizador nombrado es exactamente la
+afirmación no falsable que este artefacto existe para quitar; y como el valor se lee de la regla, un
+corpus configurado con `semgrep` se regenera diciendo `semgrep`, mientras que una lista enumerada
+quedaría obsoleta en cuanto cambiara la configuración.
+
+Una regla que declara analizador **y** además lleva un `adoptable` contradictorio en la tabla `MAP` del
+generador rompe el build. Uno de los dos está mal, y ninguno debería ganar en silencio.
+
+Las ocho reglas del SSDF y las cuatro de SLSA se quedan en `no`, y eso es un veredicto y no un olvido
+— ver [Cómo leer una fila](#cómo-leer-una-fila).
+
 ## Re-dimensionar el backlog de handlers
 
 El enunciado del gap dimensionaba el beneficio contra "~240 handlers por escribir". **Esa cifra ya está
@@ -115,21 +152,28 @@ Proyectar este mapeo sobre esa clase es la cifra que importa:
 
 | Del backlog de 52 handlers | Cantidad |
 |---|---|
-| Decidibles hoy por un analizador estándar | 5 |
+| Decidibles hoy por un analizador estándar | 9 |
 | Decidibles parcialmente (señal necesaria pero no suficiente) | 5 |
-| Que hay que escribir de verdad | 42 |
+| Que hay que escribir de verdad | 38 |
 
-Las 5 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
-`SEC-PATH-02` (consultas de inyección y path traversal de CodeQL/Semgrep) y `SEC-TIMING-01` (comparación
-en tiempo constante). Las 5 parciales están listadas en `handlerBacklog.byEvaluabilityClass` del JSON de
-mapeo.
+Las 9 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
+`SEC-PATH-02` (consultas de inyección y path traversal de CodeQL/Semgrep), `SEC-TIMING-01` (comparación
+en tiempo constante) y las cuatro reglas `ISO5055-*`, que declaran ellas mismas su analizador. Las 5
+parciales están listadas en `handlerBacklog.byEvaluabilityClass` del JSON de mapeo.
 
-Es decir, adoptar vale **9,6% del backlog por completo, 19,2% incluyendo parciales** — 10 de 52 reglas
-que no necesitan handlers a medida. Ambas proporciones bajaron al encogerse el backlog, y esa es la
-dirección correcta: entre las doce reglas cerradas el 2026-07-29 están `HXA-01`, `HXA-02`, `HXA-04` y
-`GIT-08`, que eran cuatro de las nueve que esta tabla ofrecía a un analizador. Evolith escribió el
-handler primero. Lo que queda se inclina más hacia escribir, y las reglas de seguridad siguen apuntando
-a analizadores mejores que cualquier cosa que escribiéramos.
+Es decir, adoptar vale **17,3% del backlog por completo, 26,9% incluyendo parciales** — 14 de 52 reglas
+que no necesitan handlers a medida.
+
+5 → 9 el 2026-08-09 (GT-667): las cuatro reglas de ISO/IEC 5055 se contaban como trabajo por escribir
+mientras las decidía un analizador, así que `remainderToAuthor` exageraba el backlog real en cuatro. **La
+proporción se movió porque se corrigió la descripción, no porque se adoptara nada** — entre ambas cifras
+no se entregó nada, y leer este salto como avance sería leer una medición arreglada como un resultado.
+
+Antes de eso la dirección era la contraria. Entre las doce reglas cerradas el 2026-07-29 están `HXA-01`,
+`HXA-02`, `HXA-04` y `GIT-08`, que eran cuatro de las nueve que esta tabla ofrecía a un analizador:
+Evolith escribió el handler primero, y ambas proporciones bajaron al encogerse el backlog. Lo que queda
+sigue inclinándose hacia escribir, y las reglas de seguridad siguen apuntando a analizadores mejores que
+cualquier cosa que escribiéramos.
 
 ## Taxonomía compañera: ISO/IEC 25010:2023
 
@@ -148,6 +192,21 @@ reintroduce.
 - `yes` — un analizador estándar ya decide este predicado; el trabajo es un adaptador.
 - `partial` — el analizador da una señal necesaria pero no suficiente; el resto es nuestro.
 - `no` — el predicado es específico del repositorio o del producto y hay que escribirlo.
+
+Se deriva del `enforce.config.analyser` de la propia regla cuando la regla declara uno, y en caso
+contrario de la tabla `MAP` del generador. `analyser.examples` nombra checks concretos para que la
+afirmación sea falsable; en una regla que declara, es el analizador que la regla nombra.
+
+**Las reglas del SSDF y de SLSA se quedan en `no`, y esas doce son el caso interesante**, porque
+`international-standard` es la misma clase de regla que las cuatro que se movieron. No llevan bloque
+`enforce` en absoluto: las deciden `SsdfRuleHandler` y `SlsaRuleHandler` de forma nativa. Y no es un
+accidente de quién alcanzó a escribir qué — ningún analizador estándar responde *«¿cumple este
+repositorio la práctica SSDF PW.4.1?»* ni *«¿se distribuye procedencia con cada artefacto publicado?»*.
+Esos predicados leen los workflows, manifiestos y evidencias de este repositorio, que es «específico del
+repositorio» palabra por palabra, así que el trabajo sí había que escribirlo, y se escribió (`GT-659`,
+`GT-665`). `no` es el veredicto verdadero para ellas y `yes` lo es para las cuatro reglas de ISO/IEC
+5055, y la diferencia se ve en el corpus en vez de argumentarse aquí: un pack declara analizador, los
+otros dos entregan handler.
 
 `nativeEvaluability` se copia del snapshot de triage del Core. La autoridad es
 `src/packages/core-domain/src/application/validators/rule-evaluability.ts` y su spec fijado; si esas

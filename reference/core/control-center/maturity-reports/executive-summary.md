@@ -42,14 +42,14 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-08-08 |
-| Total gaps | 664 |
-| Closed gaps | 652 |
+| Total gaps | 665 |
+| Closed gaps | 653 |
 | Open gaps | 12 |
 | Open P0 | 1 |
 | Open P1 | 3 |
 | Open P2 | 5 |
 | Total closure | 98.2% |
-| Closure evidence records | 634 |
+| Closure evidence records | 635 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |

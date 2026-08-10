@@ -60,7 +60,15 @@ const allowedFiles = new Set([
   // fixtures stay in that directory, so this admits exactly one file and not a
   // second home for action code. `64-validate-marketplace-action.mjs` fails if
   // it ever leaves the root again.
-  "action.yml"
+  "action.yml",
+  // GT-664: ESLint resolves a flat config by walking UP from the working
+  // directory, so the analyser the ISO/IEC 5055 pack runs — `eslint .` at the
+  // repository root — finds a config here and nowhere else. Without it the run
+  // exits 2 with an empty report, the adapter throws, and all four ISO/IEC 5055
+  // rules SKIP: fail-closed and correct, and also no measurement at all. Each
+  // package keeps its own `eslint.config.mjs` for its architecture lint and
+  // still wins, because those run from the package directory.
+  "eslint.config.mjs"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.

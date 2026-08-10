@@ -79,6 +79,28 @@ export class ValidateSatelliteUseCase {
         logger: (this.validator as any).logger,
         configParser: (this.validator as any).configParser,
         rulesetRepo: (this.validator as any).engine?.rulesetRepo,
+        // GT-664 — the enforcer subsystem has to survive this rebuild.
+        //
+        // The CLI always sends an engine (`options.engine === 'opa' ? 'opa' :
+        // 'native'`), so this branch runs on EVERY `evolith validate`. It
+        // reconstructed the validator from four collaborators and dropped the
+        // fifth, and `RulesetValidatorService` only builds the composite
+        // enforcer strategy when a `processRunner` is present — so the runner
+        // `app.module.ts` injects "GT-519 parity: register the enforcer
+        // subsystem on the CLI surface identically to REST/MCP" was created,
+        // handed over, and thrown away one call later.
+        //
+        // Measured, not inferred: `evolith validate --select
+        // src/rulesets/standards/iso-5055.rules.json` returned in 1.5s with all
+        // four rules skipped, and an instrumented build showed
+        // `EnforcerEvaluator.evaluateAll` was never entered — two validators
+        // were constructed, one with a runner and one without, and the command
+        // used the one without. Every `enforce:` rule in the corpus was
+        // affected, not only this pack: the six ADR-0002 dependency-cruiser
+        // rules are `blocking: true` and had been silently degrading to the
+        // native engine for their whole life on this surface.
+        processRunner: (this.validator as any).processRunner,
+        metrics: (this.validator as any).metrics,
       });
     }
 

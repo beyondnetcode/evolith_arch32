@@ -6,6 +6,8 @@ import { RulesetsNotFoundError } from '../../domain/ports/ruleset-repository.por
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { OpaEvaluator } from './evaluators/opa-evaluator';
 import { createCompositeEnforcerStrategy } from './enforcement/enforcer-subsystem';
+import type { IProcessRunner } from './enforcement/enforcer.types';
+import type { IEnforcerMetrics } from './enforcement/enforcer-metrics';
 import { TopologyCatalogService } from '../services/topology-catalog.service';
 import {
   ArchitectureValidationResult, EvolithYaml, RULESET_VALIDATOR_OPTIONS,
@@ -39,6 +41,18 @@ export class RulesetValidatorService {
   private readonly maxSkippedFraction?: number;
   /** GT-571 — filter the corpus by rule audience / topology / SDLC phase. */
   private readonly applyRuleApplicability: boolean;
+  /**
+   * GT-664 — RETAINED so a caller that rebuilds this service can carry the
+   * enforcer subsystem with it.
+   *
+   * The runner used to be read in the constructor and forgotten, which made a
+   * rebuilt validator silently weaker than the one it was copied from:
+   * `ValidateSatelliteUseCase` reconstructs on every CLI `validate` and had no
+   * way to pass this on, so every `enforce:` rule fell back to the native engine
+   * on that surface. Kept private and read only by that rebuild.
+   */
+  private readonly processRunner?: IProcessRunner;
+  private readonly metrics?: IEnforcerMetrics;
 
   constructor(@Optional() @Inject(RULESET_VALIDATOR_OPTIONS) options?: RulesetValidatorOptions) {
     if (!options?.fileSystem) throw new Error('IFileSystem is required');
@@ -52,6 +66,8 @@ export class RulesetValidatorService {
     this.topologyCatalog = options.topologyCatalog;
     this.maxSkippedFraction = options.maxSkippedFraction;
     this.applyRuleApplicability = options.applyRuleApplicability !== false;
+    this.processRunner = options.processRunner;
+    this.metrics = options.metrics;
 
     const baseStrategy = options.engineType === 'opa'
       ? new OpaEvaluator(this.fs, this.logger)

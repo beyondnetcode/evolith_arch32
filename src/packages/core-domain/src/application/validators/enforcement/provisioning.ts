@@ -136,11 +136,35 @@ export interface SandboxPolicy {
   readonly ulimits?: Readonly<Record<string, number>>;
 }
 
-/** Default: deny egress + secrets, allow only the validated enforcer binaries. */
+/**
+ * Default: deny egress + secrets, allow only the validated enforcer binaries.
+ *
+ * GT-664 — `semgrep`, `eslint` and `cat` were added because the ISO/IEC 5055
+ * pack could not run without them, and that was MEASURED, not suspected: with
+ * the pack selected, `evolith validate --select .../iso-5055.rules.json`
+ * reported `status: passed, rulesChecked: 0, rulesSkipped: 4` on this
+ * repository. The four rules named `semgrep`, the sandbox denied the binary
+ * before it was spawned, the adapter threw, and every rule SKIPped — so the
+ * pack GT-662 and GT-663 built was unreachable from the CLI for its whole life,
+ * and the surface that was supposed to say so said `passed`.
+ *
+ * `cat` is the widest of the three and is here with its eyes open: it is how
+ * `enforce.config.sarif` reads a log the tenant's CI already produced, and it
+ * grants an enforcer rule the ability to read any file the process can. What
+ * bounds it is everything around it — no shell, an args array rather than a
+ * command line, `cwd` confinement, no egress, no secret-bearing env — and the
+ * fact that whatever comes back must parse as a SARIF log with a `runs` array
+ * or the rule SKIPs. The alternative was to let the adapter touch the
+ * filesystem directly, which would put I/O in the domain to avoid naming a
+ * binary in a list.
+ */
 export const DEFAULT_SANDBOX_POLICY: SandboxPolicy = {
   allowEgress: false,
   allowSecrets: false,
-  binaryAllowlist: ['dependency-cruiser', 'depcruise', 'deptrac', 'import-linter', 'grimp', 'conftest', 'dotnet'],
+  binaryAllowlist: [
+    'dependency-cruiser', 'depcruise', 'deptrac', 'import-linter', 'grimp', 'conftest', 'dotnet',
+    'semgrep', 'eslint', 'cat',
+  ],
   timeoutMs: Number(process.env.SANDBOX_TIMEOUT_MS) || 120_000,
   ulimits: { cpu: 60, nofile: 1024 },
 };

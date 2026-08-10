@@ -8651,3 +8651,43 @@ La lección es la del propio tablero y esta vez la pagó quien medía: un `conta
 
 **Lo que se niega a calcular deliberadamente:** qué PODRÍA haber encontrado el analizador. Eso necesita el catálogo de reglas del propio escáner —una llamada al proveedor para CodeQL, una al registro para semgrep— y un número de «podría» derivado de menos que eso inventaría justo la garantía que esta ficha existe para no dar. Por eso `observed` es un suelo y está etiquetado como tal.
 
+#### GT-664
+
+**Título:** ISO/IEC 5055 no se podía medir en absoluto desde `evolith validate`, y la superficie decía `passed`
+
+- **Propósito:** Hacer alcanzable el pack ISO/IEC 5055 desde la CLI, y extenderlo a una medida que ningún analizador aquí había tocado nunca.
+- **Evidencia:** `GT-663` le dio denominador a la medición y la respuesta fue **Reliability 0/74** y **Performance Efficiency 0/18** — dos de cuatro medidas jamás medidas, porque CodeQL (10 de 138 aquí) y semgrep `p/default` (3 de 138, todas Security) no las buscan. Abrir el trabajo destapó algo mayor: `evolith validate --select src/rulesets/standards/iso-5055.rules.json` devolvía en **0,24s** con `status: passed`, `rulesChecked: 0`, `rulesSkipped: 4`. El pack que construyeron `GT-662` y `GT-663` no había corrido ni una vez desde la CLI, y la superficie reportaba un pase sobre él.
+- **Impacto:** Dos de las cuatro medidas que un tenant citaría eran estructuralmente inmedibles, y la única superficie que debía decirlo decía `passed`. El defecto de ruteo no era exclusivo de este pack: ninguna regla `enforce:` del corpus había sido evaluada nunca por `evolith validate`, incluidas seis reglas `blocking: true` de ADR-0002.
+- **Archivos afectados:** `src/rulesets/standards/eslint-cwe-map.json`, `src/packages/core-domain/src/application/validators/standards/eslint-cwe-map.ts`, `src/packages/core-domain/src/application/validators/enforcement/adapters/iso-5055-adapter.ts`, `src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts`, `src/packages/core-domain/src/application/validators/enforcement/provisioning.ts`
+- **Componente:** `Evolith Core` · **Criticidad:** P1 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Criterios de aceptación:**
+  - [x] `evolith validate --select src/rulesets/standards/iso-5055.rules.json` evalúa de verdad las cuatro reglas en vez de saltárselas.
+  - [x] Los hallazgos de ESLint llegan a las medidas ISO/IEC 5055 por el camino existente `classifySarifResult` / cobertura, no por uno paralelo.
+  - [x] Cada fila mapeada se defiende contra el comportamiento documentado de la regla ESLint y la Description del propio CWE, y los candidatos rechazados quedan registrados con el argumento que los mató.
+  - [x] Un hallazgo mapeado por la tabla de Evolith se distingue de uno que el analizador etiquetó por sí mismo, en el reporte que un lector ve de verdad.
+  - [x] Un analizador que no pudo correr sigue haciendo SKIP en vez de leerse como repositorio limpio.
+  - [x] El resultado se mide sobre este repositorio y se reporta como medido, incluido donde no se movió.
+- **Estado:** `COMPLETADO` (2026-08-09)
+
+**Dos defectos separaban al pack de la CLI, y ambos se midieron antes de arreglarse.**
+
+1. **El subsistema enforcer se cableaba y luego se descartaba.** `ValidateSatelliteUseCase.execute` reconstruye el validador cuando se nombra un motor, y la CLI nombra uno en cada corrida (`options.engine === 'opa' ? 'opa' : 'native'`). La reconstrucción copiaba `fileSystem`, `logger`, `configParser` y `rulesetRepo` — y no `processRunner`. `RulesetValidatorService` sólo construye la estrategia enforcer compuesta cuando hay runner, así que el que `app.module.ts` inyecta para «paridad GT-519: registrar el subsistema enforcer en la superficie CLI igual que REST/MCP» se creaba, se entregaba y se tiraba una llamada después. Un build instrumentado confirmó que `EnforcerEvaluator.evaluateAll` nunca se entraba. **Ninguna regla `enforce:` había corrido nunca en esta superficie**, incluidas las seis reglas `blocking: true` de dependency-cruiser de ADR-0002, que venían degradando en silencio al motor nativo.
+2. **El sandbox denegaba todos los analizadores que el adapter puede lanzar.** `DEFAULT_SANDBOX_POLICY.binaryAllowlist` no contenía ni `semgrep`, ni `eslint`, ni `cat`, así que el adapter era rechazado antes de lanzarse y lanzaba excepción — comportamiento correcto de fallo cerrado, invisible en el reporte.
+
+**ESLint como segundo productor.** ESLint no declara CWE para ninguna regla, en ninguna versión: sus metadatos llevan `description`, `recommended` y `helpUri` y ningún campo de taxonomía. El mapeo no se puede cosechar — hay que argumentarlo. `src/rulesets/standards/eslint-cwe-map.json` es ese argumento: **14 reglas core sobre 11 de las 138 debilidades**, citando cada fila el propósito documentado de la regla contra la Description del propio CWE, leída en cwe.mitre.org. `.harness/scripts/generate-eslint-cwe-map.mjs` lo compila dentro del paquete de dominio (nunca un require relativo — ése fue el fallo de arranque de `GT-662`) y se niega a emitir salvo que cada CWE sea uno que el estándar nombra, cada id de regla exista en el ESLint instalado, ninguno esté deprecado y cada descripción registrada siga coincidiendo con `meta.docs.description`.
+
+**La procedencia nunca se colapsa.** Un CWE que declaró el analizador y un CWE que infirió Evolith son evidencias distintas, y la más débil se etiqueta como tal en el mensaje de la violación, en el aviso de cobertura y como contadores separados en el registro de cobertura. Una corrida de CodeQL se lee exactamente igual que antes.
+
+**Medido sobre este repositorio, después del arreglo** — `status: warning`, `rulesChecked: 4`, `rulesSkipped: 0`, 445 hallazgos mapeados:
+
+| medida | ESLint, observadas / total | hallazgos | CodeQL (GT-663) |
+|---|---|---|---|
+| Security | **0 / 74** | 0 | 10 / 74 |
+| Reliability | **1 / 74** | 23 | 0 / 74 |
+| Performance Efficiency | **0 / 18** | 0 | 0 / 18 |
+| Maintainability | **4 / 31** | 422 | 2 / 31 |
+
+**Reliability se movió 0 → 1** (CWE-597, desde `eqeqeq`, una fila `broad`). **Performance Efficiency NO se movió, y el pack lo dice en su propio texto.** Ambas reglas candidatas se rechazaron al leer los CWE: CWE-1050 nombra un bucle que consume recursos de plataforma — mensajería, sesiones, locks, descriptores de archivo — mientras que `no-await-in-loop` va de paralelismo desaprovechado; CWE-1049 son consultas de datos contra una tabla grande mientras que `no-return-await` cuesta un microtask, y además esa regla está deprecada en ESLint 9. Era la única candidata que habría sacado la medida del cero, que es precisamente por qué necesitaba la lectura estricta y no la conveniente. Otros doce mapeos candidatos quedan registrados como `rejected` con el argumento en contra de cada uno, entre ellos `no-constant-condition` — ISO/IEC 5055 parte esa debilidad en CWE-570 y CWE-571 por polaridad y el id de la regla no la lleva, así que reclamar ambas reportaría dos debilidades donde el código tiene una.
+
+**Lo que no reclama.** Sin puntuación: 401 de los 445 hallazgos vienen de `complexity`, `max-params` y `max-lines`, que cuentan contra un umbral que configuró el tenant, así que su número no es comparable entre repositorios salvo que se cite la opción con él. Los **39 hallazgos restantes no llevaban CWE alguno** y se cuentan como tales. El camino ESLint no necesita paquete extra — lee el reporte `json` incorporado de ESLint y lo normaliza a la forma SARIF, porque instalar `@microsoft/eslint-formatter-sarif` aquí añadía 38 paquetes, un ESLint 8 anidado junto a nuestro 9 y un `jschardet: "latest"` imposible de fijar; un tenant que ya lo tenga pone `eslintFormat: "sarif"`, y uno cuyo CI ya escribe SARIF pone `sarif` y no se le hace lintear dos veces.

@@ -653,6 +653,25 @@ jobs:
           node .harness/scripts/ci/64-validate-marketplace-action.mjs --verbose
           node --test .harness/scripts/ci/64-validate-marketplace-action.test.mjs
 
+      # GT-666 — `iso-5055-mapping.json` is the table an auditor reads, and it
+      # described the 16 rules of the three international-standard packs (NIST SP
+      # 800-218, ISO/IEC 5055:2021, SLSA v1.0) as Evolith governance invariants
+      # «with no international structural equivalent». The generator classified by
+      # path prefix and the table had no `standards/` row, so all 16 hit the
+      # `governance` default and inherited its reason. Nothing was stale and
+      # nothing was missing: the one document written to be checkable by a reader
+      # who does not trust us stated the opposite of the truth about its own
+      # corpus, in the register of a considered argument.
+      #
+      # Classification now derives from each pack's own `standard` declaration, so
+      # this guard holds the direction that derivation cannot: a fourth pack
+      # dropped into `src/rulesets/standards/` WITHOUT declaring one would fall
+      # through to `governance` exactly as the first three did.
+      - name: Standards packs are classified as the standards they are
+        run: |
+          node .harness/scripts/ci/65-validate-standards-rule-class.mjs --verbose
+          node --test .harness/scripts/ci/65-validate-standards-rule-class.test.mjs
+
       # GT-650 / ADR-0125 — the artifact registry is the accepted single declaration, and the gate
       # corpus is still hand-maintained while the migration lands. For as long as both exist, the
       # only thing making that intermediate state safe is that they are checked to agree. This

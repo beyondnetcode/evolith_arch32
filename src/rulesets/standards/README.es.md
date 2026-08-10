@@ -31,7 +31,7 @@ node src/rulesets/standards/build-iso-5055-mapping.mjs                 # 2. mape
 
 El orden no es una preferencia. El generador estampa `nativeEvaluability` en cada fila del mapeo a
 partir de la captura, así que reconstruir primero blanquea una clasificación obsoleta dentro de un
-artefacto de 391 filas y sobreestima el backlog de handlers en tantas reglas como el Core haya cerrado
+artefacto de 412 filas y sobreestima el backlog de handlers en tantas reglas como el Core haya cerrado
 desde la última captura.
 
 Aquí no se reproduce texto de ISO/IEC 5055 ni de ISO/IEC 25010. Solo se registran identificadores CWE,
@@ -47,55 +47,84 @@ hace que la unión sea menor que la suma. La fecha y el método de extracción c
 
 ## Resultado
 
-Sobre **391 reglas** en 175 archivos de ruleset:
+Sobre **412 reglas** en 180 archivos de ruleset:
 
 | Medida | Cantidad | Proporción |
 |---|---|---|
-| Reglas mapeadas a una debilidad ISO/IEC 5055 | 37 | 9,5% |
+| Reglas mapeadas a una debilidad ISO/IEC 5055 | 37 | 9,0% |
 | — de ellas con mapeo directo | 8 | |
 | — de ellas con mapeo parcial / proxy | 29 | |
-| Reglas sin equivalente internacional (cada una con motivo declarado) | 354 | 90,5% |
-| Reglas que un analizador existente podría decidir por completo | 42 | 10,7% |
-| Reglas que un analizador podría decidir parcialmente | 23 | 5,9% |
+| Reglas sin equivalente internacional (cada una con motivo declarado) | 375 | 91,0% |
+| Reglas que un analizador existente podría decidir por completo | 42 | 10,2% |
+| Reglas que un analizador podría decidir parcialmente | 23 | 5,6% |
 
-**La fracción adoptada es el 9,5% del corpus.** Es un resultado real y es menor de lo que sugería la
+**La fracción adoptada es el 9,0% del corpus.** Es un resultado real y es menor de lo que sugería la
 premisa del gap, por una razón estructural: ISO/IEC 5055 mide la estructura interna del código fuente,
-y 313 de nuestras 391 reglas no tratan de estructura de código. Son conformidad con ADR (162),
-contratos de topología (66), invariantes de gobierno (51) y proceso de desarrollo (34). Ningún estándar
+y 318 de nuestras 412 reglas no tratan de estructura de código. Son conformidad con ADR (163),
+contratos de topología (66), invariantes de gobierno (55) y proceso de desarrollo (34). Ningún estándar
 internacional modela "¿honraste el ADR-0092?", y ninguno lo hará.
 
 Donde el estándar sí aplica, aplica bien: de las 26 reglas clasificadas como `code-structure`, 18
 mapean y 13 son decidibles por analizador.
 
+### Clases de regla, y la que faltaba
+
+`ruleClass` dice QUÉ TIPO de cosa restringe una regla, y es **derivada, nunca enumerada**. Hasta GT-666
+se derivaba de una tabla de prefijos de ruta con `governance` como valor por defecto, y los tres packs
+de estándares internacionales no coincidían con ningún prefijo. Sus **16** reglas — NIST SP 800-218 (8),
+ISO/IEC 5055:2021 (4), SLSA v1.0 Build track (4) — se publicaban por tanto como `governance`, llevando
+el motivo de gobierno palabra por palabra:
+
+> A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites,
+> evidence). No international structural equivalent.
+
+Cada cláusula de esa frase es falsa para una práctica del SSDF, y estaba en el único documento escrito
+para que lo verifique alguien que no confía en nosotros. La clase `international-standard` las cubre
+ahora, y se deriva del **bloque `standard` que el propio pack declara** y no de su directorio: una
+declaración viaja con el archivo, así que un cuarto pack se clasifica bien caiga donde caiga. El
+directorio es la segunda señal y se exige en la otra dirección — un `*.rules.json` bajo `standards/`
+que lleve reglas sin declarar un estándar **hace fallar al generador**, en vez de caer al valor por
+defecto. `65-validate-standards-rule-class.mjs` sostiene ambas direcciones en CI, con un fixture
+negativo construido a partir del propio artefacto previo al arreglo.
+
+El motivo de cada fila se deriva de esa misma declaración, de modo que nombra el estándar al que la
+regla pertenece de verdad. Una frase por clase habría sido el mismo defecto un nivel más abajo: un
+texto afirmado sobre todos los estándares, cierto de ninguno en particular.
+
 ## Re-dimensionar el backlog de handlers
 
 El enunciado del gap dimensionaba el beneficio contra "~240 handlers por escribir". **Esa cifra ya está
-retirada.** GT-595 hizo el triage del corpus y el backlog real, decidible desde el repositorio, son **48
-reglas** — la clase `unimplemented-native`. De las 389 reglas que carga el triage del Core, 154 ya se
-ejecutan y las otras 187 son 136 placeholders de generador solo documentales, 14 reglas sin check
+retirada.** GT-595 hizo el triage del corpus y el backlog real, decidible desde el repositorio, son **52
+reglas** — la clase `unimplemented-native`. De las 410 reglas que carga el triage del Core, 170 ya se
+ejecutan y las otras 188 son 137 placeholders de generador solo documentales, 14 reglas sin check
 redactado, 20 que requieren un sistema externo y 17 que requieren uno en ejecución.
 
-(389, no 391: los dos archivos de regla única llevan sus metadatos en la raíz del documento, y el
+(410, no 412: los dos archivos de regla única llevan sus metadatos en la raíz del documento, y el
 cargador de corpus del Core no los lee. Aparecen en el mapeo como `not-in-snapshot`.)
 
 60 → 48 el 2026-07-29: ocho reglas con forma de configuración recibieron handler (GT-595) y cuatro
 reglas de límites de módulo ya traían una cláusula `enforce` completa que la normalización descartaba
 (GT-632).
 
+48 → 52 el 2026-08-09: las cuatro reglas de ISO/IEC 5055 (GT-662). Son `unimplemented-native` porque
+ningún handler NATIVO las decide, lo cual es el diseño y no una carencia — llevan `enforce:` y las
+decide un adaptador sobre el SARIF de un analizador libre. Las cuatro reglas del pack SLSA (GT-665) NO
+cayeron aquí: `SlsaRuleHandler` las reclama, así que son `native-handler`.
+
 Proyectar este mapeo sobre esa clase es la cifra que importa:
 
-| Del backlog de 48 handlers | Cantidad |
+| Del backlog de 52 handlers | Cantidad |
 |---|---|
 | Decidibles hoy por un analizador estándar | 5 |
 | Decidibles parcialmente (señal necesaria pero no suficiente) | 5 |
-| Que hay que escribir de verdad | 38 |
+| Que hay que escribir de verdad | 42 |
 
 Las 5 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
 `SEC-PATH-02` (consultas de inyección y path traversal de CodeQL/Semgrep) y `SEC-TIMING-01` (comparación
 en tiempo constante). Las 5 parciales están listadas en `handlerBacklog.byEvaluabilityClass` del JSON de
 mapeo.
 
-Es decir, adoptar vale **10,4% del backlog por completo, 20,8% incluyendo parciales** — 10 de 48 reglas
+Es decir, adoptar vale **9,6% del backlog por completo, 19,2% incluyendo parciales** — 10 de 52 reglas
 que no necesitan handlers a medida. Ambas proporciones bajaron al encogerse el backlog, y esa es la
 dirección correcta: entre las doce reglas cerradas el 2026-07-29 están `HXA-01`, `HXA-02`, `HXA-04` y
 `GIT-08`, que eran cuatro de las nueve que esta tabla ofrecía a un analizador. Evolith escribió el

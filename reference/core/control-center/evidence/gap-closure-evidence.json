@@ -10027,6 +10027,30 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. The generator gains no import: the classification signal is a field the packs already carry, and the reason text is built from that same field. The new guard imports only node builtins plus the repository's own .harness/scripts/lib/coverage.mjs. Deliberately NOT done, and named rather than left to be discovered: (1) the analyser.adoptable correction on the four ISO5055-* rows, which is a different claim with its own arithmetic and is registered separately; (2) any change to the corpus itself - no rule was added, removed or re-authored, which is why every pinned count in rule-corpus-triage.spec.ts is unchanged and why that is stated as the assertion rather than as an incidental. Also observed and stated rather than presented as part of the fix: the standards README figures had been stale since GT-662..GT-665 (391 rules / 175 files against a real 412 / 180); they were refreshed from the regenerated artifact in the same pass because the class breakdown this change moves is one of the sentences they carry, and leaving it would have made the prose more wrong than before."
+    },
+    {
+      "id": "GT-667",
+      "closedAt": "2026-08-09",
+      "closureCommit": "1f72d9f3",
+      "evidence": [
+        "src/rulesets/standards/build-iso-5055-mapping.mjs",
+        "src/rulesets/standards/iso-5055-mapping.json",
+        "src/rulesets/standards/iso-5055-mapping.csv",
+        "src/rulesets/standards/README.md",
+        "src/rulesets/standards/README.es.md"
+      ],
+      "validationCommands": [
+        "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs --check -> faithful capture, 410 rules. Regenerated in the documented order: snapshot first, then mapping.",
+        "node src/rulesets/standards/build-iso-5055-mapping.mjs -> summary.analyserAdoptable 42 -> 46; handlerBacklog.adoptableFromAnalyser 5 -> 9, adoptableFromAnalyserIncludingPartial 10 -> 14, remainderToAuthor 42 -> 38, realBacklogSize unchanged at 52. summary.mappedToIso5055 unchanged at 37 and adoptedFraction unchanged at 0.0898 - no CWE was attached to any row.",
+        "Row-by-row diff of iso-5055-mapping.json against origin/develop (59d62bae): EXACTLY 4 rows changed - ISO5055-MAINT, ISO5055-PERF, ISO5055-REL, ISO5055-SEC. No other rule changed class, note, cwes, strength or adoptability.",
+        "The derived note was NOT disturbed: ISO5055-SEC still reads 'A conformance control of ISO/IEC 5055:2021 itself - the standard this mapping measures against - stated at MEASURE granularity...', derived by statedReason() from the pack's own `standard` block per GT-666. The MAP entries added here carry `analysers` and nothing else.",
+        "node .harness/scripts/ci/65-validate-standards-rule-class.mjs -> all 16 rule(s) across 3 declaring pack(s) are classified `international-standard`, each with a note naming its own standard. This is GT-666's guard, run because it owns the claims this change must not disturb.",
+        "node src/rulesets/standards/iso-5055-mapping.test.mjs -> tests 9, pass 9, fail 0.",
+        "node .harness/scripts/ci/46-validate-derived-artifact-order.mjs -> the chain is current AND at a fixed point - replaying 8 link(s) in order changes nothing; 11 artifacts covered.",
+        "node .harness/scripts/ci/08-validate-tracking.mjs, 04-check-bilingual-parity.mjs, 01-validate-docs.mjs, 49-validate-gap-id-allocation.mjs -> pass."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Deliberately NOT done: no CWE was attached to any ISO5055-* row. Each rule is a whole ISO/IEC 5055 measure - an aggregate over 74, 74, 18 or 31 weaknesses - so listing them would count one rule as dozens of mappings and move adoptedFraction, which measures how much of the CORPUS the standard reaches rather than how many CWEs a row can name. It stays at 0.0898. Also deliberately NOT done: no per-rule note. GT-666 replaced a per-class sentence with a reason derived from each pack's own `standard` declaration, on the argument that one text asserted over every standard is true of none in particular; a hand-written note here would have reintroduced it. The 12 SSDF and SLSA rows keep adoptable 'no' - Evolith authored their handlers, which is what 'no' asserts, and their nativeEvaluability is native-handler so no backlog arithmetic depends on them. Carried in the same commit and unrelated to the backlog: the control-centre ATDM input table's stale '381 rules', a pre-existing drift from before GT-662/664/665."
     }
   ]
 }

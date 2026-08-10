@@ -1,4 +1,11 @@
-import { classifySarifResult, type Iso5055Index, type Iso5055Measure } from './iso-5055-measure';
+import { classifySarifResult, cwesOfSarifResult, type Iso5055Index, type Iso5055Measure } from './iso-5055-measure';
+import {
+  attributeCwes,
+  describeMapProvenance,
+  isEslintDriver,
+  withAttributedCwes,
+  type EslintCweMap,
+} from './eslint-cwe-map';
 
 /**
  * GT-663 — the ISO/IEC 5055 measurement reports its own denominator.
@@ -52,6 +59,31 @@ export interface Iso5055Coverage {
   /** Findings that carried no CWE at all — the analyser said nothing to map. */
   readonly untaggedFindings: number;
   readonly byMeasure: readonly Iso5055MeasureCoverage[];
+  /**
+   * GT-664 — how the in-scope findings got their CWEs, kept apart on purpose.
+   *
+   * `analyserAttributed` is what a tool tagged itself (CodeQL's
+   * `external/cwe/cwe-089`, semgrep's `properties.cwe`). `mapAttributed` is what
+   * Evolith's hand-written ESLint→CWE table inferred from a rule id, because
+   * ESLint declares no CWE for any rule. The second is a weaker claim than the
+   * first and a reader deciding whether to act on this measurement needs to see
+   * which one it rests on, so the two are never summed into one number here.
+   */
+  readonly analyserAttributedFindings: number;
+  readonly mapAttributedFindings: number;
+  /** Of `mapAttributedFindings`, those from a row the table marks `broad`. */
+  readonly broadlyMappedFindings: number;
+  /** Of `mapAttributedFindings`, those from a rule counting against a tenant threshold. */
+  readonly thresholdDependentFindings: number;
+}
+
+/** Optional producers a coverage run can take into account. */
+export interface Iso5055CoverageOptions {
+  /**
+   * The ESLint→CWE table. Applied ONLY to a run whose driver is ESLint and only
+   * to results the analyser left untagged — see `attributeCwes`.
+   */
+  readonly cweMap?: EslintCweMap;
 }
 
 const MEASURE_ORDER: readonly Iso5055Measure[] = [
@@ -68,7 +100,11 @@ const MEASURE_ORDER: readonly Iso5055Measure[] = [
  * `iso5055ViolationsFromSarif` does: reporting «0 of 138» from an index that is
  * not there is a compliance claim built on nothing.
  */
-export function iso5055CoverageFromSarif(log: string, index: Iso5055Index): Iso5055Coverage {
+export function iso5055CoverageFromSarif(
+  log: string,
+  index: Iso5055Index,
+  options: Iso5055CoverageOptions = {},
+): Iso5055Coverage {
   if (index.size === 0) {
     throw new Error(
       'ISO/IEC 5055 weakness index did not load (size 0). Refusing to report coverage ' +
@@ -86,6 +122,10 @@ export function iso5055CoverageFromSarif(log: string, index: Iso5055Index): Iso5
   const allObserved = new Set<number>();
   let outOfScope = 0;
   let untagged = 0;
+  let analyserAttributed = 0;
+  let mapAttributed = 0;
+  let broadlyMapped = 0;
+  let thresholdDependent = 0;
 
   let parsed: { runs?: unknown[] };
   try {
@@ -95,14 +135,24 @@ export function iso5055CoverageFromSarif(log: string, index: Iso5055Index): Iso5
   }
 
   for (const run of (parsed.runs ?? []) as Array<Record<string, unknown>>) {
-    const driver = (run.tool as { driver?: { rules?: unknown[] } } | undefined)?.driver;
+    const driver = (run.tool as { driver?: { name?: string; rules?: unknown[] } } | undefined)?.driver;
     const rules = new Map<string, unknown>();
     for (const meta of (driver?.rules ?? []) as Array<{ id?: string }>) {
       if (meta?.id) rules.set(meta.id, meta);
     }
+    // GT-664 — the table is a set of claims about ESLint core rule ids and about
+    // nothing else, so it is consulted only for a run ESLint produced.
+    const map = isEslintDriver(driver?.name) ? options.cweMap : undefined;
 
     for (const result of (run.results ?? []) as Array<Record<string, unknown>>) {
-      const finding = classifySarifResult(index, result, rules.get(String(result.ruleId ?? '')));
+      const ruleId = String(result.ruleId ?? '');
+      const ruleMeta = rules.get(ruleId);
+      const attributed = attributeCwes(ruleId, cwesOfSarifResult(result, ruleMeta), map);
+      const finding = classifySarifResult(
+        index,
+        withAttributedCwes(result, attributed.all),
+        ruleMeta,
+      );
 
       if (finding.cwes.length === 0) {
         // Counted separately on purpose. A finding the analyser never tagged is
@@ -115,6 +165,16 @@ export function iso5055CoverageFromSarif(log: string, index: Iso5055Index): Iso5
       if (finding.iso5055Cwes.length === 0) {
         outOfScope += 1;
         continue;
+      }
+
+      // GT-664 — counted here, on the in-scope findings only, because this is
+      // the number that stands behind the per-measure figures a reader acts on.
+      if (attributed.provenance === 'evolith-eslint-map') {
+        mapAttributed += 1;
+        if (attributed.mapped.some((e) => e.confidence === 'broad')) broadlyMapped += 1;
+        if (map?.isThresholdDependent(ruleId)) thresholdDependent += 1;
+      } else {
+        analyserAttributed += 1;
       }
 
       for (const cwe of finding.iso5055Cwes) allObserved.add(cwe);
@@ -139,6 +199,10 @@ export function iso5055CoverageFromSarif(log: string, index: Iso5055Index): Iso5
       total: totals.get(measure) ?? 0,
       findings: findings.get(measure) ?? 0,
     })),
+    analyserAttributedFindings: analyserAttributed,
+    mapAttributedFindings: mapAttributed,
+    broadlyMappedFindings: broadlyMapped,
+    thresholdDependentFindings: thresholdDependent,
   };
 }
 
@@ -155,6 +219,20 @@ export function describeIso5055Coverage(coverage: Iso5055Coverage): string {
     .map((m) => `${m.measure} ${m.observed}/${m.total}`)
     .join(', ');
 
+  // GT-664 — appended only when part of the measurement rests on Evolith's own
+  // table. A run whose CWEs all came from the analyser reads exactly as it did
+  // before, and a run that leans on our inference says so in the same breath as
+  // the number, where it cannot be read past.
+  const provenance =
+    coverage.mapAttributedFindings > 0
+      ? ' ' +
+        describeMapProvenance(
+          coverage.mapAttributedFindings,
+          coverage.broadlyMappedFindings,
+          coverage.thresholdDependentFindings,
+        )
+      : '';
+
   return (
     `ISO/IEC 5055: the configured analyser reported ${coverage.observedWeaknesses} of the ` +
     `${coverage.standardWeaknesses} weaknesses this standard names` +
@@ -162,6 +240,7 @@ export function describeIso5055Coverage(coverage: Iso5055Coverage): string {
     `. That is a FLOOR, not coverage: it counts what was FOUND, and says nothing about how many ` +
     `of the remaining ${coverage.standardWeaknesses - coverage.observedWeaknesses} the analyser ` +
     `even looks for. ${coverage.outOfScopeFindings} finding(s) carried a CWE outside the standard ` +
-    `and ${coverage.untaggedFindings} carried none at all.`
+    `and ${coverage.untaggedFindings} carried none at all.` +
+    provenance
   );
 }

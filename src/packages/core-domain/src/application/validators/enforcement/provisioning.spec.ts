@@ -126,6 +126,25 @@ describe('SandboxedProcessRunner (GT-512 PA-04 — hardens the GT-514 IProcessRu
     expect(reached).toBe(false);
   });
 
+  it('clamps a spec timeout to the policy ceiling — a rule may shorten it, never lengthen it', async () => {
+    // GT-664 made the enforcer wall clock settable per rule
+    // (`enforce.config.timeoutMs`), and a rule is tenant-supplied content. The
+    // policy timeout has to be a ceiling rather than a default, or a ruleset
+    // could hand the host a run longer than the host said it would allow.
+    let seen: ProcessSpec | undefined;
+    const inner = { run: async (s: ProcessSpec) => { seen = s; return { exitCode: 0, stdout: '', stderr: '' }; } };
+    const runner = new SandboxedProcessRunner(inner, { ...DEFAULT_SANDBOX_POLICY, timeoutMs: 30_000 });
+
+    await runner.run({ command: 'depcruise', args: [], timeoutMs: 5_000 });
+    expect(seen?.timeoutMs).toBe(5_000);
+
+    await runner.run({ command: 'depcruise', args: [], timeoutMs: 600_000 });
+    expect(seen?.timeoutMs).toBe(30_000);
+
+    await runner.run({ command: 'depcruise', args: [] });
+    expect(seen?.timeoutMs).toBe(30_000);
+  });
+
   it('strips secret env before delegating (defense in depth)', async () => {
     let seen: ProcessSpec | undefined;
     const inner = { run: async (s: ProcessSpec) => { seen = s; return { exitCode: 0, stdout: '', stderr: '' }; } };

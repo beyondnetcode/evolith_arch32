@@ -3,14 +3,14 @@
   "scope": "evolith-core",
   "asOf": "2026-08-08",
   "gaps": {
-    "total": 661,
-    "done": 649,
+    "total": 662,
+    "done": 650,
     "pending": 0,
     "inProgress": 2,
     "deferred": 10
   },
   "evidence": {
-    "closureRecords": 631,
+    "closureRecords": 632,
     "cliPackage": "@beyondnet/evolith-cli@1.2.2",
     "adrCount": 140,
     "rulesetCount": 179,

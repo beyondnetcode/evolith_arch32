@@ -6,7 +6,7 @@ import { RulesetsNotFoundError } from '@beyondnet/evolith-core-domain/domain/por
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
 import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
-import { resolveSatellitePath } from '../../infrastructure/paths/satellite-resolver';
+import { resolveSatelliteDetailed } from '../../infrastructure/paths/satellite-resolver';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
@@ -15,7 +15,7 @@ import {
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
-import { CLI_EXIT_CODES, exitWith } from '../../infrastructure/cli/exit-codes';
+import { CLI_EXIT_CODES, exitCodeForErrorCode, exitWith } from '../../infrastructure/cli/exit-codes';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -199,10 +199,43 @@ export class ValidateCommand extends BaseEvolithCommand {
 
     // ADR-0109: unified satellite resolution — explicit --satellite →
     // nearest-ancestor evolith.yaml from cwd → profile.satellite → cwd.
-    const satellitePath = resolveSatellitePath({
+    const satellite = resolveSatelliteDetailed({
       explicit: options?.satellite,
       profileSatellite: this.profile.satellite,
     });
+
+    // GT-664 — the terminal `cwd` fallback is "nobody named a satellite": no
+    // --satellite, no evolith.yaml anywhere above the working directory, no
+    // profile. ADR-0109 keeps it so a command can report the absence itself,
+    // and `validate` reports it HERE, before anything runs.
+    //
+    // It used to report it by validating the directory anyway. That was cheap
+    // while every `enforce:` rule was inert; since the enforcer subsystem was
+    // reconnected in this same gap, `validate` spawns external analysers over
+    // the tree it was pointed at, and pointing them at an arbitrary working
+    // directory is a repository-wide scan nobody asked for. The verdict it
+    // produced was worthless anyway: 400-odd rules failing against a directory
+    // that is not a satellite is not a governance finding.
+    //
+    // Exit 1 rather than 3, derived from the envelope code rather than asserted:
+    // `NOT_A_SATELLITE` is already mapped in the GT-580 taxonomy as a tool
+    // failure — the command could not reach a verdict — and it must not start
+    // disagreeing with itself here.
+    if (satellite.source === 'cwd') {
+      const message =
+        `No satellite to validate: ${satellite.path} declares no evolith.yaml, no ancestor ` +
+        'directory does either, and no --satellite or profile satellite was given. ' +
+        'Nothing was evaluated and nothing was scanned. Run from inside the satellite, ' +
+        'pass --satellite <path>, or set one with `evolith config`.';
+      if (json) {
+        console.log(JSON.stringify(createErrorEnvelope('NOT_A_SATELLITE', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        this.promptService.showError(message);
+        this.promptService.showOutro('Validación abortada: no hay satélite.');
+      }
+      exitWith(exitCodeForErrorCode('NOT_A_SATELLITE'));
+    }
+    const satellitePath = satellite.path;
 
     // GT-456: resolve the Core rulesets root so validation works from ANY satellite,
     // not just from inside the Core monorepo. Order: --core → EVOLITH_CORE_PATH →

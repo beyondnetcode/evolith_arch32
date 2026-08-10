@@ -329,10 +329,10 @@ SEC-RL-02,security/rate-limiting.rules.json,code-structure,CWE-789,Security,part
 SEC-RL-03,security/rate-limiting.rules.json,code-structure,,,none,no,unimplemented-native
 SEC-TIMING-01,security/timing-safe-comparison.rules.json,code-structure,,,none,yes,unimplemented-native
 SEC-TIMING-02,security/timing-safe-comparison.rules.json,code-structure,,,none,partial,unimplemented-native
-ISO5055-MAINT,standards/iso-5055.rules.json,international-standard,,,none,no,unimplemented-native
-ISO5055-PERF,standards/iso-5055.rules.json,international-standard,,,none,no,unimplemented-native
-ISO5055-REL,standards/iso-5055.rules.json,international-standard,,,none,no,unimplemented-native
-ISO5055-SEC,standards/iso-5055.rules.json,international-standard,,,none,no,unimplemented-native
+ISO5055-MAINT,standards/iso-5055.rules.json,international-standard,,,none,yes,unimplemented-native
+ISO5055-PERF,standards/iso-5055.rules.json,international-standard,,,none,yes,unimplemented-native
+ISO5055-REL,standards/iso-5055.rules.json,international-standard,,,none,yes,unimplemented-native
+ISO5055-SEC,standards/iso-5055.rules.json,international-standard,,,none,yes,unimplemented-native
 SLSA-AUTH-L2,standards/slsa-v1.rules.json,international-standard,,,none,no,native-handler
 SLSA-BUILD-L1,standards/slsa-v1.rules.json,international-standard,,,none,no,native-handler
 SLSA-HOSTED-L2,standards/slsa-v1.rules.json,international-standard,,,none,no,native-handler

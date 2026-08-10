@@ -26,6 +26,20 @@
  * analyser yields a necessary-but-not-sufficient signal; `no` means the
  * predicate is repository- or product-specific and must be authored.
  *
+ * ADOPTABILITY, WHEN THE RULE DECLARES ITS OWN ANALYSER (GT-667)
+ * --------------------------------------------------------------
+ * Those three words are a definition, and until GT-667 the four `ISO5055-*`
+ * rules were published against it as `no` — «the predicate is repository- or
+ * product-specific and must be authored» — while `GT-662`…`GT-664` had already
+ * shipped that pack as an ADAPTER over a free analyser's SARIF. Nothing had to
+ * be authored; the analyser decides it today. So the mapping asserted, of rules
+ * whose whole design is adoption, that they were the opposite.
+ *
+ * The correction is DERIVED, following GT-666: a rule that names an analyser in
+ * `enforce.config.analyser` is stating in its own document that an off-the-shelf
+ * analyser produces its findings, which is the `yes` definition verbatim. See
+ * `declaredAnalyser` for why that field and not `enforce.tool`.
+ *
  * RULE CLASSES (GT-666)
  * ---------------------
  * `ruleClass` says what KIND of thing a rule constrains, and it is derived, never
@@ -94,6 +108,11 @@ const STANDARDS_DIR = 'standards/';
  * has one. That block is what a standards pack DECLARES about itself, and it is
  * the classification signal (GT-666); carrying it here is what stops the
  * classifier from having to guess from a path.
+ *
+ * Each row additionally carries the analyser the RULE declares for itself, when
+ * it declares one (GT-667). Same principle one level down: it is a statement the
+ * rule makes about how it is decided, so adoptability is read from the corpus
+ * rather than asserted about it in a table over here.
  */
 function extractRules(file) {
   const rel = path.relative(RULESETS, file).split(path.sep).join('/');
@@ -112,6 +131,7 @@ function extractRules(file) {
         severity: String(r.severity ?? ''),
         category: String(r.category ?? ''),
         declaredStandard,
+        declaredAnalyser: declaredAnalyser(r),
       }));
   } else if (parsed.id && (parsed.name || parsed.title)) {
     // Single-rule file: the rule metadata sits at the document root.
@@ -122,6 +142,7 @@ function extractRules(file) {
       severity: String(parsed.severity ?? ''),
       category: String(parsed.category ?? ''),
       declaredStandard,
+      declaredAnalyser: declaredAnalyser(parsed),
     }];
   }
   // Gate definitions and topology recommendations are not conformance rules,
@@ -143,6 +164,44 @@ function extractRules(file) {
   }
 
   return rows;
+}
+
+/**
+ * The analyser a rule declares as the thing that decides it, or `null`.
+ *
+ * WHY `enforce.config.analyser` AND NOT `enforce.tool` (GT-667)
+ * -------------------------------------------------------------
+ * Both fields name third-party software, and only one of them says who authored
+ * the predicate — which is the question `adoptable` asks. Measured over the
+ * whole corpus on 2026-08-09: 10 of 412 rules carry an `enforce` block, 6 of
+ * them `tool: dependency-cruiser` and 4 of them `config.analyser`.
+ *
+ * Those six are the counterexample that settles it. `HXA-07` declares
+ * dependency-cruiser and then supplies the rule itself —
+ * `from: ^src/(domain|core)/.+\.(spec|test)\.ts$`, `to:
+ * node_modules/(@nestjs/testing|testcontainers)/`. dependency-cruiser is the
+ * ENGINE; the predicate is Evolith's, written against this repository's own
+ * directory layout, and «repository-specific and must be authored» is exactly
+ * what it is. Deriving from `enforce.tool` would have flipped `HXA-06` and
+ * `HXA-07` to `yes` on the strength of a third-party binary appearing in the
+ * clause, which is not the claim.
+ *
+ * `enforce.config.analyser` is the other relationship. The ISO/IEC 5055 pack
+ * states it in its own description — «Evolith supplies the CWE→measure
+ * translation; the analyser supplies the findings» — so the analyser's OWN
+ * ruleset produces the verdict and Evolith writes no predicate at all. That is
+ * the `yes` definition, and the field is a declaration the rule makes about
+ * itself, so it travels with the rule the way GT-666's `standard` block travels
+ * with the pack.
+ *
+ * @param {object} rule a rule object as it appears in a `*.rules.json`
+ * @returns {string|null} the declared analyser, trimmed, or null
+ */
+function declaredAnalyser(rule) {
+  const declared = rule?.enforce?.config?.analyser;
+  if (typeof declared !== 'string') return null;
+  const trimmed = declared.trim();
+  return trimmed === '' ? null : trimmed;
 }
 
 // ---------------------------------------------------------------------------
@@ -284,6 +343,11 @@ function internationalStandardReason(std, measuredStandard) {
  *               `partial` the weakness is a proxy or covers part of the rule.
  * `adoptable` — `yes` / `partial` / `no` (see the header).
  * `analysers` — concrete, existing checks. Named so the claim is falsifiable.
+ *
+ * This table is the FALLBACK, not the authority: a rule that declares its own
+ * analyser in `enforce.config.analyser` is read from the corpus instead, and a
+ * MAP row that disagrees with such a declaration fails the build rather than
+ * losing quietly. See `adoptability`.
  */
 const MAP = {
   // --- security/ : the part of the corpus that is squarely inside 5055 -------
@@ -484,6 +548,55 @@ function statedReason(kind, declaredStandard, measuredStandard) {
   return reason;
 }
 
+/**
+ * The `analyser` block of a row: can an off-the-shelf analyser decide this rule,
+ * and which one — named, so the claim is falsifiable.
+ *
+ * The rule's own declaration is the primary signal and the MAP table is the
+ * fallback, which is the same precedence GT-666 established for `ruleClass`: a
+ * statement the corpus makes about itself beats a statement made about the
+ * corpus from a table in the generator.
+ *
+ * WHY `yes` AND NOT `partial` FOR A DECLARING RULE. `partial` means «an analyser
+ * yields a necessary-but-not-sufficient signal; the rest is ours». It is
+ * tempting to reach for it here, because the shipped ESLint path attributes only
+ * 11 of the 138 weaknesses (`GT-664`) — but that is a statement about COVERAGE,
+ * and the remainder is not Evolith's to author. It is closed by a tenant
+ * pointing the same adapter at a better analyser. `adoptable` sizes handler
+ * work, and the handler work here is zero. Coverage is reported where it belongs:
+ * the pack's `notEvaluableHere` block and the `GT-569` advisory.
+ *
+ * WHY `examples` NAMES THE DECLARED ANALYSER. An `adoptable: yes` row with an
+ * empty `examples` is precisely the unfalsifiable claim this artifact exists to
+ * remove — the reader is told an analyser decides the rule and given no way to
+ * check which. The declared value is read from the rule rather than listed here,
+ * so it is the analyser that will actually run, and a corpus whose tenant has
+ * switched to `semgrep` regenerates to say `semgrep`. An enumerated alternatives
+ * list would be stale the moment the config changed, and would be this
+ * generator asserting over the corpus again.
+ *
+ * DISAGREEMENT IS A HARD FAILURE, never a silent winner. If a rule declares an
+ * analyser and MAP also claims an adoptability for it, one of the two is wrong
+ * and the build says so instead of quietly preferring one.
+ *
+ * @param {string} ruleId
+ * @param {object|undefined} mapEntry the rule's row in MAP, if it has one
+ * @param {string|null} declared the analyser the rule declares for itself
+ */
+function adoptability(ruleId, mapEntry, declared) {
+  if (declared) {
+    if (mapEntry?.adoptable && mapEntry.adoptable !== 'yes') {
+      throw new Error(
+        `${ruleId} declares \`enforce.config.analyser: "${declared}"\` — an off-the-shelf analyser decides it — ` +
+          `but MAP claims \`adoptable: '${mapEntry.adoptable}'\`. One of the two is wrong. Fix the rule's ` +
+          'declaration if the analyser does not decide it, or drop the `adoptable` claim from MAP if it does.',
+      );
+    }
+    return { adoptable: 'yes', examples: [declared] };
+  }
+  return { adoptable: mapEntry?.adoptable ?? 'no', examples: mapEntry?.analysers ?? [] };
+}
+
 // ---------------------------------------------------------------------------
 // 3. Build
 // ---------------------------------------------------------------------------
@@ -590,10 +703,7 @@ function build() {
         measures,
         strength: m?.strength ?? 'none',
       },
-      analyser: {
-        adoptable: m?.adoptable ?? 'no',
-        examples: m?.analysers ?? [],
-      },
+      analyser: adoptability(r.ruleId, m, r.declaredAnalyser),
       // Why the rule does not run natively today, from the captured Core triage.
       // `not-in-snapshot` means the Core corpus loader does not see this rule at
       // all (single-rule infrastructure files), which is itself worth knowing.

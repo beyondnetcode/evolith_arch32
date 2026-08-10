@@ -54,7 +54,7 @@ Against **412 rules** in 180 ruleset files:
 | — of which the mapping is direct | 8 | |
 | — of which the mapping is a partial / proxy | 29 | |
 | Rules with no international equivalent (each with a stated reason) | 375 | 91.0% |
-| Rules an existing analyser could decide outright | 42 | 10.2% |
+| Rules an existing analyser could decide outright | 46 | 11.2% |
 | Rules an analyser could decide partially | 23 | 5.6% |
 
 **The adopted fraction is 9.0% of the corpus.** That is a real result and it is smaller than the gap's
@@ -90,6 +90,42 @@ Each row's note is derived from that same declaration, so it names the standard 
 belongs to. A class-wide sentence would have been the same defect one level down: one text asserted
 over every standard, true of none of them in particular.
 
+### Adoptability, when the rule declares its own analyser
+
+`analyser.adoptable` was derived the same way in GT-667, and for the same reason: the four `ISO5055-*`
+rows were published as `no` — *"the predicate is repository- or product-specific and must be authored"*
+— when GT-662…GT-664 had already shipped that pack as an **adapter over a free analyser's SARIF**.
+Nothing had to be authored. The mapping asserted, of the four rules whose entire design is adoption,
+the opposite of what they are.
+
+The signal is the rule's own `enforce.config.analyser`, which **4 of the 412 rules carry** — all four of
+them these. `enforce.tool` was the wrong field and the corpus says why: 10 rules carry an `enforce`
+block, and 6 of them name `dependency-cruiser` while supplying the predicate themselves. `HXA-07`
+declares the tool and then writes the rule — `from: ^src/(domain|core)/.+\.(spec|test)\.ts$`,
+`to: node_modules/(@nestjs/testing|testcontainers)/`. There dependency-cruiser is the *engine* and the
+predicate is Evolith's, written against this repository's layout, which is `no` by the definition
+above. Deriving from `enforce.tool` would have flipped `HXA-06` and `HXA-07` on the strength of a
+third-party binary appearing in the clause. `enforce.config.analyser` names the other relationship, the
+one the ISO pack states in its own description: *Evolith supplies the CWE→measure translation; the
+analyser supplies the findings.*
+
+`yes` rather than `partial`, deliberately. The shipped ESLint path reaches only 11 of the 138
+weaknesses, but that is **coverage**, and the remainder is not ours to author — it is closed by a tenant
+pointing the same adapter at a better analyser. `adoptable` sizes handler work, and the handler work
+here is zero. Coverage is reported where it belongs: the pack's `notEvaluableHere` block and the GT-569
+advisory.
+
+`analyser.examples` now names the declared analyser (`eslint`, the shipped default) instead of sitting
+empty. An `adoptable: yes` row with no analyser named is exactly the unfalsifiable claim this artifact
+exists to remove; and because the value is read from the rule, a corpus configured for `semgrep`
+regenerates to say `semgrep`, where an enumerated list would go stale the moment the config changed.
+
+A rule that declares an analyser **and** carries a conflicting `adoptable` in the generator's `MAP`
+table fails the build. One of the two is wrong, and neither should win quietly.
+
+The eight SSDF and four SLSA rules stay at `no`, and that is a verdict rather than an omission — see
+[Reading a row](#reading-a-row).
+
 ## Re-scoping the handler backlog
 
 The gap statement sized the payoff against "~240 handlers to write". **That figure is already
@@ -113,20 +149,27 @@ Folding this mapping onto that class is the number that matters:
 
 | Of the 52-rule handler backlog | Count |
 |---|---|
-| Decidable today by an off-the-shelf analyser | 5 |
+| Decidable today by an off-the-shelf analyser | 9 |
 | Decidable partially (analyser gives a necessary-but-not-sufficient signal) | 5 |
-| Genuinely has to be authored | 42 |
+| Genuinely has to be authored | 38 |
 
-The 5 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
-`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries) and `SEC-TIMING-01` (timing-safe
-comparison). The 5 partials are listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON.
+The 9 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
+`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries), `SEC-TIMING-01` (timing-safe
+comparison) and the four `ISO5055-*` rules, which declare their analyser themselves. The 5 partials are
+listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON.
 
-So adoption is worth **9.6% of the backlog outright, 19.2% including partials** — 10 of 52 rules that
-do not need bespoke handlers. Both shares fell when the backlog shrank, and that is the right
-direction: the twelve rules closed on 2026-07-29 include `HXA-01`, `HXA-02`, `HXA-04` and `GIT-08`,
-which were four of the nine this table used to offer to an analyser. Evolith wrote the handler first.
-What is left leans further toward authoring, and the security rules still point at analysers better
-than anything we would write.
+So adoption is worth **17.3% of the backlog outright, 26.9% including partials** — 14 of 52 rules that
+do not need bespoke handlers.
+
+5 → 9 on 2026-08-09 (GT-667): the four ISO/IEC 5055 rules were counted as work to author while being
+decided by an analyser, so `remainderToAuthor` overstated the real backlog by four. **The share moved
+because the description was corrected, not because anything was adopted** — nothing shipped between the
+two figures, and reading this jump as progress would be reading a fixed measurement as a result.
+
+The direction before that was the other way. The twelve rules closed on 2026-07-29 include `HXA-01`,
+`HXA-02`, `HXA-04` and `GIT-08`, which were four of the nine this table used to offer to an analyser:
+Evolith wrote the handler first, and both shares fell when the backlog shrank. What is left still leans
+toward authoring, and the security rules still point at analysers better than anything we would write.
 
 ## Companion taxonomy: ISO/IEC 25010:2023
 
@@ -144,6 +187,20 @@ stale, and `iso-5055-mapping.test.mjs` fails the build if anything in this direc
 - `yes` — an off-the-shelf analyser already decides this predicate; the work is an adapter.
 - `partial` — an analyser yields a necessary-but-not-sufficient signal; the rest is ours.
 - `no` — the predicate is repository- or product-specific and must be authored.
+
+It is derived from the rule's own `enforce.config.analyser` when the rule declares one, and otherwise
+from the generator's `MAP` table. `analyser.examples` names concrete checks so the claim is falsifiable;
+for a declaring rule it is the analyser the rule names.
+
+**The SSDF and SLSA rules stay at `no`, and the twelve of them are the interesting case**, because
+`international-standard` is the same rule class as the four that moved. They carry no `enforce` block
+at all: `SsdfRuleHandler` and `SlsaRuleHandler` decide them natively. That is not an accident of who got
+around to writing what — no off-the-shelf analyser answers *"does this repository satisfy SSDF PW.4.1"*
+or *"is provenance distributed with every published artifact"*. Those predicates read this repository's
+own workflows, manifests and evidence, which is «repository-specific» verbatim, so the work genuinely
+had to be authored, and it was (`GT-659`, `GT-665`). `no` is the true verdict for them and `yes` is the
+true verdict for the four ISO/IEC 5055 rules, and the difference is visible in the corpus rather than
+argued here: one pack declares an analyser, the other two ship a handler.
 
 `nativeEvaluability` is copied from the Core triage snapshot. The authority for it is
 `src/packages/core-domain/src/application/validators/rule-evaluability.ts` and its pinned spec; if the

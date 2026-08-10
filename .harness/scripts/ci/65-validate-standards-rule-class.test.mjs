@@ -12,6 +12,10 @@
  * generator and watched fail. The two that pass either way are labelled
  * REGRESSION rather than counted as proof of the fix.
  *
+ * GT-668 — that real pre-fix artifact is now a COMMITTED fixture
+ * (`.harness/fixtures/standards-rule-class/iso-5055-mapping.pre-gt-666.json`)
+ * rather than a `git show` of a moving branch ref. See `PRE_FIX_FIXTURE` below.
+ *
  * Run it with:  node --test .harness/scripts/ci/65-validate-standards-rule-class.test.mjs
  */
 import { test, describe } from 'node:test';
@@ -35,8 +39,26 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GUARD = path.join(HERE, '65-validate-standards-rule-class.mjs');
 const REPO_ROOT = path.resolve(HERE, '../../..');
 
-/** The last commit that carried the defect. `develop` is where this branch left. */
-const PRE_FIX_REF = process.env.GT666_PRE_FIX_REF ?? 'origin/develop';
+/**
+ * The pre-fix artifact, COMMITTED (GT-668).
+ *
+ * This used to be `git show origin/develop:<mapping>` — evidence anchored to a
+ * moving ref, which is not evidence. It read the defect for exactly as long as
+ * the fix lived on a branch; the moment GT-666 merged, `origin/develop` began
+ * serving the CORRECTED artifact and the case asserting 64 findings found 0. A
+ * test whose meaning changes without anyone editing it cannot be relied on to
+ * mean anything. Worse, it carried a shallow-clone skip, so in a slightly
+ * different checkout the same rot would have passed in silence.
+ *
+ * The intent — a REAL pre-fix artifact rather than a reconstruction, because a
+ * reconstruction only ever agrees with whatever the author believed was wrong —
+ * was right, and is preserved by freezing the artifact in the repository instead
+ * of fetching it at test time. See the fixture's own `_fixture` header.
+ */
+const PRE_FIX_FIXTURE = path.join(
+  REPO_ROOT,
+  '.harness/fixtures/standards-rule-class/iso-5055-mapping.pre-gt-666.json',
+);
 
 /** The reason text the defect published, verbatim from the pre-fix artifact. */
 const GOVERNANCE_NOTE =
@@ -272,23 +294,39 @@ describe('65-validate-standards-rule-class', () => {
 
   test('the REAL pre-fix artifact, against the REAL packs, is RED — 16 rules, 4 findings each', () => {
     // The strongest available fixture: the mapping exactly as it was committed
-    // before this fix, read out of git rather than reconstructed, checked against
-    // today's packs. Reconstructed fixtures agree with whatever the author
-    // believed was wrong; this one cannot.
-    const before = spawnSync('git', ['show', `${PRE_FIX_REF}:${MAPPING_FILE}`], {
-      cwd: REPO_ROOT,
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    });
-    if (before.status !== 0) {
-      // A shallow clone or a detached history cannot answer this. Skipping is
-      // honest; passing silently would not be.
-      return void assert.ok(true, `SKIPPED: git show ${PRE_FIX_REF}:${MAPPING_FILE} is unavailable here`);
-    }
+    // before GT-666, checked against today's packs. Reconstructed fixtures agree
+    // with whatever the author believed was wrong; this one cannot — its body is
+    // byte-identical to the blob GT-666's parent commit carried.
+    //
+    // No skip and no env override on purpose. Both were escape hatches out of the
+    // one case that proves the guard was ever observed failing, and an escape
+    // hatch out of THAT can only ever hide a failure. The fixture is in the
+    // repository, so there is no checkout in which this cannot be answered; if it
+    // is unreadable, the right outcome is red.
+    const mapping = JSON.parse(readFileSync(PRE_FIX_FIXTURE, 'utf8'));
     const { packs } = findPacks(REPO_ROOT);
-    const findings = checkClassification({ packs, undeclaredInDir: [], mapping: JSON.parse(before.stdout) });
+    const findings = checkClassification({ packs, undeclaredInDir: [], mapping });
     assert.equal(findings.length, 64, 'each of the 16 rules should fail the class rule, the naming rule and both false-claim rules');
     assert.equal(findings.filter((f) => /is classified `governance`/.test(f.message)).length, 16);
+  });
+
+  test('the frozen fixture is still the DEFECT, not a refresh of the fixed mapping', () => {
+    // The failure mode this fixture invites: somebody "updates" it from the live
+    // artifact, every assertion above still passes shape-wise with zero findings,
+    // and the only observed failure of this guard quietly becomes a copy of the
+    // thing it catches. The 64/16 counts above already go red if that happens;
+    // this states the reason out loud, and pins that the fixture is NOT the file
+    // the repository ships today.
+    const frozen = JSON.parse(readFileSync(PRE_FIX_FIXTURE, 'utf8'));
+    const live = JSON.parse(readFileSync(path.join(REPO_ROOT, MAPPING_FILE), 'utf8'));
+    assert.match(frozen._fixture ?? '', /FROZEN NEGATIVE FIXTURE/, 'the fixture lost its provenance header');
+    const keyOf = (r) => `${r.ruleId}@${r.sourceFile}`;
+    const frozenRows = new Map(frozen.rules.map((r) => [keyOf(r), r]));
+    const standardsRows = live.rules.filter((r) => r.ruleClass === STANDARD_CLASS).map(keyOf);
+    assert.equal(standardsRows.length, 16, 'the live mapping should carry 16 international-standard rows');
+    for (const key of standardsRows) {
+      assert.equal(frozenRows.get(key)?.ruleClass, 'governance', `${key} is no longer frozen at the defect`);
+    }
   });
 
   // --- REGRESSION (passes before and after the fix; kept, not counted as proof)

@@ -226,9 +226,19 @@ export class SandboxedProcessRunner implements IProcessRunner {
     if (!decision.allowed) {
       throw new Error(`Sandbox policy denied '${spec.command}': ${decision.violations.join('; ')}`);
     }
+    // GT-664 — the policy's wall clock is a CEILING, not just a default. A spec
+    // may ask for less time and get it; asking for more is ignored. The wall
+    // clock is now settable per rule (`enforce.config.timeoutMs`), and a rule is
+    // tenant-supplied content: without the clamp, a ruleset could hand the host
+    // a ten-minute analyser run the host's own policy says it will not host.
+    const requested = spec.timeoutMs;
+    const bounded =
+      requested !== undefined && Number.isFinite(requested) && requested > 0
+        ? Math.min(requested, this.policy.timeoutMs)
+        : this.policy.timeoutMs;
     const timedSpec: ProcessSpec = {
       ...sanitizeEnv(spec, this.policy),
-      timeoutMs: spec.timeoutMs ?? this.policy.timeoutMs,
+      timeoutMs: bounded,
     };
     return this.inner.run(timedSpec);
   }

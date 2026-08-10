@@ -9,6 +9,15 @@ export type {
   ProcessResult,
   EnforcerRuntime,
 } from './application/validators/enforcement/enforcer.types';
+export { PROCESS_TIMEOUT_EXIT_CODE } from './application/validators/enforcement/enforcer.types';
+// GT-664 — the enforcer wall clock. A tool that exceeds it SKIPs the rules
+// routed to it; it is never read as "0 violations → passed".
+export {
+  DEFAULT_ENFORCER_TIMEOUT_MS,
+  ENFORCER_TIMEOUT_GRACE_MS,
+  EnforcerTimeoutError,
+  resolveEnforcerTimeoutMs,
+} from './application/validators/enforcement/shell-enforcer-adapter';
 // Enforcer OTel metrics port (GT-519 · EAG-14 — AC3). The public seam a host maps onto a real
 // OpenTelemetry `Meter` so enforcer runs emit duration/failure/timeout/violation telemetry. Ships
 // a zero-cost noop default + an in-memory recorder; core-domain never depends on the OTel SDK.

@@ -54,6 +54,19 @@ export interface ProcessResult {
 }
 
 /**
+ * Conventional exit code for a process killed after exceeding its wall clock.
+ *
+ * GT-664 — declared HERE, in the port, rather than privately inside the infra
+ * runner that produces it. Two parties have to agree on this number for a
+ * timeout to be recognised: the runner that sets it and
+ * {@link ShellEnforcerAdapter}, which treats it as "the tool never finished" and
+ * SKIPs the rule. When each kept its own copy, the two could drift and the
+ * consequence of the drift is the failure mode this corpus keeps finding — a
+ * tool that did not run being read as a clean repository.
+ */
+export const PROCESS_TIMEOUT_EXIT_CODE = 124;
+
+/**
  * Runs a subprocess. GT-514 depends only on this PORT; the production, sandboxed
  * implementation (restore, no egress, ulimits/cgroups, binary allowlist) is GT-512.
  * Core intentionally ships NO unsandboxed default runner.

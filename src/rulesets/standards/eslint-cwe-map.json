@@ -1,0 +1,221 @@
+{
+  "$id": "https://evolith.dev/rulesets/standards/eslint-cwe-map.json",
+  "title": "ESLint rule → CWE, for the ISO/IEC 5055 measurement",
+  "description": "A hand-authored table from ESLint core rule ids to the CWE identifiers ISO/IEC 5055:2021 names. ESLint declares no CWE for any of its rules, so every row here is a claim a human made and can be argued with — which is a different, weaker confidence class from a CodeQL rule that tags itself `external/cwe/cwe-089`.",
+  "version": "1.0.0",
+  "provenance": {
+    "class": "human-claim",
+    "whatThisIs": "A reading of each ESLint rule's own documented purpose against each CWE's own Description, written by a person and reviewable line by line. The `rationale` on every row is the argument; if the argument is wrong, the row is wrong.",
+    "whatThisIsNot": "Anything ESLint says. ESLint rule metadata carries `description`, `recommended` and `helpUri` and NO taxonomy identifier of any kind — there is no CWE, no OWASP, no CERT field to read. Nothing in this file was produced by running a tool, and no row may ever be presented as one.",
+    "whyItIsSeparableInTheReport": "A finding whose CWE the analyser declared and a finding whose CWE we inferred are not the same evidence. Collapsing them would let a table written in an afternoon inherit the authority of a static analyser's own taxonomy work, so the adapter keeps the two apart all the way into the violation message and the coverage advisory.",
+    "confidenceLevels": {
+      "exact": "The ESLint rule's documented purpose and the CWE's Description name the same defect. A finding is an instance of the weakness.",
+      "broad": "The rule fires on a set that CONTAINS the weakness but is wider than it, or the CWE is phrased for a language family that JavaScript is read into by analogy. A finding is evidence of the weakness, not proof of it. Every `broad` row says which way it is loose."
+    },
+    "verifiedAgainst": {
+      "eslint": "9.39.4 — rule ids and `meta.docs.description` read from the installed package, not from memory",
+      "cwe": "cwe.mitre.org definition pages, read 2026-08-09; Description / Extended Description / Applicable Languages quoted in the rationales",
+      "iso5055Index": "src/rulesets/standards/iso-5055-weaknesses.json — every `cwe` below is one of the 138 the standard names",
+      "scope": "ESLint CORE rules only. A plugin rule id means whatever the installed plugin version means, and this file cannot claim that."
+    },
+    "regenerateCompiledCopy": "node .harness/scripts/generate-eslint-cwe-map.mjs"
+  },
+  "entries": [
+    {
+      "ruleId": "no-fallthrough",
+      "eslintDescription": "Disallow fallthrough of `case` statements",
+      "cwe": 484,
+      "cweName": "Omitted Break Statement in Switch",
+      "confidence": "exact",
+      "rationale": "CWE-484: «The product omits a break statement within a switch or similar construct, causing code associated with multiple conditions to execute.» That is the rule's subject sentence for sentence."
+    },
+    {
+      "ruleId": "default-case",
+      "eslintDescription": "Require `default` cases in `switch` statements",
+      "cwe": 478,
+      "cweName": "Missing Default Case in Multiple Condition Expression",
+      "confidence": "exact",
+      "rationale": "CWE-478: «The code does not have a default case in an expression with multiple conditions, such as a switch statement.» The rule requires exactly that default case."
+    },
+    {
+      "ruleId": "no-unreachable",
+      "eslintDescription": "Disallow unreachable code after `return`, `throw`, `continue`, and `break` statements",
+      "cwe": 561,
+      "cweName": "Dead Code",
+      "confidence": "exact",
+      "rationale": "CWE-561: «The product contains dead code, which can never be executed… The surrounding code makes it impossible for a section of code to ever be executed.» A statement after `return` is that, by construction."
+    },
+    {
+      "ruleId": "no-dupe-else-if",
+      "eslintDescription": "Disallow duplicate conditions in if-else-if chains",
+      "cwe": 561,
+      "cweName": "Dead Code",
+      "confidence": "exact",
+      "rationale": "A condition already tested earlier in the chain can never select its branch, so the branch can never execute — CWE-561's own demonstrative examples include a branch made unreachable by preceding control flow."
+    },
+    {
+      "ruleId": "no-duplicate-case",
+      "eslintDescription": "Disallow duplicate case labels",
+      "cwe": 561,
+      "cweName": "Dead Code",
+      "confidence": "exact",
+      "rationale": "A `switch` matches the first label, so a repeated label's body can never run. NOT mapped to CWE-484: that weakness is an omitted `break`, which is a different defect that happens to live in the same construct."
+    },
+    {
+      "ruleId": "for-direction",
+      "eslintDescription": "Enforce `for` loop update clause moving the counter in the right direction",
+      "cwe": 835,
+      "cweName": "Loop with Unreachable Exit Condition ('Infinite Loop')",
+      "confidence": "exact",
+      "rationale": "CWE-835: «an iteration or loop with an exit condition that cannot be reached, i.e., an infinite loop», Class: Not Language-Specific. A counter moving away from its stop condition is that loop."
+    },
+    {
+      "ruleId": "no-unmodified-loop-condition",
+      "eslintDescription": "Disallow unmodified loop conditions",
+      "cwe": 835,
+      "cweName": "Loop with Unreachable Exit Condition ('Infinite Loop')",
+      "confidence": "broad",
+      "rationale": "Same weakness, reached by a wider net: a condition whose variables are never assigned in the loop cannot become false from inside it. Loose in one direction — the rule cannot see mutation through a closure, an object property or an external reference, so some findings are loops that do terminate."
+    },
+    {
+      "ruleId": "no-cond-assign",
+      "eslintDescription": "Disallow assignment operators in conditional expressions",
+      "cwe": 480,
+      "cweName": "Use of Incorrect Operator",
+      "confidence": "broad",
+      "rationale": "The defect is CWE-481 «Assigning instead of Comparing», which ISO/IEC 5055 does not name; CWE-480 is its parent and IS among the 138, so the row rolls up to the parent. Loose in one direction: CWE-480 says «changes the logic in security-relevant ways», and the rule cannot tell a typo from a deliberate assignment. At the rule's default `except-parens` option the deliberate form is already excluded."
+    },
+    {
+      "ruleId": "eqeqeq",
+      "eslintDescription": "Require the use of `===` and `!==`",
+      "cwe": 597,
+      "cweName": "Use of Wrong Operator in String Comparison",
+      "confidence": "broad",
+      "rationale": "CWE-597 lists JavaScript among its Applicable Languages and its second demonstrative example is `==` versus `===` in JavaScript, so the mapping is the CWE's own reading, not ours. Loose in one direction: the CWE is scoped to STRING comparison and the rule fires on every `==`, so a finding is evidence of the weakness rather than proof of it."
+    },
+    {
+      "ruleId": "no-unsafe-negation",
+      "eslintDescription": "Disallow negating the left operand of relational operators",
+      "cwe": 783,
+      "cweName": "Operator Precedence Logic Error",
+      "confidence": "exact",
+      "rationale": "CWE-783: «The product uses an expression in which operator precedence causes incorrect logic to be used», Class: Not Language-Specific. `!key in obj` negates `key` before the `in`, which is that error exactly."
+    },
+    {
+      "ruleId": "no-unsafe-optional-chaining",
+      "eslintDescription": "Disallow use of optional chaining in contexts where the `undefined` value is not allowed",
+      "cwe": 476,
+      "cweName": "NULL Pointer Dereference",
+      "confidence": "broad",
+      "rationale": "The author wrote `?.` to say the value may be absent and then used it as if present; at runtime that is a TypeError on `undefined`. CWE-476 does not list JavaScript, but it does list Java, C# and Go and names the same defect there (`NPE`, `nil pointer dereference`), so JavaScript is read into it by analogy — which is why this is `broad` and not `exact`."
+    },
+    {
+      "ruleId": "complexity",
+      "eslintDescription": "Enforce a maximum cyclomatic complexity allowed in a program",
+      "cwe": 1121,
+      "cweName": "Excessive McCabe Cyclomatic Complexity",
+      "confidence": "exact",
+      "rationale": "CWE-1121: «The code contains McCabe cyclomatic complexity that exceeds a desirable maximum.» Both the rule and the CWE leave the maximum to the adopter, so a count of findings is only meaningful next to the threshold that produced it — see `thresholdDependent`."
+    },
+    {
+      "ruleId": "max-params",
+      "eslintDescription": "Enforce a maximum number of parameters in function definitions",
+      "cwe": 1064,
+      "cweName": "Invokable Control Element with Signature Containing an Excessive Number of Parameters",
+      "confidence": "exact",
+      "rationale": "CWE-1064: «a function, subroutine, or method whose signature has an unnecessarily large number of parameters/arguments.» Threshold-dependent in the same way as `complexity`."
+    },
+    {
+      "ruleId": "max-lines",
+      "eslintDescription": "Enforce a maximum number of lines per file",
+      "cwe": 1080,
+      "cweName": "Source Code File with Excessive Number of Lines of Code",
+      "confidence": "exact",
+      "rationale": "CWE-1080: «A source code file has too many lines of code.» Threshold-dependent in the same way as `complexity`."
+    }
+  ],
+  "thresholdDependent": {
+    "ruleIds": ["complexity", "max-params", "max-lines"],
+    "why": "These three CWEs are defined against «a desirable maximum» the standard does not fix, and the ESLint rules take that maximum as an option. The same repository yields a different count at a different threshold, so any number derived from these rows is unreadable without the configured option printed beside it."
+  },
+  "rejected": [
+    {
+      "ruleId": "no-await-in-loop",
+      "consideredCwe": 1050,
+      "consideredCweName": "Excessive Platform Resource Consumption within a Loop",
+      "reason": "CWE-1050 is about a loop that CONSUMES platform resources — its Description names messaging, sessions, locks and file descriptors. ESLint's stated concern is the opposite end of the problem: an `await` per iteration forfeits parallelism. Serialised latency is not resource exhaustion, and this is the only rule that was going to move Performance Efficiency off zero, which is precisely why it needed the stricter reading rather than the convenient one."
+    },
+    {
+      "ruleId": "no-return-await",
+      "consideredCwe": 1049,
+      "consideredCweName": "Excessive Data Query Operations in a Large Data Table",
+      "reason": "CWE-1049 is about data queries against a large table. `return await` costs one extra microtask and touches no data resource. The rule is also deprecated as of ESLint 9, so the row would have been stale as well as wrong."
+    },
+    {
+      "ruleId": "no-implicit-coercion",
+      "consideredCwe": 704,
+      "consideredCweName": "Incorrect Type Conversion or Cast",
+      "reason": "`!!x` and `+x` are deliberate, correct conversions written in shorthand; the rule is about legibility. CWE-704 is about a conversion that is WRONG. A style preference must not be reported as a reliability weakness."
+    },
+    {
+      "ruleId": "no-sparse-arrays",
+      "consideredCwe": 478,
+      "consideredCweName": "Missing Default Case in Multiple Condition Expression",
+      "reason": "An array elision has nothing to do with a missing `default` branch. `default-case` is the rule that actually matches CWE-478 and is mapped above."
+    },
+    {
+      "ruleId": "no-constant-condition",
+      "consideredCwe": 570,
+      "consideredCweName": "Expression is Always False (with CWE-571, Expression is Always True)",
+      "reason": "ISO/IEC 5055 splits this into two weaknesses by polarity, and the rule id does not carry the polarity — `if (false)` and `while (true)` arrive under the same name. Mapping to both would report two of the 138 weaknesses where the code contains one. Same reasoning retires `no-self-compare` and `use-isnan`."
+    },
+    {
+      "ruleId": "no-unused-vars",
+      "consideredCwe": 563,
+      "consideredCweName": "Assignment to Variable without Use",
+      "reason": "Neither CWE-563 nor CWE-1164 (Irrelevant Code) is among the 138. Not mapped to CWE-561 either: dead code is code that CANNOT execute, and an unused variable's initialiser executes and simply has no effect."
+    },
+    {
+      "ruleId": "no-eval",
+      "consideredCwe": 95,
+      "consideredCweName": "Eval Injection",
+      "reason": "CWE-95 is not among the 138. It would also have been an over-claim: `no-eval` fires on every `eval`, and CWE-95 requires attacker-influenced input."
+    },
+    {
+      "ruleId": "require-atomic-updates",
+      "consideredCwe": 366,
+      "consideredCweName": "Race Condition within a Thread",
+      "reason": "CWE-366 and CWE-362 are both phrased around two threads or processes using a resource simultaneously. Interleaved async continuations on one JavaScript event loop are not that, and CWE-362 is not among the 138 in any case."
+    },
+    {
+      "ruleId": "no-unsafe-finally",
+      "consideredCwe": 584,
+      "consideredCweName": "Return Inside Finally Block",
+      "reason": "An exact match that the standard does not name — CWE-584 is not among the 138, and no ancestor of it that IS among them describes this defect rather than a much larger family."
+    },
+    {
+      "ruleId": "no-loss-of-precision",
+      "consideredCwe": 681,
+      "consideredCweName": "Incorrect Conversion between Numeric Types",
+      "reason": "CWE-681 is about converting a value from one numeric type to another in code. The rule flags a literal that cannot be represented exactly once parsed. Adjacent, not the same."
+    },
+    {
+      "ruleId": "no-caller",
+      "consideredCwe": 477,
+      "consideredCweName": "Use of Obsolete Function",
+      "reason": "CWE-477's examples are library functions with known-unsafe behaviour. `arguments.callee` is a deprecated language feature with no consequence of its own beyond strict mode rejecting it."
+    },
+    {
+      "ruleId": "import/no-cycle",
+      "consideredCwe": 1047,
+      "consideredCweName": "Modules with Circular Dependencies",
+      "reason": "The match is exact, but the rule is not ESLint core: its id means whatever the installed eslint-plugin-import version means, and this file's whole warrant is that a core rule id has one fixed documented behaviour. Circular dependencies already have a real analyser in this Core — the dependency-cruiser adapter."
+    },
+    {
+      "ruleId": "max-lines-per-function, max-statements, max-depth, no-magic-numbers",
+      "consideredCwe": 1124,
+      "consideredCweName": "Excessively Deep Nesting, and neighbours",
+      "reason": "No CWE among the 138 matches these. CWE-1124 is absent from the standard, and CWE-1052 is scoped to hard-coded literals in INITIALISATION, which is narrower than what `no-magic-numbers` reports."
+    }
+  ]
+}

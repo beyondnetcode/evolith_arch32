@@ -6,8 +6,20 @@ import { makeViolation } from '../../../domain/violation';
 import type { IRuleEvaluatorStrategy, RuleEvaluationResult, WorkspaceEvaluationContext } from '../evaluators/evaluator.interface';
 import { CompositeRuleEvaluator } from './composite-rule-evaluator';
 import { EnforcerEvaluator } from './enforcer-evaluator';
-import { ShellEnforcerAdapter } from './shell-enforcer-adapter';
-import { StubProcessRunner, type ProcessResult } from './enforcer.types';
+import {
+  DEFAULT_ENFORCER_TIMEOUT_MS,
+  ENFORCER_TIMEOUT_GRACE_MS,
+  EnforcerTimeoutError,
+  ShellEnforcerAdapter,
+  resolveEnforcerTimeoutMs,
+} from './shell-enforcer-adapter';
+import {
+  PROCESS_TIMEOUT_EXIT_CODE,
+  StubProcessRunner,
+  type IProcessRunner,
+  type ProcessResult,
+  type ProcessSpec,
+} from './enforcer.types';
 
 const ctx: WorkspaceEvaluationContext = { satellitePath: '/w', corePath: '/c' };
 
@@ -69,6 +81,103 @@ describe('ShellEnforcerAdapter (GT-514 AC2 — Violation[] via IProcessRunner)',
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ ruleId: 'no-circular', tool: 'dependency-cruiser', file: 'src/a.ts', severity: 'error' });
     expect(out[0].fingerprint).toMatch(/^[0-9a-f]{16}$/);
+  });
+});
+
+describe('ShellEnforcerAdapter wall clock (GT-664 — a tool that ran out of time SKIPs)', () => {
+  const enforce: EnforceDescriptor = { engine: 'enforcer', tool: 'dependency-cruiser', toolRuleId: 'no-circular' };
+
+  /** An adapter whose parser would happily accept a truncated report. */
+  function permissiveAdapter(runner: IProcessRunner, timeoutMs?: number): ShellEnforcerAdapter {
+    return new ShellEnforcerAdapter(
+      {
+        tool: 'dependency-cruiser',
+        runtime: 'node',
+        timeoutMs,
+        buildSpec: () => ({ command: 'depcruise', args: [] }),
+        // The failure mode being guarded: an `isToolFailure` that asks "is this
+        // a report?" answers YES for the prefix of one.
+        isToolFailure: (res) => { try { JSON.parse(res.stdout); return false; } catch { return true; } },
+        parse: () => [],
+      },
+      runner,
+    );
+  }
+
+  it('reads a timed-out run as SKIPPED even when its partial output still parses', async () => {
+    // The tool was killed mid-scan but had already flushed a syntactically valid
+    // (and therefore shorter) report. Parsed as a completed run it would report
+    // zero violations — a clean repository that was never fully looked at.
+    const runner = new StubProcessRunner({
+      exitCode: PROCESS_TIMEOUT_EXIT_CODE,
+      stdout: '{"violations":[]}',
+      stderr: '',
+      timedOut: true,
+    });
+    const [res] = await new EnforcerEvaluator([permissiveAdapter(runner)]).evaluateAll(
+      [rule('HXA-01', enforce)],
+      ctx,
+    );
+    expect(res.result).toBe('skipped');
+    expect(res.message).toMatch(/timed out/i);
+  });
+
+  it('treats the conventional 124 exit as a timeout even without the timedOut flag', async () => {
+    const runner = new StubProcessRunner({ exitCode: PROCESS_TIMEOUT_EXIT_CODE, stdout: '{"violations":[]}', stderr: '' });
+    const [res] = await new EnforcerEvaluator([permissiveAdapter(runner)]).evaluateAll(
+      [rule('HXA-01', enforce)],
+      ctx,
+    );
+    expect(res.result).toBe('skipped');
+  });
+
+  it('bounds a runner that ignores spec.timeoutMs and never settles', async () => {
+    jest.useFakeTimers();
+    try {
+      const hanging: IProcessRunner = { run: () => new Promise<ProcessResult>(() => {}) };
+      const analysis = permissiveAdapter(hanging, 1_000).analyze({ ...ctx, rules: [] });
+      const assertion = expect(analysis).rejects.toBeInstanceOf(EnforcerTimeoutError);
+      await jest.advanceTimersByTimeAsync(1_000 + ENFORCER_TIMEOUT_GRACE_MS + 1);
+      await assertion;
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('hands the resolved wall clock to the runner on the spec', async () => {
+    let seen: ProcessSpec | undefined;
+    const runner: IProcessRunner = {
+      run: async (spec) => { seen = spec; return { exitCode: 0, stdout: '{}', stderr: '' }; },
+    };
+    await permissiveAdapter(runner, 7_000).analyze({ ...ctx, rules: [] });
+    expect(seen?.timeoutMs).toBe(7_000);
+  });
+
+  describe('resolveEnforcerTimeoutMs precedence', () => {
+    const withConfig = (config: Record<string, unknown>) =>
+      ({ ...ctx, rules: [rule('HXA-01', { ...enforce, config })] });
+
+    it('lets a rule override the adapter default via enforce.config.timeoutMs', () => {
+      expect(resolveEnforcerTimeoutMs(withConfig({ timeoutMs: 4_000 }), 90_000)).toBe(4_000);
+    });
+
+    it('accepts the override as a string, because JSON config is hand-written', () => {
+      expect(resolveEnforcerTimeoutMs(withConfig({ timeoutMs: '2500' }), 90_000)).toBe(2_500);
+    });
+
+    it('falls back to the adapter default, then to the package default', () => {
+      expect(resolveEnforcerTimeoutMs({ ...ctx, rules: [] }, 90_000)).toBe(90_000);
+      expect(resolveEnforcerTimeoutMs({ ...ctx, rules: [] })).toBe(DEFAULT_ENFORCER_TIMEOUT_MS);
+    });
+
+    it('ignores a zero/negative/garbage override instead of honouring it', () => {
+      // `timeoutMs: 0` read literally means "no time at all", which would SKIP
+      // every rule routed to the tool and be indistinguishable, in the report,
+      // from an analyser nobody installed.
+      for (const bad of [0, -1, 'soon', NaN]) {
+        expect(resolveEnforcerTimeoutMs(withConfig({ timeoutMs: bad }), 90_000)).toBe(90_000);
+      }
+    });
   });
 });
 

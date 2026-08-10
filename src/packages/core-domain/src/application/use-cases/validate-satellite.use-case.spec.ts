@@ -131,4 +131,55 @@ describe('ValidateSatelliteUseCase', () => {
       expect(formattedOutput).toBeUndefined();
     });
   });
+
+  /**
+   * GT-664 — the rebuild must not quietly drop the enforcer subsystem.
+   *
+   * `RulesetValidatorService` only builds the composite enforcer strategy when a
+   * `processRunner` is present. This use case reconstructs the validator whenever
+   * an engine is named, and the CLI names one on EVERY run
+   * (`options.engine === 'opa' ? 'opa' : 'native'`) — so the runner
+   * `app.module.ts` injects for "GT-519 parity" was created, handed over, and
+   * discarded one call later.
+   *
+   * Measured before the fix: `evolith validate --select
+   * src/rulesets/standards/iso-5055.rules.json` returned in 1.5s with all four
+   * rules skipped, and an instrumented build showed `EnforcerEvaluator.evaluateAll`
+   * was never entered. Every `enforce:` rule in the corpus was affected — the six
+   * ADR-0002 dependency-cruiser rules are `blocking: true` and had been degrading
+   * to the native engine on this surface for their whole life.
+   */
+  describe('the engine rebuild · GT-664', () => {
+    it('CARRIES THE ENFORCER SUBSYSTEM ACROSS: the rebuilt validator keeps the process runner', async () => {
+      const processRunner = { run: jest.fn() };
+      const metrics = { recordDuration: jest.fn() };
+      const source = {
+        validate: jest.fn().mockResolvedValue(mockResult),
+        loadRulesetById: jest.fn().mockResolvedValue([]),
+        fs: { name: 'fs' },
+        logger: { name: 'logger' },
+        configParser: { name: 'configParser' },
+        engine: { rulesetRepo: { name: 'repo' } },
+        processRunner,
+        metrics,
+      } as unknown as jest.Mocked<RulesetValidatorService>;
+
+      const Ctor = RulesetValidatorService as unknown as jest.Mock;
+      Ctor.mockClear();
+      await new ValidateSatelliteUseCase(source).execute({
+        satellitePath: '/satellite',
+        engine: 'native',
+      });
+
+      expect(Ctor).toHaveBeenCalledTimes(1);
+      const options = Ctor.mock.calls[0][0];
+      // A runner that does not survive the copy is a validator that cannot run a
+      // single `enforce:` rule, while reporting `passed` over the ones it skipped.
+      expect(options.processRunner).toBe(processRunner);
+      expect(options.metrics).toBe(metrics);
+      // The collaborators that were already carried must still be.
+      expect(options.engineType).toBe('native');
+      expect(options.rulesetRepo).toBe(source.engine.rulesetRepo);
+    });
+  });
 });

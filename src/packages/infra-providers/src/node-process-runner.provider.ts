@@ -1,6 +1,11 @@
 import { execFile } from 'node:child_process';
 
-import type { IProcessRunner, ProcessResult, ProcessSpec } from '@beyondnet/evolith-core-domain';
+import {
+  PROCESS_TIMEOUT_EXIT_CODE,
+  type IProcessRunner,
+  type ProcessResult,
+  type ProcessSpec,
+} from '@beyondnet/evolith-core-domain';
 
 /**
  * Real {@link IProcessRunner} backed by `child_process.execFile` (GT-512 · EAG-04 infra adapter).
@@ -26,8 +31,15 @@ const ENV_PASSTHROUGH: readonly string[] = [
   'DOTNET_CLI_TELEMETRY_OPTOUT', 'DOTNET_NOLOGO', 'DOTNET_SKIP_FIRST_TIME_EXPERIENCE',
 ];
 
-/** Conventional exit code for a process killed after exceeding its timeout. */
-const TIMEOUT_EXIT_CODE = 124;
+/**
+ * Conventional exit code for a process killed after exceeding its timeout.
+ *
+ * GT-664 — taken from the port rather than declared again here. The adapter on
+ * the other side of the seam reads this number to decide that a tool never
+ * finished; two private copies of it could drift, and the drift would show up as
+ * a timed-out scan being parsed as a completed one.
+ */
+const TIMEOUT_EXIT_CODE = PROCESS_TIMEOUT_EXIT_CODE;
 /** Conventional exit code for "command not found"/spawn failure (ENOENT etc.). */
 const SPAWN_FAILURE_EXIT_CODE = 127;
 

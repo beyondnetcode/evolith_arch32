@@ -9925,6 +9925,42 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Deliberately NOT computed: what the analyser COULD have found. That needs the scanner's own rule catalogue - a vendor call for CodeQL, a registry fetch for semgrep - and a 'could have' number derived from anything less would invent the assurance this row exists to withhold. observed is a floor and is labelled one. The measurement also makes the next step evidenced rather than asserted: Reliability 0/74 and Performance Efficiency 0/18 say CodeQL does not look there at all, which is the concrete argument for adding a second analyser."
+    },
+    {
+      "id": "GT-664",
+      "closedAt": "2026-08-09",
+      "closureCommit": "94ffa1d3",
+      "evidence": [
+        "src/rulesets/standards/eslint-cwe-map.json",
+        ".harness/scripts/generate-eslint-cwe-map.mjs",
+        "src/packages/core-domain/src/application/validators/standards/eslint-cwe-map.ts",
+        "src/packages/core-domain/src/application/validators/standards/eslint-cwe-map.generated.ts",
+        "src/packages/core-domain/src/application/validators/standards/eslint-cwe-map.spec.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/adapters/iso-5055-adapter.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/adapters/iso-5055-adapter.spec.ts",
+        "src/packages/core-domain/src/application/validators/standards/iso-5055-coverage.ts",
+        "src/packages/core-domain/src/application/validators/enforcement/provisioning.ts",
+        "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts",
+        "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.spec.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "src/rulesets/standards/iso-5055.rules.json",
+        "eslint.config.mjs"
+      ],
+      "validationCommands": [
+        "BEFORE, on this repository: node src/sdk/cli/dist/main.js validate --select src/rulesets/standards/iso-5055.rules.json --format json -> status passed, rulesChecked 0, rulesSkipped 4, issues 0, 0.24s. The pack had never run once from the CLI.",
+        "AFTER, same command: status warning, rulesChecked 4, rulesSkipped 0, rulesErrored 0, 7.0s; ISO5055-REL failed with 23 violations, ISO5055-MAINT with 422.",
+        "iso5055CoverageFromSarif over the live ESLint report (484 messages over 1437 files) -> observed 5 of 138; Security 0/74, Reliability 1/74 (CWE-597, 23 findings), Performance Efficiency 0/18, Maintainability 4/31 (CWE-478, 1064, 1080, 1121; 422 findings); 0 out of scope, 39 untagged; 445 map-attributed of which 23 broad and 401 threshold-dependent, 0 analyser-attributed.",
+        "Root cause 1, measured with an instrumented build: EnforcerEvaluator.evaluateAll was never entered, and two RulesetValidatorService instances were constructed - one with a processRunner (app.module.ts) and one without (ValidateSatelliteUseCase.execute), the command using the one without.",
+        "Root cause 2: enforceSandboxPolicy({command:'semgrep'|'eslint'|'cat'}, DEFAULT_SANDBOX_POLICY) -> allowed:false, \"binary is not in the allowlist\", before the fix.",
+        "node .harness/scripts/generate-eslint-cwe-map.mjs -> 14 rule(s) -> 11 distinct CWE(s), each named by ISO/IEC 5055 and each rule id verified against the installed ESLint 9.39.4.",
+        "npx jest --config src/packages/core-domain/jest.config.js -> 156 suites, 1820 tests passed (rebuilt from a clean dist first).",
+        "npx jest --config src/packages/infra-providers/jest.config.js -> 19 suites, 164 tests passed.",
+        "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs --check -> faithful capture, 406 rules (unchanged; enforce.config edits do not reclassify).",
+        "node src/rulesets/standards/iso-5055-mapping.test.mjs -> 9 passed.",
+        "node .harness/scripts/ci/24-check-surface-parity.mjs -> 74 operations tracked, 0 unregistered, 0 obsolete."
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Performance Efficiency was the measure this gap was opened to unlock and it did NOT move: 0/18 before and after. Both candidate ESLint rules were rejected on reading the CWEs - CWE-1050 names a loop consuming platform resources (messaging, sessions, locks, file descriptors) while no-await-in-loop is about forfeited parallelism, and CWE-1049 is data queries against a large table while no-return-await costs one extra microtask and is deprecated in ESLint 9. No ESLint core rule matches any of the 18 CWEs in that measure, so the negative result is reported rather than smoothed over, in this record, in the pack's own text and in the map's `rejected` list. Also deliberately NOT done: adding @microsoft/eslint-formatter-sarif as a dependency (measured at 38 packages, a nested ESLint 8 beside our 9, and an unpinnable jschardet:latest) - the adapter reads ESLint's built-in json report and normalises it into the SARIF shape instead, and a tenant that has the formatter sets eslintFormat:sarif. No scoring: 401 of the 445 findings come from threshold rules whose counts are not portable between repositories, and that caveat travels with the number."
     }
   ]
 }

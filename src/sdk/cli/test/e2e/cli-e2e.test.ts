@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -42,7 +43,12 @@ interface CliResult {
   exitCode: number;
 }
 
-async function runCli(args: string[], cwd?: string, timeout = 15000): Promise<CliResult> {
+async function runCli(
+  args: string[],
+  cwd?: string,
+  timeout = 15000,
+  env: NodeJS.ProcessEnv = {},
+): Promise<CliResult> {
   return new Promise((resolve) => {
     let stdout = '';
     let stderr = '';
@@ -50,6 +56,7 @@ async function runCli(args: string[], cwd?: string, timeout = 15000): Promise<Cl
     const proc = spawn('node', [CLI_PATH, ...args], {
       cwd: cwd || process.cwd(),
       stdio: ['pipe', 'pipe', 'pipe'],
+      env: { ...process.env, ...env },
     });
 
     proc.stdout!.on('data', (data) => {
@@ -277,11 +284,39 @@ describe('CLI E2E Tests', () => {
     });
 
     it('should handle missing required arguments', async () => {
-      const result = await runCli(['validate']);
+      // GT-664 — the cwd and HOME are explicit, and both had to become so.
+      //
+      // This case ran with no `cwd`, so it inherited the one jest was launched
+      // from (`src/sdk/cli`) and `validate` resolved a satellite by walking up
+      // from there. What it found differed by machine: on a developer's
+      // checkout `src/sdk/cli/evolith.yaml` exists — it is gitignored — and the
+      // walk stopped there; on CI it does not, so the walk reached the
+      // repository root and the subject became a full governance validation of
+      // the whole monorepo, external analysers included. The same assertion was
+      // measuring two different things, and it started timing out at 15 s the
+      // moment the enforcer subsystem was reconnected and those analysers
+      // actually ran (measured: 28 s on two CPUs; 1.2 s with them unreachable).
+      //
+      // A temp directory with no satellite above it is what this case is named
+      // for, and it costs what argument handling should cost (~0.7 s). HOME is
+      // redirected for the same reason as the cwd: `profile.satellite` would
+      // otherwise supply a satellite from the developer's own config and put
+      // the ambient-state dependency straight back.
+      const noSatellite = await fs.mkdtemp(path.join(os.tmpdir(), 'evolith-no-satellite-'));
+      try {
+        const result = await runCli(['validate'], noSatellite, 15000, {
+          HOME: noSatellite,
+          USERPROFILE: noSatellite,
+        });
 
-      // `validate` with no satellite either cannot resolve a corpus (1) or
-      // reaches a negative verdict (2); both are non-zero under the taxonomy.
-      expect([1, 2]).toContain(result.exitCode);
+        // `validate` with no satellite cannot reach a verdict: NOT_A_SATELLITE
+        // maps to 1 under the GT-580 taxonomy. 2 stays accepted because it is
+        // the other non-zero this invocation is allowed to produce (a negative
+        // verdict), and this case asserts the taxonomy, not the code path.
+        expect([1, 2]).toContain(result.exitCode);
+      } finally {
+        await fs.remove(noSatellite).catch(() => {});
+      }
     });
   });
 

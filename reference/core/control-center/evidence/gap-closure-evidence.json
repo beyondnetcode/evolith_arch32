@@ -9961,6 +9961,40 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Performance Efficiency was the measure this gap was opened to unlock and it did NOT move: 0/18 before and after. Both candidate ESLint rules were rejected on reading the CWEs - CWE-1050 names a loop consuming platform resources (messaging, sessions, locks, file descriptors) while no-await-in-loop is about forfeited parallelism, and CWE-1049 is data queries against a large table while no-return-await costs one extra microtask and is deprecated in ESLint 9. No ESLint core rule matches any of the 18 CWEs in that measure, so the negative result is reported rather than smoothed over, in this record, in the pack's own text and in the map's `rejected` list. Also deliberately NOT done: adding @microsoft/eslint-formatter-sarif as a dependency (measured at 38 packages, a nested ESLint 8 beside our 9, and an unpinnable jschardet:latest) - the adapter reads ESLint's built-in json report and normalises it into the SARIF shape instead, and a tenant that has the formatter sets eslintFormat:sarif. No scoring: 401 of the 445 findings come from threshold rules whose counts are not portable between repositories, and that caveat travels with the number."
+    },
+    {
+      "id": "GT-665",
+      "closedAt": "2026-08-09",
+      "closureCommit": "1131b060",
+      "evidence": [
+        "src/rulesets/standards/slsa-v1.rules.json",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/slsa-rule.handler.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/slsa-rule.handler.spec.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts",
+        "src/rulesets/standards/native-evaluability-snapshot.json",
+        "src/rulesets/standards/iso-5055-mapping.json",
+        "src/rulesets/standards/iso-5055-mapping.csv",
+        "reference/core/control-center/security/supply-chain-posture.md"
+      ],
+      "validationCommands": [
+        "node src/sdk/cli/dist/main.js rulesets --core \"$PWD\" -> lists src/rulesets/standards/slsa-v1.rules.json at 4 RULES / 0 BLOCKING, alongside ssdf-v1.1 (8/0) and iso-5055 (4/0).",
+        "node src/sdk/cli/dist/main.js validate --core \"$PWD\" --select src/rulesets/standards/slsa-v1.rules.json --format json -> status passed, rulesChecked 4, rulesSkipped 0, rulesErrored 0, rulesNotApplicable 0, issues 0; selection.matched 1, unmatched 0, corpusTotal 410. THE PACK RUNS, AND THE REPOSITORY PASSES IT.",
+        "Not a vacuous pass, measured per rule against this repository: SLSA-PROV-L1 -> 'all 2 publishing step(s) generate provenance, across npm-release.yml, sdk-cli-release.yml'; SLSA-BUILD-L1 -> both build before they publish; SLSA-AUTH-L2 -> 'npm-release.yml:release, sdk-cli-release.yml:publish-npm' (workflow-level and job-level permissions respectively); SLSA-HOSTED-L2 -> '12 package manifest(s) inspected and none offers a script that publishes'.",
+        "npm view @beyondnet/evolith-cli@1.2.2 --json -> dist.attestations.provenance.predicateType = \"https://slsa.dev/provenance/v1\", served live by the npm registry on 2026-08-09. The artifact this pack is about already exists; nothing measured it.",
+        "REFUTED, and recorded rather than repeated: the assignment's premise that ci-cd.yml still publishes src/sdk/cli with --tag beta and no provenance. grep -n 'publish-npm|npm publish|--tag beta' .github/workflows/*.yml -> ci-cd.yml:726 is a RETIRED comment (GT-570, 2026-07-27); the only two live publish paths are npm-release.yml:167 and sdk-cli-release.yml:190, both with --provenance. The rule is kept as the regression guard for exactly that shape.",
+        "MEASURED AND DELIBERATELY NOT AUTHORED AS A SLSA RULE: grep -hoE 'uses:\\s*\\S+' .github/workflows/*.yml | sort | uniq -c -> 47 actions/checkout@v7, 41 actions/setup-node@v7 against 4 SHA-pinned uses. This repository would fail an action-pinning rule; hermetic builds were deferred out of SLSA v1.0 and pinning is an OpenSSF Scorecard check, so the finding is recorded in the pack's notEvaluableHere block instead.",
+        "First run against this repository FAILED with two false positives of my own, both now fixtures: SLSA-PROV-L1 counted npm-release.yml's comment block ('npm publish would otherwise ship whatever...') as two unprovenanced publishing steps, and SLSA-AUTH-L2 failed on 'id-token: write # required for npm provenance' because the pattern was end-anchored.",
+        "npx jest src/application/validators/evaluators/handlers/slsa-rule.handler.spec.ts (from src/packages/core-domain) -> 24 tests passed; every rule exercised in BOTH directions, including the retired --tag beta shape, the --dry-run exclusion, id-token on a non-publishing job, and a publish step outside a recognised job block failing CLOSED.",
+        "cd src/packages/core-domain && rm -f tsconfig.tsbuildinfo && npm run build && npm test -> 157 suites, 1853 tests passed, rebuilt from a clean dist first.",
+        "npx jest --config src/packages/infra-providers/jest.config.js -> 19 suites, 164 tests passed. The enforce roster is unchanged and correctly so: the SLSA rules author no enforce block, because a native handler decides them.",
+        "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs --check -> faithful capture, 410 rules; native-handler 166 -> 170 and every other class unchanged.",
+        "node src/rulesets/standards/iso-5055-mapping.test.mjs -> 9/9 pass (the dependency-free guard that reads the pinned class counts out of rule-corpus-triage.spec.ts).",
+        "node .harness/scripts/ci/32-validate-ruleset-schemas.mjs -> 175 passed, 0 failed (180 total).",
+        "node .harness/scripts/ci/08-validate-tracking.mjs, 09-reconcile-maturity.mjs, 46-validate-derived-artifact-order.mjs, 04-check-bilingual-parity.mjs, 01-validate-docs.mjs, 24-check-surface-parity.mjs and ci-runner.mjs governance -> all pass on the final tree."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "The pack is authored against what a filesystem can decide and adds no dependency: no analyser, no registry client, no YAML parser. That last one is a choice with a stated cost — workflow YAML is read as TEXT, so SLSA-BUILD-L1 compares line order within one file and does not resolve the `needs:` job graph, and it says so in its own failure message rather than presenting a limitation as a verdict. A YAML parser inside the domain layer would cross the boundary the architecture lint defends, for questions that are 'does this step carry a flag'. Deliberately NOT done, and each recorded in the ruleset's notEvaluableHere block rather than left to be discovered: any rule requiring the live registry (the predicate type served, per-version attestation presence, signature verification), Build L3 in full (Provenance is Unforgeable and Isolated are properties of the build platform's control plane), and an action-pinning rule — which this repository would fail and which is an OpenSSF Scorecard check, not a SLSA Build-track requirement, since hermetic builds were deferred out of v1.0. Also NOT done: fixing the ISO/IEC 5055 mapping generator, whose CLASS_BY_FILE table has no `standards/` prefix and therefore labels all 16 standards-pack rules `governance` with a note denying they are international standards. That defect predates this row — it already applied to the SSDF and ISO packs — and correcting it needs a new rule class rather than a one-line edit, so it is registered separately instead of being smuggled into this diff."
     }
   ]
 }

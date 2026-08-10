@@ -15,6 +15,7 @@ import { CrossCuttingRuleHandler } from './handlers/cross-cutting-rule.handler';
 import { ExecutiveScorecardRuleHandler } from './handlers/executive-scorecard-rule.handler';
 import { SatelliteContractRuleHandler } from './handlers/satellite-contract-rule.handler';
 import { SsdfRuleHandler } from './handlers/ssdf-rule.handler';
+import { SlsaRuleHandler } from './handlers/slsa-rule.handler';
 import { AclRuleHandler } from './handlers/acl-rule.handler';
 import { AdrConformanceRuleHandler } from './handlers/adr-conformance-rule.handler';
 import { ModuleBoundaryRuleHandler } from './handlers/module-boundary-rule.handler';
@@ -46,6 +47,12 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       new ExecutiveScorecardRuleHandler(fs),
       new SatelliteContractRuleHandler(fs, configParser),
       new SsdfRuleHandler(fs),
+      // GT-665: SLSA-* — the SLSA Build track's file-decidable half. Native
+      // rather than an adapter, unlike ISO/IEC 5055: what Build L1/L2 ask of a
+      // PRODUCER is declared in workflow files and package manifests, so a
+      // filesystem is the right instrument. Build L3 is a property of the build
+      // PLATFORM and is named in the ruleset's notEvaluableHere block instead.
+      new SlsaRuleHandler(fs),
       new AclRuleHandler(fs),
       // GT-584: PEA-01..04 — whether a PROBABILISTIC quality signal may reach a
       // blocking verdict. The native twin of

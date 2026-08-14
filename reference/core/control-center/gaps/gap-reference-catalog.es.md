@@ -8855,3 +8855,153 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
 **Medido después.** `node --test` sobre el archivo rehecho: **20 casos, 20 pasan, 0 fallan, 0 saltados** (19 antes, todos pasando salvo el caso que cuenta). `42-validate-guard-denominators`: 78 guardas clasificadas, 57/57 escáneres rechazan un escaneo de cero elementos. `43-validate-guard-negative-fixtures`: 54/54 guardas ejercitadas se pusieron rojas sobre el fixture vacío. **No se tocó ningún archivo del corpus, ningún generador ni ningún artefacto derivado** — esta fila cambia un test y añade un fixture, que es también por lo que no colisiona con el trabajo concurrente de `analyser.adoptable` sobre `build-iso-5055-mapping.mjs` e `iso-5055-mapping.json`.
 
 **Lo que NO se afirma.** El fixture congelado fija el lado previo al arreglo de la comparación; el lado vivo se sigue leyendo del repositorio, así que los conteos de aquí se sostienen mientras los tres packs de estándares conserven sus 16 reglas. Eso se afirma en otro punto del mismo archivo (`their rules … 16`) y deliberadamente no se duplica como segundo denominador. Esta fila tampoco reaudita los otros 64 autotests de guardas buscando el mismo patrón de referencia móvil; si `git show` contra una rama aparece en algún otro sitio, no se midió.
+
+
+#### GT-669
+
+**Título:** Un hallazgo recurrente no tiene camino hasta una regla determinista escrita por el tenant, así que el ratchet es práctica privada nuestra y no capacidad del producto
+
+- **Propósito:** Dar al tenant el mismo bucle que este repositorio se aplica a sí mismo — un hallazgo que se repite se convierte en una regla determinista y verificable en *su* corpus — por una superficie soportada y no por un fork.
+- **Evidencia:** Este repositorio convierte sus propios hallazgos en guardas: **112 ficheros bajo `.harness/scripts/ci/`**, `.mjs` escritos a mano, cada uno trazable a la fila del board que lo originó. **Nada de ese bucle es alcanzable por un tenant.** La única superficie de CLI orientada a reglas es `evolith rulesets`, y su propia descripción declarada es *«List the ruleset packs this Core can evaluate, with the refs `validate --select` accepts»* (`rulesets.command.ts:39-40`) — solo lectura, 138 líneas, sin camino de autoría, validación ni publicación. El corpus vive en `src/rulesets/**` dentro del repositorio Core, y `evolith upgrade` copia las reglas del core **hacia** el satélite (`satellite-upgrade-apply.ts:5-15`), así que hoy la única manera que tiene un tenant de añadir una regla es editar un fichero que el siguiente upgrade sobrescribe — que es [`GT-673`](./gap-reference-catalog.es.md#gt-673), registrado aparte porque aquello es un defecto de `upgrade` y esto es una capacidad ausente. Comparado el 2026-08-14 con **Facility**, de The Agile Monkeys (`sdlc.theagilemonkeys.com`, `github.com/theam/Facility`), que embarca este bucle como capacidad de cabecera — feedback de revisión repetido graduado a comprobación determinista. Sus guardas son scripts ejecutables sin dependencias; la nuestra es política compilada con runtime wasm y un oráculo de builtins ([`GT-644`](./gap-reference-catalog.es.md#gt-644)). **El activo está de nuestro lado y el camino al tenant no.**
+- **Casos de uso:**
+  - Los revisores de un tenant señalan lo mismo una y otra vez en los pull requests; un lead quiere aplicarlo desde mañana sin esperar a una release de Evolith.
+  - Un tenant regulado debe añadir un control de su propio estándar interno y demostrar que se decide de forma determinista y no por un modelo.
+  - El mismo mecanismo desde nuestro lado: un hallazgo registrado en este board se convierte en una regla que llega a todo tenant suscrito a ese pack.
+  - Un LLM propone una regla candidata a partir de un grupo de hallazgos parecidos; el tenant la revisa y el verificador decide — la tesis neuro-simbólica como funcionalidad del producto y no como hábito interno.
+- **Impacto:** Este es el bucle que permite que el corpus crezca al ritmo del tenant y no al nuestro, y es la forma producto de *el modelo propone, el verificador decide*. Sin él, «el cliente selecciona su nivel» solo vale para los packs que escribimos nosotros, y el ratchet — la práctica que la landing de un competidor vende con más fuerza — no se ve fuera de este repositorio.
+- **Resultado esperado:** Un tenant puede llevar un hallazgo recurrente hasta una regla propia, evaluada por el mismo motor que el corpus embarcado, y conservarla entre upgrades — con el origen de la regla (los hallazgos que la motivaron) registrado en la propia regla.
+- **Ficheros afectados:** `src/sdk/cli/src/commands/rulesets/rulesets.command.ts`, `src/packages/core-domain/src/application/upgrade/**`, `src/rulesets/**`, `src/packages/mcp-server/src/**`
+- **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** L
+- **Principal:** `L` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 a partir de un benchmarking competitivo pedido por el dueño sobre `https://sdlc.theagilemonkeys.com/` y `github.com/theam/Facility`. **Toda ausencia afirmada en esta ola se midió contra este repositorio antes de registrarla, y dos filas candidatas NO sobrevivieron a esa comprobación y están deliberadamente ausentes:** una fila de «no hay instrumento de calibración» (refutada — `evolith calibrate report` embarca matriz de confusión, tasa de bloqueo falso, intervalo de Wilson y κ, criterio 2 de [`GT-585`](./gap-reference-catalog.es.md#gt-585)), y una de «no hay conector de observabilidad» (refutada — `LangfuseEvidenceAdapter` existe y está exportado; lo que falta de verdad es más estrecho y se registra como [`GT-674`](./gap-reference-catalog.es.md#gt-674)).
+- **Criterios de aceptación:**
+  - [ ] Un tenant puede escribir una regla por una superficie soportada (CLI como mínimo) y hacerla evaluar por el mismo motor que el corpus embarcado, sin editar ficheros bajo `src/rulesets/` del Core.
+  - [ ] Una regla escrita se valida contra el esquema de rulesets y se RECHAZA con un diagnóstico cuando está malformada, en vez de saltarse en la carga — el fallo de salto silencioso de [`GT-649`](./gap-reference-catalog.es.md#gt-649).
+  - [ ] Una regla escrita sobrevive a `evolith upgrade` (depende de [`GT-673`](./gap-reference-catalog.es.md#gt-673)) y se demuestra con un test que actualiza y vuelve a evaluar.
+  - [ ] La regla lleva su procedencia — qué hallazgo recurrente la motivó y quién la aprobó — para que una entrada del ratchet sea auditable y no folclore.
+  - [ ] Un test negativo demuestra que una regla escrita puede FALLAR de verdad sobre un sujeto; una regla que solo pasa es el caso vacío que este board no deja de encontrar.
+- **Estado:** `PENDIENTE`
+
+#### GT-670
+
+**Título:** La única adjudicación orgánica que el producto ya captura — un waiver aprobado — nunca se convierte en la etiqueta de calibración que ese instrumento está esperando
+
+- **Propósito:** Alimentar `evolith calibrate report` con datos que el producto ya recoge, para que la tasa de bloqueo falso por regla sea derivable en vez de depender de un corpus etiquetado a mano.
+- **Evidencia:** `evolith waiver` registra el `correlationId` del veredicto que se exime (`waiver.command.ts:229`), y el `Waiver` de dominio lleva el `fingerprint` de la violación suprimida, la `reason`, `requestedBy`, `approvedBy`, `approvedAt` y un `expiresAt` duro (`domain/waiver.ts:29-48`), con un `FileWaiverStore` que los persiste. **Un waiver APROBADO es un humano decidiendo que una violación bloqueante no debió bloquear** — es decir, exactamente `humanBlocked: false` para esa regla sobre ese sujeto, la etiqueta que consume `evolith calibrate report` (`{ subject, rulesetId, gateBlocked, humanBlocked }`, `calibrate.command.ts:56`). Nada conecta ambos: `grep -rn "waiver" src/sdk/cli/src/commands/calibrate/` devuelve **cero coincidencias**. [`GT-585`](./gap-reference-catalog.es.md#gt-585) registra su bloqueo como «no hay corpus orgánico de etiquetas hasta que algo corra en producción» y está DIFERIDO por eso; **esta fila es el canal, no un segundo instrumento** — el registro de waivers ES un corpus orgánico, ya fluye allí donde corren las compuertas, y nadie lo lee. Comparado el 2026-08-14 con Facility, cuyo watchtower une cada recibo de ejecución con su resultado posterior; esa unión es la parte que nos falta, y los waivers son la unión que ya poseemos.
+- **Casos de uso:**
+  - Un tenant aprueba doce waivers sobre la misma regla en un mes; el board debería leer eso como una tasa candidata de bloqueo falso de esa regla, no como doce excepciones sin relación.
+  - Evolith publica una precisión por ruleset (criterio 3 de [`GT-585`](./gap-reference-catalog.es.md#gt-585)) con datos que ya posee, en vez de con un conjunto etiquetado a mano.
+  - Una regla cuya tasa de waivers cruza un umbral se propone para bajar de `blocking` a `advisory` — un argumento respaldado por las decisiones del propio tenant y no por nuestra opinión.
+  - Un auditor pregunta con qué frecuencia se equivoca la compuerta y recibe una tasa con su denominador y su intervalo, por regla.
+- **Impacto:** «Nuestras compuertas tienen una tasa de bloqueo falso medida, por regla y por tenant» es la afirmación que un catálogo de reglas competidor no puede copiar, porque es una propiedad de la operación acumulada. Hoy esa afirmación está bloqueada por falta de etiquetas mientras la fuente de etiquetas está sin leer en el almacén de waivers.
+- **Resultado esperado:** Un corpus de calibración que crece solo a medida que se operan las compuertas, y una tasa de bloqueo falso por regla derivada en lugar de reconstruida a posteriori.
+- **Ficheros afectados:** `src/packages/infra-providers/src/file-waiver-store.provider.ts`, `src/packages/core-domain/src/domain/waiver.ts`, `src/packages/core-domain/src/domain/calibration/**`, `src/sdk/cli/src/commands/calibrate/**`
+- **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 a partir del mismo benchmarking que [`GT-669`](./gap-reference-catalog.es.md#gt-669), y estrechado por medición: la primera formulación era «nada mide si la compuerta acertó», REFUTADA por `evolith calibrate report`. Lo que sobrevivió es el canal de entrada ausente, y por eso esta fila referencia a [`GT-585`](./gap-reference-catalog.es.md#gt-585) en vez de repetirlo.
+- **Criterios de aceptación:**
+  - [ ] Un exportador convierte los waivers aprobados en etiquetas de calibración (`subject`, `rulesetId`, `gateBlocked: true`, `humanBlocked: false`), llevando el `fingerprint` y el `approvedAt` del waiver como procedencia.
+  - [ ] Un waiver RECHAZADO se exporta como `humanBlocked: true` — sin la etiqueta confirmatoria el corpus solo contiene desacuerdo y toda tasa da 100 %.
+  - [ ] Los waivers que caducaron sin adjudicar se EXCLUYEN y se cuentan aparte, para que el silencio nunca se lea como acuerdo.
+  - [ ] `evolith calibrate report` corre de extremo a extremo sobre el corpus exportado en un test, y sigue negándose a citar una tasa por debajo de su suelo de n declarado.
+  - [ ] El exportador se demuestra falsable: un corpus con un desacuerdo plantado produce la matriz esperada, y quitar esa fila la cambia.
+- **Estado:** `PENDIENTE`
+
+#### GT-671
+
+**Título:** Nada vuelve a verificar el artefacto publicado después del día en que se publica, y la única comprobación posterior es `--help`
+
+- **Propósito:** Detectar una rotura en lo que la gente instala de verdad, de forma periódica, en vez de enterarnos por un usuario.
+- **Evidencia:** `sdk-cli-release.yml` es el **único** workflow que instala desde el registro — `npm install -g @beyondnet/evolith-cli@<version>` seguido de `evolith-cli --help` (`sdk-cli-release.yml:328-332`). El smoke funcional inmediatamente anterior corre `init` contra el **binario** empaquetado descargado de los artefactos de build, no contra la instalación npm (`:317-325`), así que ninguna ejecución somete a una instalación real de registro a trabajo real. Ambos corren una vez, dentro de la release. **Exactamente dos workflows del repositorio llevan `schedule:`** — `opa-parity.yml` y `openssf-scorecard.yml` — así que nada periódico toca el artefacto publicado. **La clase no es hipotética y ya ha costado dos veces:** [`GT-634`](./gap-reference-catalog.es.md#gt-634) es un defecto del CLI PUBLICADO que apareció después de publicar (un rango `^1.1.0` que no puede cruzar un major, resolviendo `latest` a un SDK anterior a la ola) y se encontró a mano haciendo otra cosa; y el propio registro de cierre de [`GT-625`](./gap-reference-catalog.es.md#gt-625) dice que su criterio se marca contra «un tarball empaquetado localmente, no contra el registro». Comparado el 2026-08-14 con el canario sintético semanal de Facility, que corre un bucle de entrega de extremo a extremo por calendario exactamente por esto.
+- **Casos de uso:**
+  - Una dependencia transitiva se republica o un rango resuelve distinto, y el CLI instalado se rompe para todo usuario nuevo mientras el repositorio sigue verde.
+  - Antes de señalar a un prospecto hacia `npm install`, el equipo quiere una ejecución verde y fechada que pruebe que el artefacto publicado hace trabajo real.
+  - Un paquete del que depende el CLI se deprecia o se despublica aguas arriba — un `--help` no se entera.
+  - Una regresión del lado del registro queda separada de una del lado del código, porque el canario prueba el artefacto y CI prueba el árbol.
+- **Impacto:** Todas las comprobaciones de este repositorio miden el árbol; lo que el cliente toca es el tarball. Esa asimetría es la clase [`GT-625`](./gap-reference-catalog.es.md#gt-625), y es la diferencia entre un producto instalable y un repositorio que compila.
+- **Resultado esperado:** Una ejecución programada que falle de forma ruidosa el día en que el artefacto publicado deje de funcionar, con el fallo atribuible al registro y no a la rama.
+- **Ficheros afectados:** `.github/workflows/**` (nuevo canario programado), `src/sdk/cli/examples/gate-verdict.assert.js`, `src/sdk/cli/package.json`
+- **Componente:** `Infra` · **Criticidad:** P1 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 a partir del mismo benchmarking que [`GT-669`](./gap-reference-catalog.es.md#gt-669). La afirmación «no hay comprobación posterior a la publicación» se midió y es FALSA — existe una — así que esta fila se acota a lo que esa comprobación no puede ver: un único `--help` en el momento de la release, nunca repetido.
+- **Criterios de aceptación:**
+  - [ ] Un workflow programado instala `@beyondnet/evolith-cli@latest` desde el registro en un contenedor limpio sin checkout del repositorio en el camino de resolución, y corre `init` y después `validate`.
+  - [ ] La aserción es un envelope ADR-0073 real con veredicto, no un código de salida cero — el fallo de oráculo débil registrado en [`GT-625`](./gap-reference-catalog.es.md#gt-625).
+  - [ ] La misma ejecución somete a `@beyondnet/evolith-mcp@latest` por stdio y afirma un veredicto de compuerta real, reutilizando `gate-verdict.assert.js` en vez de un segundo oráculo.
+  - [ ] Un canario rojo aparece en algún sitio que un humano lea; un workflow programado rojo permanente es el modo de fallo que registra [`GT-635`](./gap-reference-catalog.es.md#gt-635).
+  - [ ] Demostrado falsable: se corre contra una versión que se sabe rota (`cli@1.2.0`, [`GT-625`](./gap-reference-catalog.es.md#gt-625)) y se OBSERVA roja, no se argumenta que lo estaría.
+- **Estado:** `PENDIENTE`
+
+#### GT-672
+
+**Título:** Toda cifra que haría comprobable la afirmación de gobernanza está derivada y versionada, y ninguna se publica donde un lector pueda verla
+
+- **Propósito:** Publicar las mediciones que este repositorio ya produce, derivadas de artefactos versionados, para que la afirmación «gobernado y medido» pueda comprobarla alguien que no confía en nosotros.
+- **Evidencia:** Las mediciones existen y ya se mantienen honestas: `gap-tracking.md` lleva 666 filas con estados y economía de deuda ([`GT-599`](./gap-reference-catalog.es.md#gt-599)), la reconciliación de madurez y el resumen ejecutivo son artefactos generados, `iso-5055-mapping.json` publica la clasificación de reglas con denominadores, el corpus de guardas está clasificado y sus fixtures negativos contados (78 clasificadas, 54 observadas fallando), y `46-validate-derived-artifact-order` mantiene toda la cadena en punto fijo. **Lo que se publica es documentación** — `docs.yml` y `docs-release.yml` publican a `gh-pages` — y ninguna de esas cifras va con ella. Comparado el 2026-08-14 con Facility, cuya landing *es* su cuadro de mando (tasa de aceptación por lane de agente, reverts, tiempo hasta el merge) y es el activo suyo más transferible. **El benchmarking aporta además el antipatrón, medido el mismo día:** esa página renderiza hoy `0 deterministic guards recorded` y `0h median` — marcadores donde la derivación no está cableada — así que la lección es la contraria a imitar: publicar solo cifras derivadas de un artefacto versionado, cada una con su denominador, y hacer fallar el generador cuando falta la fuente en vez de renderizar un cero.
+- **Casos de uso:**
+  - Un prospecto pregunta por qué debería confiar en las compuertas y recibe una página fechada con denominadores en vez de un argumento de venta.
+  - El dueño ve la deriva — P0 abiertas, guardas observadas fallando, nivel de madurez — sin abrir el repositorio.
+  - Una cifra de precisión por regla (criterio 3 de [`GT-585`](./gap-reference-catalog.es.md#gt-585)) tiene dónde vivir cuando [`GT-670`](./gap-reference-catalog.es.md#gt-670) produzca etiquetas.
+  - Un auditor o un socio verifica una afirmación de la narrativa comercial contra el artefacto del que salió.
+- **Impacto:** La distancia entre «tenemos 112 guardas y un ledger firmado» y que un lector se lo crea es una cifra publicada y derivada. Es el movimiento de posicionamiento más barato disponible porque el material ya se produce y ya está guardado.
+- **Resultado esperado:** Una página pública en la que cada cifra nombra el artefacto y el commit del que se derivó, regenerada dentro de la misma cadena que el resto del corpus derivado.
+- **Ficheros afectados:** `.harness/scripts/ci/**` (nuevo generador y enlace de cadena), `.github/workflows/docs.yml`, `reference/core/control-center/**`
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `LOW` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 a partir del mismo benchmarking que [`GT-669`](./gap-reference-catalog.es.md#gt-669), incluidas las cifras marcador del propio competidor observadas ese día en su página viva — anotadas porque son el fallo que esta fila debe evitar, no como comparación.
+- **Criterios de aceptación:**
+  - [ ] Un generador emite la página pública de métricas solo desde artefactos versionados, sin ninguna cifra escrita a mano.
+  - [ ] Cada cifra lleva su denominador y nombra el artefacto y el commit del que se derivó.
+  - [ ] Una fuente ausente o ilegible HACE FALLAR al generador; nunca se renderiza como cero.
+  - [ ] El generador es un enlace declarado de la cadena de `46-validate-derived-artifact-order`, para que una página desactualizada sea un check rojo y no un bochorno.
+  - [ ] Se publica por el pipeline de documentación existente; sin hosting nuevo ni dominio nuevo.
+- **Estado:** `PENDIENTE`
+
+#### GT-673
+
+**Título:** `evolith upgrade` no distingue una edición del tenant de un cambio de upstream, y la sobrescribe
+
+- **Propósito:** Hacer que actualizar un satélite sea seguro para un tenant que haya personalizado algo, que serán todos en cuanto exista [`GT-669`](./gap-reference-catalog.es.md#gt-669).
+- **Evidencia:** `diffSatelliteVsCore` compara el contenido del fichero del core contra el del satélite y emite un cambio `modify` ante **cualquier** diferencia (`satellite-upgrade-diff.ts:70-81`); `applyChange` escribe entonces el contenido del core sobre el fichero del satélite de forma incondicional (`satellite-upgrade-apply.ts:5-15`). **No hay registro de lo que se scaffoldeó originalmente** — `grep -nE "hash|checksum|fingerprint|modified|overwrite" src/packages/core-domain/src/application/upgrade/*.ts` no devuelve **nada** — así que «el tenant personalizó esta regla» y «el core cambió esta regla» son indistinguibles, y el plan que el operador aprueba describe ambos igual: `Update ruleset: <ruta>`. `createBackup` acota la pérdida a una copia recuperable; no impide la sobrescritura, y nada en el plan avisa de que una edición está a punto de descartarse. Comparado el 2026-08-14 con Facility, que huella su plantilla instalada, mantiene los ficheros editables por el usuario en bloques gestionados delimitados y entrega las actualizaciones como pull requests revisables en vez de escrituras in situ.
+- **Casos de uso:**
+  - Un tenant endurece un umbral en un ruleset scaffoldeado; el siguiente upgrade restaura en silencio nuestro valor y su política desaparece del árbol de trabajo.
+  - Un tenant quiere las actualizaciones de reglas de upstream pero debe conservar tres overrides locales — hoy el único consejo seguro es «no actualices nunca», que lo congela en un corpus viejo.
+  - Un operador que revisa un plan de upgrade necesita ver qué cambios tocan ficheros que él modificó, antes de aprobar nada.
+  - Un tenant quiere saber en qué ha divergido de upstream, sin diferenciar dos repositorios a mano.
+- **Impacto:** Un upgrade que revierte en silencio la política del tenant es peor que no tener camino de actualización: convierte el propio mecanismo de actualización del producto en un incidente de gobernanza, y contradice directamente el principio de configurabilidad por tenant sobre el que se está construyendo el corpus.
+- **Resultado esperado:** Un upgrade que separa cambio de upstream, cambio local y conflicto real, aplica el primero, preserva el segundo y se niega al tercero sin instrucción explícita.
+- **Ficheros afectados:** `src/packages/core-domain/src/application/upgrade/satellite-upgrade-diff.ts`, `src/packages/core-domain/src/application/upgrade/satellite-upgrade-apply.ts`, `src/packages/core-domain/src/application/services/project-scaffolder.service.ts`, `src/sdk/cli/src/commands/upgrade/upgrade.command.ts`
+- **Componente:** `CLI` · **Criticidad:** P2 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 a partir del mismo benchmarking que [`GT-669`](./gap-reference-catalog.es.md#gt-669). El defecto se leyó en los dos módulos de upgrade antes de registrarlo, no se infirió de la lista de funcionalidades del competidor; la ausencia de cualquier huella se verificó con grep y se cita arriba. **No se afirma:** que ningún tenant haya perdido de verdad una edición por esta vía — todavía no corre nada en producción ([`GT-435`](./gap-reference-catalog.es.md#gt-435)/[`GT-448`](./gap-reference-catalog.es.md#gt-448)), así que es un defecto vivo sin víctima registrada, y decir otra cosa sería inventar un incidente.
+- **Criterios de aceptación:**
+  - [ ] `init` registra una huella de cada fichero que scaffoldea — ruta, hash de contenido y versión del core — en un manifiesto versionado.
+  - [ ] `upgrade` clasifica cada cambio como `upstream-only`, `local-only` o `conflict` contra esa huella, y reporta los tres por separado tanto en el envelope humano como en el JSON.
+  - [ ] Un `conflict` no se aplica por defecto; aplicarlo exige un flag explícito y nombra cada fichero que va a sobrescribir.
+  - [ ] Un test scaffoldea un satélite, edita un fichero scaffoldeado, actualiza y afirma que la edición SOBREVIVE — observado fallando contra el código actual antes del arreglo.
+  - [ ] El satélite puede reportar su divergencia respecto a upstream sin ejecutar un upgrade.
+- **Estado:** `PENDIENTE`
+
+#### GT-674
+
+**Título:** El puerto de evidencia de ejecución de IA y su adaptador de Langfuse se embarcan sin consumidor: ninguna regla lee coste ni tokens, y ninguna superficie puede aportar una traza
+
+- **Propósito:** O hacer que la evidencia de ejecución de IA sea decidible por una regla de gobernanza, o borrar el puerto en vez de dejar una capacidad aparente.
+- **Evidencia:** `ObservabilityEvidence` modela id de traza, fuente, modelo, nombre y versión de prompt, `costUsd`, `latencyMs`, `totalTokens`, llamadas a herramientas y puntuaciones de evaluación (`domain/observability-evidence.ts:20-35`), y `LangfuseEvidenceAdapter` implementa `IObservabilityEvidenceSource` (`infra-providers/src/langfuse-evidence.adapter.ts:26`) y se exporta desde el barrel del paquete. **Nada consume ninguno de los dos símbolos.** Fuera de esos dos ficheros, sus specs y el `index.ts`, un grep de `LangfuseEvidenceAdapter` y `IObservabilityEvidenceSource` sobre `src` no encuentra nada — ni handler de regla, ni registro de DI en `core-api` ni en `mcp-server`, ni entrada de CLI o MCP que acepte una traza. Así que hoy ninguna regla de gobernanza puede decidir nada sobre el coste, el modelo o la versión de prompt de una ejecución de IA, que es toda la clase de evidencia que el puerto existe para transportar. Comparado el 2026-08-14 con Facility, que sí decide con estos datos — presupuestos por proyecto aplicados en un gateway de modelos, atribución de coste y tokens por agente y tarea — que es lo que hace que cablear el puerto merezca discusión en vez de borrarse por defecto.
+- **Casos de uso:**
+  - Una compuerta rechaza un cambio cuya ejecución de IA corrió sobre una versión de prompt sin fijar o un modelo no declarado.
+  - Un tenant limita el gasto por iniciativa y quiere que el límite se evalúe como regla, con la traza como evidencia tras el veredicto.
+  - El coste y los tokens de una ejecución de agente pasan a formar parte del registro de auditoría de una iniciativa, junto a los statements firmados de [`GT-588`](./gap-reference-catalog.es.md#gt-588).
+  - Un tenant con otro backend de observabilidad aporta la misma forma portable, y la regla no cambia.
+- **Impacto:** Es el eje donde un competidor de AI-SDLC es más fuerte (miden y presupuestan cada ejecución) y donde nosotros tenemos el modelo y no el cable. Un puerto sin consumidor es además el peor inventario posible: se lee como capacidad embarcada en todo recuento de símbolos.
+- **Resultado esperado:** O una regla embarcada que falle ante una condición declarada sobre evidencia de ejecución de IA, con una vía documentada de aportar una traza — o un puerto borrado, decidido de forma explícita.
+- **Ficheros afectados:** `src/packages/core-domain/src/domain/observability-evidence.ts`, `src/packages/infra-providers/src/langfuse-evidence.adapter.ts`, `src/rulesets/**`, `src/apps/core-api/src/**`
+- **Componente:** `Core Domain` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `LOW` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 a partir del mismo benchmarking que [`GT-669`](./gap-reference-catalog.es.md#gt-669), después de REFUTAR la fila candidata más amplia: la primera formulación decía que faltaba el conector, y el adaptador existe y está exportado. Lo que sobrevivió a la medición es la ausencia de consumidor, que es una afirmación distinta y más pequeña.
+- **Criterios de aceptación:**
+  - [ ] Al menos una regla embarcada consume `ObservabilityEvidence` y FALLA ante una condición declarada, con test negativo.
+  - [ ] Una superficie puede aportar la evidencia inline, conforme a `ADR-0101` — el Core sigue sin estado y no lee el sistema de ficheros para ello.
+  - [ ] El adaptador se ejercita contra un fixture con un payload real del proveedor y no contra un objeto construido a mano, para que el mapeo quede probado contra una forma real.
+  - [ ] Si se juzga que el cable no merece la pena, el puerto y el adaptador se BORRAN y la decisión queda registrada — un puerto sin consumidor no se deja en pie como capacidad aparente.
+- **Estado:** `PENDIENTE`

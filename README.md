@@ -9,6 +9,8 @@
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
 
+> **[Start Here: Step-by-Step Quickstart Guide](./docs/guides/evolith-quickstart.md)**
+
 <br/>
 
 <a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Open the interactive diagram — pan & zoom">
@@ -148,6 +150,7 @@ Evolith ships as a suite of coordinated products built on a common foundation.
 | **[MCP Services](product/products/mcp-services/README.md)** | Governance as live context for LLMs and AI agents (47 tools, 9 resources, 8 prompts) |
 | **[Agent Runtime](reference/core/architecture/foundations/README.md)** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
 | **[Evolith Tracker](product/products/evolith-tracker/README.md)** | Business lifecycle governance — phases, owners, funding, and ROI |
+| **[Commercial Vision](product/suite/vision/evolith-commercial-brochure.md)** | Product strategy and enterprise monetization narrative (Hub & Spoke deployment) |
 | **[Rulesets](src/rulesets/README.md)** | Machine-readable enforcement rules per topology |
 | **[OPA Policies](src/rulesets/opa/README.md)** | Fine-grained policy checks integrated into the pipeline |
 | **[Schemas & Manifests](src/rulesets/schema/README.md)** | Structured contracts for artifacts and topology definitions |

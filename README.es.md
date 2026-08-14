@@ -8,6 +8,8 @@
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
 
+> **[Comenzar Aquí: Guía de Instalación Paso a Paso](./docs/guides/evolith-quickstart.es.md)**
+
 <br/>
 
 <a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Abrir el diagrama interactivo — desplazar y hacer zoom">
@@ -147,6 +149,7 @@ Evolith se distribuye como una suite de productos coordinados sobre una base com
 | **[MCP Services](product/products/mcp-services/README.es.md)**        | Gobernanza como contexto en vivo para LLMs y agentes de IA (47 tools, 9 resources, 8 prompts)                                |
 | **[Agent Runtime](reference/core/architecture/foundations/README.es.md)**       | Capa de mediación agéntica — orquesta el Core mediante Puertos y Adaptadores; Hermes es uno de los adaptadores reemplazables |
 | **[Evolith Tracker](product/products/evolith-tracker/README.es.md)**     | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI                                           |
+| **[Narrativa Comercial](product/suite/vision/evolith-commercial-brochure.es.md)** | Estrategia de producto y monetización empresarial (Despliegue Hub & Spoke)                                                   |
 | **[Rulesets](src/rulesets/README.es.md)**            | Reglas de aplicación legibles por máquina por topología                                                                      |
 | **[Políticas OPA](src/rulesets/opa/README.es.md)**       | Controles de política granulares integrados en el pipeline                                                                   |
 | **[Schemas y Manifests](src/rulesets/schema/README.es.md)** | Contratos estructurados para artefactos y definiciones de topología                                                          |

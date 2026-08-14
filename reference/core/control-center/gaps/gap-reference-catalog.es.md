@@ -168,6 +168,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Progreso (2026-07-13, Ola 6, commit `41135566`):** En el seam de core-domain (reusa `sarif-exporter`/`EvidenceNormalizer`, el Core queda puro). core-domain 1018/1018 + CLI evaluate 6/6. Queda `IN-PROGRESS`: publish live Checks API + store durable de waivers + subcomando CLI.
 - **Status:** `COMPLETADO`
 
+**CORRECCIÓN 2026-08-14 — ambas mitades se construyeron y nunca se cablearon entre sí.** `evaluateDriftGate` implementa la supresión completa tras un parámetro opcional `waivers?: IWaiverStore`, y los tres llamantes de producción lo omiten (`evaluate.command.ts:174`, `evaluate.command.ts:204`, `mcp-server/src/tools/evaluate.tool.ts:138`); `FileWaiverStore` tiene exactamente un consumidor no-spec, el comando que ESCRIBE waivers. Medido de extremo a extremo: aprobar un waiver y repetir la compuerta de drift deja `blockingFailures 94 → 94`, `frozen 0 → 0`, `waiverRef undefined`. El registro de cierre de esta fila queda como historia; el defecto vivo se registra como [`GT-677`](./gap-reference-catalog.es.md#gt-677).
+
 #### GT-519
 
 **Title:** Paridad CLI/MCP/REST (BR-008) + toolchain reproducible + observabilidad de enforcers
@@ -2689,6 +2691,8 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
   - [x] Los eventos de auditoría persisten en un almacén append-only.
   - [x] Consultable por tenant/fase/actor/correlationId.
 
+**CORRECCIÓN 2026-08-14 — esta fila se cerró contra una clase sin instanciación en producción.** `grep -rn "JsonlAuditRepository" src .harness` devuelve exactamente dos hits: su propia declaración y un comentario en prosa de `jsonl-transparency-ledger.ts`. Cero imports, cero registros de DI, y `new AuditService(...)` solo en specs — así que los criterios marcados «los eventos persisten en un almacén append-only» y «consultable por tenant/fase/actor/correlationId» no los satisface ningún camino de código alcanzable. Registrado como [`GT-680`](./gap-reference-catalog.es.md#gt-680) en vez de reabierto, porque `08-validate-tracking` trata un registro de cierre sobre una fila no-DONE como error y deshacerlo destruiría el rastro de evidencia.
+
 #### GT-322
 
 **Título:** Cliente @evolith/sdk tipado (REST+MCP)
@@ -2848,6 +2852,8 @@ Detectado por el **spike Fase-0b de ADR-0109** al validar el workspace de monore
   - [x] Una política ABAC en OPA (`abac-mcp-tool-access.rego`) gobierna las herramientas mutativas por rol/alcance, deny por defecto.
   - [x] Los eventos de auditoría registran identidad del llamante, alcance, approval token y diff por cada invocación mutativa.
 
+
+**CORRECCIÓN 2026-08-14 — nada emite un `approvalToken`.** El criterio marcado nombra un token «emitido fuera de banda»; el predicado completo en `mcp-tool-dispatch.ts:232` es `typeof approvalToken === 'string' && trim() !== ''`, y un grep de `issueApproval`, `redeemApproval`, `mintApproval` y `createApprovalToken` sobre `src` no devuelve nada fuera de comentarios y fixtures. Registrado como [`GT-679`](./gap-reference-catalog.es.md#gt-679).
 
 #### GT-159
 
@@ -4961,6 +4967,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los correlation IDs se propagan desde headers HTTP/metadata Stdio hasta spans OTel y audit logs.
   - [x] Tests de integración verifican emisión de eventos de audit para al menos una ruta de tool, resource y prompt.
 
+**CORRECCIÓN 2026-08-14 — la mitad de recursos y prompts del criterio marcado no tiene llamante de producción.** `logResourceAccess` y `logPromptAccess` están definidos en `audit-logger.ts:72,77` y sus únicos llamantes en todo el árbol son `mcp-server.service.spec.ts:709,724` — los tests de apoyo llaman al logger directamente, que es por lo que «emite eventos estructurados para toda llamada de tool/resource/prompt en ambos transportes» se lee como satisfecho. Seguido en el criterio 2 de [`GT-680`](./gap-reference-catalog.es.md#gt-680).
+
 #### GT-222
 
 **Propósito:** Subir la densidad de tests OPA por topología a ≥1 test por regla para que el gate de paridad sea significativo — hoy modular-monolith tiene 2 tests para 12 reglas (17%), distributed-modules 4 para 8 (50%) y agentic-ai 4 para 9 (44%), todos muy por debajo de la densidad 100%+ de data-mesh y event-driven.
@@ -5380,6 +5388,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Endpoint o mecanismo de revocación documentado.
   - [x] Log de auditoría para eventos de creación, rotación y revocación de keys.
   - [x] Ruta de migración documentada desde el modelo actual de env-var único al servicio de provisioning.
+
+**CORRECCIÓN 2026-08-14 — el servicio de aprovisionamiento no tiene llamante.** `grep -rn "ApiKeyProvisioningService" src` solo devuelve su propio fichero, su spec, prosa del README y `mcp.module.ts:9,14,15` donde se registra como provider y se exporta. Los criterios marcados «un comando CLI o endpoint HTTP genera keys bajo demanda», «rotación sin reinicio» y «revocación documentada» no son alcanzables: las únicas rutas son `/health*`, `/metrics` y `/.well-known/oauth-protected-resource`, y el almacén de keys es un `Map` en proceso. Registrado como [`GT-681`](./gap-reference-catalog.es.md#gt-681).
 
 #### GT-267
 
@@ -8882,6 +8892,8 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Un test negativo demuestra que una regla escrita puede FALLAR de verdad sobre un sujeto; una regla que solo pasa es el caso vacío que este board no deja de encontrar.
 - **Estado:** `PENDIENTE`
 
+**CORRECCIÓN DE ALCANCE 2026-08-14, desde la ola de benchmarking ultracode — una afirmación de esta fila fue REFUTADA y el residuo es más estrecho de lo registrado.** Una regla escrita íntegramente fuera del repositorio Core SÍ puede ejecutarse hoy, por dos caminos cableados en producción y sin tocar código del Core, y ambos se ejecutaron: (1) una regla con id nuevo `ACME-04`, `category: "boundary"` y una cláusula escrita devolvió un veredicto `failed` real a través de `NativeEvaluator`, porque `ModuleBoundaryRuleHandler.canHandle` reclama por CLÁUSULA y no por id (`:35-42`), igual que los handlers de conformidad ADR y arquitectura; (2) una regla con id nuevo y `enforce: {engine: 'enforcer', tool: 'Trivy'}` devolvió `failed | 1 violation(s) from Trivy`, porque los bloques `enforce` se normalizan desde `GT-632` y las tres superficies inyectan un ejecutor de procesos. **Lo que sí sobrevive, y lo que esta fila acota ahora:** un tenant no puede registrar un EJECUTOR nuevo — `createEnforcerAdapters` es una factoría fija de seis entradas (`enforcer-subsystem.ts:40-53`) sin punto de inyección, y tres grafías distintas de gancho de registro no encontraron nada fuera de specs — y no hay documentación orientada al tenant de los dos caminos que ya funcionan. El criterio 1 se mantiene tal cual; el titular honesto es la ausencia de una superficie de autoría SOPORTADA y DOCUMENTADA y de extensibilidad de ejecutores, no una incapacidad de ejecutar.
+
 #### GT-670
 
 **Título:** La única adjudicación orgánica que el producto ya captura — un waiver aprobado — nunca se convierte en la etiqueta de calibración que ese instrumento está esperando
@@ -9004,4 +9016,344 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Una superficie puede aportar la evidencia inline, conforme a `ADR-0101` — el Core sigue sin estado y no lee el sistema de ficheros para ello.
   - [ ] El adaptador se ejercita contra un fixture con un payload real del proveedor y no contra un objeto construido a mano, para que el mapeo quede probado contra una forma real.
   - [ ] Si se juzga que el cable no merece la pena, el puerto y el adaptador se BORRAN y la decisión queda registrada — un puerto sin consumidor no se deja en pie como capacidad aparente.
+- **Estado:** `PENDIENTE`
+
+
+#### GT-675
+
+**Título:** El motor OPA reporta `passed` para toda regla que ninguna política compilada puede decidir, invirtiendo el veredicto respecto al motor nativo sobre la misma entrada
+
+- **Propósito:** Que los dos motores que un ADR vende como intercambiables discrepen solo sobre hechos, nunca sobre si una regla llegó a ejecutarse.
+- **Evidencia:** **Reproducido de primera mano el 2026-08-14, un comando cada uno, veredictos opuestos sobre la misma entrada.** `node src/sdk/cli/dist/main.js validate --format json --core . --engine opa --select src/rulesets/security/injection-prevention.rules.json` → **exit 0**, `{status: "passed", rulesChecked: 2, rulesSkipped: 0, issues: 0, blocking: 0}`. El mismo comando con `--engine native` → **exit 2**, `{status: "failed", rulesChecked: 0, rulesSkipped: 2, issues: 2, blocking: 2}`. `grep -rn "SEC-INJ" src/rulesets/opa/` no devuelve nada: ninguna política compilada decide esas reglas. **El mecanismo es un tercer resultado ausente.** `OpaEvaluator` no tiene `skipped` en ninguna parte — toda regla que recibe o casa con una violación (`failed`) o se reporta `passed` (`opa-evaluator.ts:169-185`) — mientras que `NativeEvaluator` devuelve `skipped` con una razón de evaluabilidad cuando ningún handler reclama la regla (`native-evaluator.ts:92-97`), y `rule-evaluation-engine.ts:412-416` convierte una regla `skipped` + `blocking` en un issue bloqueante. Medido sobre todo el corpus: OPA `rulesChecked 354 / rulesSkipped 0`, nativo `113 / 241`; **206 reglas que el motor nativo salta las reporta OPA como `passed`, 147 de ellas no aparecen en ningún `.rego` no-test de los 34 ficheros de política, y 12 de esas son `blocking: true`.**
+- **Casos de uso:**
+  - Un tenant adopta un pack sin cobertura Rego, corre el motor OPA y CI reporta verde sobre reglas que nadie evaluó.
+  - Un job de CI sigue `ADR-0041`, que anuncia `--engine <native|opa>` para pipelines, elige OPA por velocidad y desactiva en silencio 147 reglas.
+  - Un auditor compara dos ejecuciones del mismo corpus, obtiene 52 frente a 112 issues y ningún campo explica la diferencia.
+  - Un autor de políticas borra un `.rego` y nada se pone rojo: las reglas que decidía pasan a aprobar siempre.
+- **Impacto:** Un motor de gobernanza que responde `passed` donde el otro responde `failed` con issues bloqueantes es el peor fallo que este producto puede embarcar, porque es indistinguible del éxito. Además invierte el invariante que estableció `GT-595` — `blocking + skipped` debe fallar — en el motor al que un ADR aceptado apunta desde CI.
+- **Resultado esperado:** `OpaEvaluator` devuelve `skipped` con razón de evaluabilidad para toda regla fuera del conjunto de ids que su bundle compilado declara, y un guard de CI falla cuando un id sale `passed` en un motor y `skipped` en el otro.
+- **Ficheros afectados:** `src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts`, `src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts`, `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/**` (nuevo guard de acuerdo entre motores)
+- **Componente:** `Core Domain` · **Criticidad:** P1 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola de benchmarking multi-agente ultracode (30 agentes, 40 candidatos, 16 verificados adversarialmente, 15 supervivientes, 1 refutación). **Tres subafirmaciones del candidato original murieron antes de llegar al board y no deben reimportarse:** «un corpus que el motor OPA no puede evaluar devuelve un verde limpio» es FALSO para el corpus completo (`validate --engine opa --core .` → `status: failed`, 52 issues, 31 bloqueantes, exit 2 — el falso verde solo es alcanzable sobre un pack SELECCIONADO); «el defecto afecta a CLI, MCP y REST» es FALSO (`grep -rn "engineType" src/packages/mcp-server/src src/apps/core-api/src` → 0: ambas superficies aceptan un argumento `engine` y lo tiran, defecto menor y separado recogido en el criterio 6); y las cifras del candidato estaban desactualizadas. **No es P0 según la convención de este board:** la bandera es opt-in, por defecto es nativo, y ningún camino de CI de este repositorio la usa — el defecto es un veredicto equivocado, no una caída. **También medido:** sin un `policy.wasm` compilado en disco (está gitignorado, `.gitignore:154-155`) el mismo evaluador falla TODAS las reglas — ambos modos de fallo son erróneos, en direcciones opuestas, tras una sola bandera.
+- **Criterios de aceptación:**
+  - [ ] `OpaEvaluator` tiene un tercer resultado y un test unitario afirma `skipped` para un id ausente del conjunto declarado por la política.
+  - [ ] El bundle compilado puede enumerar los ids que sabe decidir — un manifiesto de build desde `compile-opa-wasm.mjs` o un entrypoint `declared_rule_ids` — comprobado no vacío y cubriendo todo `.rego` no-test.
+  - [ ] **FALSABILIDAD:** el par exacto de comandos de arriba se OBSERVA pasando de exit 0 / `passed` a exit 2 / `failed` / `rulesSkipped: 2`, con ambas salidas literales pegadas en el registro de cierre. Un arreglo registrado sin esa observación no cierra esta fila.
+  - [ ] Un guard nuevo corre ambos motores sobre el corpus, publica su denominador, rechaza un escaneo de cero elementos (`42-validate-guard-denominators`) y es observado ponerse rojo por `43-validate-guard-negative-fixtures`.
+  - [ ] El desacuerdo medido — 206 OPA-passed / nativo-skipped, 147 sin política alguna, 12 de ellas bloqueantes — pasa a 0 / 0 / 0 bajo la misma medición.
+  - [ ] El argumento `engine` que aceptan `composable-validate.tool.ts:62` y `composable-validate.controller.ts:78` y que nadie consume se cablea o se elimina; aceptado-e-ignorado no es un estado final.
+- **Estado:** `PENDIENTE`
+
+#### GT-676
+
+**Título:** El suelo de cobertura no se puede activar desde ninguna superficie, así que la única guarda contra el salto masivo de reglas nace muerta
+
+- **Propósito:** Permitir que un operador diga «falla si más del N% de las reglas aplicables no se ejecutaron» — la guarda que construyó `GT-569` y que ningún llamante alcanza.
+- **Evidencia:** `maxSkippedFraction` está implementado y probado unitariamente, y `grep -rn "maxSkippedFraction"` sobre el repositorio (excluyendo `node_modules`, `dist`, `coverage`) solo devuelve hits bajo `src/packages/core-domain/src/application/validators/`, dos comentarios en prosa y el board — **cero** bajo `src/sdk/cli`, `src/apps/core-api` o `src/packages/mcp-server`. No hay flag de CLI, ni argumento de herramienta MCP, ni campo REST, ni clave de perfil, ni variable de entorno que lo fije, así que `coverageThresholdIssue` cortocircuita a `undefined` en toda ejecución real y `GOV-COVERAGE-THRESHOLD` solo puede emitirse desde los propios specs de core-domain. **La costura importa:** `validate-satellite.use-case.ts:76-104` enumera los campos de opciones al reconstruir el validador, así que una opción nueva que no se añada ahí se pierde en silencio aunque exista el flag — el mismo fallo que registró `GT-664` para `processRunner`.
+- **Casos de uso:**
+  - Un tenant quiere que CI falle cuando un cuarto de las reglas aplicables no se ejecutó, y no tiene forma de expresarlo.
+  - Un satélite deriva, su conteo de saltos sube y nada escala porque `rulesSkipped` es informativo en todas las superficies.
+  - Un auditor pregunta qué suelo de cobertura está configurado y no hay campo al que apuntar.
+  - Un llamante MCP o REST no puede reproducir un veredicto del CLI porque un umbral que cambia el resultado es irrepresentable en su superficie.
+- **Impacto:** La cobertura es la diferencia entre «no hay hallazgos bloqueantes» y «las reglas bloqueantes no corrieron», la distinción que este corpus descubre una y otra vez que no puede hacer. Embarcar la medición y dejarla inalcanzable significa que el board registra un control que ninguna ejecución ha aplicado jamás.
+- **Resultado esperado:** un flag `--max-skipped-fraction`, un argumento MCP y un campo REST, los tres atravesando la costura de reconstrucción del caso de uso, produciendo un issue bloqueante idéntico en las tres superficies.
+- **Ficheros afectados:** `src/sdk/cli/src/commands/validate/validate.command.ts`, `src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts`, `src/packages/mcp-server/src/tools/**`, `src/apps/core-api/src/presentation/controllers/evaluation.controller.ts`
+- **Componente:** `Core Domain` · **Criticidad:** P1 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode. Deliberadamente NO fusionado con [`GT-675`](./gap-reference-catalog.es.md#gt-675): el suelo de cobertura no puede atrapar el caso OPA, porque OPA reporta `rulesSkipped: 0` — medido `rulesChecked 354 / rulesSkipped 0` frente al `113 / 241` del nativo. Son dos canales independientes de falso verde que casualmente comparten una costura.
+- **Criterios de aceptación:**
+  - [ ] `evolith validate --max-skipped-fraction 0.2 --format json` sobre este repositorio sale con código distinto de cero y un issue `GOV-COVERAGE-THRESHOLD` que nombra el conteo no evaluado, el denominador ejecutable y el máximo configurado.
+  - [ ] **FALSABILIDAD:** la misma ejecución con `1.0`, y sin el flag, sale 0 por este motivo y no emite tal issue — la guarda observada disparándose y no disparándose.
+  - [ ] **COSTURA:** borrar `maxSkippedFraction` de la lista de opciones en `validate-satellite.use-case.ts:76-104` pone roja la suite, demostrado por un test que construye el caso de uso y toma la rama que reconstruye, no la instancia creada en `app.module.ts`.
+  - [ ] Paridad MCP: la herramienta acepta el umbral y el tester exploratorio cross-superficie reporta 0 divergencias con el nuevo binding.
+  - [ ] Paridad REST: el campo se lee dentro de la construcción por petición y una petición devuelve el issue bloqueante.
+  - [ ] `ruleset-validator.types.ts` deja de documentar el denominador como `rulesTotal`; es `rulesExecutable` desde `GT-595`.
+- **Estado:** `PENDIENTE`
+
+#### GT-677
+
+**Título:** Un waiver aprobado no suprime nada en ningún camino embarcado — la compuerta implementa la supresión y ningún llamante de producción pasa el almacén
+
+- **Propósito:** Que la acción humana de mayor consecuencia del producto — aceptar un riesgo — cambie de verdad un veredicto.
+- **Evidencia:** `evaluateDriftGate` implementa la supresión completa tras un parámetro opcional (`drift-gate.ts:90` `readonly waivers?: IWaiverStore`, `:171-186` `applyWaivers` → `frozen: true`, una entrada en `waived[]` y `evidence.waiverRef`), y **todos los llamantes de producción omiten el argumento.** Verificado el 2026-08-14 enumerándolos: `evaluate.command.ts:174` (`evaluateDriftGate({ result, codeowners })`), `evaluate.command.ts:204` y `mcp-server/src/tools/evaluate.tool.ts:138` (`evaluateDriftGate({ result })`). Los únicos sitios que pasan `waivers:` están en `drift-gate.spec.ts:105,117`. Simétricamente, `FileWaiverStore` tiene exactamente **un** consumidor no-spec en el repositorio — `waiver.command.ts:110` — el comando que ESCRIBE waivers. **Medido de extremo a extremo por ejecución, no por lectura:** en un workspace de prueba, `evaluate --format drift` → exit 2 con 94 violaciones, la primera `{"ruleId":"GOV-000","fingerprint":"a670fcba5dccb53f","frozen":false}`; después `waiver request --ref W-1 --fingerprint a670fcba5dccb53f` + `waiver approve --ref W-1 --by lead` → `"effectiveStatus":"approved"` persistido en `.evolith/waivers.json`; después la misma ejecución de drift → **exit 2, `blockingFailures 94 → 94`, `frozen 0 → 0`, `waiverRef undefined`, sin sección «Waived findings».** La violación eximida sigue reportándose `frozen: false`.
+- **Casos de uso:**
+  - Un dueño acepta un riesgo documentado, aprueba el waiver, y el merge sigue bloqueado sin explicación.
+  - Un equipo concluye que el comando de waivers está roto y desactiva la compuerta — la peor reacción posible, y la racional.
+  - El canal de calibración de [`GT-670`](./gap-reference-catalog.es.md#gt-670) se apoya en que un waiver aprobado signifique algo; hoy no significa nada.
+  - Un auditor pregunta a qué evaluación se aplicó un waiver dado, y esa evaluación no existe.
+  - `waiver.command.ts:58-60` le dice al lector que «la compuerta de drift … consume el MISMO almacén», y eso es falso en el propio código del producto.
+- **Impacto:** `GT-518` figura `DONE` por «almacén durable de waivers + CLI `evolith waiver` + la compuerta de drift», y ambas mitades se construyeron sin llegar a conectarse — exactamente la forma de defecto que este board no deja de encontrar, sobre la única acción que permite a un humano corregir a la máquina. Es además el arreglo más barato de esta ola: un argumento en tres llamadas.
+- **Resultado esperado:** los llamantes de producción resuelven un `IWaiverStore` y lo pasan, de modo que un waiver aprobado, no caducado y con fingerprint coincidente mueve el hallazgo a la sección «Waived findings» que la compuerta ya renderiza en `drift-gate.ts:136-139`, y mueve el código de salida.
+- **Ficheros afectados:** `src/sdk/cli/src/commands/evaluate/evaluate.command.ts`, `src/packages/mcp-server/src/tools/evaluate.tool.ts`, `src/sdk/cli/src/commands/waiver/waiver.command.ts`, `src/packages/core-domain/src/evaluation/drift-gate.ts`
+- **Componente:** `Evolith CLI` · **Criticidad:** P1 · **Complejidad:** XS
+- **Principal:** `XS` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode y reverificado de forma independiente antes de registrar: los tres llamantes y el único consumidor no-spec de `FileWaiverStore` se enumeraron con grep en este árbol de trabajo. **`GT-518` se anota en lugar de reabrirse** — su registro de cierre queda como historia, y esta fila lleva la medición de que sus dos mitades nunca se cablearon entre sí. Bloquea el criterio 6 de [`GT-682`](./gap-reference-catalog.es.md#gt-682) y el criterio 2 de [`GT-687`](./gap-reference-catalog.es.md#gt-687), y refuta la premisa desde la que razona [`GT-670`](./gap-reference-catalog.es.md#gt-670).
+- **Criterios de aceptación:**
+  - [ ] Aprobar un waiver para el fingerprint de una violación bloqueante y repetir `evaluate --format drift` en el mismo workspace la muestra bajo «Waived findings» nombrando `W-<ref>@v<version>` y su caducidad, con `frozen: true` en el manifiesto y `blockingFailures = N-1`.
+  - [ ] Un workspace cuya única violación bloqueante está eximida sale **0** — el código de salida es lo que lee CI.
+  - [ ] **FALSABILIDAD (cuatro negativos, cada uno observado sin suprimir):** un waiver `requested` sin aprobar, uno `rejected`, uno aprobado pasado su `expiresAt`, y uno aprobado cuyo fingerprint no coincide. Una suite solo de camino verde no es evidencia: `applyWaivers` ya pasa su camino verde hoy mientras el producto no suprime nada.
+  - [ ] Paridad MCP: `evaluate.tool.ts` resuelve un almacén, y un oráculo que pregunta a ambas superficies por el mismo workspace y waiver afirma conjuntos eximidos idénticos, mostrado poniéndose rojo cuando el almacén se pasa solo a una superficie.
+  - [ ] La resolución del almacén es una opción explícita y probada por defecto relativa al **workspace**, no a `process.cwd()` como hace hoy `waiver.command.ts:110`, con un test que demuestra que un waiver aprobado desde otro cwd sigue aplicando.
+  - [ ] `waiver.command.ts:58-60` es cierto o se reescribe, con un test que falla si la afirmación y el cableado vuelven a divergir.
+- **Estado:** `PENDIENTE`
+
+#### GT-678
+
+**Título:** No hay suavizado por regla para el tenant: los ids duplicados cargan de forma aditiva y un `enabled: false` escrito por el tenant lo acepta el esquema y lo tira el loader
+
+- **Propósito:** Permitir que un tenant desactive, degrade o desbloquee UNA regla, y que el loader lo diga, en vez de producir en silencio dos copias contradictorias.
+- **Evidencia:** La selección por pack existe y está cableada (`--select`, `ProfileConfig.select`, `GT-659`/`GT-660`/`GT-661`), así que el hueco es de granularidad y dirección, no de existencia. **Medido contra el `DiskRulesetRepository` real** sobre un corpus donde un pack de tenant redefine la regla Core `ACL-02` como `severity: warning, blocking: false, enabled: false`: `TOTAL RULES LOADED: 2` — `{"id":"ACL-02","severity":"MUST","blocking":true,"src":"rulesets/core.rules.json"}` **y** `{"id":"ACL-02","severity":"SHOULD","blocking":false,"src":"rulesets/tenants/tenantpack.rules.json"}` — con `enabled` **ausente en ambas**, descartado en vez de leído como falso. El esquema lo permite: `definitions.rule` no lleva `additionalProperties: false`, a diferencia de `definitions.enforce` a su lado. **Y la superficie de override por tenant que parece existir no existe:** `src/rulesets/tenants/**` embarca esquema, ejemplo y README con **cero** consumidores de código (`grep -rnE "overridesRef|tenant-override" --include='*.ts'` → 0), y el README afirma que `multi-tenancy.rego` lo aplica, lo cual es falso — `MTN-01..08` leen `input.satellite.multiTenancy.*`.
+- **Casos de uso:**
+  - Un tenant acepta permanentemente el riesgo de una regla y debe elegir entre adoptar el pack entero o ninguno.
+  - Un tenant escribe un override y obtiene un hallazgo duplicado: la regla dispara dos veces, con dos severidades, desde dos ficheros.
+  - Un tenant escribe `"enabled": false`, la ejecución no cambia, y nada le dice que la clave se descartó.
+  - Un auditor pregunta qué reglas suavizó este tenant y de qué a qué; nada lo registra.
+- **Impacto:** «El Core expone su catálogo y el cliente selecciona su nivel» se detiene en la granularidad de pack, y un esquema muerto se embarca como si funcionara. Una clave descartada en silencio es peor que una rechazada: parece configuración.
+- **Resultado esperado:** un delta por regla que el loader lea de verdad, con cada override aplicado nombrado en el resultado como hermano del campo `selection` de `GT-661`, y las claves desconocidas rechazadas en vez de descartadas.
+- **Ficheros afectados:** `src/packages/infra-providers/src/disk-ruleset.repository.ts`, `src/rulesets/schema/**`, `src/rulesets/tenants/**`
+- **Componente:** `Core Domain` · **Criticidad:** P2 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode. Separado a propósito de [`GT-669`](./gap-reference-catalog.es.md#gt-669) — escribir una regla nueva y suavizar una existente son mecanismos distintos con arreglos distintos (merge del loader y estrictez del esquema aquí; una superficie de autoría allí) — y de [`GT-673`](./gap-reference-catalog.es.md#gt-673), que trata de que el upgrade sobrescriba lo que el tenant escribió. El encuadre más fuerte del candidato, «no hay selección por tenant en absoluto», fue REFUTADO antes de registrar.
+- **Criterios de aceptación:**
+  - [ ] **FALSABILIDAD (observado rojo primero):** un test que carga un corpus donde un pack de tenant redefine un id Core afirma que la regla aparece una vez con la severidad del tenant, y debe observarse primero reproduciendo `TOTAL RULES LOADED: 2` con la copia Core todavía `blocking: true`.
+  - [ ] Una clave desconocida en una regla — hoy `enabled` — se rechaza con un error nombrado o se honra; nunca el no-op silencioso de hoy.
+  - [ ] Un delta por regla es expresable en un documento que lea un camino de producción, y la ejecución reporta la regla una vez con la severidad sobrescrita.
+  - [ ] Todo override que cambió una ejecución se nombra en el resultado con de→a, aprobador y caducidad, comprobado no vacío para una ejecución con override y **vacío en vez de ausente** para una limpia.
+  - [ ] Un override que elimina un criterio bloqueante se rechaza con un id de issue nombrado, observado fallando en un test.
+  - [ ] `src/rulesets/tenants/README.md` se corrige o se borra; un documento que describe una aplicación inexistente es peor que ningún documento.
+- **Estado:** `PENDIENTE`
+
+#### GT-679
+
+**Título:** El segundo factor de aprobación humana del MCP es una cadena sin verificar: cualquier valor no vacío aprueba cualquier herramienta mutativa
+
+- **Propósito:** Que la compuerta de aprobación sobre las 20 herramientas mutativas del MCP signifique que un humano aprobó algo, cosa que hoy no ocurre.
+- **Evidencia:** **Leído literalmente el 2026-08-14** en `mcp-tool-dispatch.ts:232`: `if (args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string' || args.approvalToken.trim() === '')`. Ese es el predicado completo — sin emisor, sin almacén, sin firma, sin caducidad, sin un solo uso, sin vínculo con principal, herramienta ni argumentos — así que la compuerta no añade **ninguna** autorización más allá del scope `write` que el llamante ya tiene y de la decisión ABAC que ya corrió. Nada emite un token en ningún sitio: `grep -rn "issueApproval|redeemApproval|mintApproval|createApprovalToken" src` no devuelve nada fuera de comentarios y fixtures. El test **actualmente en verde** `mcp-server.service.spec.ts:125-137` llama a `handleCallTool('evolith-write-file', { apply: true, approvalToken: 'test-token-123' })` y afirma éxito: el defecto está fijado en verde. **Existe un subsistema de aprobación completo a un paquete de distancia y nunca se consulta:** `agent-runtime/src/adapters/approval/` tiene TTL, `approve(id, approver)` y caducidad fail-closed, y `mrtr-request-state.ts` sella estado con AES-256-GCM, `expiresAt` y `timingSafeEqual` mientras EXCLUYE explícitamente `approvalToken` del digest sellado (`:81`).
+- **Casos de uso:**
+  - Un agente autónomo con una key `write` válida se inventa su propio token y se autoaprueba toda herramienta irreversible que llama.
+  - Un auditor pregunta quién aprobó un `satellite-create`; el registro guarda el fingerprint de una cadena que nadie emitió.
+  - El viaje de ida y vuelta de elicitación se salta entero por el atajo inline de `stateless-rpc.ts:288-292`, y el servidor no distingue los dos caminos.
+  - `McpInteractionAdapter.ts:47-49` convierte cualquier cadena del llamante en `{granted: true, approver: 'mcp'}` y presatisfaría la comprobación de aprobación del agent-runtime si llegara a cablearse.
+- **Impacto:** El humano en el bucle es el control que este producto vende con más fuerza, y en la superficie orientada a agentes es una comprobación de veracidad. `GT-158` registra lo contrario como entregado: su criterio «un `approvalToken` **emitido fuera de banda**» está marcado y nada lo emite.
+- **Resultado esperado:** una concesión protegida en integridad que lleve aprobador, tenant, herramienta, un digest de los argumentos vinculantes y una caducidad, verificada antes de `tool.execute`, reutilizando la maquinaria HKDF y `timingSafeEqual` que ya está en el repositorio.
+- **Ficheros afectados:** `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts`, `src/packages/mcp-server/src/mcp/stateless-rpc.ts`, `src/packages/mcp-server/src/mcp/mrtr-request-state.ts`, `src/packages/agent-runtime/src/adapters/approval/**`
+- **Componente:** `MCP Server` · **Criticidad:** P1 · **Complejidad:** L
+- **Principal:** `L` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode; el predicado se leyó directamente en este árbol antes de registrar. **Dos encuadres fueron REFUTADOS y quedan excluidos:** «cualquier cliente MCP autenticado puede ejecutar una herramienta mutativa» es falso — una compuerta de scope (`:188-195`) y el ABAC nativo+OPA (`:210-229`) corren antes, así que el token no añade nada *por encima* de eso en vez de ser el único control; y «no existe almacén de aprobación, TTL, firma ni identidad de aprobador en ningún sitio» es falso: los cuatro existen en `agent-runtime` y simplemente no se consultan. **`GT-158` queda anotado por esta fila, no reabierto:** su registro de cierre se mantiene, y aquí queda la medición de que nada emite un token.
+- **Criterios de aceptación:**
+  - [ ] **FALSABILIDAD:** una llamada mutativa con `approvalToken: 'x'`, desde un llamante con credencial `write` válida que pasa ABAC, es RECHAZADA con un motivo. El commit que añade ese test sin el arreglo debe observarse rojo — hoy la aserción equivalente pasa verde en la dirección contraria.
+  - [ ] `grep -n "test-token-123" src/packages/mcp-server/src/mcp/mcp-server.service.spec.ts` no devuelve nada.
+  - [ ] La emisión existe y es medible: una superficie nombrada emite la concesión, y canjear una concesión emitida para la herramienta A contra la herramienta B se rechaza.
+  - [ ] Caducidad y uso único quedan probados: un reloj adelantado más allá de `expiresAt`, y un segundo canje rechazado.
+  - [ ] Ambos caminos de protocolo llegan a un solo verificador: un test de paridad donde un token aceptado en el dispatch pero rechazado en el atajo inline de `stateless-rpc.ts` hace fallar el build.
+  - [ ] La línea de auditoría responde «quién aprobó» con identidad de aprobador e id del registro de canje, con el token en crudo aún redactado para que las aserciones de `GT-332` sigan pasando.
+  - [ ] `McpInteractionAdapter.ts:47-49` deja de convertir una cadena del llamante en `{granted: true, approver: 'mcp'}`.
+- **Estado:** `PENDIENTE`
+
+#### GT-680
+
+**Título:** La auditoría de llamadas del MCP es un buffer circular en memoria y el ledger durable contra el que se cerró no tiene ninguna instanciación en producción
+
+- **Propósito:** Que el registro de auditoría sobreviva a un reinicio y sea legible, que es lo que el board ya da por entregado.
+- **Evidencia:** **Verificado de primera mano el 2026-08-14:** `grep -rn "JsonlAuditRepository" src .harness` devuelve exactamente **dos** hits — `jsonl-audit-repository.ts:15`, su propia declaración, y `jsonl-transparency-ledger.ts:4`, un comentario en prosa. Cero instanciaciones, cero imports, cero registros de DI; `new AuditService(...)` solo aparece en specs. `AuditLogger` mantiene 1000 eventos en memoria del proceso y avisa de ello él mismo (`audit-logger.ts:37-42`). **Además, `resources/read` y `prompts/get` no se auditan en absoluto:** `logResourceAccess` y `logPromptAccess` están definidos en `audit-logger.ts:72,77` y sus únicos llamantes en todo el árbol son `mcp-server.service.spec.ts:709,724` — los tests llaman al logger directamente, que es por lo que el criterio marcado de `GT-221`, «emite eventos estructurados para toda llamada de tool/resource/prompt en ambos transportes», se lee como satisfecho. `AUDIT_LOG_PATH` no aparece en ningún documento mientras que `AUDIT_MAX_EVENTS` sí está documentado.
+- **Casos de uso:**
+  - Un reinicio borra el registro consultable de toda llamada mutativa hecha desde el arranque.
+  - Quien revisa un incidente pregunta qué agente leyó qué recurso; nunca se emitió evento alguno para una lectura de recurso.
+  - Un operador quiere la auditoría en disco y no encuentra variable documentada a la que apuntar.
+  - No hay superficie de lectura: ningún controlador en `mcp-server/src`, ninguna herramienta de auditoría o historial, así que el registro no se puede consultar ni siquiera con el proceso vivo.
+- **Impacto:** `GT-321` está `DONE` por «los eventos de auditoría persisten en un almacén append-only» y «consultable por tenant/fase/actor/correlationId», cerrado contra una clase que ningún camino de código alcanza. Eso es un coste de integridad del board encima del defecto: la fila que lo habría cazado se lee como entregada.
+- **Resultado esperado:** las llamadas de tool, resource y prompt del MCP aterrizan en el ledger durable; el ledger se exporta, se cablea y se documenta; `GT-321` y `GT-221` quedan anotados con la medición.
+- **Ficheros afectados:** `src/packages/mcp-server/src/mcp/audit-logger.ts`, `src/packages/mcp-server/src/mcp/mcp.module.ts`, `src/packages/core-domain/src/infrastructure/audit/jsonl-audit-repository.ts`, `src/packages/core-domain/src/index.ts`, `reference/**/env-variables-reference.md`
+- **Componente:** `MCP Server` · **Criticidad:** P1 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode y reverificado de forma independiente. **Dos subafirmaciones fueron REFUTADAS y quedan excluidas:** «el MCP registra la llamada, nunca el veredicto» es falso (`mcp-server.service.ts:216-227` resuelve `success | error | denied`), y «al reiniciar desaparece todo el registro» es falso: cada evento también sale a stdout como JSON (`audit-logger.ts:51`), así que lo que muere con el proceso es el buffer consultable, no la emisión. Registrado como fila NUEVA en vez de reabrir `GT-321`, porque `08-validate-tracking` trata un registro de cierre sobre una fila no-DONE como error y deshacer la historia destruiría el rastro de evidencia; la corrección vive aquí y se referencia desde allí.
+- **Criterios de aceptación:**
+  - [ ] Con un `AUDIT_LOG_PATH` temporal, invocar una herramienta y después matar y reiniciar el proceso deja la llamada legible en el fichero JSONL.
+  - [ ] Un test que construye `ResourcesService`/`PromptsService` —no `AuditLogger`— y llama al handler real observa una entrada de auditoría; ese es el criterio que `GT-221` marcó y que hoy no puede pasar.
+  - [ ] `JsonlAuditRepository` se exporta y tiene un import no-spec y no-declaración, y `AUDIT_LOG_PATH` aparece en la referencia de entorno en ambos idiomas.
+  - [ ] **FALSABILIDAD:** un test hace fallar el append durable (ruta de solo lectura o adaptador que lanza) y afirma tanto que el veredicto de la herramienta no cambia como que el fallo se hace visible, mostrado poniéndose rojo al quitar la rama de fallo.
+  - [ ] **FALSABILIDAD:** un test reescribe una línea existente del ledger y afirma que el camino de lectura reporta manipulación; si hace falta custodia de claves, esa mitad se difiere a [`GT-588`](./gap-reference-catalog.es.md#gt-588) por escrito en vez de marcarse.
+  - [ ] `GT-321` y `GT-221` llevan una anotación que registra que `JsonlAuditRepository` tenía cero instanciaciones y los loggers de recursos y prompts cero llamantes de producción cuando se cerraron.
+- **Estado:** `PENDIENTE`
+
+#### GT-681
+
+**Título:** Todo portador de la API key compartida del MCP colapsa en un solo principal, el servicio de aprovisionamiento por cliente no tiene llamante, y ni MCP ni CLI estampan nunca al solicitante
+
+- **Propósito:** Que «quién hizo esto» sea respondible en la superficie orientada a agentes, y que una credencial filtrada sea revocable sin rotar la de todos los agentes.
+- **Evidencia:** En el camino de API key, `validateAuth` devuelve un principal constante congelado — `mcp-server-auth.ts:80` devuelve `{ ...ADMIN_CONTEXT, environment }` con `mcp-auth-contexts.ts:9` `id: 'admin-api-key'`. **Verificado de primera mano el 2026-08-14:** `grep -rn "ApiKeyProvisioningService" src` solo devuelve el fichero del propio servicio, su spec, la prosa del README y `mcp.module.ts:9,14,15`, donde se registra como provider y se exporta — **cero llamantes**, aunque el servicio emite keys con prefijo `evk_`, hash SHA-256, scopes, `expiresAt`, `revokedAt`, `rotateKey` y `revokeKey`. Y `grep -rnE "requester|actorId|actorType" src/packages/mcp-server/src src/sdk/cli/src` devuelve **0**, así que todo veredicto originado por un agente llega al ledger con `requestedBy` ausente aunque el DTO REST sí pueda llevarlo.
+- **Casos de uso:**
+  - Una key filtrada no se puede revocar sin rotar la credencial que usan todos los agentes.
+  - El rastro de auditoría nombra una constante, así que «qué agente hizo esto» es irrespondible en el camino de key compartida.
+  - `evaluation-ingest.ts:159` nombra la pregunta objetivo — «de qué agente son los veredictos que fallan» — y el cable no puede responderla desde MCP ni CLI.
+  - Un operador busca la superficie documentada de gestión de keys y solo encuentra `/health*`, `/metrics` y `/.well-known/oauth-protected-resource`.
+- **Impacto:** `GT-266` está `DONE` con «un comando CLI o endpoint HTTP genera keys bajo demanda», «rotación sin reinicio» y «revocación documentada» todos marcados, contra un servicio que nadie llama y un `Map` en proceso que no sobrevive a un reinicio.
+- **Resultado esperado:** el camino de API key resuelve credenciales a través del servicio de aprovisionamiento; existe una superficie de gestión de keys y aparece en el catálogo de interfaces generado; MCP y CLI reenvían `requester{actorType, actorId, modelRef?, sessionId?}`.
+- **Ficheros afectados:** `src/packages/mcp-server/src/mcp/mcp-server-auth.ts`, `src/packages/mcp-server/src/mcp/api-key-provisioning.service.ts`, `src/packages/mcp-server/src/tools/evaluate.tool.ts`, `src/sdk/cli/src/commands/evaluate/evaluate.command.ts`
+- **Componente:** `MCP Server` · **Criticidad:** P1 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode y reverificado de forma independiente. **Un encuadre fue REFUTADO:** «no existe credencial por agente, ni scope, ni revocación» es falso — todo el mecanismo existe y está sin cablear, que es un defecto distinto y un arreglo más barato. Secuenciado DESPUÉS de [`GT-680`](./gap-reference-catalog.es.md#gt-680), cuyo registro durable consume el criterio de cierre de esta fila. `GT-266` queda anotado por esta fila, no reabierto, por la misma razón que `GT-321`.
+- **Criterios de aceptación:**
+  - [ ] Dos keys aprovisionadas con etiquetas de cliente distintas presentadas al mismo servidor en marcha producen dos `userId` distintos en el rastro de auditoría; hoy ambos son `admin-api-key`.
+  - [ ] **FALSABILIDAD:** una key que autenticó con éxito se revoca por la superficie expuesta, se repite la misma petición contra el **mismo proceso en marcha** y devuelve 401 mientras una segunda key sigue funcionando. Un test unitario que afirma que `revokeKey()` devuelve `true` no satisface esto.
+  - [ ] El servicio de aprovisionamiento tiene un llamante fuera de su propio fichero, su spec y el registro del módulo, y la ruta o comando aparece en el catálogo generado para que el tester exploratorio lo vea.
+  - [ ] Los metadatos de las keys sobreviven a un reinicio, o el servicio lleva el mismo aviso explícito de producción que ya imprime `audit-logger.ts:37-42`, con el test de reinicio registrando cuál de los dos resultados ocurrió.
+  - [ ] `evolith-evaluate` y el CLI aceptan y reenvían `requester`, y un payload depositado desde esa ejecución lleva un `requestedBy` no vacío verificado contra la procedencia de campos del ingest.
+  - [ ] **NEGATIVO:** sin solicitante aportado por el llamante y sin principal autenticado, `requestedBy` queda **ausente, no un marcador** — la regla «ausente entra, ausente sale» que `GT-586` ya aplica a `repositoryRevision`.
+- **Estado:** `PENDIENTE`
+
+#### GT-682
+
+**Título:** Todo comando de medición y de apelación de gobernanza existe solo en el CLI: siete comandos no tienen herramienta MCP ni ruta REST
+
+- **Propósito:** Que un agente pueda medir y apelar una decisión de gobernanza por la misma superficie desde la que la disparó.
+- **Evidencia:** `calibrate`, `audit verify`, `waiver`, `enforce`, `standards`, `history` y `profile` son comandos CLI registrados, y ninguno tiene contraparte entre las 52 herramientas `evolith-*` del MCP: un bucle sobre esos nombres contra `src/packages/mcp-server/src/tools/*.ts` casa con **0 ficheros en todos ellos**. La única superficie REST de `waiver` es de entrada (`WaiverFactDto`) más dos campos de metadatos de referencia. Así que un agente puede disparar una evaluación y no puede verificar el ledger en el que acaba de escribir, ni pedir un waiver por el veredicto que acaba de recibir, ni leer un informe de calibración.
+- **Casos de uso:**
+  - Un agente evalúa, queda bloqueado y no tiene superficie donde pedir un waiver.
+  - Un agente escribe en el ledger de auditoría y no puede verificarlo.
+  - El Tracker no puede renderizar calibración sin invocar el CLI por debajo.
+  - `enforce` —el propio comando de aplicación— es igual de inalcanzable, así que la afirmación de paridad del README de interfaces es más estrecha de lo que se lee.
+- **Impacto:** La arquitectura declara el CLI como superficie de referencia y el MCP con paridad plena. Siete comandos, incluido todo el eje de medición y apelación, quedan fuera de esa afirmación.
+- **Resultado esperado:** `evolith-calibrate-report`, `evolith-audit-verify` y `evolith-waiver` registradas con envelopes ADR-0073 y bindings cross-superficie, y la mitad REST decidida por escrito contra el alcance del Core sin estado en vez de quedar en silencio.
+- **Ficheros afectados:** `src/packages/mcp-server/src/tools/**`, `src/tests/exploration/bindings.ts`, `reference/core/interfaces/README.md`
+- **Componente:** `Evolith MCP` · **Criticidad:** P2 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode. **El encuadre del candidato fue REFUTADO y ampliado:** la medición no es «el único sitio donde nunca se entregó paridad» — `enforce`, `standards`, `history` y `profile` son igual de exclusivos del CLI, así que es un déficit general de paridad de al menos siete comandos. **Condicionado por [`GT-677`](./gap-reference-catalog.es.md#gt-677):** portar `waiver` antes de que los waivers surtan efecto llevaría una operación de solo escritura a una segunda superficie.
+- **Criterios de aceptación:**
+  - [ ] Las tres herramientas aparecen en el registro y el spec de paridad del catálogo de API queda verde tras regenerar, con el conteo vivo de herramientas observado subiendo desde 52.
+  - [ ] Cada herramienta nueva afirma `success` / `data` / `meta.correlationId` de primer nivel, y la de waiver lleva el correlationId del veredicto que se exime, como ya hace el CLI.
+  - [ ] Los bindings de exploración ganan las tres operaciones con constructores CLI y MCP, y el tester cross-superficie las reporta BOUND con 0 divergencias.
+  - [ ] **FALSABILIDAD:** borrar cualquiera de los registros MCP pone rojo el spec de paridad del catálogo, demostrado en el registro de cierre; y se observa al ABAC DENEGANDO una de las herramientas nuevas para un rol sin autoridad de waiver contra el `policy.wasm` **compilado** y no contra el `.rego` fuente, mostrando tanto la denegación como el permiso.
+  - [ ] Una decisión escrita registra si la persistencia de waivers pertenece a la superficie REST sin estado; si no, la exclusión queda registrada en el README de interfaces y aplicada por la tabla de bindings, nunca en silencio.
+  - [ ] El registro de cierre muestra un waiver aprobado suprimiendo un hallazgo en ambas superficies, o declara por escrito que esta fila porta una operación de solo escritura porque [`GT-677`](./gap-reference-catalog.es.md#gt-677) no ha aterrizado.
+- **Estado:** `PENDIENTE`
+
+#### GT-683
+
+**Título:** Las nueve reglas bloqueantes de IA agéntica se deciden leyendo un solo fichero JSON autodeclarado, así que un repositorio con un socket sin sandbox y un spawn que filtra el entorno las pasa todas
+
+- **Propósito:** Que la topología insignia de gobernanza de IA observe el repositorio que califica, o que diga con claridad que califica una declaración.
+- **Evidencia:** Las nueve reglas `AAI-*` MUST/bloqueantes se deciden desde `agent.config.json`. **Verificado de primera mano el 2026-08-14:** el handler en `src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/agent-rules.ts` lee `readJsonConfig(fs, ctx.satellitePath, 'agent.config.json')` en `:14` y compara campos declarados, y `grep -nE "spawn|exec\(|fetch|http|ProcessRunner|net\.|socket"` sobre ese fichero no devuelve **NINGUNA COINCIDENCIA**: no tiene ninguna primitiva con la que observar nada. **El camino OPA no es un segundo oráculo:** `opa-input-builder.ts:116-144` calcula los mismos booleanos desde el mismo fichero y se los da a `agentic-ai.rego` como `input.satellite.agenticAi.*`. **Medido de extremo a extremo:** un satélite con exactamente dos ficheros —el `fixtures/valid-agent.config.json` embarcado como `agent.config.json` y un runbook— devolvió `AAI-R01 … AAI-R09 passed`, 9 de 9; añadir `src/escape.js` con `net.connect(443, 'attacker.example.com')` y `execSync(…, { env: process.env })` —el inverso literal de AAI-R02 y AAI-R05— no cambió **nada**: siguen 9 de 9. AAI-R08 exige «un documento de runbook legible» y un **directorio vacío** lo satisface. AAI-R03 pasa con `promptSources` e `implementationRoots` declarados que no existen; esa comprobación de existencia vive solo en un test, en `agentic-ai-self-conformance.spec.ts:126-141`, cuyo propio comentario enuncia el defecto.
+- **Casos de uso:**
+  - Un cliente pasa la topología de IA agéntica sin una sola línea de código de agente en el repositorio.
+  - Un repositorio con un socket saliente sin restricción y un `child_process` que hereda el entorno queda certificado contra nueve MUST bloqueantes.
+  - El veredicto no puede decirle a un comprador qué aprobados fueron observados: `rule-evaluability.ts` clasifica las nueve como `native-handler`, una clase que no distingue leer una autodeclaración de inspeccionar un repositorio.
+  - El propio `agent.config.json` de Evolith marca con honestidad R02, R05 y R08 como `partial` y R09 como `declarative`, y ningún evaluador lee ese bloque.
+- **Impacto:** Esta es la afirmación de gobernanza de IA en sí misma. Un competidor que decide sobre ejecución observada —sandboxes, gateways con medición, recibos— está midiendo comportamiento donde esta topología compara cadenas, y la diferencia es invisible en el veredicto.
+- **Resultado esperado:** al menos tres reglas AAI ganan un evaluador observacional por la costura `enforce` existente (hoy `grep -c '"enforce"' agentic-ai.rules.json` → 0), y toda regla que se siga decidiendo desde una declaración queda etiquetada como tal en el veredicto.
+- **Ficheros afectados:** `src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/agent-rules.ts`, `src/rulesets/topologies/agentic-ai/**`, `src/rulesets/opa/agentic-ai.rego`, `src/packages/core-domain/src/evaluation/opa-input-builder.ts`
+- **Componente:** `Core Domain` · **Criticidad:** P1 · **Complejidad:** L
+- **Principal:** `L` · **Interés:** `SEVERE` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode; la ausencia de toda primitiva de observación en el handler se reverificó en este árbol antes de registrar. **Registrado P1 y no P0, dicho en vez de asumido:** todavía no corre nada en producción (`GT-435`/`GT-448`), así que es un veredicto equivocado y no una caída — pero lleva interés `SEVERE` porque cada día que sigue en pie la topología certifica repositorios que nunca inspeccionó. **Una subafirmación fue REFUTADA:** los estados de aplicación AAI no son todos `declarative` — R02, R05 y R08 son `partial` y solo R09 es `declarative`. **Rebanada más barata, primero:** el criterio 3, que mueve al handler una comprobación de existencia que ya existe en un spec.
+- **Criterios de aceptación:**
+  - [ ] **FALSABILIDAD (el criterio que la cierra):** el fixture exacto medido aquí —un `agent.config.json` conforme más un socket saliente sin restricción y un `child_process` que hereda el entorno— produce al menos un veredicto AAI FALLIDO, con el antes literal (9 de 9 pasando, 2026-08-14) y el después registrados.
+  - [ ] AAI-R08 falla ante un directorio y ante un fichero de cero bytes.
+  - [ ] AAI-R03 falla cuando los `promptSources` o `implementationRoots` declarados no existen bajo la ruta del satélite, sacando la comprobación de `agentic-ai-self-conformance.spec.ts` para que esas aserciones compensatorias puedan borrarse sin debilitar la suite.
+  - [ ] Cada objeto de regla lleva un `assurance` veraz de `observed` o `declared`, y las cuatro que la propia config de Evolith marca `partial` o `declarative` no pueden etiquetarse `observed` mientras se decidan por comparación de campos; un auditor puede partir las nueve leyendo solo el veredicto JSON.
+  - [ ] La distinción es visible para un comprador en el README de la topología y en la explicación de la regla, con un guard que sale 1 cuando README y ruleset discrepan, demostrado cambiando un valor y viendo fallar el guard.
+  - [ ] La paridad nativo/OPA sobrevive: el fixture reforzado produce violación también por el camino wasm, `agentic-ai.test.rego` cubre el nuevo caso fallido y `opa test` está verde.
+  - [ ] El mismo patrón de leer-la-declaración en los lectores de las topologías serverless, event-driven y data-mesh se arregla o se difiere explícitamente por escrito en esta fila.
+- **Estado:** `PENDIENTE`
+
+#### GT-684
+
+**Título:** El contenido que se devuelve a un modelo no lleva clasificación de confianza, así que Evolith incumple en su propia superficie el control que vende como regla bloqueante
+
+- **Propósito:** Marcar como datos el texto escrito por terceros antes de entregárselo a un modelo, que es lo que `AAI-R06` exige a todo satélite.
+- **Evidencia:** `evolith-knowledge-search` con `includeText: true` emite prosa de terceros en crudo, con atribución de origen y sin etiqueta de confianza ni valla estructural, y la capa de dispatch no añade ninguna para ninguna de las 52 herramientas — `grep -rn "trust|provenance|untrusted"` sobre `mcp-tool-dispatch.ts` y `tool.interface.ts` devuelve 0. **El ADR lo dice de sí mismo:** `0082-agentic-ai-trust-boundary.md:9-15` lleva `<!-- implementation-status: none -->` y el texto «No trust label on retrieved context exists anywhere in `src/`. … Evolith itself neither labels nor schema-validates tool output before acting on it.». Mientras tanto `AAI-R06` «Untrusted Context Is Data» es un MUST bloqueante que Evolith aplica a los satélites (`agentic-ai.rego:30`, cableado en `opa-input-builder.ts:139` y en el handler nativo). No existe ningún fixture con forma de inyección en el repositorio, así que ningún test negativo afirma que un chunk hostil no consiga dirigir una llamada posterior.
+- **Casos de uso:**
+  - Un chunk envenenado del corpus llega a un modelo como contexto indiferenciado, indistinguible de las instrucciones de Evolith.
+  - Un comprador pregunta si Evolith cumple el control con el que le califica, y la respuesta honesta está en un ADR aceptado que dice que no.
+  - La dirección de RAG multi-tenant convierte el corpus de un tenant en ese mismo canal sin control alguno.
+  - Quien revisa busca el test negativo que atraparía una regresión aquí y no encuentra ni un fixture con forma de inyección.
+- **Impacto:** Incumplir tu propia regla bloqueante en tu propia superficie es el defecto más citable que puede tener un producto de gobernanza, y está documentado en nuestro propio ADR en vez de oculto.
+- **Resultado esperado:** una clasificación de confianza en el conjunto `required` del esquema de chunks y una valla no falsificable alrededor del texto emitido.
+- **Ficheros afectados:** `src/packages/mcp-server/src/tools/knowledge*`, `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts`, `reference/core/architecture/adrs/core/0082-agentic-ai-trust-boundary.md`
+- **Componente:** `MCP Server` · **Criticidad:** P1 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode. **Tres encuadres fueron REFUTADOS y no deben reimportarse:** «prompt injection no aparece en el código» es falso (ADR-0082 en ambos idiomas, `mcp-security.md:539`, `agentic-ai/patterns.md:23` dos veces); «ni regla ni test» es falso (`AAI-R06` más `agentic-ai.test.rego:66-70` y dos evaluadores TypeScript); y la herramienta que nombraba el candidato, `evolith-read-file`, no existe — el nombre solo sobrevive en un conjunto ABAC heredado. La exposición hoy está acotada por [`GT-685`](./gap-reference-catalog.es.md#gt-685), que es un argumento de orden, no una razón para diferir.
+- **Criterios de aceptación:**
+  - [ ] Cada chunk lleva una clasificación de confianza explícita listada en el `required` del esquema de chunks, verificada contra una respuesta `tools/call` viva y no solo contra el esquema.
+  - [ ] El texto emitido va vallado por un delimitador documentado, con un test que alimenta un chunk cuyo texto CONTIENE el delimitador y afirma que se escapa en vez de cerrar la valla antes de tiempo.
+  - [ ] **FALSABILIDAD (observado fallando primero):** se añade un fixture con forma de inyección y un spec afirma que se marca como no confiable y se valla — se acredita solo cuando ese spec queda registrado FALLANDO contra el emisor actual, mostrando el texto crudo sin vallar.
+  - [ ] Quitar el campo de confianza pone rojo al menos un test, registrado borrándolo, nombrando el test que falla y restaurándolo.
+  - [ ] El banner de estado de implementación de ADR-0082 sale de `none` y se corrige su afirmación desactualizada de que ningún evaluador atiende esa categoría; `44-validate-adr-implementation-status` pasa.
+- **Estado:** `PENDIENTE`
+
+#### GT-685
+
+**Título:** `evolith-knowledge-search` está registrada en todos los despliegues y no puede responder en ninguno
+
+- **Propósito:** Dejar de anunciar una herramienta que rechaza en todos los entornos que embarcamos.
+- **Evidencia:** La herramienta se registra incondicionalmente y lanza `NOT_IMPLEMENTED` en tiempo de llamada salvo que estén fijadas `EVOLITH_RAG_PG_URL` o `DATABASE_URL`, y **ningún artefacto de despliegue de este repositorio fija ninguna de las dos para el servicio `mcp`**: `grep -c "EVOLITH_RAG" product/infra/docker-compose.fullstack.yml product/infra/docker-compose.evolith.yml` → `0` y `0`; ningún manifiesto de Helm, Kubernetes o kind la menciona; ni el runbook de Coolify ni el documento de secretos contienen variable de RAG alguna. Nada en ningún despliegue puebla `rag_chunks` tampoco: el único sembrador es un workflow disparado por push que corre en seco sin variables de repositorio.
+- **Casos de uso:**
+  - Un agente conectado al gateway desplegado llama a una herramienta anunciada y recibe un rechazo directo.
+  - Un cliente sigue el quickstart, que le dice que ejecute `evolith mcp start` — un comando que no existe entre los 30 directorios de comandos.
+  - Un operador quiere activarla y encuentra el procedimiento solo en prosa, sin ninguna variable que fijar en los ficheros de compose.
+  - Una demo de «gobernanza con memoria institucional» no se puede correr sobre el stack que publicamos.
+- **Impacto:** Una herramienta registrada que no puede responder en ningún sitio es peor que una ausente: es descubrible, está anunciada en el catálogo y rechaza al primer contacto.
+- **Resultado esperado:** o los ficheros de compose aprovisionan y cablean un almacén pgvector para `mcp` con un camino de siembra dentro del despliegue, o llevan ellos mismos el procedimiento de activación — documentarlo en una guía no lo cierra, porque ese texto ya existe.
+- **Ficheros afectados:** `product/infra/docker-compose.fullstack.yml`, `product/infra/docker-compose.evolith.yml`, `product/infra/README.md`, `docs/guides/evolith-quickstart.md`
+- **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode. **Dos subafirmaciones fueron REFUTADAS:** la imagen de pgvector no está tras un opt-in `--profile rag` (solo lo está el servicio de embeddings), y el fichero de compose que lleva pgvector no tiene servicio `mcp` en absoluto y vive en una red disjunta — lo que hace la pregunta del cableado más aguda, no más suave. **INCIERTO y deliberadamente no elevado:** si el entorno vivo de Coolify fija `EVOLITH_RAG_PG_URL`; el entorno cifrado no se inspeccionó. Necesita una excepción explícita frente a la regla de `ADR-0101` de que ninguna configuración de despliegue del Core lleva `DATABASE_URL`.
+- **Criterios de aceptación:**
+  - [ ] El compose fullstack fija `EVOLITH_RAG_PG_URL` para `mcp`, apuntando a un almacén en la misma red.
+  - [ ] El mismo fichero aprovisiona el almacén de modo que su esquema exista sin ningún paso manual.
+  - [ ] La siembra vive dentro del despliegue: tras levantar el stack, una llamada de knowledge-search devuelve al menos un chunk con un `sourceFile` bajo `reference/`, con la respuesta literal registrada.
+  - [ ] **FALSABILIDAD:** con el almacén parado, la misma llamada se observa FALLANDO — un rechazo o un error de conexión visible. Un envelope de éxito con cero resultados falsifica el arreglo; un corpus vacío en silencio es justo lo que la factoría de conocimiento se escribió para evitar.
+  - [ ] El quickstart deja de nombrar un comando que no existe, o esta fila declara por escrito que el quickstart queda fuera de alcance.
+- **Estado:** `PENDIENTE`
+
+#### GT-686
+
+**Título:** Cuarenta y seis envelopes reportan `durationMs: 0` como literal, así que todo consumidor lee una medición fabricada
+
+- **Propósito:** Que el único campo universal de telemetría del envelope ADR-0073 lleve una medición en lugar de una constante.
+- **Evidencia:** **Contado de primera mano el 2026-08-14:** `grep -rn "durationMs: 0" src` excluyendo `node_modules`, `dist`, `coverage` y specs devuelve **46 sitios**, entre ellos `base-command.ts:64` —la clase base del CLI— más `evaluate.command.ts:87,145`, `validate.command.ts:191`, `calibrate.command.ts:80`, `audit.command.ts:92`, y en las otras superficies `evaluate.tool.ts:147`, `pattern.tools.ts:33`, `topology.tools.ts:131,186`, `evaluation.controller.ts:158`, `gates.controller.ts:44`, `phases.controller.ts:32`. El esquema define el campo como «tiempo de ejecución de reloj de pared en milisegundos» y permite `minimum: 0`, que es lo que dejó que se embarcara. `gate.command.ts:65`, en un directorio vecino, lo hace bien con `Date.now() - startedAt`, así que no falta una convención: hay 46 desviaciones de una. Aparte, `EvaluationIngestPayload` no lleva miembro de tiempo alguno, así que nada medido llegaría al ledger aunque se midiera.
+- **Casos de uso:**
+  - Una fila del ledger no puede responder cuánto tardó una evaluación, y el campo con el que respondería dice cero.
+  - Un consumidor que lee `meta.durationMs` obtiene un número plausible y no puede saber que es fabricado — peor que un campo ausente, que al menos es honesto.
+  - Poner precio o presupuesto a las ejecuciones de gobernanza no tiene entrada, en un producto cuyos competidores miden cada ejecución.
+  - Una regresión de rendimiento como la de `GT-648` (releer el corpus en cada petición) es invisible en el envelope que la habría mostrado.
+- **Impacto:** Una constante donde se declara una medición es la misma clase de defecto que un guard tautológico: reporta un acuerdo que nunca comprobó. Cuarenta y seis de ellas dejan decorativo el contrato de telemetría del envelope.
+- **Resultado esperado:** duraciones medidas en los envelopes, un miembro de tiempo en el contrato de depósito, y miembros de coste y tokens opcionales y **ausentes** en vez de cero mientras ningún SDK de LLM sea dependencia.
+- **Ficheros afectados:** `src/sdk/cli/src/infrastructure/cli/base-command.ts`, `src/sdk/cli/src/commands/**`, `src/packages/mcp-server/src/tools/**`, `src/packages/contracts/src/ingest/evaluation-ingest.ts`
+- **Componente:** `Evolith CLI` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode, y el conteo se volvió a medir aquí: el candidato reportaba cinco sitios, el árbol lleva **46**. **Un encuadre fue REFUTADO:** «el CLI y el MCP no emiten registro de recursos en absoluto» es falso — `durationMs` es un miembro obligatorio del envelope y el dispatch del MCP calcula una duración real para cada `tools/call`; el defecto es el cero cableado, que es peor que una ausencia. Sujeto distinto del de [`GT-674`](./gap-reference-catalog.es.md#gt-674), que trata de evidencia sobre las ejecuciones de LLM del sistema GOBERNADO.
+- **Criterios de aceptación:**
+  - [ ] `evolith evaluate --format json` imprime `meta.durationMs > 0`, cerrado con la salida estándar observada y no leyendo el diff.
+  - [ ] El conteo de literales `durationMs: 0` fuera de specs pasa de 46 a cero, o cada superviviente es un camino de duración genuinamente nula con razón declarada.
+  - [ ] El contrato de depósito gana un miembro de tiempo con su entrada en el mapa de derivación, y la entrada correspondiente, para que el valor se entregue y no se sintetice dentro del paquete de contratos.
+  - [ ] **FALSABILIDAD:** revertir un sitio a `durationMs: 0` y correr el guard produce una salida FALLIDA, pegada en el registro de cierre.
+  - [ ] La comprobación rechaza `durationMs: 0` como VALOR en una ejecución cuyo reloj de pared no fue cero, no solo una clave ausente.
+  - [ ] **SIN COSTE INVENTADO:** un payload que emita `costUsd: 0` o `totalTokens: 0` sin señal de IA se rechaza; ausente debe seguir siendo distinguible de cero.
+- **Estado:** `PENDIENTE`
+
+#### GT-687
+
+**Título:** El cable de ingest lleva el bit de waiver pero no el registro de la adjudicación, y el bit no distingue a un humano de una máquina
+
+- **Propósito:** Que el Tracker —y cualquier calibración construida sobre él— pueda distinguir una excepción humana de una línea base automática, y sepa quién la decidió.
+- **Evidencia:** `IngestViolation.frozen` está documentado como «bandera de baseline/waiver» y lo fijan tanto un waiver aprobado (`drift-gate.ts:174-185`) como una línea base de política de máquina (`policy-baseline.ts:99`), mientras que el array `waived[]` que la compuerta ya calcula —`waiverRef`, `waiverVersion`, `expiresAt`— más el aprobador y el motivo se caen en el cable: `grep -an -i "waived" src/packages/contracts/src/ingest/evaluation-ingest.ts` devuelve **0 hits** para el array, y la única aparición de `waiv` en 860 líneas es el comentario sobre `frozen`, que el oráculo exige y que gobierna `blockingViolationCount`. La pata de vuelta tampoco existe: `grep -rn -iE "http|url|fetch" src/sdk/cli/src/commands/calibrate/calibrate.command.ts` → **0**; el comando lee `--labels <ruta>` de disco local.
+- **Casos de uso:**
+  - Un Tracker que lee `frozen: true` no puede saber si un humano aceptó el riesgo o una máquina lo baselineó.
+  - El corpus de calibración de [`GT-670`](./gap-reference-catalog.es.md#gt-670) no se puede armar desde las filas depositadas, porque ni aprobador ni motivo ni caducidad cruzan el cable.
+  - Un waiver rechazado no tiene representación alguna, así que un corpus construido desde el cable solo contiene desacuerdo y toda tasa da 100 %.
+  - Un auditor que reconstruye una decisión tiene el efecto y no la decisión.
+- **Impacto:** La única señal de adjudicación orgánica que el producto captura no puede salir de la máquina que la capturó — lo que acota la historia de medición de la que dependen dos filas por encima.
+- **Resultado esperado:** un miembro `suppression: { kind: 'baseline' | 'waiver', waiverRef?, waiverVersion?, expiresAt?, approvedBy?, reason? }` con entradas de derivación, más una ruta de lectura nombrada del lado Tracker o un aplazamiento escrito explícito.
+- **Ficheros afectados:** `src/packages/contracts/src/ingest/evaluation-ingest.ts`, `src/packages/core-domain/src/evaluation/drift-gate.ts`, `src/sdk/cli/src/commands/calibrate/calibrate.command.ts`
+- **Componente:** `Core Domain` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la ola ultracode. **Cuatro encuadres fueron REFUTADOS:** el cable no está libre de adjudicación (el bit `frozen` está ahí y lo exige el oráculo); el endpoint de ingest va Core→Tracker, así que enriquecerlo no «viaja de vuelta al Core»; una decisión humana ya cruza el cable en otro sitio (`tracker-approval.http-client.ts:16` devuelve estado, aprobador y motivo para intents de skills de agente); y `violations[].fingerprint` ya se transporta. **Bloqueado por [`GT-677`](./gap-reference-catalog.es.md#gt-677):** hoy ningún llamante de producción aporta waivers, así que no hay nada que el miembro enriquecido pueda llevar hasta que eso aterrice.
+- **Criterios de aceptación:**
+  - [ ] `IngestViolation` distingue baseline de waiver, con filas de origen de campo que resuelven contra un objeto producido por el pipeline REAL de la compuerta de drift, para que el recorrido de derivación existente las cubra.
+  - [ ] Un llamante de producción pasa waivers a la compuerta y un test de extremo a extremo afirma que un waiver aprobado produce un payload depositado con `suppression.kind === 'waiver'` y la referencia coincidente.
+  - [ ] **FALSABILIDAD:** una violación suprimida por waiver sin referencia, y un congelado por línea base reportado como waiver, son RECHAZADOS cada uno por el oráculo del payload con un problema nombrado; un cambio que haga que el oráculo los acepte pone roja la suite.
+  - [ ] **ANTI-VACUIDAD:** renombrar `Waiver.waiverRef` en el dominio pone rojo el spec de ingest en vez de dejar el cable sin origen en silencio.
+  - [ ] La pata de vuelta queda nombrada: se especifica una ruta de lectura del lado Tracker y `calibrate` puede alimentarse de ella, con un test que dirige el comando contra un fetch simulado — o el aplazamiento al repositorio del Tracker queda por escrito.
+  - [ ] Un waiver rechazado es representable y mapea a `humanBlocked: true`, afirmado en ambas polaridades — la trampa de la etiqueta confirmatoria de [`GT-670`](./gap-reference-catalog.es.md#gt-670).
 - **Estado:** `PENDIENTE`

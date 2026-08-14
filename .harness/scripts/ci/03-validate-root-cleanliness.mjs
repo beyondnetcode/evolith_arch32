@@ -89,6 +89,7 @@ const allowedDirectories = new Set([
   // sdk/, tests/) was relocated here, so those are no longer permitted at root.
   "src",
   // Product documentation corpus.
+  "docs",
   "product",
   "examples",
   "wiki"

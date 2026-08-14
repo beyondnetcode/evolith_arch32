@@ -303,7 +303,7 @@ function auditThreeInterfaces() {
   for (const f of coreDomainFiles) {
     const c = read(f);
     if (!c) continue;
-    if (c.includes("ValidateSatelliteUseCase")) {
+    if (c.includes("class ValidateSatelliteUseCase")) {
       const name = f.split("/").pop().replace(".ts", "");
       sharedUseCase = name;
       break;

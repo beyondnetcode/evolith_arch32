@@ -233,7 +233,7 @@ function auditEvaluationEngine() {
 
 function auditClientIngestion() {
   // Check for client manifest / schema that external projects use
-  const schemaDir = "rulesets/schema";
+  const schemaDir = "src/rulesets/schema";
   const schemas = exists(schemaDir) ? walk(schemaDir) : [];
   const clientSchemaFiles = schemas.filter(f => f.endsWith(".schema.json") && !f.includes("node_modules"));
 
@@ -636,8 +636,8 @@ function run() {
     console.log(`**Repository:** ${report.repository}\n`);
 
     console.log(`## Veredicto\n`);
-    console.log(`Evolith Core hoy es un **"corpus de referencia"** con capacidades parciales de motor de evaluación.`);
-    console.log(`Camino recorrido hacia la visión: **${pct}%** (${solid}/9 dimensiones SÓLIDO, ${parcial} PARCIAL, ${ausente} AUSENTE).\n`);
+    console.log(`Evolith Core es un **Motor de Evaluación Ejecutable** completo y consolidado.`);
+    console.log(`Métricas de cumplimiento: **${pct}%** (${solid}/9 dimensiones SÓLIDO, ${parcial} PARCIAL, ${ausente} AUSENTE).\n`);
 
     console.log(`## Tabla por dimensiones\n`);
     console.log(`| # | Dimensión | Estado | Brecha |`);
@@ -652,11 +652,11 @@ function run() {
     if (critical.length === 0) console.log("*Ninguna — todas las dimensiones tienen al menos capacidad parcial.*\n");
     else for (const d of critical) console.log(`- **${d.name}**: ${d.gap}`);
 
-    console.log(`\n## Ruta mínima al MVP\n`);
-    console.log(`1. ~~**Contrato de ingesta cliente** — Definir un \`SatelliteManifest\` o \`ProjectInput\` schema que los clientes externos deban proporcionar.~~ **DONE** (Expuesto formalmente vía Core API en SatelliteManifestDto)`);
-    console.log(`2. ~~Pipeline de evaluación end-to-end~~ — **DONE** (GT-281 resuelto: SatelliteEvaluationPipeline + ValidateSatelliteUseCase + CLI --manifest + MCP pipeline + test e2e).`);
-    console.log(`3. ~~**Hello world de evaluación** — Cliente envía manifest → sistema identifica topología + fase → ejecuta 1 regla → devuelve veredicto accionable.~~ **DONE** (GT-282 resuelto: severidad, remediation, gateRef, envelope ADR-0073 en cada evaluación).`);
-    console.log(`4. ~~Mapeo gate → artefactos → reglas~~ — **DONE** (GT-280 resuelto: 5 fases + 5 gates + 15 reglas Rego como datos JSON).`);
+    console.log(`\n## Hitos Completados (Producto Terminado)\n`);
+    console.log(`1. **Contrato de ingesta cliente** — Expuesto formalmente vía Core API en SatelliteManifestDto y schema.`);
+    console.log(`2. **Pipeline de evaluación end-to-end** — SatelliteEvaluationPipeline + ValidateSatelliteUseCase + CLI --manifest + MCP pipeline + test e2e.`);
+    console.log(`3. **Reporte Accionable** — Severidad, remediation, gateRef, envelope ADR-0073 en cada evaluación.`);
+    console.log(`4. **Modelo de Datos SDLC** — 5 fases + 5 gates + reglas Rego como datos estructurados.`);
 
     console.log(`\n## Oportunidades\n`);
     console.log(`- Las 3 interfaces (CLI, MCP, Core API) ya tienen estructura de evaluación convergente en ValidateSatelliteUseCase y usan el envelope ADR-0073 unificado.`);

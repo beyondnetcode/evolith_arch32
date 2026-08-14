@@ -49,3 +49,5 @@ podDisruptionBudget:
 
 networkPolicy:
   enabled: false
+extraEnv:
+  SWAGGER_ENABLED: "true"

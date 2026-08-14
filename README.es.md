@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
 
-> 🚀 **[Comenzar Aquí: Guía de Instalación Paso a Paso](./docs/guides/evolith-quickstart.es.md)**
+> **[Comenzar Aquí: Guía de Instalación Paso a Paso](./docs/guides/evolith-quickstart.es.md)**
 
 <br/>
 

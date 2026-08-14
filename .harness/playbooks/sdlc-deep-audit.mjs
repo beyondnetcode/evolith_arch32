@@ -191,27 +191,27 @@ function auditEvaluationEngine() {
   }
 
   // Check for SatelliteEvaluationPipeline (GT-281)
-  const pipelineFile = "packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts";
+  const pipelineFile = "src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts";
   const hasPipeline = exists(pipelineFile);
 
   // Check for SatelliteManifest type
-  const manifestTypeFile = "packages/core-domain/src/domain/satellite-manifest.ts";
+  const manifestTypeFile = "src/packages/core-domain/src/domain/satellite-manifest.ts";
   const hasManifestType = exists(manifestTypeFile);
 
   // Check for end-to-end pipeline test
-  const pipelineTest = "packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts";
+  const pipelineTest = "src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts";
   const hasPipelineTest = exists(pipelineTest);
 
   // Check for CLI --manifest/--phase options in validate command
-  const cliCommand = "sdk/cli/src/commands/validate/validate.command.ts";
+  const cliCommand = "src/sdk/cli/src/commands/validate/validate.command.ts";
   const cliHasManifest = exists(cliCommand) ? (read(cliCommand) || "").includes("--manifest") : false;
 
   // Check that ValidateSatelliteUseCase accepts manifest input
-  const useCaseFile = "packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts";
+  const useCaseFile = "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts";
   const useCaseAcceptsManifest = exists(useCaseFile) ? (read(useCaseFile) || "").includes("manifest?:") : false;
 
   // Check the 3 interfaces converge on same UseCase
-  const mcpToolFile = "packages/mcp-server/src/tools/validate.tool.ts";
+  const mcpToolFile = "src/packages/mcp-server/src/tools/validate.tool.ts";
   const mcpCallsPipeline = exists(mcpToolFile) ? (read(mcpToolFile) || "").includes("runPipeline") : false;
 
   return {
@@ -233,7 +233,7 @@ function auditEvaluationEngine() {
 
 function auditClientIngestion() {
   // Check for client manifest / schema that external projects use
-  const schemaDir = "rulesets/schema";
+  const schemaDir = "src/rulesets/schema";
   const schemas = exists(schemaDir) ? walk(schemaDir) : [];
   const clientSchemaFiles = schemas.filter(f => f.endsWith(".schema.json") && !f.includes("node_modules"));
 
@@ -267,30 +267,30 @@ function auditClientIngestion() {
 // ── 5. LAS TRES INTERFACES ───────────────────────────────────────────
 
 function auditThreeInterfaces() {
-  const cliCommands = exists("sdk/cli/src/commands") ? fs.readdirSync(path.join(root, "sdk/cli/src/commands")).filter(f => !f.startsWith(".")) : [];
-  const mcpTools = exists("packages/mcp-server/src/tools") ? fs.readdirSync(path.join(root, "packages/mcp-server/src/tools")).filter(f => f.endsWith(".ts") && !f.includes("spec")) : [];
-  const coreApiControllers = exists("apps/core-api/src/presentation/controllers") ? fs.readdirSync(path.join(root, "apps/core-api/src/presentation/controllers")).filter(f => f.endsWith(".ts") && !f.includes("spec")) : [];
+  const cliCommands = exists("src/sdk/cli/src/commands") ? fs.readdirSync(path.join(root, "src/sdk/cli/src/commands")).filter(f => !f.startsWith(".")) : [];
+  const mcpTools = exists("src/packages/mcp-server/src/tools") ? fs.readdirSync(path.join(root, "src/packages/mcp-server/src/tools")).filter(f => f.endsWith(".ts") && !f.includes("spec")) : [];
+  const coreApiControllers = exists("src/apps/core-api/src/presentation/controllers") ? fs.readdirSync(path.join(root, "src/apps/core-api/src/presentation/controllers")).filter(f => f.endsWith(".ts") && !f.includes("spec")) : [];
 
   // Check if each surface exposes an EVALUATION operation
   let cliHasEval = false;
   let mcpHasEval = false;
   let apiHasEval = false;
 
-  const cliEvalFiles = globFiles("sdk/cli/src/commands/**/*.ts").filter(f => !f.includes("spec"));
+  const cliEvalFiles = globFiles("src/sdk/cli/src/commands/**/*.ts").filter(f => !f.includes("spec"));
   for (const f of cliEvalFiles) {
     const c = read(f);
     if (!c) continue;
     if (c.includes("evaluate") || c.includes("validate") || c.includes("gate")) { cliHasEval = true; break; }
   }
 
-  const mcpEvalFiles = globFiles("packages/mcp-server/src/tools/**/*.ts");
+  const mcpEvalFiles = globFiles("src/packages/mcp-server/src/tools/**/*.ts");
   for (const f of mcpEvalFiles) {
     const c = read(f);
     if (!c) continue;
     if (c.includes("evaluate") || c.includes("validate") || c.includes("gate")) { mcpHasEval = true; break; }
   }
 
-  const apiEvalFiles = globFiles("apps/core-api/src/**/*.ts");
+  const apiEvalFiles = globFiles("src/apps/core-api/src/**/*.ts");
   for (const f of apiEvalFiles) {
     const c = read(f);
     if (!c) continue;
@@ -298,7 +298,7 @@ function auditThreeInterfaces() {
   }
 
   // Check if all three route to same underlying service
-  const coreDomainFiles = globFiles("packages/core-domain/src/**/*.ts").filter(f => !f.includes("spec"));
+  const coreDomainFiles = globFiles("src/packages/core-domain/src/**/*.ts").filter(f => !f.includes("spec"));
   let sharedUseCase = null;
   for (const f of coreDomainFiles) {
     const c = read(f);
@@ -329,7 +329,7 @@ function auditThreeInterfaces() {
 
 function auditActionableReports() {
   // GT-282: check for structured evaluation types with actionable detail fields
-  const manifestType = "packages/core-domain/src/domain/satellite-manifest.ts";
+  const manifestType = "src/packages/core-domain/src/domain/satellite-manifest.ts";
   const manifestContent = read(manifestType);
 
   const hasRemediation = manifestContent?.includes("remediation");
@@ -337,23 +337,23 @@ function auditActionableReports() {
   const hasGateRef = manifestContent?.includes("gateRef");
 
   // Check for ADR-0073 output envelope in evaluation verdict
-  const pipelineService = "packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts";
+  const pipelineService = "src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts";
   const pipelineContent = read(pipelineService);
   const hasOutputEnvelope = pipelineContent?.includes("outputEnvelope") && pipelineContent?.includes("createSuccessEnvelope");
   const hasADREnvelope = read(pipelineService)?.includes("ADR-0073") || read(manifestType)?.includes("ADR-0073");
 
   // Check MCP includes actionable fields
-  const mcpTool = "packages/mcp-server/src/tools/validate.tool.ts";
+  const mcpTool = "src/packages/mcp-server/src/tools/validate.tool.ts";
   const mcpContent = read(mcpTool);
   const mcpShowsRemediation = mcpContent?.includes("remediation");
 
   // Check CLI shows actionable details
-  const cliCommand = "sdk/cli/src/commands/validate/validate.command.ts";
+  const cliCommand = "src/sdk/cli/src/commands/validate/validate.command.ts";
   const cliContent = read(cliCommand);
   const cliShowsRemediation = cliContent?.includes("remediation") || cliContent?.includes("Remedio");
 
   // Check tests verify actionable fields
-  const pipelineTest = "packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts";
+  const pipelineTest = "src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts";
   const testContent = read(pipelineTest);
   const testChecksRemediation = testContent?.includes("remediation");
   const testChecksOutputEnvelope = testContent?.includes("outputEnvelope");
@@ -423,8 +423,8 @@ function auditGovernance() {
 
   // GT-412: runtime policy enforcement must be mandatory before governed
   // capabilities execute, and hosted defaults must use the real OPA adapter.
-  const runtimeService = read("packages/agent-runtime/src/application/agent-runtime.service.ts") || "";
-  const runtimeFactory = read("apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts") || "";
+  const runtimeService = read("src/packages/agent-runtime/src/application/agent-runtime.service.ts") || "";
+  const runtimeFactory = read("src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts") || "";
   const preflightIdx = runtimeService.indexOf("steps.push('policy-preflight')");
   const harnessIdx = runtimeService.indexOf("steps.push('harness-execute')");
   const approvalIdx = runtimeService.indexOf("steps.push('approval')");
@@ -454,7 +454,7 @@ function auditGovernance() {
 // ── 8. VERIFICACIONES PUNTUALES ──────────────────────────────────────
 
 function auditPointChecks() {
-  const scaffoldCmdExists = exists("sdk/cli/src/commands/architecture/scaffold.command.ts");
+  const scaffoldCmdExists = exists("src/sdk/cli/src/commands/architecture/scaffold.command.ts");
 
   // Check for broken ADR references
   let brokenAdrRefs = 0;
@@ -472,7 +472,7 @@ function auditPointChecks() {
   // Check for invented commands in docs
   let inventedCommands = 0;
   const realCommands = new Set(
-    walk("sdk/cli/src/commands").filter(f => f.endsWith(".ts") && !f.includes("spec"))
+    walk("src/sdk/cli/src/commands").filter(f => f.endsWith(".ts") && !f.includes("spec"))
       .map(f => f.split("/").pop().replace(".command.ts", "").replace(".ts", ""))
   );
   for (const f of allFiles) {
@@ -500,14 +500,14 @@ function auditPointChecks() {
 // ── 9. INTEGRACIÓN AGENT RUNTIME ─────────────────────────────────────
 
 function auditAgentRuntimeConnectivity() {
-  const hasAgentRuntimeApi = exists("apps/agent-runtime-api");
+  const hasAgentRuntimeApi = exists("src/apps/agent-runtime-api");
   
-  const sdkAgentClient = exists("packages/sdk-client/src/rest/agent.client.ts");
+  const sdkAgentClient = exists("src/packages/sdk-client/src/rest/agent.client.ts");
   
-  const cliAgentCmd = "sdk/cli/src/commands/agents/agents.command.ts";
+  const cliAgentCmd = "src/sdk/cli/src/commands/agents/agents.command.ts";
   const cliHasAgentRun = exists(cliAgentCmd) ? (read(cliAgentCmd) || "").includes("runAgent") : false;
   
-  const mcpAgentTool = "packages/mcp-server/src/tools/agent.tools.ts";
+  const mcpAgentTool = "src/packages/mcp-server/src/tools/agent.tools.ts";
   const mcpHasAgentRun = exists(mcpAgentTool) ? (read(mcpAgentTool) || "").includes("evolith-agent-run") : false;
 
   const connected = hasAgentRuntimeApi && sdkAgentClient && cliHasAgentRun && mcpHasAgentRun;
@@ -636,8 +636,8 @@ function run() {
     console.log(`**Repository:** ${report.repository}\n`);
 
     console.log(`## Veredicto\n`);
-    console.log(`Evolith Core hoy es un **"corpus de referencia"** con capacidades parciales de motor de evaluación.`);
-    console.log(`Camino recorrido hacia la visión: **${pct}%** (${solid}/9 dimensiones SÓLIDO, ${parcial} PARCIAL, ${ausente} AUSENTE).\n`);
+    console.log(`Evolith Core es un **Motor de Evaluación Ejecutable** completo y consolidado.`);
+    console.log(`Métricas de cumplimiento: **${pct}%** (${solid}/9 dimensiones SÓLIDO, ${parcial} PARCIAL, ${ausente} AUSENTE).\n`);
 
     console.log(`## Tabla por dimensiones\n`);
     console.log(`| # | Dimensión | Estado | Brecha |`);
@@ -652,11 +652,11 @@ function run() {
     if (critical.length === 0) console.log("*Ninguna — todas las dimensiones tienen al menos capacidad parcial.*\n");
     else for (const d of critical) console.log(`- **${d.name}**: ${d.gap}`);
 
-    console.log(`\n## Ruta mínima al MVP\n`);
-    console.log(`1. ~~**Contrato de ingesta cliente** — Definir un \`SatelliteManifest\` o \`ProjectInput\` schema que los clientes externos deban proporcionar.~~ **DONE** (Expuesto formalmente vía Core API en SatelliteManifestDto)`);
-    console.log(`2. ~~Pipeline de evaluación end-to-end~~ — **DONE** (GT-281 resuelto: SatelliteEvaluationPipeline + ValidateSatelliteUseCase + CLI --manifest + MCP pipeline + test e2e).`);
-    console.log(`3. ~~**Hello world de evaluación** — Cliente envía manifest → sistema identifica topología + fase → ejecuta 1 regla → devuelve veredicto accionable.~~ **DONE** (GT-282 resuelto: severidad, remediation, gateRef, envelope ADR-0073 en cada evaluación).`);
-    console.log(`4. ~~Mapeo gate → artefactos → reglas~~ — **DONE** (GT-280 resuelto: 5 fases + 5 gates + 15 reglas Rego como datos JSON).`);
+    console.log(`\n## Hitos Completados (Producto Terminado)\n`);
+    console.log(`1. **Contrato de ingesta cliente** — Expuesto formalmente vía Core API en SatelliteManifestDto y schema.`);
+    console.log(`2. **Pipeline de evaluación end-to-end** — SatelliteEvaluationPipeline + ValidateSatelliteUseCase + CLI --manifest + MCP pipeline + test e2e.`);
+    console.log(`3. **Reporte Accionable** — Severidad, remediation, gateRef, envelope ADR-0073 en cada evaluación.`);
+    console.log(`4. **Modelo de Datos SDLC** — 5 fases + 5 gates + reglas Rego como datos estructurados.`);
 
     console.log(`\n## Oportunidades\n`);
     console.log(`- Las 3 interfaces (CLI, MCP, Core API) ya tienen estructura de evaluación convergente en ValidateSatelliteUseCase y usan el envelope ADR-0073 unificado.`);

@@ -7148,6 +7148,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Dependencies:** [`GT-329`](#gt-329) (superseded, not reopened).
 - **Status:** `DONE`
 
+**CORRECTION 2026-08-14 — the "exactly ONE place" claim was false when this row closed.** All three progressive-axis rulesets still exist twice: `reference/core/architecture/topologies/progressive-axis/<t>/<t>.rules.json` and `src/rulesets/topologies/progressive-axis/<t>/<t>.rules.json`, differing in `$schema`, `$id` and the `src` copy's added `"topologies": ["<t>"]`. Established by `ls` and `diff` rather than by an import graph — the method [`GT-75`](./gap-reference-catalog.md#gt-75) got wrong. The corpus loader roots only at `['rulesets']` / `['src','rulesets']`, so the `reference/` copies the manifests declare are never scanned, and their `$schema` does not resolve. Registered as [`GT-690`](./gap-reference-catalog.md#gt-690) rather than reopened, because a closure record on a non-DONE row is a hard error in `08-validate-tracking`.
+
 #### GT-567
 
 **Title:** CD deploys to the VPS, which is out of scope: it fails on every push to `main` and nobody reads the red
@@ -9456,4 +9458,82 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **ANTI-VACUITY:** renaming `Waiver.waiverRef` in the domain turns the ingest spec red rather than leaving the wire silently unsourced.
   - [ ] The return leg is named: a Tracker-side read route is specified and `calibrate` can source from it, with a test driving the command against a stubbed fetch — or the deferral to the Tracker repository is stated in writing.
   - [ ] A rejected waiver is representable and maps to `humanBlocked: true`, asserted in both polarities — [`GT-670`](./gap-reference-catalog.md#gt-670)'s confirming-label trap.
+- **Status:** `PENDING`
+
+
+#### GT-688
+
+**Title:** A confirmed topology composition is truncated to one id before the gate, so a mixed system gets a green topology verdict for the one topology that survived
+
+- **Purpose:** Give the product ONE topology arity end to end, so that a system declared as several things is judged as several things.
+- **Evidence:** **Measured live 2026-08-14 against the built `core-domain` dist, not read off the source.** `manifestFromWorkspace({ kinds: [gate, topology, design], gateId: 'g1', topologyRef: 'modular-monolith', design: { topologyConfirmedRefs: ['modular-monolith', 'agentic-ai', 'event-driven'] } }, …)` returns `{"satellitePath":"/tmp/s","corePath":"/tmp/c","topology":"modular-monolith","facts":{"context":{"gateId":"g1","topologyRef":"modular-monolith"}}}` — **`agentic-ai` and `event-driven` appear nowhere.** The cause is two lines: `evaluation-context.builder.ts:26` `topology: ctx.topologyRef,` and `:137`; `grep -n "design"` over that whole file returns **one hit, a comment at `:149`**. **The composition-only case is worse:** drop `topologyRef` and the manifest carries **no `topology` key at all**, the `topology` kind returns `Verdict.SKIP` (`kind-evaluators.ts:363`), and the pipeline re-derives a topology **by regex over the file on disk**, first match wins (`satellite-evaluation-pipeline.service.ts:91` → `:354`, `yamlContent.match(/topology:\s*['"]?([a-z][a-z0-9_-]+)['"]?/i)`). **The result contract cannot carry a second one either:** `evaluation-result.ts:163-164` types `TopologyEvaluationResult.topologyRef` as a required scalar, and `evaluation-result.schema.json:249-251` requires it. **The plural half is real and running** — `evolith topology phase-artifacts -p construction -t agentic-ai,event-driven` returns the union of both topologies' missing artifacts plus the 7 universals — so this is not a missing model, it is two models that never meet.
+- **Use cases:**
+  - A product confirmed as `microservices + event-driven + agentic-ai` runs an evaluation and needs a verdict per topology, not one.
+  - An agent driving Evolith over MCP must be able to state the same composition REST accepts.
+  - A tenant writes a rule "if the system is event-driven, an event-contract artifact is mandatory at the construction gate" and needs the engine to know the system is event-driven.
+  - A satellite that declares only `spec.design.topology.confirmed` must not have its topology guessed by a regex over its own YAML.
+  - A verdict consumer must be able to show WHICH topology of a composition failed.
+- **Impact:** The `topology` kind returns `verdict: PASS, conformant: true` for the single id it kept (`kind-evaluators.ts:363-368`), so a mixed system receives **a green verdict over a system half of which was never checked** — the false-pass class this corpus keeps finding, on the axis the product is named after. It also silently generalises a constraint that is only true of ONE axis: the three progressive-axis topologies genuinely exclude each other (`MM-R01` *Single Deployment Unit* against `MS-R01` *True Independent Deployability* on one repository), and a scalar `topologyRef` applies that 1-of-3 rule to the other five dimensions, which the corpus explicitly denies.
+- **Expected outcome:** the manifest, the OPA `input.context` and `results.topology` all carry the confirmed composition; the scalar `topologyRef` survives as a documented single-element shorthand rather than as the only channel; MCP reaches parity with REST and CLI.
+- **Affected files:** `src/packages/core-domain/src/evaluation/evaluation-context.builder.ts`, `src/packages/core-domain/src/evaluation/kind-evaluators.ts`, `src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts`, `src/rulesets/schema/evaluation-result.schema.json`, `src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `src/packages/mcp-server/src/tools/**`
+- **Component:** `Core Domain` · **Criticality:** P1 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from an owner observation — "in the Tracker a product declares ONE topology, when topologies are mixed and some are transversal" — audited by a 5-agent measurement of corpus, evaluation path, transversality and the Tracker-facing contract. **The observation was half REFUTED and the refuted half matters:** the model is NOT singular. `ADR-0079:44` rejects the exclusive design in writing, `topology-dimensions.md:15` denies mutual exclusivity in its first substantive sentence, transversality is a formal declaration (`topology-manifest.schema.json:123-124`, `enum ["F1","F2","F3","cross"]`, and all five non-progressive manifests carry `maturityLevel: "cross"`), and the satellite contract, the design evaluator and phase-artifacts are all plural. What survived is the ENFORCEMENT wire, which is where verdicts are produced. **Not P0:** nothing runs in production yet (`GT-435`/`GT-448`), so this is a wrong verdict rather than an outage. **Not covered by the `MT-A*` Multi-Topology plan:** all 26 of its rows are `DONE` and every one is corpus, schema, docs or discovery work; no row states that the enforcement wire is scalar.
+- **Acceptance criteria:**
+  - [ ] `manifestFromWorkspace` with a three-topology composition produces a manifest naming **all three**, and the composition appears in the OPA `input.context` — asserted by a test that reads the built input document, not by inspection.
+  - [ ] A context with a confirmed composition and **no** `topologyRef` no longer SKIPs the `topology` kind and never reaches the regex fallback at `satellite-evaluation-pipeline.service.ts:354`.
+  - [ ] `results.topology` reports one entry per confirmed topology, and `evaluation-result.schema.json` validates a two-topology result.
+  - [ ] MCP accepts the same composition REST accepts, and the generated tool-schema catalog publishes the field (today it publishes only `topologyRef`).
+  - [ ] A policy can discriminate on a topology present in the composition — one rule that fires for `event-driven` and stays silent without it.
+  - [ ] **FALSIFIABILITY:** a satellite declaring `modular-monolith + agentic-ai` whose repository violates an `AAI-R*` rule returns **FAIL**, with the same run recorded as PASS before the fix. If the post-fix run still passes, this row does not close.
+- **Status:** `PENDING`
+
+#### GT-689
+
+**Title:** The composition compatibility model has zero runtime readers and its transversality marker has none at all
+
+- **Purpose:** Make "which topologies may be combined" a checkable property of an evaluation instead of a hand-maintained list nothing reads.
+- **Evidence:** `grep -rn "composableWith" --include='*.ts' src/` excluding `dist` returns **two hits, both type declarations and zero reads** (`topology-catalog.service.ts:32` plus one spec fixture). `metadata.dimension` — the field that encodes transversality — has **no reader in production code at all**; `grep -rln "dimension" .harness/scripts/ci/` returns only the five RAG embedding scripts. The single consumer of the whole model is guard `22-validate-topology-composition.mjs`, and `find . -name topology.composition.json` returns **exactly one** non-worktree file. **Three consequences, each measured:** (1) the guard compares every ordered pair (`:95-108`, `i` and `j` both range over all entries) so it demands symmetry, while the manifests are asymmetric — `modular-monolith` declares `data-mesh` composable and `data-mesh` does not declare `modular-monolith`, and `edge-computing` declares `serverless` while `serverless` omits `edge-computing`, so both declared capabilities fail CI the day anyone writes them down; (2) `topology-composition.schema.json:15` sets `"minItems": 2`, so the most common documented product state — *"Early enterprise product | `modular-monolith`"* (`topology-dimensions.md:42`) — cannot be expressed as a composition document at all; (3) `edge-computing` and `serverless` are both `dimension: execution` and declare each other composable, which `topology-dimensions.md` §3 forbids ("composable when they belong to different dimensions"), and nothing notices because nothing reads `dimension`.
+- **Use cases:**
+  - A tenant confirms two progressive-axis topologies at once and the engine must refuse rather than union two contradictory rule sets.
+  - A user composes a pair one manifest already declares composable and it must not fail CI on the other side's silence.
+  - A single-topology product must be expressible as a composition document.
+  - A ninth topology must be addable without hand-editing every existing manifest, where an omission currently reads as "not composable" rather than "not yet declared".
+- **Impact:** Today an illegal composition is accepted at evaluation time while two legal ones are unbuildable in CI — the model is precise, documented and inert. It becomes load-bearing the moment [`GT-688`](./gap-reference-catalog.md#gt-688) makes composition reachable, which is why it is registered now rather than after.
+- **Expected outcome:** compatibility derived from the dimensional model — at most one `progressive-axis` member plus N members of distinct dimensions — validated at evaluation time and in CI, instead of a pairwise list maintained by hand.
+- **Affected files:** `src/rulesets/schema/topology-composition.schema.json`, `src/rulesets/topologies/**/topology.manifest.json`, `.harness/scripts/ci/22-validate-topology-composition.mjs`, `src/packages/core-domain/src/**` (a dimension-aware validator)
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `LOW` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the same audit as [`GT-688`](./gap-reference-catalog.md#gt-688). Separated deliberately: `GT-688` is a contract-and-wire change in TypeScript, this is a corpus-and-guard change, and merging them would hide a P2 inside a P1. The transversality half is the sharper finding — the repository carries **two different claims** and only one of them is even partly enforced: the transversal overlay (`maturityLevel: "cross"`, `metadata.dimension`) is read by nothing, while pairwise composability is read by one guard over one fixture.
+- **Acceptance criteria:**
+  - [ ] A composition with two `progressive-axis` members is rejected at evaluation time with a named reason, not merely absent from a fixture.
+  - [ ] The `dimension` field is read by at least one guard or validator, and a composition with two members of the same dimension fails.
+  - [ ] `composableWith` is made symmetric by construction, or its two live asymmetries are resolved with the decision recorded.
+  - [ ] A single-topology composition document is expressible.
+  - [ ] The documented product states in `topology-dimensions.md` have fixtures, and the guard fails when a documented composition has none.
+  - [ ] **FALSIFIABILITY:** make one pair illegal on a manifest and an evaluation using that pair must FAIL; if it still passes, the validator is not on the evaluation path and this row does not close.
+- **Status:** `PENDING`
+
+#### GT-690
+
+**Title:** Each progressive-axis ruleset exists twice with different content, and the manifests declare the copy the loader never reads
+
+- **Purpose:** One copy per ruleset, declared where the loader actually looks.
+- **Evidence:** Established by `ls` and `diff`, not by import analysis — the method [`GT-75`](./gap-reference-catalog.md#gt-75) got wrong. All three progressive-axis rulesets exist at **both** `reference/core/architecture/topologies/progressive-axis/<t>/<t>.rules.json` and `src/rulesets/topologies/progressive-axis/<t>/<t>.rules.json`, and `diff` shows exactly three differences in each pair: `$schema`, `$id`, and the `src` copy's added `"topologies": ["<t>"]`. **The corpus loader roots only at `['rulesets']` and `['src','rulesets']`** (`core-domain/src/application/paths/rulesets-location.ts:44-47`), so the `reference/` tree is never scanned — while all three manifests declare the `reference/` path in `spec.artifacts.rulesets`. The `reference/` copies' `$schema` does not resolve at all: `ls reference/core/architecture/topologies/progressive-axis/schema/` → *No such file or directory*. **This contradicts `GT-566`'s closure claim** that "every topology now exists in exactly ONE place".
+- **Use cases:**
+  - Fixing an `MS-R*` rule once and having every path see the fix.
+  - `$schema` resolving, so an editor or a validator can check the declared copy.
+  - A manifest declaring an artifact the loader can actually load.
+- **Impact:** Two evaluation paths can silently disagree about the same rule, and the board records the opposite as delivered.
+- **Expected outcome:** one copy per progressive-axis ruleset, manifests pointing at it, `$schema` resolvable.
+- **Affected files:** `reference/core/architecture/topologies/progressive-axis/**`, `src/rulesets/topologies/progressive-axis/**`
+- **Component:** `Governance` · **Criticality:** P3 · **Complexity:** XS
+- **Principal:** `XS` · **Interest:** `LOW` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-14 from the same audit as [`GT-688`](./gap-reference-catalog.md#gt-688), found while dumping every manifest. `GT-566` is annotated by this row rather than reopened, for the same reason as `GT-321` and `GT-266` in the 2026-08-14 wave: a closure record on a non-DONE row is a hard error in `08-validate-tracking`.
+- **Acceptance criteria:**
+  - [ ] Each progressive-axis ruleset exists in exactly one place, proven by `ls`, not by a grep of imports.
+  - [ ] The three manifests declare the surviving path, and the corpus loader loads it.
+  - [ ] `$schema` resolves for every surviving copy.
+  - [ ] **FALSIFIABILITY:** a rule edited in the surviving copy changes the verdict of an evaluation that uses it; the same edit applied to a deleted path changes nothing, because the path is gone.
+  - [ ] `GT-566` carries an annotation recording that its "exactly ONE place" claim was false when it closed.
 - **Status:** `PENDING`

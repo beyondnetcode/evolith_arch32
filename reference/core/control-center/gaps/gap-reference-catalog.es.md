@@ -7054,6 +7054,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Dependencias:** [`GT-329`](#gt-329) (superseded, no reabierto).
 - **Estado:** `COMPLETADO`
 
+**CORRECCIÓN 2026-08-14 — la afirmación de «exactamente UN sitio» era falsa cuando esta fila cerró.** Los tres rulesets del eje progresivo siguen existiendo dos veces: `reference/core/architecture/topologies/progressive-axis/<t>/<t>.rules.json` y `src/rulesets/topologies/progressive-axis/<t>/<t>.rules.json`, difiriendo en `$schema`, `$id` y el `"topologies": ["<t>"]` que añade la copia de `src`. Establecido con `ls` y `diff` y no con un grafo de imports — el método que [`GT-75`](./gap-reference-catalog.es.md#gt-75) hizo mal. El loader del corpus solo enraíza en `['rulesets']` / `['src','rulesets']`, así que las copias de `reference/` que declaran los manifiestos no se escanean nunca, y su `$schema` no resuelve. Registrado como [`GT-690`](./gap-reference-catalog.es.md#gt-690) en vez de reabierto, porque un registro de cierre sobre una fila no-DONE es error duro en `08-validate-tracking`.
+
 #### GT-567
 
 **Title:** CD despliega al VPS, que esta fuera de alcance: falla en cada push a `main` y nadie lee el rojo
@@ -9362,4 +9364,82 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **ANTI-VACUIDAD:** renombrar `Waiver.waiverRef` en el dominio pone rojo el spec de ingest en vez de dejar el cable sin origen en silencio.
   - [ ] La pata de vuelta queda nombrada: se especifica una ruta de lectura del lado Tracker y `calibrate` puede alimentarse de ella, con un test que dirige el comando contra un fetch simulado — o el aplazamiento al repositorio del Tracker queda por escrito.
   - [ ] Un waiver rechazado es representable y mapea a `humanBlocked: true`, afirmado en ambas polaridades — la trampa de la etiqueta confirmatoria de [`GT-670`](./gap-reference-catalog.es.md#gt-670).
+- **Estado:** `PENDIENTE`
+
+
+#### GT-688
+
+**Título:** Una composición de topologías confirmada se trunca a un solo id antes de la compuerta, así que un sistema mixto obtiene un veredicto verde por la única topología que sobrevivió
+
+- **Propósito:** Dar al producto UNA sola aridad de topología de punta a punta, para que un sistema declarado como varias cosas se juzgue como varias cosas.
+- **Evidencia:** **Medido en vivo el 2026-08-14 contra el `dist` compilado de `core-domain`, no leído del fuente.** `manifestFromWorkspace({ kinds: [gate, topology, design], gateId: 'g1', topologyRef: 'modular-monolith', design: { topologyConfirmedRefs: ['modular-monolith', 'agentic-ai', 'event-driven'] } }, …)` devuelve `{"satellitePath":"/tmp/s","corePath":"/tmp/c","topology":"modular-monolith","facts":{"context":{"gateId":"g1","topologyRef":"modular-monolith"}}}` — **`agentic-ai` y `event-driven` no aparecen por ninguna parte.** La causa son dos líneas: `evaluation-context.builder.ts:26` `topology: ctx.topologyRef,` y `:137`; `grep -n "design"` sobre ese fichero entero devuelve **un solo hit, un comentario en `:149`**. **El caso de solo composición es peor:** al quitar `topologyRef`, el manifiesto sale **sin clave `topology`**, el kind `topology` devuelve `Verdict.SKIP` (`kind-evaluators.ts:363`), y el pipeline se reinventa una topología **con un regex sobre el fichero en disco**, ganando la primera coincidencia (`satellite-evaluation-pipeline.service.ts:91` → `:354`). **El contrato de resultado tampoco puede llevar una segunda:** `evaluation-result.ts:163-164` tipa `TopologyEvaluationResult.topologyRef` como escalar obligatorio, y `evaluation-result.schema.json:249-251` lo exige. **La mitad plural es real y funciona** — `evolith topology phase-artifacts -p construction -t agentic-ai,event-driven` devuelve la unión de los artefactos que faltan de ambas más los 7 universales — así que esto no es un modelo ausente: son dos modelos que nunca se tocan.
+- **Casos de uso:**
+  - Un producto confirmado como `microservices + event-driven + agentic-ai` se evalúa y necesita un veredicto por topología, no uno.
+  - Un agente que maneja Evolith por MCP debe poder declarar la misma composición que acepta REST.
+  - Un tenant escribe una regla «si el sistema es event-driven, un contrato de eventos es obligatorio en la compuerta de construcción» y necesita que el motor sepa que el sistema es event-driven.
+  - Un satélite que solo declara `spec.design.topology.confirmed` no debe tener su topología adivinada por un regex sobre su propio YAML.
+  - Quien consume el veredicto debe poder mostrar QUÉ topología de la composición falló.
+- **Impacto:** El kind `topology` devuelve `verdict: PASS, conformant: true` por el único id que conservó (`kind-evaluators.ts:363-368`), así que un sistema mixto recibe **un veredicto verde sobre un sistema del que la mitad nunca se comprobó** — la clase de falso verde que este corpus no deja de encontrar, y justo en el eje que da nombre al producto. Además generaliza en silencio una restricción que solo es cierta de UN eje: las tres topologías del eje progresivo sí se excluyen entre sí (`MM-R01` *Single Deployment Unit* contra `MS-R01` *True Independent Deployability* sobre un mismo repositorio), y un `topologyRef` escalar aplica esa regla de 1-de-3 a las otras cinco dimensiones, que es justo lo que el corpus niega.
+- **Resultado esperado:** el manifiesto, el `input.context` de OPA y `results.topology` llevan la composición confirmada; el escalar `topologyRef` sobrevive como atajo documentado de un solo elemento y no como único canal; MCP alcanza la paridad con REST y CLI.
+- **Ficheros afectados:** `src/packages/core-domain/src/evaluation/evaluation-context.builder.ts`, `src/packages/core-domain/src/evaluation/kind-evaluators.ts`, `src/packages/core-domain/src/evaluation/contracts/evaluation-result.ts`, `src/rulesets/schema/evaluation-result.schema.json`, `src/packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `src/packages/mcp-server/src/tools/**`
+- **Componente:** `Core Domain` · **Criticidad:** P1 · **Complejidad:** L
+- **Principal:** `L` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 a partir de una observación del dueño —«en el Tracker un producto declara UNA topología, cuando las topologías son mixtas y algunas transversales»— auditada con 5 agentes que midieron corpus, camino de evaluación, transversalidad y el contrato hacia el Tracker. **La observación quedó REFUTADA a medias, y la mitad refutada importa:** el modelo NO es singular. `ADR-0079:44` rechaza por escrito el diseño excluyente, `topology-dimensions.md:15` niega la exclusividad mutua en su primera frase sustantiva, la transversalidad es una declaración formal (`topology-manifest.schema.json:123-124`, `enum ["F1","F2","F3","cross"]`, y las cinco topologías no progresivas llevan `maturityLevel: "cross"`), y el contrato de satélite, el evaluador de diseño y phase-artifacts son todos plurales. Lo que sobrevivió es el cable de APLICACIÓN, que es donde se producen los veredictos. **No es P0:** todavía no corre nada en producción (`GT-435`/`GT-448`), así que es un veredicto equivocado y no una caída. **No lo cubre el plan Multi-Topology `MT-A*`:** sus 26 filas están `DONE` y todas son corpus, esquema, documentación o discovery; ninguna dice que el cable de aplicación sea escalar.
+- **Criterios de aceptación:**
+  - [ ] `manifestFromWorkspace` con una composición de tres topologías produce un manifiesto que nombra **las tres**, y la composición aparece en el `input.context` de OPA — comprobado por un test que lee el documento de entrada construido, no por inspección.
+  - [ ] Un contexto con composición confirmada y **sin** `topologyRef` deja de SALTAR el kind `topology` y nunca llega al regex de reserva de `satellite-evaluation-pipeline.service.ts:354`.
+  - [ ] `results.topology` reporta una entrada por topología confirmada, y `evaluation-result.schema.json` valida un resultado de dos topologías.
+  - [ ] MCP acepta la misma composición que acepta REST, y el catálogo generado de esquemas de herramientas publica el campo (hoy solo publica `topologyRef`).
+  - [ ] Una política puede discriminar por una topología presente en la composición — una regla que dispara para `event-driven` y calla sin ella.
+  - [ ] **FALSABILIDAD:** un satélite que declara `modular-monolith + agentic-ai` y cuyo repositorio viola una regla `AAI-R*` devuelve **FAIL**, con la misma ejecución registrada como PASS antes del arreglo. Si tras el arreglo sigue pasando, esta fila no se cierra.
+- **Estado:** `PENDIENTE`
+
+#### GT-689
+
+**Título:** El modelo de compatibilidad de composiciones no tiene ningún lector en tiempo de ejecución, y su marcador de transversalidad no tiene ninguno en absoluto
+
+- **Propósito:** Que «qué topologías pueden combinarse» sea una propiedad comprobable de una evaluación y no una lista mantenida a mano que nadie lee.
+- **Evidencia:** `grep -rn "composableWith" --include='*.ts' src/` excluyendo `dist` devuelve **dos hits, ambos declaraciones de tipo y cero lecturas** (`topology-catalog.service.ts:32` más un fixture de spec). `metadata.dimension` —el campo que codifica la transversalidad— **no tiene lector alguno en código de producción**; `grep -rln "dimension" .harness/scripts/ci/` solo devuelve los cinco scripts de embeddings RAG. El único consumidor de todo el modelo es el guard `22-validate-topology-composition.mjs`, y `find . -name topology.composition.json` devuelve **exactamente un** fichero fuera de worktrees. **Tres consecuencias, cada una medida:** (1) el guard compara todo par ordenado (`:95-108`, `i` y `j` recorren ambos todas las entradas), así que exige simetría, mientras los manifiestos son asimétricos — `modular-monolith` declara componible `data-mesh` y `data-mesh` no declara `modular-monolith`, y `edge-computing` declara `serverless` mientras `serverless` omite `edge-computing`, de modo que ambas capacidades declaradas fallan en CI el día que alguien las escriba; (2) `topology-composition.schema.json:15` fija `"minItems": 2`, así que el estado de producto más común de los documentados —*«Early enterprise product | `modular-monolith`»* (`topology-dimensions.md:42`)— no puede expresarse como documento de composición; (3) `edge-computing` y `serverless` son ambos `dimension: execution` y se declaran componibles, algo que `topology-dimensions.md` §3 prohíbe («componibles cuando pertenecen a dimensiones distintas»), y nadie lo nota porque nadie lee `dimension`.
+- **Casos de uso:**
+  - Un tenant confirma dos topologías del eje progresivo a la vez y el motor debe negarse en vez de unir dos conjuntos de reglas contradictorios.
+  - Un usuario compone un par que un manifiesto ya declara componible y no debe fallar en CI por el silencio del otro lado.
+  - Un producto de una sola topología debe poder expresarse como documento de composición.
+  - Una novena topología debe poder añadirse sin editar a mano todos los manifiestos existentes, donde hoy una omisión se lee como «no componible» en vez de «aún no declarado».
+- **Impacto:** Hoy una composición ilegal se acepta en tiempo de evaluación mientras dos legales son inconstruibles en CI — el modelo es preciso, está documentado y es inerte. Pasa a ser portante en cuanto [`GT-688`](./gap-reference-catalog.es.md#gt-688) haga alcanzable la composición, que es la razón de registrarlo ahora y no después.
+- **Resultado esperado:** compatibilidad derivada del modelo dimensional —como mucho un miembro `progressive-axis` más N miembros de dimensiones distintas— validada en tiempo de evaluación y en CI, en vez de una lista por pares mantenida a mano.
+- **Ficheros afectados:** `src/rulesets/schema/topology-composition.schema.json`, `src/rulesets/topologies/**/topology.manifest.json`, `.harness/scripts/ci/22-validate-topology-composition.mjs`, `src/packages/core-domain/src/**` (un validador consciente de dimensiones)
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `LOW` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la misma auditoría que [`GT-688`](./gap-reference-catalog.es.md#gt-688). Separado a propósito: `GT-688` es un cambio de contrato y cable en TypeScript, este es de corpus y guard, y fusionarlos escondería un P2 dentro de un P1. La mitad de transversalidad es el hallazgo más afilado — el repositorio lleva **dos afirmaciones distintas** y solo una está siquiera parcialmente aplicada: el overlay transversal (`maturityLevel: "cross"`, `metadata.dimension`) no lo lee nadie, mientras la componibilidad por pares la lee un guard sobre un fixture.
+- **Criterios de aceptación:**
+  - [ ] Una composición con dos miembros `progressive-axis` se rechaza en tiempo de evaluación con un motivo nombrado, no meramente ausente de un fixture.
+  - [ ] El campo `dimension` lo lee al menos un guard o validador, y una composición con dos miembros de la misma dimensión falla.
+  - [ ] `composableWith` se vuelve simétrico por construcción, o sus dos asimetrías vivas se resuelven con la decisión registrada.
+  - [ ] Un documento de composición de una sola topología es expresable.
+  - [ ] Los estados de producto documentados en `topology-dimensions.md` tienen fixtures, y el guard falla cuando una composición documentada no lo tiene.
+  - [ ] **FALSABILIDAD:** hacer ilegal un par en un manifiesto y una evaluación que lo use debe FALLAR; si sigue pasando, el validador no está en el camino de evaluación y esta fila no se cierra.
+- **Estado:** `PENDIENTE`
+
+#### GT-690
+
+**Título:** Cada ruleset del eje progresivo existe dos veces con contenido distinto, y los manifiestos declaran la copia que el loader nunca lee
+
+- **Propósito:** Una sola copia por ruleset, declarada donde el loader mira de verdad.
+- **Evidencia:** Establecido con `ls` y `diff`, no con análisis de imports — el método que [`GT-75`](./gap-reference-catalog.es.md#gt-75) hizo mal. Los tres rulesets del eje progresivo existen **a la vez** en `reference/core/architecture/topologies/progressive-axis/<t>/<t>.rules.json` y en `src/rulesets/topologies/progressive-axis/<t>/<t>.rules.json`, y `diff` muestra exactamente tres diferencias en cada par: `$schema`, `$id` y el `"topologies": ["<t>"]` que añade la copia de `src`. **El loader del corpus solo enraíza en `['rulesets']` y `['src','rulesets']`** (`core-domain/src/application/paths/rulesets-location.ts:44-47`), así que el árbol `reference/` no se escanea jamás — mientras los tres manifiestos declaran la ruta de `reference/` en `spec.artifacts.rulesets`. El `$schema` de las copias de `reference/` ni siquiera resuelve: `ls reference/core/architecture/topologies/progressive-axis/schema/` → *No such file or directory*. **Esto contradice la afirmación de cierre de `GT-566`** de que «cada topología existe ahora en exactamente UN sitio».
+- **Casos de uso:**
+  - Arreglar una regla `MS-R*` una vez y que todos los caminos vean el arreglo.
+  - Que `$schema` resuelva, para que un editor o un validador puedan comprobar la copia declarada.
+  - Que un manifiesto declare un artefacto que el loader pueda cargar de verdad.
+- **Impacto:** Dos caminos de evaluación pueden discrepar en silencio sobre la misma regla, y el board registra lo contrario como entregado.
+- **Resultado esperado:** una copia por ruleset del eje progresivo, manifiestos apuntando a ella, y `$schema` resoluble.
+- **Ficheros afectados:** `reference/core/architecture/topologies/progressive-axis/**`, `src/rulesets/topologies/progressive-axis/**`
+- **Componente:** `Governance` · **Criticidad:** P3 · **Complejidad:** XS
+- **Principal:** `XS` · **Interés:** `LOW` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-14 desde la misma auditoría que [`GT-688`](./gap-reference-catalog.es.md#gt-688), encontrado al volcar todos los manifiestos. `GT-566` queda anotado por esta fila en vez de reabierto, por la misma razón que `GT-321` y `GT-266` en la ola del 2026-08-14: un registro de cierre sobre una fila no-DONE es error duro en `08-validate-tracking`.
+- **Criterios de aceptación:**
+  - [ ] Cada ruleset del eje progresivo existe en un solo sitio, demostrado con `ls` y no con un grep de imports.
+  - [ ] Los tres manifiestos declaran la ruta superviviente, y el loader del corpus la carga.
+  - [ ] `$schema` resuelve para cada copia superviviente.
+  - [ ] **FALSABILIDAD:** una regla editada en la copia superviviente cambia el veredicto de una evaluación que la usa; la misma edición sobre una ruta borrada no cambia nada, porque la ruta ya no existe.
+  - [ ] `GT-566` lleva una anotación que registra que su afirmación de «exactamente UN sitio» era falsa cuando cerró.
 - **Estado:** `PENDIENTE`

@@ -10138,6 +10138,31 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. The work is wiring and one table entry: an `engine` argument threaded two frames down an existing private method, two collaborators copied on an existing constructor call, one key added to a module-level constant, and two envelope fields switched from a result field to a constant the same module already imported. Nothing new reaches the network, the filesystem or a process; the tests read `.rego` files with `node:fs`, which the spec tree already does elsewhere."
+    },
+    {
+      "id": "GT-693",
+      "closedAt": "2026-08-15",
+      "closureCommit": "acd05ccd",
+      "evidence": [
+        "src/rulesets/opa/main.rego",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-native-attribution-parity.spec.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, REPRODUCED AGAINST THE REAL BUNDLE BEFORE ANY CHANGE: a satellite whose package.json carries `lodash: \"^4.17.21\"` -- the literal thing DEP-01 forbids -- made policy.wasm emit 61 violations, 5 of them DEP-* including DEP-01, while a gate rule `opa-version-pinning` evaluated through OpaEvaluator returned `passed`. Both facts printed from the same run, so the violation demonstrably existed and was discarded.",
+        "AC1, AFTER: the same gate on the same satellite returns `failed` with `package.json#dependencies.lodash=^4.17.21 (Caret pinning not allowed)`.",
+        "THE FIX: main.rego now tags each of its 34 aggregated violations with the id `deriveRuleId` builds from the emitting policy's path. Rewritten programmatically from the imports, not by hand. `opa check` clean; `opa test` PASS 265/265; bundle rebuilt and re-measured at the SAME 61 violations, so nothing was duplicated or lost. Written as literal object construction because only a handful of builtins are dispatchable in the wasm (GT-644 / guard 55); `{id, message}` is the complete shape, verified across all 251 violation literals.",
+        "AC4, THE COLLISIONS: CLI-RR-01..05 are emitted by both cli-readiness and cli-release-readiness; TAX-05..11 by both taxonomy and repository-taxonomy. Four cases assert each attributes to its OWN policy and NOT to the other.",
+        "AC2, ORPHANS: an unclaimed violation is now named with its policy instead of vanishing. MUTATION: replacing the orphan computation with an empty array turns that case RED; restored 19/19.",
+        "AC3, THE LIST IS GONE BECAUSE ITS PREMISE IS: the 27-name pin was REPLACED by three cases asserting that every aggregation carries a tag and every tag equals the derived id of the file declaring the package it aggregates. MUTATIONS: removing one tag turns 2 cases RED; changing one tag to a non-deriving value turns 1 RED; both restored to 19/19.",
+        "AC5, ADR-0041 PARITY: `opa-native-attribution-parity.spec.ts` runs DEP-01 through the NATIVE handler and through OPA against the same real directory with the real compiled bundle -- both `failed`, both naming lodash -- and both `passed` on an exactly-pinned repository so the agreement is not vacuous. The bundle's absence FAILS that suite rather than skipping it.",
+        "A CORRECTION TO MY OWN MEASUREMENT, recorded in the row rather than quietly fixed: my first census matched packages by PREFIX and skipped every basename containing `test`, so `evolith.testing_pyramid` resolved to `testing-pyramid.test.rego` (which actually declares `evolith.testing_pyramid_test`) and the real `testing-pyramid.rego` disappeared from the count. This produced the row's original `33 / 31 / 197`; the corrected figures are `39 policies / 35 namespaced / 203 ids`. A draft finding built on that error -- that a test file compiles into the bundle as ordinary policy -- was REFUTED and the refutation kept. The collision facts were unaffected and were correct. The spec uses exact package keys and validated all 34 tags, catching what the script could have got wrong.",
+        "GT-694 REGISTERED RATHER THAN ABSORBED: 15 facets that shipped input schemas require are never emitted by opa-input-builder.ts, so 12 categories can never reach their policy. Confirmed end to end on one: a `multi-tenancy` gate rule returns `OPA Input Schema Validation Failed: data/satellite must have required property 'multiTenancy'`.",
+        "SUITES, MEASURED AFTER: core-domain 1934, cli 1482, mcp 575, infra-providers 179, contracts 115. Guards 26, 28, 32, 55 green."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. The Rego change is literal object construction inside main.rego -- no builtin is called, which is a hard constraint here because only a handful are dispatchable in the compiled wasm. The TypeScript change is one exported pure predicate plus a Set used to compute what nothing claimed; both use language built-ins only. The new parity spec reads the shipped corpus and the compiled bundle with node:fs, which the spec tree already does elsewhere."
     }
   ]
 }

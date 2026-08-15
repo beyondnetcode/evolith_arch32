@@ -1,8 +1,7 @@
-import * as path from 'path';
 import { IFileSystem } from '../../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext } from '../../evaluator.interface';
-import { SubResult, PASSED, SKIPPED, asRecord, asStringArray, isRestrictedAccess, isPositiveNumber, pathsOverlap, readJsonConfig } from './shared';
+import { SubResult, PASSED, SKIPPED, asRecord, asStringArray, isRestrictedAccess, isPositiveNumber, pathsOverlap, readJsonConfig, declaredDirectoryIsPopulated, declaredFileHasContent } from './shared';
 
 export const AGENT_CATEGORIES = new Set([
   'agent-identity', 'agent-sandbox', 'agent-prompt-boundaries', 'agent-tool-approval',
@@ -34,6 +33,17 @@ export async function evaluateAgentRule(rule: NormalizedRule, ctx: WorkspaceEval
       const implementationRoots = asStringArray(config?.implementationRoots);
       if (promptSources.length === 0 || implementationRoots.length === 0 || pathsOverlap(promptSources, implementationRoots)) {
         return fail('Expected non-overlapping promptSources and implementationRoots in agent.config.json');
+      }
+      // GT-683: the two arrays were the WHOLE rule, so a descriptor naming
+      // directories that do not exist satisfied a boundary it never checked.
+      // The offender is named, because "the separation is missing" tells nobody
+      // which path to create.
+      const missing: string[] = [];
+      for (const declared of [...promptSources, ...implementationRoots]) {
+        if (!await declaredDirectoryIsPopulated(fs, ctx.satellitePath, declared)) missing.push(declared);
+      }
+      if (missing.length > 0) {
+        return fail(`Declared prompt/implementation paths must exist and hold files; missing or empty: ${missing.join(', ')}`);
       }
       return PASSED;
     }
@@ -70,8 +80,10 @@ export async function evaluateAgentRule(rule: NormalizedRule, ctx: WorkspaceEval
       const budgets = asRecord(config?.operationalBudgets);
       const concurrency = asRecord(budgets?.mcpToolConcurrency);
       const runbooksPath = typeof budgets?.runbooksPath === 'string' ? budgets.runbooksPath : '';
-      const runbooksAbsolute = runbooksPath.length > 0 ? (path.isAbsolute(runbooksPath) ? runbooksPath : path.join(ctx.satellitePath, runbooksPath)) : '';
-      const runbooksExists = runbooksAbsolute.length > 0 && await fs.exists(runbooksAbsolute);
+      // GT-683: `fs.exists` is true of a DIRECTORY, so an empty folder satisfied
+      // a rule whose own text asks for "a readable runbook document". Now the
+      // path must be a file with content -- a zero-byte file is not a runbook.
+      const runbooksExists = runbooksPath.length > 0 && await declaredFileHasContent(fs, ctx.satellitePath, runbooksPath);
       if (!isPositiveNumber(budgets?.maxPromptTokens)
         || !isPositiveNumber(budgets?.maxCompletionTokens)
         || !isPositiveNumber(budgets?.maxContextWindowTokens)

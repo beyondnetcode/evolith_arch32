@@ -223,6 +223,97 @@ describe('ArchitectureRuleHandler', () => {
         await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });
       }
     });
+    /**
+     * GT-683 — the negatives are the deliverable.
+     *
+     * Until this row, AAI-R03 compared two arrays of strings and AAI-R08 asked
+     * `fs.exists`, so a satellite could declare a prompt/implementation split that
+     * did not exist and a "runbook" that was an empty directory, and pass nine
+     * blocking MUSTs. Each case below is red without the observation.
+     */
+    describe('Agentic AI rules observe the repository, not only the descriptor', () => {
+      const baseConfig = {
+        agent: { id: 'a', capabilities: ['read'] },
+        sandbox: { mode: 'isolated', network: 'allowlist', process: 'deny', ephemeral: true, maxDurationSeconds: 30, maxMemoryMb: 512, maxCpuCores: 1 },
+        promptSources: ['prompts'],
+        implementationRoots: ['src/agents'],
+        toolPolicy: { mutative: 'approval-required', capabilityDelegation: 'scoped-and-expiring' },
+        contextPolicy: { untrustedContent: 'data-only', provenanceRequired: true, toolOutputSchemaValidation: true },
+        audit: { appendOnly: true, correlationId: 'required' },
+        operationalBudgets: {
+          maxPromptTokens: 1000, maxCompletionTokens: 1000, maxContextWindowTokens: 2000,
+          mcpToolConcurrency: { maxInFlight: 2, perToolMaxInFlight: 1 },
+          runbooksPath: 'docs/runbooks.md',
+        },
+        credentialLifecycle: { delegationMaxTtlSeconds: 60, rotationCadenceDays: 30, revocation: { onIncident: 'immediate', maxPropagationSeconds: 60 } },
+      };
+      const config = path.join(SAT, 'agent.config.json');
+      const runbooks = path.join(SAT, 'docs', 'runbooks.md');
+      const promptsDir = path.join(SAT, 'prompts');
+      const agentsDir = path.join(SAT, 'src', 'agents');
+      const boundaries = rule({ id: 'AAI-R03', category: 'agent-prompt-boundaries' });
+      const budgets = rule({ id: 'AAI-R08', category: 'agent-operational-budgets' });
+
+      it('AAI-R03 FAILS when a declared prompt directory does not exist on disk', async () => {
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, runbooks, agentsDir],
+          directories: [agentsDir],
+          dirs: { [agentsDir]: ['a.ts'] },
+          files: { [runbooks]: '# runbook' },
+          json: { [config]: baseConfig },
+        }));
+        const res = await h.evaluate(boundaries, ctx);
+        expect(res.result).toBe('failed');
+        expect(res.message).toContain('prompts');
+      });
+
+      it('AAI-R03 FAILS when the declared directory exists but is EMPTY', async () => {
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, runbooks, promptsDir, agentsDir],
+          directories: [promptsDir, agentsDir],
+          dirs: { [promptsDir]: [], [agentsDir]: ['a.ts'] },
+          files: { [runbooks]: '# runbook' },
+          json: { [config]: baseConfig },
+        }));
+        const res = await h.evaluate(boundaries, ctx);
+        expect(res.result).toBe('failed');
+        expect(res.message).toContain('prompts');
+      });
+
+      it('AAI-R08 FAILS when the runbook path is a DIRECTORY', async () => {
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, runbooks, promptsDir, agentsDir],
+          directories: [runbooks, promptsDir, agentsDir],
+          dirs: { [promptsDir]: ['p.md'], [agentsDir]: ['a.ts'], [runbooks]: [] },
+          json: { [config]: baseConfig },
+        }));
+        expect((await h.evaluate(budgets, ctx)).result).toBe('failed');
+      });
+
+      it('AAI-R08 FAILS when the runbook is a zero-byte file', async () => {
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, runbooks, promptsDir, agentsDir],
+          directories: [promptsDir, agentsDir],
+          dirs: { [promptsDir]: ['p.md'], [agentsDir]: ['a.ts'] },
+          files: { [runbooks]: '   \n' },
+          json: { [config]: baseConfig },
+        }));
+        expect((await h.evaluate(budgets, ctx)).result).toBe('failed');
+      });
+
+      it('both PASS when the declared paths are real and populated — the contrast case', async () => {
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, runbooks, promptsDir, agentsDir],
+          directories: [promptsDir, agentsDir],
+          dirs: { [promptsDir]: ['p.md'], [agentsDir]: ['a.ts'] },
+          files: { [runbooks]: '# runbook\n\nwhat an operator does.' },
+          json: { [config]: baseConfig },
+        }));
+        expect((await h.evaluate(boundaries, ctx)).result).toBe('passed');
+        expect((await h.evaluate(budgets, ctx)).result).toBe('passed');
+      });
+    });
+
     it('passes all Agentic AI rules for the governed configuration contract', async () => {
       const config = path.join(SAT, 'agent.config.json');
       const runbooks = path.join(SAT, 'docs', 'agentic-ai-runbooks.md');
@@ -247,7 +338,19 @@ describe('ArchitectureRuleHandler', () => {
           revocation: { onIncident: 'immediate', maxPropagationSeconds: 60 },
         },
       };
-      const h = new ArchitectureRuleHandler(fsMock({ existing: [config, runbooks], json: { [config]: agentConfig } }));
+      // GT-683: the AAI rules now OBSERVE what the config declares, so a fixture that
+      // names `prompts`, `src/agents` and a runbook has to actually provide them --
+      // populated directories and a runbook with content. Before, the config alone was
+      // the whole world, which is the defect this row removes.
+      const promptsDir = path.join(SAT, 'prompts');
+      const agentsDir = path.join(SAT, 'src', 'agents');
+      const h = new ArchitectureRuleHandler(fsMock({
+        existing: [config, runbooks, promptsDir, agentsDir],
+        directories: [promptsDir, agentsDir],
+        dirs: { [promptsDir]: ['review.md'], [agentsDir]: ['reviewer.ts'] },
+        files: { [runbooks]: '# Runbooks\n\nOperator procedure for agent incidents.\n' },
+        json: { [config]: agentConfig },
+      }));
 
       for (const [id, category] of [['AAI-R01', 'agent-identity'], ['AAI-R02', 'agent-sandbox'], ['AAI-R03', 'agent-prompt-boundaries'], ['AAI-R04', 'agent-tool-approval'], ['AAI-R05', 'agent-sandbox-limits'], ['AAI-R06', 'agent-context-trust'], ['AAI-R07', 'agent-action-accountability'], ['AAI-R08', 'agent-operational-budgets'], ['AAI-R09', 'agent-credential-lifecycle']] as const) {
         await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });

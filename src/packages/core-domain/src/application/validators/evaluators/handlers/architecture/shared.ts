@@ -30,6 +30,56 @@ export function pathsOverlap(left: string[], right: string[]): boolean {
   }));
 }
 
+/**
+ * GT-683 — resolve a path a config DECLARED, against the satellite it describes.
+ *
+ * Absolute paths are honoured as written; relative ones hang off the satellite,
+ * which is the convention `agent.config.json`'s `runbooksPath` already used.
+ */
+export function resolveDeclaredPath(satellitePath: string, declared: string): string {
+  return path.isAbsolute(declared) ? declared : path.join(satellitePath, declared);
+}
+
+/**
+ * GT-683 — a declared directory that exists AND holds something.
+ *
+ * The agentic-AI rules compared two arrays of strings and never looked at the
+ * repository, so a descriptor naming directories that do not exist satisfied
+ * them. An EMPTY directory is refused too: `promptSources: ["prompts"]` with an
+ * empty `prompts/` is the same claim with one `mkdir` of camouflage, and the
+ * self-conformance spec already asserted non-emptiness on disk — this moves that
+ * assertion from a test about ourselves into the rule that judges everyone.
+ */
+export async function declaredDirectoryIsPopulated(fs: IFileSystem, satellitePath: string, declared: string): Promise<boolean> {
+  const full = resolveDeclaredPath(satellitePath, declared);
+  if (!await fs.exists(full)) return false;
+  try {
+    if (!(await fs.stat(full)).isDirectory()) return false;
+    return (await fs.readdirNames(full)).some((entry) => entry !== '.' && entry !== '..');
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * GT-683 — a declared document that is a readable FILE with content.
+ *
+ * `fs.exists` was the whole check behind AAI-R08's "a runbooksPath that exists",
+ * and `exists` is true of a DIRECTORY: an empty folder satisfied a rule whose
+ * own text demands "a readable runbook document". A zero-byte file is refused
+ * for the same reason — the rule asks for something an operator can act on.
+ */
+export async function declaredFileHasContent(fs: IFileSystem, satellitePath: string, declared: string): Promise<boolean> {
+  const full = resolveDeclaredPath(satellitePath, declared);
+  if (!await fs.exists(full)) return false;
+  try {
+    if (!(await fs.stat(full)).isFile()) return false;
+    return (await fs.readFile(full)).trim().length > 0;
+  } catch {
+    return false;
+  }
+}
+
 export async function getAllFilesRecursive(fs: IFileSystem, dir: string): Promise<string[]> {
   const files: string[] = [];
   if (!await fs.exists(dir)) return files;

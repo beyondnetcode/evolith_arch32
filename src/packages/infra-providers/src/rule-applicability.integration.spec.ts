@@ -320,7 +320,26 @@ describe('GT-571 · the Core monorepo keeps its own rules', () => {
  * error, and a status assertion would go green on the bug.
  */
 describe('GT-688 · an inline composition puts the declared topology corpus in scope', () => {
-  const AAI = ['AAI-R01', 'AAI-R02', 'AAI-R03', 'AAI-R04', 'AAI-R05', 'AAI-R06', 'AAI-R07', 'AAI-R08', 'AAI-R09'];
+  /**
+   * Read from the shipped ruleset, NOT hand-listed. GT-683 added `AAI-R10` and a
+   * hardcoded array turned this test red for a reason that had nothing to do with
+   * what it asserts — the test knew the corpus of one particular day.
+   *
+   * Not vacuous: this reads the JSON file directly while the code under test
+   * reaches the same rules through `DiskRulesetRepository` and
+   * `RuleApplicabilityIndex`, so a rule that exists on disk but never enters scope
+   * still fails here. The length assertion keeps an emptied ruleset from passing
+   * over zero ids.
+   */
+  const AAI: string[] = (
+    JSON.parse(
+      nodeFs.readFileSync(path.join(CORE, 'src/rulesets/topologies/agentic-ai/agentic-ai.rules.json'), 'utf8'),
+    ) as { rules: Array<{ id: string }> }
+  ).rules.map((r) => r.id);
+
+  it('the corpus this test compares against is real', () => {
+    expect(AAI.length).toBeGreaterThanOrEqual(9);
+  });
 
   /** Applicability over the REAL corpus for one declared composition. */
   async function partitionFor(declaredTopologies: readonly string[]) {

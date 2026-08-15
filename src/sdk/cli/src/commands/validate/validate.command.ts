@@ -290,7 +290,14 @@ export class ValidateCommand extends BaseEvolithCommand {
           } else {
             this.promptService.showError(message);
           }
+          // `process.exit` does NOT stop this function under test — every spec in this
+          // suite stubs it — so without the `return` the refused run FALLS THROUGH into
+          // the real composable validation. That is not a test-only cosmetic: it is why
+          // `validate.topology-composition.spec.ts` timed out at 10s on the runner while
+          // passing locally in milliseconds, the fall-through doing real work against a
+          // corpus that a developer's tree has cached and a fresh checkout does not.
           process.exit(1);
+          return;
         }
         const context = {
           satellitePath,

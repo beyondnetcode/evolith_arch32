@@ -1,4 +1,4 @@
-import { OpaEvaluator, CONTEXT_AWARE_VIOLATION_PREFIXES, violationBelongsToRule } from './opa-evaluator';
+import { OpaEvaluator, violationBelongsToRule } from './opa-evaluator';
 import { createMockFileSystem, createMockLogger } from '../../../test/mocks';
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext } from './evaluator.interface';

@@ -13,23 +13,57 @@ const globalPolicyCache = new Map<string, any>();
 const globalSchemaCache = new Map<string, any>();
 
 /**
- * GT-382: context-aware policies emit namespaced violation ids (`DOD-*`, `CB-*`,
- * `PG-*`) that can never equal the path-derived rule id produced for a gate's
- * `rules: ["rulesets/opa/<file>.rego"]` reference (e.g. `deriveRuleId` →
- * `opa-dod`). For these policies a gate rule referencing the policy file owns
- * ALL of that policy's violations, so they are matched by id PREFIX. Every other
- * rule keeps exact-id matching, so this changes no other policy's behavior.
+ * GT-382, superseded by GT-693 — kept ONLY to read bundles compiled before the
+ * provenance change, and deliberately not extended.
+ *
+ * The problem it was built for is real: a policy emits namespaced ids (`DOD-*`,
+ * `CB-*`) that can never equal the `opa-<file>` id `deriveRuleId` builds from a
+ * gate's `rules: ["rulesets/opa/<file>.rego"]` reference. The problem with the
+ * SOLUTION was that it is a list somebody has to remember to update, and forgetting
+ * is silent in the worst direction: the violation matches no rule, the branch falls
+ * through to `passed`, and a policy that fired is reported as conformance.
+ *
+ * Measured on 2026-08-15 before the fix: 31 of the 33 shipped policies emit
+ * namespaced ids and four were listed here. A satellite with `lodash: ^4.17.21` —
+ * the literal thing `DEP-01` forbids — produced `DEP-01` in the wasm and a verdict
+ * of `passed` for a gate referencing `version-pinning.rego`.
+ *
+ * `main.rego` now tags every aggregated violation with the policy that emitted it,
+ * using exactly the id `deriveRuleId` produces, so attribution compares two things
+ * equal by construction. This table is the fallback for a `policy`-less violation,
+ * which today means one thing only: a `policy.wasm` older than that change. Adding
+ * an entry here would be re-creating the defect, so `unattributedPolicies` below
+ * reports what the fallback could not place instead of dropping it.
  */
 export const CONTEXT_AWARE_VIOLATION_PREFIXES: Readonly<Record<string, string>> = {
   'opa-dod': 'DOD-',
   'opa-compliance-baseline': 'CB-',
   'opa-phase-gates': 'PG-',
-  // GT-688 AC5 — `topology-composition.rego` emits `TPC-01`, which can never
-  // equal the `opa-topology-composition` id derived from a gate's
-  // `rules: ["rulesets/opa/topology-composition.rego"]`. Without this entry the
-  // policy fires in the wasm and the rule is reported `passed`.
   'opa-topology-composition': 'TPC-',
 };
+
+/**
+ * Does this violation belong to this rule?
+ *
+ * Provenance first — `v.policy` is the emitting policy's derived id, so a gate
+ * referencing that file owns it. This is what makes the two colliding id ranges
+ * resolvable: `CLI-RR-01..05` are emitted by BOTH `cli-readiness` and
+ * `cli-release-readiness`, and `TAX-05..11` by both `taxonomy` and
+ * `repository-taxonomy` (10 of 197 ids collide), so no id-based scheme can tell
+ * them apart and a prefix scheme attributes them to whichever rule asks first.
+ */
+export function violationBelongsToRule(
+  violation: Record<string, unknown>,
+  ruleId: string,
+): boolean {
+  const provenance = violation.policy;
+  if (typeof provenance === 'string') return provenance === ruleId;
+
+  // Legacy bundle: no provenance on the wire.
+  const prefix = CONTEXT_AWARE_VIOLATION_PREFIXES[ruleId];
+  if (prefix) return typeof violation.id === 'string' && violation.id.startsWith(prefix);
+  return violation.id === ruleId;
+}
 
 export class OpaEvaluator implements IRuleEvaluatorStrategy {
   private inputBuilder: OpaInputBuilder;
@@ -171,11 +205,19 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
           violations = (resultSet?.[0]?.result) ? resultSet[0].result as Record<string, unknown>[] : [];
         }
 
+        // GT-693 — a violation nobody claims used to vanish here. It is now named,
+        // with the policy that emitted it, because "the run said nothing" and "the
+        // run found nothing" are different facts and only one of them is good news.
+        // Reported at debug: for a partial rule selection most violations legitimately
+        // belong to policies this run did not ask about, so warning would be noise —
+        // what matters is that the information exists at all rather than being lost.
+        const claimed = new Set<Record<string, unknown>>();
+
         opaResults = passedRules.map(rule => {
-          const prefix = CONTEXT_AWARE_VIOLATION_PREFIXES[rule.id];
-          const ruleViolations = prefix
-            ? violations.filter((v: Record<string, unknown>) => typeof v.id === 'string' && (v.id as string).startsWith(prefix))
-            : violations.filter((v: Record<string, unknown>) => v.id === rule.id);
+          const ruleViolations = violations.filter((v: Record<string, unknown>) =>
+            violationBelongsToRule(v, rule.id),
+          );
+          for (const v of ruleViolations) claimed.add(v);
           if (ruleViolations.length > 0) {
             return {
               rule,
@@ -188,6 +230,19 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
             result: 'passed'
           };
         });
+
+        const orphans = violations.filter((v) => !claimed.has(v));
+        if (orphans.length > 0) {
+          const byPolicy = new Map<string, string[]>();
+          for (const v of orphans) {
+            const owner = typeof v.policy === 'string' ? v.policy : '<no provenance — bundle predates GT-693>';
+            byPolicy.set(owner, [...(byPolicy.get(owner) ?? []), String(v.id)]);
+          }
+          this.logger.debug(
+            `OPA: ${orphans.length} violation(s) matched no evaluated rule — ` +
+              [...byPolicy.entries()].map(([p, ids]) => `${p}: ${ids.join(', ')}`).join(' | '),
+          );
+        }
       }
 
       return [...failedResults, ...opaResults];

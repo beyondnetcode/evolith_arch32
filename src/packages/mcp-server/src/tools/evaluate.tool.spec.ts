@@ -218,3 +218,28 @@ jest.mock('@beyondnet/evolith-core-domain/evaluation', () => {
     })),
   };
 });
+
+/**
+ * GT-688 — the MCP surface must be able to EXPRESS a topology composition.
+ *
+ * The behavioural half (that `design` reaches `manifest.topologies`) lives in
+ * `evaluate.tool.composition.spec.ts`: it spies on the use case the tool
+ * `await import`s, and the describe blocks above load that module through a
+ * different specifier first, which defeats the spy. Split rather than reordered,
+ * so neither test depends on the other's module-registry state.
+ */
+describe('EvaluateTool · the composition argument is published (GT-688)', () => {
+  it('publishes `design` on the tool schema without making anything required', () => {
+    const t = new EvaluateTool({} as any, {} as any);
+    const props = t.schema.inputSchema.properties as Record<string, { description?: string }>;
+    expect(props).toHaveProperty('design');
+    expect(props.design.description).toMatch(/topologyConfirmedRefs/);
+    expect(t.schema.inputSchema.required).toEqual([]);
+  });
+
+  it('still documents topologyRef as the single-element shorthand', () => {
+    const t = new EvaluateTool({} as any, {} as any);
+    const props = t.schema.inputSchema.properties as Record<string, { description?: string }>;
+    expect(props.topologyRef.description).toMatch(/shorthand/i);
+  });
+});

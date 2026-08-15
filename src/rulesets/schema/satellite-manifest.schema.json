@@ -18,6 +18,11 @@
       "type": "string",
       "description": "Optional topology override. If omitted, the pipeline auto-detects by analyzing the satellite's tech stack against the topology catalog."
     },
+    "topologies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "GT-688: the confirmed topology composition. `topology` is its primary member, kept for the scalar display envelope."
+    },
     "phase": {
       "type": "string",
       "description": "Optional SDLC phase. If provided, the pipeline evaluates only the gates for that phase. If omitted, all phases are checked. Accepts canonical names and legacy f1-f5 aliases.",

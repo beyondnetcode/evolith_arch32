@@ -69,6 +69,13 @@ function stageRoot(): string {
 
   copyInto('src/rulesets/contracts/evolith-machine-contracts.json');
   copyInto('src/sdk/cli/package.json');
+  // GT-688: the guard now also compares the PUBLISHED "Pinned schemas" tables to
+  // the manifest — the tables kept advertising `evaluation-result` at 1.1.0
+  // after the schema went to 2.0.0, and nothing failed. They are part of the
+  // minimum tree because the guard resolves them; a `stageRoot` that omitted
+  // them would test a guard weaker than the one CI runs.
+  copyInto('src/rulesets/contracts/README.md');
+  copyInto('src/rulesets/contracts/README.es.md');
   for (const schema of manifest.schemas) copyInto(schema.path);
   return root;
 }
@@ -156,5 +163,41 @@ describe('producer machine-contract manifest (GT-573 AC3)', () => {
       expect(output).toContain(`Schema hash mismatch: ${id}`);
       expect(code).toBe(1);
     });
+
+    /**
+     * GT-688 — the drift this guard could NOT see.
+     *
+     * `evaluation-result` went to 2.0.0 in the manifest, the fixture and the
+     * TypeScript constant; the two "Pinned schemas" tables kept publishing
+     * 1.1.0 and every check stayed green, because the guard hashed schema FILES
+     * and never read the document consumers actually integrate from.
+     */
+    it.each(['README.md', 'README.es.md'])(
+      'rejects a %s that publishes a version the manifest does not pin',
+      (readme) => {
+        const root = stage();
+        const target = join(root, 'src', 'rulesets', 'contracts', readme);
+        const pinned = manifest.schemas.find((s) => s.id === 'evaluation-result');
+        expect(pinned && pinned.version).toEqual(expect.stringMatching(/^\d+\.\d+\.\d+$/));
+
+        const text = readFileSync(target, 'utf8');
+        const stale = text.replace(
+          // Escape EVERY regex metacharacter, not just the dot. CodeQL flagged the
+          // dot-only form (`Incomplete string escaping or encoding`, alert 412): a
+          // backslash in the input would survive into the pattern. The input here is a
+          // semver asserted two lines above, so nothing could reach it today — which is
+          // exactly why the partial escape looked fine and stayed wrong.
+          new RegExp(`(\\|\\s*\`evaluation-result\`\\s*\\|\\s*)${pinned!.version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`),
+          '$10.0.1',
+        );
+        // The table row must actually have changed, or the case proves nothing.
+        expect(stale).not.toEqual(text);
+        writeFileSync(target, stale);
+
+        const { code, output } = runGuard(root);
+        expect(output).toContain(`publishes evaluation-result at 0.0.1`);
+        expect(code).toBe(1);
+      },
+    );
   });
 });

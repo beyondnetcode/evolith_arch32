@@ -91,6 +91,58 @@ describe('Contract Schema Registry (GT-377 AC-1)', () => {
     expect(validateResult(result)).toBe(false);
   });
 
+  // ---------------------------------------------------------------------------
+  // GT-688 — `results.topology` object → ARRAY.
+  //
+  // Before this row NOTHING in this suite asserted anything about the topology
+  // key, so the JSON schema and the TypeScript type were free to drift apart.
+  // Both halves are asserted: the plural form validates, and the OLD singular
+  // form is now REJECTED — which is what makes the 2.0.0 major bump honest.
+  // ---------------------------------------------------------------------------
+  describe('results.topology is a composition (GT-688)', () => {
+    const topologyEntry = (topologyRef: string) => ({
+      topologyRef,
+      verdict: Verdict.PASS,
+      conformant: true,
+      gaps: [],
+      recommendations: [],
+    });
+
+    const resultWithTopology = (topology: unknown): Record<string, unknown> => ({
+      overallVerdict: 'PASS',
+      outcome: 'approved',
+      results: { topology },
+      rulesExecuted: [],
+      policiesApplied: [],
+      gaps: [],
+      risks: [],
+      missingEvidence: [],
+      incompleteArtifacts: [],
+      recommendations: [],
+      requiredActions: [],
+      confidence: 1,
+      rationale: 'ok',
+      versions: { core: '1.0.5' },
+      evaluatedAt: '2026-06-29T00:00:00.000Z',
+      schemaVersion: '2.0.0',
+    });
+
+    it('validates a two-topology EvaluationResult', () => {
+      const valid = validateResult(
+        resultWithTopology([topologyEntry('modular-monolith'), topologyEntry('agentic-ai')]),
+      );
+      expect(valid).toBe(true);
+    });
+
+    it('rejects the pre-GT-688 single-object form', () => {
+      expect(validateResult(resultWithTopology(topologyEntry('modular-monolith')))).toBe(false);
+    });
+
+    it('still accepts the single-element composition a scalar caller produces', () => {
+      expect(validateResult(resultWithTopology([topologyEntry('modular-monolith')]))).toBe(true);
+    });
+  });
+
   describe('attribution is additive (GT-586)', () => {
     const requester = {
       actorType: 'agent' as const,

@@ -14,8 +14,15 @@ import type { StructuralFactsSummary } from './repo-facts';
 import type { DriftConformanceDelta, DriftSignalReport } from './drift-signals';
 import type { RepositoryRevisionContext, RequesterContext } from './evaluation-context';
 
-/** Schema version of this contract (bumped only on incompatible changes). */
-export const EVALUATION_RESULT_SCHEMA_VERSION = '1.0.0';
+/**
+ * Schema version of this contract (bumped only on incompatible changes).
+ *
+ * GT-688 — 2.0.0, a MAJOR bump: `results.topology` changed from a single object
+ * to an ARRAY (one entry per confirmed topology), aligning it with the four
+ * sibling keys that were already arrays. A 1.x consumer reading
+ * `results.topology.conformant` gets `undefined`, so this is not additive.
+ */
+export const EVALUATION_RESULT_SCHEMA_VERSION = '2.0.0';
 
 export type FindingSeverity = 'error' | 'warning' | 'info';
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
@@ -273,7 +280,8 @@ export interface EvaluationResult {
     readonly evidence?: readonly EvidenceEvaluationResult[];
     readonly architecture?: ArchitectureEvaluationResult;
     readonly blueprint?: BlueprintEvaluationResult;
-    readonly topology?: TopologyEvaluationResult;
+    /** GT-688 — one entry per CONFIRMED topology. `TopologyEvaluationResult.topologyRef` stays a required scalar. */
+    readonly topology?: readonly TopologyEvaluationResult[];
     readonly checkpoint?: readonly CheckpointEvaluationResult[];
     readonly deployment?: DeploymentEvaluationResult;
     readonly compliance?: ComplianceResult;

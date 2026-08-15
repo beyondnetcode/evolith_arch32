@@ -2,6 +2,45 @@
 
 ## [Unreleased]
 
+### Behaviour change — a `-t` override is now UNIONED with what the satellite declares (GT-688)
+
+Before this change, `topologyRef` was a scalar that travelled alone: a caller
+naming `-t <topology>` replaced whatever the repository declared, and only the
+surviving id selected rules. A composition is now carried end to end, and the
+override is added to the disk declaration rather than substituted for it.
+
+**Two consequences a caller who changed nothing can see.**
+
+1. **A contradictory pair is now REFUSED instead of silently narrowed.** Naming
+   a progressive-axis topology that contradicts the one on disk raises
+   `TOPOLOGY_COMPOSITION_CONFLICT` and the run is refused. Measured on this
+   repository, which declares `metadata.phase: F1` (⇒ `modular-monolith`):
+   `evolith evaluate -t microservices` goes from **96 to 101** error gaps, with
+   the refusal present and **both** corpora in scope — 5 `MM-R*` and 4 `MS-R*`.
+   The refusal is the intended behaviour: the two are mutually exclusive on one
+   repository, and a verdict produced under an unsatisfiable premise says
+   nothing. What is NOT intended is meeting it by surprise, which is why it is
+   written here. **To keep the old behaviour, name the topology the repository
+   actually declares, or change `metadata.phase` so the declaration and the
+   override agree.**
+
+2. **A satellite that declares NO topology on disk now has the named one in
+   scope.** Previously the caller's declaration had nowhere to land, so
+   topology-specific rules were excluded. Measured on a bare satellite (an
+   `evolith.yaml` with no `metadata.phase`): **88 → 91** error gaps, and the
+   three additions are exactly `MM-R03`, `MM-R04` and `MM-R05` — all declared
+   `topologies: ["modular-monolith"]`, `severity: MUST`, `blocking: true`, all
+   three evaluated and failing, where the same run without `-t` reports **zero**
+   `MM-R*`. This is a stricter verdict, not a regression: those rules always
+   addressed a modular monolith. On this repository the count does not move
+   (96 → 96), because `F1` already mapped to `modular-monolith` — which is why
+   the delta is only visible on a satellite that declares nothing.
+
+Mixing DIFFERENT dimensions is unaffected and is the point of ADR-0079:
+`-t modular-monolith -t agentic-ai -t event-driven` composes cleanly and puts
+each corpus in scope (measured: 96 ⇒ 105 error gaps, the nine `AAI-R*` among
+them).
+
 ## [1.2.2] - 2026-07-29
 
 **Which packages this version covers.** Only `@beyondnet/evolith-cli` and

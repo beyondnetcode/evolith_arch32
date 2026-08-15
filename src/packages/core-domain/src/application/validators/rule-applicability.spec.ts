@@ -223,3 +223,52 @@ describe('GT-688 · resolveApplicabilityContext unions the declared composition'
     expect(ctx.declaredTopologies).toEqual(['microservices']);
   });
 });
+
+/**
+ * GT-688 AC6 — the refusal has to live where EVERY surface passes, and the
+ * criterion names that seam explicitly: `RulesetValidatorService.validate`,
+ * which takes no `kinds` argument at all.
+ *
+ * The reason the criterion is written that way: `evolith evaluate` builds its
+ * context with `kinds: ['gate','compliance']`, so a refusal expressed only in
+ * the `topology` kind evaluator is bypassed by the enforcement path itself —
+ * with `MM-R*` and `MS-R*` both in scope and no `TOPOLOGY_COMPOSITION_CONFLICT`
+ * anywhere in the verdict.
+ *
+ * Measured through the CLI while closing this row: `evolith evaluate
+ * -t modular-monolith -t microservices` DOES carry the refusal. This pins the
+ * seam itself so the runtime behaviour cannot regress unnoticed.
+ */
+describe('GT-688 AC6 · the progressive-axis refusal is raised on the validator seam', () => {
+  // `compositionConflictIssue` is private; the seam is reached through `validate`,
+  // which is the point of the criterion — a caller cannot opt out of it.
+  const { RulesetValidatorService } = require('./ruleset-validator.service');
+
+  function validatorRefusing(declaredTopologies: string[]) {
+    const service = new RulesetValidatorService({
+      fileSystem: { exists: async () => false, readFile: async () => '', readdirNames: async () => [] } as never,
+      logger: { info: () => undefined, warn: () => undefined, error: () => undefined, debug: () => undefined, success: () => undefined } as never,
+      configParser: { parse: () => ({}) } as never,
+      rulesetRepo: { loadAllRulesets: async () => [] } as never,
+    });
+    return (service as any).compositionConflictIssue(declaredTopologies);
+  }
+
+  it('REFUSES two progressive-axis members', () => {
+    const issue = validatorRefusing(['modular-monolith', 'microservices']);
+    expect(issue?.ruleId).toBe('TOPOLOGY_COMPOSITION_CONFLICT');
+    expect(issue?.blocking).toBe(true);
+    // The message must name both, or the operator cannot act on it.
+    expect(issue?.description).toMatch(/modular-monolith/);
+    expect(issue?.description).toMatch(/microservices/);
+  });
+
+  it('is SILENT for a composition that mixes dimensions, which is the whole point of ADR-0079', () => {
+    expect(validatorRefusing(['modular-monolith', 'agentic-ai', 'event-driven'])).toBeUndefined();
+  });
+
+  it('is SILENT for a single topology and for none at all', () => {
+    expect(validatorRefusing(['microservices'])).toBeUndefined();
+    expect(validatorRefusing([])).toBeUndefined();
+  });
+});

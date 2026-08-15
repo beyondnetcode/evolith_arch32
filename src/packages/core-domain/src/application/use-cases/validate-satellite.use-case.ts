@@ -67,7 +67,7 @@ export class ValidateSatelliteUseCase {
     if (manifest) {
       // GT-614: the plan travels with the manifest, so the selection made from
       // `ctx.kinds` reaches the pipeline instead of stopping at this boundary.
-      return this.executeWithPipeline(manifest, plan);
+      return this.executeWithPipeline(manifest, plan, engine);
     }
 
     // Fall back to the standard validation logic
@@ -126,9 +126,10 @@ export class ValidateSatelliteUseCase {
   private async executeWithPipeline(
     manifest: SatelliteManifest,
     plan?: PipelineExecutionPlan,
+    engine?: 'native' | 'opa',
   ): Promise<ValidateSatelliteOutput> {
     const corePath = manifest.corePath || this.findCoreFromSatellite(manifest.satellitePath);
-    const validator = this.buildValidator(corePath);
+    const validator = this.buildValidator(corePath, engine);
     const pipeline = new SatelliteEvaluationPipeline(
       (validator as any).fs,
       (validator as any).logger,
@@ -165,14 +166,31 @@ export class ValidateSatelliteUseCase {
     return { result, evaluationVerdict: verdict };
   }
 
-  private buildValidator(corePath: string): RulesetValidatorService {
+  /**
+   * GT-688 — this used to hardcode `'native'` and drop two collaborators, and
+   * both losses were invisible from the standard path that documents them.
+   *
+   * `execute` returns into the pipeline BEFORE it reads `engine`, so
+   * `evolith validate --engine opa` accepted the flag, advertised it in `--help`,
+   * and evaluated natively: a verifier driving the product surfaces with a
+   * recording OPA sidecar measured ZERO requests. Answering with a different
+   * engine than the one asked for is worse than refusing, because the verdict
+   * that comes back looks legitimate.
+   *
+   * The `processRunner`/`metrics` loss is the SAME GT-664 defect the branch above
+   * documents at length — it was fixed there and left standing here, so every
+   * `enforce:` rule degraded silently on the pipeline path too.
+   */
+  private buildValidator(corePath: string, engine?: 'native' | 'opa'): RulesetValidatorService {
     const fs = (this.validator as any).fs;
     return new RulesetValidatorService({
-      engineType: 'native',
+      engineType: engine ?? 'native',
       fileSystem: fs,
       logger: (this.validator as any).logger,
       configParser: (this.validator as any).configParser,
       rulesetRepo: (this.validator as any).engine?.rulesetRepo,
+      processRunner: (this.validator as any).processRunner,
+      metrics: (this.validator as any).metrics,
     });
   }
 

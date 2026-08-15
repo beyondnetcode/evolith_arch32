@@ -10110,6 +10110,34 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. The fix is wiring plus one new pure function: `freezeWaivedViolations` in core-domain (no imports beyond what waiver.ts already had), a resolver and a reader-opener in infra-providers (`node:fs`/`node:path` only), and a CODEOWNERS loader that reuses core-domain’s existing `parseCodeowners`. `IWaiverStore` is a synchronous port already owned by the domain, so passing it at three call sites crosses no new boundary: infra-providers already depended on core-domain, and both the CLI and the MCP server already depended on infra-providers. Nothing new reaches the network, the clock or a process — expiry is compared against `result.evaluatedAt`, which the orchestrator already supplies."
+    },
+    {
+      "id": "GT-688",
+      "closedAt": "2026-08-15",
+      "closureCommit": "1805af16",
+      "evidence": [
+        "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts",
+        "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.spec.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts",
+        "src/packages/core-domain/src/application/validators/rule-applicability.spec.ts",
+        "src/sdk/cli/src/commands/evaluate/evaluate.command.ts",
+        "src/sdk/cli/src/commands/evaluate/evaluate.command.spec.ts",
+        "CHANGELOG.md"
+      ],
+      "validationCommands": [
+        "AC7, THE FALSIFIABILITY CRITERION, REPRODUCED EXACTLY through the built CLI at this repository's root: `node src/sdk/cli/dist/main.js evaluate -t modular-monolith --format json` -> 96 error gaps, 0 of them AAI-*; `-t modular-monolith -t agentic-ai` -> 105 error gaps, 9 of them, ids AAI-R01..AAI-R09. AAI-R10 does not appear because it ships SHOULD/non-blocking, which is consistent.",
+        "AC1/AC2/AC3/AC4 verified against the suites that assert them, all green: evaluation-context.builder 22, opa-wasm-composition 4, kind-evaluators 29, mcp evaluate.tool 13. AC4 was initially recorded as NOT met and that was MY error -- I grepped `topologyRefs` when the shipped field is `design.topologyConfirmedRefs`; the catalog publishes it (2 occurrences) and evaluate.tool.composition.spec.ts threads it end to end.",
+        "AC5 was genuinely unmet and is now met. `TPC-01` fired in the wasm but `CONTEXT_AWARE_VIOLATION_PREFIXES` had no `opa-topology-composition` entry, so no rule claimed it and the run reported `passed`. MUTATION: with the entry removed the new attribution case returns `passed` where it must return `failed` -- the literal pre-fix false pass -- and restoring returns 15/15.",
+        "AC6's refusal existed at ruleset-validator.service.ts:321 with NO test on the seam the criterion names. Added three cases; MUTATION `if (progressive.length < 2)` -> `< 99` turns the refusal case RED, restoring returns 19/19. Also measured end to end: `evolith evaluate -t modular-monolith -t microservices` carries TOPOLOGY_COMPOSITION_CONFLICT on the enforcement path (kinds gate+compliance).",
+        "OPEN ITEM 1, CONFIRMED AND WORSE THAN REPORTED: `execute` returns into `executeWithPipeline` BEFORE reading `engine`, so `--engine opa` was accepted, documented in --help, and evaluated natively; `buildValidator` additionally dropped `processRunner` and `metrics`, the same GT-664 loss the standard path documents ninety lines above. Two of three new cases observed RED first (`native` where `opa` was asked; `processRunner` undefined).",
+        "OPEN ITEM 4, CONFIRMED AND FIXED: two sites copied `result.schemaVersion` into the envelope. Observed RED at `Expected \"1.0.0\" / Received \"2.0.0\"`. The reason no existing test caught it: the spec fixture pins the mocked result at 1.0.0, which EQUALS the envelope constant.",
+        "OPEN ITEM 3, MEASURED NOT INHERITED, and my own first measurement was WRONG: a faulty loop reported `88 -> 88, no delta` for the bare-satellite case, and the row's inherited figure was `75 -> 78`. Both are wrong. Clean single-command runs: bare satellite 88 -> 91 error gaps, the three additions being exactly MM-R03/MM-R04/MM-R05 against ZERO MM-R* in the same run without `-t`. On this repository `-t microservices` gives 96 -> 101, refused, with 5 MM-R* and 4 MS-R* both in scope. Written to CHANGELOG.md under [Unreleased].",
+        "A LARGER DEFECT UNCOVERED AND REGISTERED RATHER THAN ABSORBED (GT-693): 31 of the 33 shipped .rego policies emit namespaced ids and only 4 are mapped, so 27 others drop their violations silently for any satellite whose gate references them. A test pins the unmapped set by name so the rot fails loudly next time.",
+        "SUITES, MEASURED AFTER the change rather than predicted: core-domain 1927, cli 1482, mcp 575, infra-providers 179, agent-runtime 483 (11 skipped), contracts 115. An earlier draft of this record and the closure commit message both said `core-domain 1934`; that figure was written before the run and was wrong -- 12 cases were added to 1915, which is 1927. Corrected here rather than left standing."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. The work is wiring and one table entry: an `engine` argument threaded two frames down an existing private method, two collaborators copied on an existing constructor call, one key added to a module-level constant, and two envelope fields switched from a result field to a constant the same module already imported. Nothing new reaches the network, the filesystem or a process; the tests read `.rego` files with `node:fs`, which the spec tree already does elsewhere."
     }
   ]
 }

@@ -20,10 +20,15 @@ const globalSchemaCache = new Map<string, any>();
  * ALL of that policy's violations, so they are matched by id PREFIX. Every other
  * rule keeps exact-id matching, so this changes no other policy's behavior.
  */
-const CONTEXT_AWARE_VIOLATION_PREFIXES: Readonly<Record<string, string>> = {
+export const CONTEXT_AWARE_VIOLATION_PREFIXES: Readonly<Record<string, string>> = {
   'opa-dod': 'DOD-',
   'opa-compliance-baseline': 'CB-',
   'opa-phase-gates': 'PG-',
+  // GT-688 AC5 — `topology-composition.rego` emits `TPC-01`, which can never
+  // equal the `opa-topology-composition` id derived from a gate's
+  // `rules: ["rulesets/opa/topology-composition.rego"]`. Without this entry the
+  // policy fires in the wasm and the rule is reported `passed`.
+  'opa-topology-composition': 'TPC-',
 };
 
 export class OpaEvaluator implements IRuleEvaluatorStrategy {

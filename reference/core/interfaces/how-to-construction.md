@@ -972,7 +972,7 @@ Response shape (captured live):
     "correlationId": "<string>",
     "durationMs": "<number>",
     "executedAt": "<string>",
-    "schemaVersion": "2.0.0"
+    "schemaVersion": "1.0.0"
   },
   "success": true
 }

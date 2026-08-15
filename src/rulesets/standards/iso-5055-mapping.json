@@ -13,20 +13,20 @@
   },
   "corpus": {
     "rulesetFiles": 180,
-    "rules": 412,
+    "rules": 413,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 412,
+    "rules": 413,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 375,
-    "adoptedFraction": 0.0898,
+    "noInternationalEquivalent": 376,
+    "adoptedFraction": 0.0896,
     "analyserAdoptable": 46,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1117,
-    "analyserAdoptableFractionIncludingPartial": 0.1675,
+    "analyserAdoptableFraction": 0.1114,
+    "analyserAdoptableFractionIncludingPartial": 0.1671,
     "byClass": {
       "architecture-decision": {
         "rules": 163,
@@ -79,7 +79,7 @@
         "adoptable": 7
       },
       "topology": {
-        "rules": 66,
+        "rules": 67,
         "mapped": 4,
         "adoptable": 2
       }
@@ -177,7 +177,7 @@
         "adoptablePartialRuleIds": []
       },
       "native-handler": {
-        "rules": 170,
+        "rules": 171,
         "mappedToIso5055": 19,
         "analyserAdoptable": 28,
         "analyserAdoptablePartial": 11,
@@ -7399,6 +7399,25 @@
           "gitleaks",
           "CodeQL js/hardcoded-credentials"
         ]
+      },
+      "nativeEvaluability": "native-handler",
+      "note": "A contract of a named architecture topology. The predicate is about declared topology configuration, not about code structure."
+    },
+    {
+      "ruleId": "AAI-R10",
+      "sourceFile": "topologies/agentic-ai/agentic-ai.rules.json",
+      "title": "Declared Sandbox Boundary Is Not Contradicted By The Implementation",
+      "severity": "SHOULD",
+      "ruleClass": "topology",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
       },
       "nativeEvaluability": "native-handler",
       "note": "A contract of a named architecture topology. The predicate is about declared topology configuration, not about code structure."

@@ -354,6 +354,7 @@ AAI-R06,topologies/agentic-ai/agentic-ai.rules.json,topology,,,none,no,native-ha
 AAI-R07,topologies/agentic-ai/agentic-ai.rules.json,topology,,,none,no,native-handler
 AAI-R08,topologies/agentic-ai/agentic-ai.rules.json,topology,,,none,no,native-handler
 AAI-R09,topologies/agentic-ai/agentic-ai.rules.json,topology,CWE-798,Security,partial,partial,native-handler
+AAI-R10,topologies/agentic-ai/agentic-ai.rules.json,topology,,,none,no,native-handler
 DAM-R01,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,native-handler
 DAM-R02,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,native-handler
 DAM-R03,topologies/data-mesh/data-mesh.rules.json,topology,,,none,no,native-handler

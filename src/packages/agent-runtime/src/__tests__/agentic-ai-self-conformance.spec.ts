@@ -119,23 +119,21 @@ describe('GT-575 — the agent runtime passes the 9 blocking AAI-* rules it ship
   });
 
   /**
-   * AAI-R03 only compares two arrays of strings, so a descriptor could satisfy
-   * it while pointing at nothing. Assert the separation exists on disk: the
-   * prompt directory is real and non-empty, and so is every implementation root.
+   * GT-683 — this test used to assert on disk what AAI-R03 and AAI-R08 could not
+   * see, because both only compared fields: a descriptor could satisfy them while
+   * pointing at nothing. The handler now checks existence, population and runbook
+   * CONTENT itself, so the rule-driven cases above cover that and those
+   * assertions were deleted rather than kept as a duplicate that would rot.
+   *
+   * What survives is the part the handler deliberately does NOT enforce: it
+   * requires the runbook to be non-empty, which is the floor a customer must
+   * clear. 500 characters is OUR standard for our own package — a stricter local
+   * bar, not the shipped rule, and it belongs here rather than in the corpus.
    */
-  it('the declared prompt/implementation separation exists on disk, not only in the config', () => {
+  it("this package's runbook is a document an operator can act on, not a placeholder", () => {
     const config = JSON.parse(readFileSync(join(SATELLITE, 'agent.config.json'), 'utf8')) as {
-      promptSources: string[];
-      implementationRoots: string[];
       operationalBudgets: { runbooksPath: string };
     };
-    expect(config.promptSources.length).toBeGreaterThan(0);
-    for (const dir of [...config.promptSources, ...config.implementationRoots]) {
-      const abs = join(SATELLITE, dir);
-      expect([dir, existsSync(abs)]).toEqual([dir, true]);
-      expect([dir, readdirSync(abs).length > 0]).toEqual([dir, true]);
-    }
-    // AAI-R08's runbook is a document an operator can act on, not a placeholder.
     const runbook = readFileSync(join(SATELLITE, config.operationalBudgets.runbooksPath), 'utf8');
     expect(runbook.length).toBeGreaterThan(500);
   });

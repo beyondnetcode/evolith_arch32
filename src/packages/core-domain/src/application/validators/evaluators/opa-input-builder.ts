@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../domain/interfaces';
 import { WorkspaceEvaluationContext } from './evaluator.interface';
+import { declaredDirectoryIsPopulated, declaredFileHasContent } from './handlers/architecture/shared';
 
 export class OpaInputBuilder {
   constructor(private readonly fs: IFileSystem) {}
@@ -128,12 +129,23 @@ export class OpaInputBuilder {
     const implementationRoots = this.asStringArray(config?.implementationRoots);
 
     const runbooksPath = typeof budgets?.runbooksPath === 'string' ? budgets.runbooksPath : '';
-    const runbooksExists = runbooksPath.length > 0 && await this.fs.exists(path.isAbsolute(runbooksPath) ? runbooksPath : path.join(root, runbooksPath));
+    // GT-683: the two engines must not disagree about a fact they both name.
+    // `hasOperationalBudgets` and the native AAI-R08 handler both mean "there is a
+    // readable runbook", and `fs.exists` is true of a DIRECTORY -- so the OPA input
+    // said yes where the native rule now says no. Same predicate on both sides.
+    const runbooksExists = runbooksPath.length > 0 && await declaredFileHasContent(this.fs, root, runbooksPath);
+
+    // GT-683: the separation must exist on disk, matching the native AAI-R03.
+    let declaredPathsOnDisk = promptSources.length > 0 && implementationRoots.length > 0;
+    for (const declared of [...promptSources, ...implementationRoots]) {
+      if (!declaredPathsOnDisk) break;
+      declaredPathsOnDisk = await declaredDirectoryIsPopulated(this.fs, root, declared);
+    }
 
     return {
       hasIdentity: typeof agent?.id === 'string' && agent.id.length > 0 && this.asStringArray(agent.capabilities).length > 0,
       hasIsolatedSandbox: sandbox?.mode === 'isolated' && this.isRestrictedAccess(sandbox.network) && this.isRestrictedAccess(sandbox.process),
-      hasSeparatedPromptAndImplementation: promptSources.length > 0 && implementationRoots.length > 0 && !this.pathsOverlap(promptSources, implementationRoots),
+      hasSeparatedPromptAndImplementation: promptSources.length > 0 && implementationRoots.length > 0 && !this.pathsOverlap(promptSources, implementationRoots) && declaredPathsOnDisk,
       requiresApprovalForMutativeTools: toolPolicy?.mutative === 'approval-required',
       hasEphemeralSandboxLimits: sandbox?.ephemeral === true && this.isPositiveNumber(sandbox.maxDurationSeconds) && this.isPositiveNumber(sandbox.maxMemoryMb) && this.isPositiveNumber(sandbox.maxCpuCores),
       hasTrustedContextPolicy: contextPolicy?.untrustedContent === 'data-only' && contextPolicy?.provenanceRequired === true && contextPolicy?.toolOutputSchemaValidation === true,

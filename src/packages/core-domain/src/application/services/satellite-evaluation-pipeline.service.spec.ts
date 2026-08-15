@@ -133,3 +133,111 @@ describe('SatelliteEvaluationPipeline', () => {
     }
   });
 });
+
+/**
+ * GT-688 — the composition must reach RULE SELECTION, and the regex fallback
+ * must not be reached at all when the consumer declared one.
+ *
+ * The fallback is a `/topology:\s*.../` scan over raw `evolith.yaml` text. On a
+ * CANONICAL satellite manifest, which nests the composition under
+ * `spec.design.topology.confirmed:`, it matches the literal string `confirmed`
+ * — an id no catalog entry has. Before this row a composition-only context
+ * arrived with `topology: undefined`, so that fabricated id is exactly what the
+ * pipeline resolved.
+ */
+describe('GT-688 · the composition reaches the validator, not the regex', () => {
+  const CANONICAL_YAML = [
+    'apiVersion: evolith.dev/v1',
+    'kind: EvolithSatellite',
+    'spec:',
+    '  design:',
+    '    topology:',
+    '      confirmed:',
+    '        - modular-monolith',
+    '        - agentic-ai',
+  ].join('\n');
+
+  const yamlFs = () =>
+    mockFs({
+      exists: async (p: string) => String(p).endsWith('evolith.yaml'),
+      readFile: async () => CANONICAL_YAML,
+    });
+
+  it('never reaches the regex fallback when a composition was declared', async () => {
+    const validate = jest.fn(async () => ({ passed: true, rulesChecked: 0, issues: [] }));
+    const pipeline = new SatelliteEvaluationPipeline(yamlFs(), mockLogger(), { validate } as any, '/test/core');
+    const resolveSpy = jest.spyOn(pipeline as any, 'resolveTopology');
+
+    const verdict = await pipeline.evaluate(
+      makeManifest({ topology: 'modular-monolith', topologies: ['modular-monolith', 'agentic-ai'] }),
+    );
+
+    expect(verdict.resolvedTopology).toBe('modular-monolith');
+    expect(verdict.resolvedTopology).not.toBe('confirmed');
+    expect(resolveSpy).not.toHaveBeenCalled();
+  });
+
+  it('hands the composition to RulesetValidatorService.validate as a declared override', async () => {
+    // This is the load-bearing assertion of the whole row: `declaredTopologies`
+    // is the ONLY mechanism in the tree where a topology changes which rules run.
+    const validate = jest.fn(async () => ({ passed: true, rulesChecked: 0, issues: [] }));
+    const pipeline = new SatelliteEvaluationPipeline(yamlFs(), mockLogger(), { validate } as any, '/test/core');
+
+    await pipeline.evaluate(
+      makeManifest({ topology: 'modular-monolith', topologies: ['modular-monolith', 'agentic-ai'] }),
+    );
+
+    // `facts` travels in the SAME argument, and is asserted here rather than
+    // relaxed away with `expect.objectContaining`: the corpus stage runs OPA
+    // through `discoverAndEvaluate`, which had no facts to give
+    // `OpaInputBuilder`, so `input.context` was absent from every corpus
+    // policy's input document while the gate stage below received it. Dropping
+    // this key again is the same defect returning.
+    expect(validate).toHaveBeenCalledWith('/test/satellite', '/test/core', undefined, {
+      topologies: ['modular-monolith', 'agentic-ai'],
+      facts: {},
+    });
+  });
+
+  it('promotes a scalar-only manifest to a single-element composition', async () => {
+    const validate = jest.fn(async () => ({ passed: true, rulesChecked: 0, issues: [] }));
+    const pipeline = new SatelliteEvaluationPipeline(yamlFs(), mockLogger(), { validate } as any, '/test/core');
+
+    await pipeline.evaluate(makeManifest({ topology: 'serverless', topologies: undefined }));
+
+    expect(validate).toHaveBeenCalledWith('/test/satellite', '/test/core', undefined, {
+      topologies: ['serverless'],
+      facts: {},
+    });
+  });
+
+  it('forwards the projected facts even when nothing about topology was declared', async () => {
+    const validate = jest.fn(async () => ({ passed: true, rulesChecked: 0, issues: [] }));
+    const pipeline = new SatelliteEvaluationPipeline(yamlFs(), mockLogger(), { validate } as any, '/test/core');
+
+    const verdict = await pipeline.evaluate(
+      makeManifest({ topology: undefined, topologies: undefined, facts: { context: { phaseId: 'design' } } as any }),
+    );
+
+    // The regex DOES run here (no topology was declared) and DOES match the
+    // literal `confirmed` — which the pipeline now rejects rather than
+    // publishing as an id.
+    expect(verdict.resolvedTopology).not.toBe('confirmed');
+    expect(validate).toHaveBeenCalledWith('/test/satellite', '/test/core', undefined, {
+      facts: { context: { phaseId: 'design' } },
+    });
+  });
+
+  it('declares nothing at all when the consumer projected no facts and no topology', async () => {
+    const validate = jest.fn(async () => ({ passed: true, rulesChecked: 0, issues: [] }));
+    const pipeline = new SatelliteEvaluationPipeline(yamlFs(), mockLogger(), { validate } as any, '/test/core');
+
+    await pipeline.evaluate(
+      makeManifest({ topology: undefined, topologies: undefined, facts: undefined }),
+    );
+
+    // The pre-GT-688 call shape, preserved byte-for-byte for a caller that
+    // declared nothing: a fourth argument of `undefined`, not an empty object.
+    expect(validate).toHaveBeenCalledWith('/test/satellite', '/test/core', undefined, undefined);
+  });
+});

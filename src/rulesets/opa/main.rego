@@ -33,6 +33,7 @@ import data.evolith.repository_taxonomy.violations as repo_tax_violations
 import data.evolith.satellite_contracts.violations as svc_violations
 import data.evolith.taxonomy.violations as taxonomy_violations
 import data.evolith.telemetry_evidence.violations as telemetry_violations
+import data.evolith.topology_composition.violations as tpc_violations
 import data.evolith.testing_pyramid.violations as tpy_violations
 import data.evolith.version_pinning.violations as vp_violations
 
@@ -175,4 +176,13 @@ violations contains v if {
 # for. Silent unless the caller declares `input.qualityEvidence`.
 violations contains v if {
 	v := pea_violations[_]
+}
+
+# GT-688 — TPC-01, the composition-aware half. Aggregated HERE and not only
+# shipped as a package: `compile-opa-wasm.mjs` builds exactly two entrypoints, so
+# a policy unreachable from one of them passes `opa test` and then decides
+# nothing at runtime (the R-25 defect GT-602 was registered for). Silent unless
+# the caller declares `input.context.topologyConfirmedRefs`.
+violations contains v if {
+	v := tpc_violations[_]
 }

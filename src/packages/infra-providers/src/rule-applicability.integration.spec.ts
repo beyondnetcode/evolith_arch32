@@ -302,3 +302,165 @@ describe('GT-571 · the Core monorepo keeps its own rules', () => {
     expect(excludedAt(3)).toBe(false);
   });
 });
+/**
+ * GT-688 — AC6, the falsifier.
+ *
+ * `ApplicabilityContext.declaredTopologies` is the ONLY mechanism in the tree
+ * where a topology changes which rules run (`notApplicableReason`). Everything
+ * else GT-688 touches — the manifest plural, the result arity, the surface
+ * arguments — is what makes this path EXPRESSIBLE; this is the path itself.
+ *
+ * The two halves are run against the REAL corpus and a satellite with NO
+ * `evolith.yaml` — the ADR-0101 case, where a stateless consumer's declaration
+ * has nowhere on disk to live and every topology-scoped rule was therefore
+ * excluded in silence.
+ *
+ * Asserted on the ID SETS, never on `status`: `buildApplicabilityFilter` fails
+ * OPEN, so a dropped override reads as a passing (over-broad) run rather than an
+ * error, and a status assertion would go green on the bug.
+ */
+describe('GT-688 · an inline composition puts the declared topology corpus in scope', () => {
+  const AAI = ['AAI-R01', 'AAI-R02', 'AAI-R03', 'AAI-R04', 'AAI-R05', 'AAI-R06', 'AAI-R07', 'AAI-R08', 'AAI-R09'];
+
+  /** Applicability over the REAL corpus for one declared composition. */
+  async function partitionFor(declaredTopologies: readonly string[]) {
+    const fs = new NodeFileSystemProvider() as any;
+    const rules = await new DiskRulesetRepository(fs, silentLogger).loadAllRulesets(CORE);
+    const index = await RuleApplicabilityIndex.load(fs, CORE, path.sep);
+    const context: ApplicabilityContext = { audience: 'satellite', declaredTopologies };
+    const { applicable, notApplicable } = partitionByApplicability(rules as NormalizedRule[], { index, context });
+    return {
+      applicableIds: new Set(applicable.map((r) => r.id)),
+      notApplicableIds: new Set(notApplicable.map((n) => n.rule.id)),
+    };
+  }
+
+  it('excludes the whole AAI corpus when the composition does not name agentic-ai', async () => {
+    // The "PASS before the fix" half: this is what a scalar `modular-monolith`
+    // has always produced, and it is CORRECT — the repository never claimed to
+    // be an agentic system.
+    const { applicableIds, notApplicableIds } = await partitionFor(['modular-monolith']);
+    for (const id of AAI) {
+      expect(notApplicableIds.has(id)).toBe(true);
+      expect(applicableIds.has(id)).toBe(false);
+    }
+  });
+
+  it('puts the whole AAI corpus in scope when the composition names agentic-ai', async () => {
+    // The half that was UNREACHABLE before GT-688: no surface could express this
+    // composition to the applicability context at all.
+    const { applicableIds, notApplicableIds } = await partitionFor(['modular-monolith', 'agentic-ai']);
+    for (const id of AAI) {
+      expect(applicableIds.has(id)).toBe(true);
+      expect(notApplicableIds.has(id)).toBe(false);
+    }
+  });
+
+  it('is ADDITIVE — declaring agentic-ai takes nothing out of scope', async () => {
+    // `notApplicableReason` is an OR over declared topologies, so widening the
+    // composition can only ever ADD rules. Stated as a set relation rather than a
+    // count so it cannot be satisfied by a coincidental swap.
+    const narrow = await partitionFor(['modular-monolith']);
+    const wide = await partitionFor(['modular-monolith', 'agentic-ai']);
+
+    for (const id of narrow.applicableIds) expect(wide.applicableIds.has(id)).toBe(true);
+    // …and exactly the AAI corpus is what entered scope. Measured, not assumed.
+    const entered = [...wide.applicableIds].filter((id) => !narrow.applicableIds.has(id)).sort();
+    expect(entered).toEqual([...AAI].sort());
+  });
+
+  it('reaches the corpus through validate() on a satellite with no evolith.yaml', async () => {
+    // End to end through the public seam the pipeline uses, not just the pure
+    // partition function: `validate(sat, core, undefined, {topologies})`.
+    const bare = nodeFs.mkdtempSync(path.join(os.tmpdir(), 'gt688-bare-'));
+
+    const withComposition = await validatorFor().validate(bare, CORE, undefined, {
+      topologies: ['modular-monolith', 'agentic-ai'],
+    });
+    const without = await validatorFor().validate(bare, CORE);
+
+    const naWith = new Set(withComposition.notApplicableRuleIds!);
+    const naWithout = new Set(without.notApplicableRuleIds!);
+
+    for (const id of AAI) {
+      // Declared ⇒ evaluated. NOT declared ⇒ excluded. This is the whole gap.
+      expect(naWith.has(id)).toBe(false);
+      expect(naWithout.has(id)).toBe(true);
+    }
+  });
+});
+
+/**
+ * GT-688 · a contradictory composition is REFUSED where the union is applied.
+ *
+ * The refusal was first written into the `topology` KIND evaluator. That is the
+ * wrong seam: `evolith evaluate` builds its context with
+ * `kinds: ['gate','compliance']` (evaluate.command.ts), so the `topology` kind
+ * never runs on the enforcement path and a composition naming two
+ * progressive-axis topologies sailed through with MM-R* and MS-R* both in scope
+ * — two blocking, mutually unsatisfiable corpora — and no
+ * `TOPOLOGY_COMPOSITION_CONFLICT` anywhere in the verdict.
+ *
+ * So the enforcing copy lives in `RulesetValidatorService.validate`, beside the
+ * union it refers to. `validate` is the ONE call every surface traverses, and it
+ * takes no `kinds` argument at all — there is nothing a caller can ask for that
+ * routes around it. These tests exercise that seam directly, which is the
+ * bypassed path, not the kind evaluator that was already covered.
+ */
+describe('GT-688 · the progressive axis is refused, never unioned', () => {
+  const CONFLICT = 'TOPOLOGY_COMPOSITION_CONFLICT';
+  const bareSatellite = () => nodeFs.mkdtempSync(path.join(os.tmpdir(), 'gt688-conflict-'));
+
+  it('refuses two progressive-axis members through validate(), with no kind requested', async () => {
+    const result = await validatorFor().validate(bareSatellite(), CORE, undefined, {
+      topologies: ['modular-monolith', 'microservices'],
+    });
+
+    const conflict = result.issues.find((i) => i.ruleId === CONFLICT);
+    expect(conflict).toBeDefined();
+    expect(conflict!.blocking).toBe(true);
+    // Both members are NAMED, so the report says which two claims collide
+    // instead of only that something did.
+    expect(conflict!.description).toContain('modular-monolith');
+    expect(conflict!.description).toContain('microservices');
+    expect(result.status).toBe('failed');
+  });
+
+  it('does NOT refuse a legal cross-axis composition', async () => {
+    // agentic-ai is not on the progressive axis; composing it is the whole point
+    // of the feature and must stay silent.
+    const result = await validatorFor().validate(bareSatellite(), CORE, undefined, {
+      topologies: ['modular-monolith', 'agentic-ai'],
+    });
+    expect(result.issues.find((i) => i.ruleId === CONFLICT)).toBeUndefined();
+  });
+
+  it('refuses even when applicability filtering is switched OFF', async () => {
+    // `applyRuleApplicability: false` opts a host out of NARROWING the corpus.
+    // It must not also opt it out of being told the composition it sent is
+    // incoherent — otherwise one host option silently disables the refusal.
+    const result = await validatorFor({ applyRuleApplicability: false }).validate(
+      bareSatellite(),
+      CORE,
+      undefined,
+      { topologies: ['distributed-modules', 'microservices'] },
+    );
+    expect(result.issues.find((i) => i.ruleId === CONFLICT)?.blocking).toBe(true);
+  });
+
+  it('refuses a composition that becomes contradictory only after the UNION with disk', async () => {
+    // The satellite declares F1 (modular-monolith) on disk; the caller sends
+    // microservices inline. Neither declaration is contradictory on its own —
+    // the union is, and the union is what the filter uses.
+    const sat = bareSatellite();
+    nodeFs.writeFileSync(
+      path.join(sat, 'evolith.yaml'),
+      ['apiVersion: evolith.dev/v1', 'kind: Satellite', 'metadata:', '  name: s', '  phase: F1', ''].join('\n'),
+    );
+
+    const result = await validatorFor().validate(sat, CORE, undefined, {
+      topologies: ['microservices'],
+    });
+    expect(result.issues.find((i) => i.ruleId === CONFLICT)?.blocking).toBe(true);
+  });
+});

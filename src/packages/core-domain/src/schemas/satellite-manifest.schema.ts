@@ -131,6 +131,14 @@ export const SatelliteManifestSchema = z.object({
   topology: z.string().optional(),
 
   /**
+   * GT-688: the confirmed topology composition. Declared HERE and not only on
+   * the TypeScript interface because `.strip()` is Zod's default and the MCP
+   * surface parses before running (`validate.tool.ts:78` → `:85`) — the exact
+   * failure mode GT-380 L1c (`facts`) and GT-584 (`qualityEvidence`) hit.
+   */
+  topologies: z.array(z.string()).optional(),
+
+  /**
    * Optional SDLC phase to evaluate.
    * Accepts canonical names (discovery..release) and legacy aliases (f1..f5).
    */

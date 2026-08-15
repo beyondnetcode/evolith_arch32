@@ -19,10 +19,13 @@ import type { RulesetCatalog } from './ruleset-catalog';
 import { runArchitectureValidation } from './architecture-validator';
 import type { NotApplicableRule, RuleApplicabilityFilter } from './rule-evaluation-engine';
 import {
+  ApplicabilityContext,
   RuleApplicabilityIndex,
   describeNotApplicable,
+  progressiveAxisConflict,
   resolveApplicabilityContext,
 } from './rule-applicability';
+import type { EvaluationFacts } from '../../domain/satellite-manifest';
 
 export {
   ValidationResult, ValidationIssue, EvolithYaml, ArchitectureValidationResult,
@@ -99,6 +102,17 @@ export class RulesetValidatorService {
     satellitePath: string,
     corePath?: string,
     selection?: RulesetSelection,
+    /**
+     * GT-688 — facts the CALLER declared about the repository that are not on
+     * its disk. `topologies` is the confirmed composition, unioned with
+     * `evolith.yaml` and never substituted for it; `facts` is the projected
+     * `EvaluationFacts` document, forwarded to the engine so `input.context`
+     * exists in the OPA input the corpus policies actually see.
+     */
+    declared?: {
+      readonly topologies?: readonly string[];
+      readonly facts?: EvaluationFacts;
+    },
   ): Promise<ValidationResult> {
     const issues: ValidationIssue[] = [];
     // GT-569: the verdict reports its own denominator. `rulesChecked` keeps
@@ -139,10 +153,30 @@ export class RulesetValidatorService {
       });
     }
 
+    // GT-688 — the applicability context is resolved BEFORE the try/catch that
+    // guards the engine, because two different things depend on it and only one
+    // of them may fail open. The FILTER may fail open (a broken index must never
+    // hide a rule, GT-571). The REFUSAL below may not: it is a statement about
+    // what the caller declared, and the caller's own declaration is never
+    // unreadable.
+    const applicabilityContext = await this.resolveDeclaredContext(
+      satellitePath,
+      resolvedCorePath,
+      declared,
+    );
+    const conflictIssue = this.compositionConflictIssue(applicabilityContext?.declaredTopologies);
+    if (conflictIssue) issues.push(conflictIssue);
+
     try {
-      const filter = await this.buildApplicabilityFilter(satellitePath, resolvedCorePath);
+      const filter = await this.buildApplicabilityFilter(applicabilityContext, resolvedCorePath);
       const { results: engineResults, notApplicable: excluded, selection: applied } =
-        await this.engine.discoverAndEvaluate(satellitePath, resolvedCorePath, filter, selection);
+        await this.engine.discoverAndEvaluate(
+          satellitePath,
+          resolvedCorePath,
+          filter,
+          selection,
+          declared?.facts,
+        );
       notApplicable = excluded;
 
       // GT-661 — `applied` is present ONLY when the caller restricted the run
@@ -230,6 +264,75 @@ export class RulesetValidatorService {
   }
 
   /**
+   * GT-688 — the UNION of what the repository declares on disk and what the
+   * caller declared inline, resolved once per run.
+   *
+   * Separated from {@link buildApplicabilityFilter} so the refusal in
+   * {@link compositionConflictIssue} does not depend on `applyRuleApplicability`
+   * or on the index loading: a host that opted out of applicability filtering
+   * has opted out of NARROWING the corpus, not out of being told that the
+   * composition it sent is self-contradictory.
+   *
+   * Returns `undefined` only when the declaration itself could not be read, in
+   * which case the run proceeds unfiltered (fail-open, GT-571).
+   */
+  private async resolveDeclaredContext(
+    satellitePath: string,
+    corePath: string,
+    declared?: { readonly topologies?: readonly string[] },
+  ): Promise<ApplicabilityContext | undefined> {
+    try {
+      return await resolveApplicabilityContext(
+        { fs: this.fs, configParser: this.configParser },
+        satellitePath,
+        corePath,
+        path.sep,
+        { declaredTopologies: declared?.topologies },
+      );
+    } catch (err: unknown) {
+      this.logger.warn(
+        `Declared applicability context could not be resolved: ` +
+        `${err instanceof Error ? err.message : String(err)}`,
+      );
+      return undefined;
+    }
+  }
+
+  /**
+   * GT-688 — REFUSED, never unioned.
+   *
+   * A composition that confirms two progressive-axis topologies asks one
+   * repository to be a single deployment unit AND a set of independently
+   * deployed services. `notApplicableReason` would happily OR the two and put
+   * both blocking corpora in scope, which reads as "stricter" and is in fact
+   * incoherent — no repository can satisfy it, so the verdict stops carrying
+   * information.
+   *
+   * Emitted from the validator, i.e. from the path EVERY caller traverses,
+   * because the same refusal expressed in the `topology` kind evaluator is
+   * bypassed by `evaluate`'s `kinds: ['gate','compliance']`.
+   */
+  private compositionConflictIssue(
+    declaredTopologies: readonly string[] | undefined,
+  ): ValidationIssue | undefined {
+    const progressive = progressiveAxisConflict(declaredTopologies ?? []);
+    if (progressive.length < 2) return undefined;
+    return {
+      ruleId: 'TOPOLOGY_COMPOSITION_CONFLICT',
+      severity: 'MUST',
+      category: 'topology',
+      title: 'Contradictory topology composition',
+      description:
+        `The confirmed composition names ${progressive.length} progressive-axis topologies ` +
+        `(${progressive.join(', ')}). At most ONE is admissible: they are mutually exclusive on a ` +
+        'single repository (a single deployment unit versus independently deployed services), and ' +
+        'their blocking rule corpora contradict each other. Nothing was narrowed away — the run is ' +
+        'refused instead, because a verdict produced under an unsatisfiable premise says nothing.',
+      blocking: true,
+    };
+  }
+
+  /**
    * GT-571 — build the corpus pre-filter for this run, or `undefined` when the
    * host opted out via `applyRuleApplicability: false`.
    *
@@ -238,20 +341,12 @@ export class RulesetValidatorService {
    * be able to hide a rule.
    */
   private async buildApplicabilityFilter(
-    satellitePath: string,
+    context: ApplicabilityContext | undefined,
     corePath: string,
   ): Promise<RuleApplicabilityFilter | undefined> {
-    if (!this.applyRuleApplicability) return undefined;
+    if (!this.applyRuleApplicability || !context) return undefined;
     try {
-      const [index, context] = await Promise.all([
-        RuleApplicabilityIndex.load(this.fs, corePath, path.sep),
-        resolveApplicabilityContext(
-          { fs: this.fs, configParser: this.configParser },
-          satellitePath,
-          corePath,
-          path.sep,
-        ),
-      ]);
+      const index = await RuleApplicabilityIndex.load(this.fs, corePath, path.sep);
       return { index, context };
     } catch (err: unknown) {
       this.logger.warn(

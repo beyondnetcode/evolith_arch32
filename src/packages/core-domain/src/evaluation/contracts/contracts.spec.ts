@@ -10,7 +10,8 @@ import { Verdict } from '../../domain/verdict/verdict';
 describe('Core Evaluation Engine contracts (GT-377 / ADR-0101)', () => {
   it('exposes versioned schema constants', () => {
     expect(EVALUATION_CONTEXT_SCHEMA_VERSION).toBe('1.0.0');
-    expect(EVALUATION_RESULT_SCHEMA_VERSION).toBe('1.0.0');
+    // GT-688 — MAJOR: `results.topology` became an array of per-topology results.
+    expect(EVALUATION_RESULT_SCHEMA_VERSION).toBe('2.0.0');
   });
 
   it('accepts a context with opaque identifiers only (no Core entities)', () => {

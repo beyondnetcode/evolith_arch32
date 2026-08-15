@@ -274,6 +274,24 @@ export class ValidateCommand extends BaseEvolithCommand {
       const engine = options?.engine === 'opa' ? 'opa' : 'native';
 
       if (options?.composable || options?.adr || options?.file) {
+        // GT-688 — the composable modes are SINGLE-topology by construction:
+        // `architecture-validation.mode.ts` resolves exactly one
+        // `topology.manifest.json` from `context.topology`. Rather than collapse a
+        // composition to its first member in silence — the defect this row exists
+        // to remove — the difference is stated and the run is refused.
+        if ((options?.topology?.length ?? 0) > 1) {
+          const message =
+            `--composable/--adr/--file validate ONE topology at a time; got ${options!.topology!.length} ` +
+            `(${options!.topology!.join(', ')}). These modes resolve a single topology manifest, so a ` +
+            'composition cannot be honoured here. Re-run without --composable/--adr/--file for the ' +
+            'composition, or pass a single -t.';
+          if (json) {
+            console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          } else {
+            this.promptService.showError(message);
+          }
+          process.exit(1);
+        }
         const context = {
           satellitePath,
           corePath,
@@ -321,7 +339,15 @@ export class ValidateCommand extends BaseEvolithCommand {
             manifest: {
               satellitePath,
               corePath,
+              // GT-688 — the SAME repeatable flag must mean the SAME thing on
+              // both commands. Taking `[0]` here while `evaluate` sent the whole
+              // array made `-t modular-monolith -t agentic-ai` put the nine
+              // AAI-R rules in scope on `evaluate` and drop them on `validate`,
+              // from one identical command line. `topology` stays the scalar
+              // display envelope (its first member); `topologies` is what the
+              // applicability filter reads.
               topology: options?.topology?.[0],
+              ...(options?.topology?.length ? { topologies: options.topology } : {}),
               phase: options?.phase,
             },
           });

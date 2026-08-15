@@ -339,3 +339,48 @@ export interface EvaluationContext {
   /** Contract schema version the consumer is sending. */
   readonly schemaVersion?: string;
 }
+
+/**
+ * GT-688 — the ONE place that answers "which topologies did this context confirm".
+ *
+ * Arity contract, in force since ADR-0104 and previously duplicated in two
+ * evaluators (`kind-evaluators.ts:539` and `:690`):
+ *  - a non-empty `design.topologyConfirmedRefs` IS the answer;
+ *  - otherwise `topologyRef` is read as a SINGLE-ELEMENT SHORTHAND;
+ *  - otherwise the empty composition.
+ *
+ * The plural wins on disagreement. `topologyRefIsShadowed` exists so that a
+ * caller which set both and meant the scalar is TOLD, instead of having it
+ * dropped in silence.
+ */
+export function confirmedTopologies(ctx: EvaluationContext): readonly string[] {
+  const plural = ctx.design?.topologyConfirmedRefs;
+  if (plural && plural.length > 0) return [...new Set(plural)];
+  return ctx.topologyRef ? [ctx.topologyRef] : [];
+}
+
+/** True when a scalar `topologyRef` was set but a composition overrode it. */
+export function topologyRefIsShadowed(ctx: EvaluationContext): boolean {
+  const plural = ctx.design?.topologyConfirmedRefs;
+  return !!ctx.topologyRef && !!plural && plural.length > 0 && !plural.includes(ctx.topologyRef);
+}
+
+/**
+ * The three progressive-axis ids. Mutually exclusive on ONE repository.
+ *
+ * Mirrors the VALUES of `PROGRESSIVE_PHASE_TOPOLOGY`
+ * (`application/validators/rule-applicability.ts`) and is duplicated
+ * DELIBERATELY: `evaluation/contracts/` may not import
+ * `application/validators/`. The equality is asserted by a test so the two
+ * cannot drift.
+ */
+export const PROGRESSIVE_AXIS_TOPOLOGIES: readonly string[] = Object.freeze([
+  'modular-monolith',
+  'distributed-modules',
+  'microservices',
+]);
+
+/** The progressive-axis members of a composition. Length > 1 ⇒ contradictory. */
+export function progressiveAxisMembers(topologies: readonly string[]): readonly string[] {
+  return topologies.filter((t) => PROGRESSIVE_AXIS_TOPOLOGIES.includes(t));
+}

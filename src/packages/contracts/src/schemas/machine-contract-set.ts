@@ -100,11 +100,14 @@ export const MACHINE_CONTRACT_SET: MachineContractSet = Object.freeze({
     }),
     Object.freeze({
       id: 'evaluation-result',
-      // GT-589 added optional `repoFacts` / `structuralFacts`. Additive only, so a
-      // minor bump: a 1.0.0 consumer keeps validating against 1.1.0 payloads.
-      version: '1.1.0',
+      // GT-688 — a MAJOR bump, unlike the GT-589 one it replaces. `results.topology`
+      // changed from a single object to an ARRAY (one entry per confirmed topology),
+      // aligning it with the four sibling keys that were already arrays. A 1.x
+      // consumer reading `results.topology.conformant` gets `undefined`, so this is
+      // NOT additive and cannot be published as a minor.
+      version: '2.0.0',
       path: 'rulesets/schema/evaluation-result.schema.json',
-      sha256: 'b0cad39fb15f0dccd1adbcc0f59aa26aee2a0f9a13ad250ffe031db7a0875d9d',
+      sha256: '730b23d04e7f9221c1e0c2077d3ac9121ac31ee65f2a6b812861fcc23d1a1d15',
     }),
     // GT-605: the typed evidence edge. It is published HERE, and not only as the
     // TypeScript model in `evidence/evidence-edge.ts`, because the consumer that

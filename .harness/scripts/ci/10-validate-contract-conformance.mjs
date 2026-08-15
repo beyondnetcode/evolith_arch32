@@ -38,6 +38,48 @@ export function validateManifest(manifest, root = ROOT) {
   return errors;
 }
 
+/**
+ * GT-688 — the PUBLISHED version table must agree with the pinned manifest.
+ *
+ * This guard hashes schema FILES, so bumping `evaluation-result` from 1.1.0 to
+ * 2.0.0 in the manifest and the fixture left the "Pinned schemas" tables in
+ * `src/rulesets/contracts/README{,.es}.md` still publishing 1.1.0 — and nothing
+ * failed. A consumer integrating from the README pins a version this Core no
+ * longer produces, which is the exact failure mode the contract set exists to
+ * prevent, one document over.
+ *
+ * The table row is the authority's rendering, not a second source: it is
+ * compared to the manifest, never the other way round.
+ */
+export function validateVersionTables(manifest, root = ROOT) {
+  const errors = [];
+  const tables = [
+    'src/rulesets/contracts/README.md',
+    'src/rulesets/contracts/README.es.md',
+  ];
+  for (const rel of tables) {
+    const file = path.join(root, rel);
+    if (!fs.existsSync(file)) {
+      errors.push(`Contract README does not resolve: ${rel}`);
+      continue;
+    }
+    const text = fs.readFileSync(file, 'utf8');
+    for (const schema of manifest.schemas || []) {
+      // `| `<id>` | <version> |` — the row shape the tables use.
+      const row = new RegExp(`^\\|\\s*\`${schema.id}\`\\s*\\|\\s*([0-9]+\\.[0-9]+\\.[0-9]+)\\s*\\|`, 'm');
+      const match = text.match(row);
+      // Only ids the table already publishes are checked: the tables document
+      // the wire contracts, not every schema the manifest happens to hash.
+      if (match && match[1] !== schema.version) {
+        errors.push(
+          `${rel} publishes ${schema.id} at ${match[1]}, manifest pins ${schema.version}`,
+        );
+      }
+    }
+  }
+  return errors;
+}
+
 export function validateConsumer(consumer, manifest) {
   const errors = [];
   if (consumer.contractVersion !== manifest.contractVersion) errors.push('Consumer contractVersion is not supported');
@@ -61,7 +103,7 @@ function run() {
     what: 'declared contract schemas',
     where: 'src/rulesets/contracts/evolith-machine-contracts.json#schemas',
   });
-  const errors = validateManifest(manifest);
+  const errors = [...validateManifest(manifest), ...validateVersionTables(manifest)];
   const consumerFlag = process.argv.indexOf('--consumer');
   if (consumerFlag >= 0) {
     const consumerPath = path.resolve(process.argv[consumerFlag + 1] || '');

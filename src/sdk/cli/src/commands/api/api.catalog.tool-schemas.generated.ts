@@ -9,7 +9,7 @@
 import type { ToolSchema } from './api.catalog';
 
 /** sha256 of the manifest operation catalog these schemas were generated from. */
-export const GENERATED_TOOL_SCHEMAS_SHA256 = 'e557b65205ef2a3c33d322a4649585809cd61237ddd6ddb3b66df41499ef59cf';
+export const GENERATED_TOOL_SCHEMAS_SHA256 = 'd41453e4c14100a7e25800b12804079035674e88bd388076a4b31c812f89b58b';
 
 export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
   "evolith-adr-create": {
@@ -3278,7 +3278,11 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
         },
         "topologyRef": {
           "type": "string",
-          "description": "Topology reference/override"
+          "description": "Topology reference/override (single-element shorthand for design.topologyConfirmedRefs)"
+        },
+        "design": {
+          "type": "object",
+          "description": "Design facet (ADR-0104). Carries the confirmed topology composition as design.topologyConfirmedRefs: string[]. Same field and shape the REST EvaluationContextDto accepts (GT-688)."
         },
         "executionMode": {
           "type": "string",

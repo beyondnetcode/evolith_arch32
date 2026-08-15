@@ -45,7 +45,8 @@ interface EvaluateCommandOptions {
   workspace?: string;
   core?: string;
   phase?: string;
-  topology?: string;
+  /** GT-688: repeatable — the CONFIRMED topology composition. */
+  topology?: string[];
   format?: string;
   evidence?: string;
   waivers?: string;
@@ -323,11 +324,16 @@ export class EvaluateCommand extends BaseEvolithCommand {
     }
 
     // Build a minimal context from flags.
+    // GT-688: -t is repeatable and lands in the COMPOSITION. `topologyRef` is
+    // still emitted for a single -t so a scalar-only caller's payload is
+    // byte-for-byte what it was.
+    const topologies = options?.topology ?? [];
     return {
       kinds: ['gate', 'compliance'],
       workspaceRef: options?.workspace || this.profile.satellite || process.cwd(),
       phaseId: options?.phase as EvaluationContext['phaseId'],
-      topologyRef: options?.topology,
+      ...(topologies.length === 1 ? { topologyRef: topologies[0] } : {}),
+      ...(topologies.length ? { design: { topologyConfirmedRefs: topologies } } : {}),
     };
   }
 
@@ -351,9 +357,14 @@ export class EvaluateCommand extends BaseEvolithCommand {
     return val;
   }
 
-  @Option({ flags: '-t, --topology [id]', description: 'Topology reference/override' })
-  parseTopology(val: string): string {
-    return val;
+  @Option({
+    flags: '-t, --topology [id]',
+    description: 'Confirmed topology (repeatable: -t modular-monolith -t agentic-ai)',
+  })
+  parseTopology(val: string, acc?: string[]): string[] {
+    const list = acc || [];
+    list.push(val);
+    return list;
   }
 
   @Option({ flags: '-f, --format [string]', description: 'Output format (json | text | sarif | drift). Default: json' })

@@ -99,6 +99,26 @@ export const PROGRESSIVE_PHASE_TOPOLOGY: Readonly<Record<string, string>> = Obje
 });
 
 /**
+ * GT-688 — the progressive-axis members of a declared composition.
+ *
+ * More than one is a CONTRADICTION, not a wider scope. `notApplicableReason`
+ * below is an OR over `ctx.declaredTopologies`, so a composition naming two
+ * progressive members puts MM-R01 ("Single Deployment Unit") and MS-R01
+ * ("independently deployable services") in scope on ONE repository — both
+ * blocking, both MUST, and jointly unsatisfiable. The refusal belongs HERE,
+ * beside the union it refers to, and not in the `topology` kind evaluator where
+ * GT-688 first put it: `evaluate` requests `kinds: ['gate','compliance']`, so a
+ * refusal that only the `topology` kind raises is bypassed by every caller that
+ * does not ask for that kind — including the CLI's own enforcement path.
+ */
+export function progressiveAxisConflict(
+  declaredTopologies: readonly string[],
+): readonly string[] {
+  const members = new Set(Object.values(PROGRESSIVE_PHASE_TOPOLOGY));
+  return [...new Set(declaredTopologies)].filter((t) => members.has(t));
+}
+
+/**
  * Decide whether a rule addresses this repository. Returns the reason it does
  * NOT, or `undefined` when it does.
  *
@@ -437,12 +457,20 @@ function samePath(a: string, b: string, sep: string): boolean {
  * is there, fall back to inference, and never throw — a manifest that cannot be
  * read yields the fully permissive context (everything applies), which is the
  * pre-GT-571 behaviour.
+ *
+ * GT-688 — `overrides.declaredTopologies` carries the CONFIRMED COMPOSITION the
+ * consumer sent inline (ADR-0101: the stateless caller has no `evolith.yaml` on
+ * disk, so the disk read below finds nothing and every topology-scoped rule was
+ * silently excluded). It is UNIONED with the on-disk declaration and never
+ * replaces it: replacing would let an inline context NARROW what a satellite's
+ * own manifest declares, i.e. use a request to hide a rule.
  */
 export async function resolveApplicabilityContext(
   deps: { fs: IFileSystem; configParser: IConfigParser },
   satellitePath: string,
   corePath: string,
   sep = '/',
+  overrides?: { readonly declaredTopologies?: readonly string[] },
 ): Promise<ApplicabilityContext> {
   let declaration: SatelliteDeclaration = { topologies: [] };
   const manifestPath = `${trimTrailing(satellitePath, sep)}${sep}evolith.yaml`;
@@ -459,9 +487,15 @@ export async function resolveApplicabilityContext(
   const audience =
     declaration.audience ?? (await inferRepositoryAudience(deps.fs, satellitePath, corePath, sep));
 
+  // GT-688 — UNION, never substitution. An inline composition can only ADD
+  // topologies to what the repository already declares on disk.
+  const declaredTopologies = [
+    ...new Set([...declaration.topologies, ...(overrides?.declaredTopologies ?? [])]),
+  ];
+
   return {
     audience,
-    declaredTopologies: declaration.topologies,
+    declaredTopologies,
     sdlcPhase: declaration.sdlcPhase,
   };
 }

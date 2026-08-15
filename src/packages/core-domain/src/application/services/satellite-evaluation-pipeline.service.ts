@@ -88,6 +88,11 @@ export class SatelliteEvaluationPipeline {
     const corePath = manifest.corePath || this.discoverCorePath(manifest.satellitePath);
 
     // Step 1: Resolve topology
+    // GT-688 — the composition, not the scalar, is what the general-ruleset
+    // stage selects on. The regex fallback below is reached only when the
+    // consumer declared NOTHING; a declared composition always yields
+    // `manifest.topology` (its first member) from the context builder.
+    const topologies = manifest.topologies ?? (manifest.topology ? [manifest.topology] : []);
     const topology = manifest.topology || await this.resolveTopology(manifest.satellitePath, corePath);
 
     // GT-614: decide what this request pays for BEFORE spending anything. Both
@@ -123,7 +128,26 @@ export class SatelliteEvaluationPipeline {
     // Step 4: Run general ruleset validation (GT-395: enforce canonical rulesets)
     let generalResult: ValidationResult | undefined;
     if (runGeneralRulesets) {
-      generalResult = await this.validator.validate(manifest.satellitePath, corePath);
+      // GT-688 — `topologies` reaches the applicability filter, which is the
+      // ONLY mechanism in the tree where a topology changes which rules run
+      // (rule-applicability.ts `notApplicableReason`). Passing `manifest.topology`
+      // here would change nothing: `evaluateGate`'s `topology` parameter is never
+      // read in its body, and gate rules come from `gate.requiredArtifacts[].rules`.
+      //
+      // `facts` travels with it for a different reason: the corpus stage runs OPA
+      // through `discoverAndEvaluate`, which built its workspace context from the
+      // two paths alone, so `input.context` was absent from the input document
+      // every corpus policy saw. The gate stage below has passed the same facts
+      // since GT-380; one half of the engine received the declaration and the
+      // other did not.
+      generalResult = await this.validator.validate(
+        manifest.satellitePath,
+        corePath,
+        undefined,
+        topologies.length || manifest.facts
+          ? { ...(topologies.length ? { topologies } : {}), ...(manifest.facts ? { facts: manifest.facts } : {}) }
+          : undefined,
+      );
 
       // GT-395: Convert blocking general-result issues into a synthetic gate so
       // they are visible in the output and participate in the top-level verdict.
@@ -350,9 +374,13 @@ export class SatelliteEvaluationPipeline {
       const yamlPath = path.join(satellitePath, 'evolith.yaml');
       if (await this.fs.exists(yamlPath)) {
         const yamlContent = await this.fs.readFile(yamlPath);
-        // Simple heuristic: look for topology field in yaml
+        // GT-688: LAST RESORT, reachable only when the consumer declared no
+        // topology at all. On a CANONICAL satellite manifest — which nests the
+        // composition under `spec.design.topology.confirmed:` — this regex
+        // returns the literal string "confirmed", an id no catalog entry has.
+        // Do not extend it; the fix is for the caller to declare a composition.
         const match = yamlContent.match(/topology:\s*['"]?([a-z][a-z0-9_-]+)['"]?/i);
-        if (match) return match[1];
+        if (match && match[1] !== 'confirmed') return match[1];
       }
     } catch {
       // Silently fall through

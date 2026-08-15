@@ -81,23 +81,135 @@ describe('kind-evaluators (GT-379)', () => {
   });
 
   describe('topology', () => {
-    it('SKIPs when no topologyRef', async () => {
+    it('SKIPs when no topology is confirmed at all', async () => {
       const cat: any = { get: jest.fn(), list: jest.fn() };
       const r = await createTopologyKindEvaluator(cat, () => '/core').evaluate({ ...ctx, topologyRef: undefined }, ws);
       expect(r.verdict).toBe(Verdict.SKIP);
     });
     it('PASSes when the topology exists in the catalog', async () => {
-      const cat: any = { get: jest.fn(async () => ({ metadata: { id: 'modular-monolith' } })), list: jest.fn() };
+      const cat: any = { get: jest.fn(async () => ({ metadata: { id: 'modular-monolith' } })), list: jest.fn(async () => []) };
       const r = await createTopologyKindEvaluator(cat, () => '/core').evaluate(ctx, ws);
       expect(r.verdict).toBe(Verdict.PASS);
-      expect(r.results.topology?.conformant).toBe(true);
+      // GT-688: `results.topology` is an ARRAY now; the scalar shorthand yields
+      // exactly one entry, so a pre-GT-688 caller loses nothing.
+      expect(r.results.topology?.[0]?.conformant).toBe(true);
+      expect(r.results.topology).toHaveLength(1);
     });
     it('FAILs unknown topology and recommends available ones', async () => {
       const cat: any = { get: jest.fn(async () => undefined), list: jest.fn(async () => [{ metadata: { id: 'microservices' } }, { metadata: { id: 'serverless' } }]) };
       const r = await createTopologyKindEvaluator(cat, () => '/core').evaluate(ctx, ws);
       expect(r.verdict).toBe(Verdict.FAIL);
-      expect(r.results.topology?.conformant).toBe(false);
+      expect(r.results.topology?.[0]?.conformant).toBe(false);
       expect(r.recommendations?.[0].references).toEqual(['microservices', 'serverless']);
+    });
+
+    // -----------------------------------------------------------------------
+    // GT-688 — the kind used to read ONLY `ctx.topologyRef`, so a consumer that
+    // confirmed a composition in `design` got Verdict.SKIP and an empty result:
+    // the engine judged nothing and reported a pass.
+    // -----------------------------------------------------------------------
+
+    it('no longer SKIPs on a composition without topologyRef', async () => {
+      const cat: any = {
+        get: jest.fn(async (_c: string, id: string) => ({ metadata: { id } })),
+        list: jest.fn(async () => []),
+      };
+      const r = await createTopologyKindEvaluator(cat, () => '/core').evaluate(
+        { ...ctx, topologyRef: undefined, design: { topologyConfirmedRefs: ['modular-monolith', 'agentic-ai'] } },
+        ws,
+      );
+      expect(r.verdict).toBe(Verdict.PASS);
+      expect(r.results.topology).toHaveLength(2);
+      expect(r.results.topology?.map((t) => t.topologyRef)).toEqual(['modular-monolith', 'agentic-ai']);
+      expect(r.results.topology?.every((t) => t.conformant)).toBe(true);
+    });
+
+    it('refuses two progressive-axis members instead of unioning them', async () => {
+      // MM-R01 ("Single Deployment Unit") and MS-R01 are both blocking and both
+      // unsatisfiable on one repository. `notApplicableReason` is an OR, so a
+      // union would put both in scope. Fail loudly rather than emit a contradiction.
+      const cat: any = {
+        get: jest.fn(async (_c: string, id: string) => ({ metadata: { id } })),
+        list: jest.fn(async () => []),
+      };
+      const r = await createTopologyKindEvaluator(cat, () => '/core').evaluate(
+        { ...ctx, topologyRef: undefined, design: { topologyConfirmedRefs: ['modular-monolith', 'microservices'] } },
+        ws,
+      );
+      expect(r.verdict).toBe(Verdict.FAIL);
+      const conflict = r.gaps?.find((g) => g.id === 'TOPOLOGY_COMPOSITION_CONFLICT');
+      expect(conflict).toBeDefined();
+      expect(conflict!.message).toContain('modular-monolith');
+      expect(conflict!.message).toContain('microservices');
+    });
+
+    it('does not report the conflicting entries as conformant PASSes', async () => {
+      // The run-level verdict said FAIL while BOTH array entries said
+      // `verdict: PASS, conformant: true`, because `conformant` was answering
+      // "is it in the catalog" — which it is. Any consumer folding the array
+      // (`results.topology.every(t => t.conformant)`) therefore read a green out
+      // of a refused run: the two halves of one document contradicted each other.
+      const cat: any = {
+        get: jest.fn(async (_c: string, id: string) => ({ metadata: { id } })),
+        list: jest.fn(async () => []),
+      };
+      const r = await createTopologyKindEvaluator(cat, () => '/core').evaluate(
+        { ...ctx, topologyRef: undefined, design: { topologyConfirmedRefs: ['modular-monolith', 'microservices'] } },
+        ws,
+      );
+
+      expect(r.results.topology).toHaveLength(2);
+      expect(r.results.topology!.every((t) => t.conformant)).toBe(false);
+      for (const entry of r.results.topology!) {
+        expect(entry.verdict).toBe(Verdict.FAIL);
+        expect(entry.conformant).toBe(false);
+        // The reason travels WITH the entry, so a consumer reading one topology
+        // out of the array is told why it was refused.
+        expect(entry.gaps?.some((g) => g.id === 'TOPOLOGY_COMPOSITION_CONFLICT')).toBe(true);
+      }
+      // …and the run-level list still carries the conflict exactly ONCE, not
+      // once per conflicting member.
+      expect(r.gaps!.filter((g) => g.id === 'TOPOLOGY_COMPOSITION_CONFLICT')).toHaveLength(1);
+    });
+
+    it('leaves a NON-conflicting member of the same composition conformant', async () => {
+      // Only the progressive-axis members collide. A cross-axis member of a
+      // conflicting composition is still a truthful, catalogued confirmation and
+      // must not be tarred with the refusal.
+      const cat: any = {
+        get: jest.fn(async (_c: string, id: string) => ({ metadata: { id } })),
+        list: jest.fn(async () => []),
+      };
+      const r = await createTopologyKindEvaluator(cat, () => '/core').evaluate(
+        {
+          ...ctx,
+          topologyRef: undefined,
+          design: { topologyConfirmedRefs: ['modular-monolith', 'microservices', 'agentic-ai'] },
+        },
+        ws,
+      );
+
+      const byId = new Map(r.results.topology!.map((t) => [t.topologyRef, t]));
+      expect(byId.get('agentic-ai')!.conformant).toBe(true);
+      expect(byId.get('agentic-ai')!.verdict).toBe(Verdict.PASS);
+      expect(byId.get('modular-monolith')!.conformant).toBe(false);
+      expect(byId.get('microservices')!.conformant).toBe(false);
+    });
+
+    it('reports a shadowed scalar instead of dropping it in silence', async () => {
+      const cat: any = {
+        get: jest.fn(async (_c: string, id: string) => ({ metadata: { id } })),
+        list: jest.fn(async () => []),
+      };
+      const r = await createTopologyKindEvaluator(cat, () => '/core').evaluate(
+        { ...ctx, topologyRef: 'serverless', design: { topologyConfirmedRefs: ['event-driven'] } },
+        ws,
+      );
+      expect(r.results.topology).toHaveLength(1);
+      expect(r.results.topology?.[0]?.topologyRef).toBe('event-driven');
+      const shadowed = r.recommendations?.find((x) => x.id === 'topology-scalar-shadowed');
+      expect(shadowed).toBeDefined();
+      expect(shadowed!.message).toContain('serverless');
     });
   });
 

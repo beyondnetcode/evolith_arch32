@@ -800,7 +800,7 @@ Command: `evolith-cli evaluate`
 | `-w, --workspace [path]` | Local workspace path (interpreted as workspaceRef; default: profile/cwd) |
 | `-c, --core [path]` | Path to the Evolith Core repository (default: auto-detect) |
 | `-p, --phase [id]` | Canonical SDLC phase id (discovery|design|construction|qa|release) |
-| `-t, --topology [id]` | Topology reference/override |
+| `-t, --topology [id]` | Confirmed topology (repeatable: -t modular-monolith -t agentic-ai) |
 | `-f, --format [string]` | Output format (json | text | sarif | drift). Default: json |
 | `--evidence [path]` | Write the enforcer-evidence manifest (EVD-01..03) to a file (GT-518) |
 | `--waivers [path]` | Waiver store path (default: <workspace>/.evolith/waivers.json). Approved, unexpired, fingerprint-matching waivers suppress findings (GT-677) |
@@ -962,7 +962,7 @@ Response shape (captured live):
         "verdict": "<string>"
       }
     ],
-    "schemaVersion": "1.0.0",
+    "schemaVersion": "2.0.0",
     "versions": {
       "core": "<string>"
     }
@@ -972,7 +972,7 @@ Response shape (captured live):
     "correlationId": "<string>",
     "durationMs": "<number>",
     "executedAt": "<string>",
-    "schemaVersion": "1.0.0"
+    "schemaVersion": "2.0.0"
   },
   "success": true
 }
@@ -993,7 +993,8 @@ Tool: `evolith-evaluate`
 | `phaseId` | string |  | Canonical SDLC phase id (discovery|design|construction|qa|release) |
 | `gateId` | string |  | Gate id to evaluate |
 | `rulesetRef` | string |  | Versioned ruleset reference |
-| `topologyRef` | string |  | Topology reference/override |
+| `topologyRef` | string |  | Topology reference/override (single-element shorthand for design.topologyConfirmedRefs) |
+| `design` | object |  | Design facet (ADR-0104). Carries the confirmed topology composition as design.topologyConfirmedRefs: string[]. Same field and shape the REST EvaluationContextDto accepts (GT-688). |
 | `executionMode` | string |  | manual | hybrid | agentic |
 | `correlationId` | string |  | Consumer correlation id (echoed) |
 
@@ -1165,7 +1166,7 @@ Response shape (captured live):
           "verdict": "<string>"
         }
       ],
-      "schemaVersion": "1.0.0",
+      "schemaVersion": "2.0.0",
       "versions": {
         "core": "<string>"
       }
@@ -1175,7 +1176,7 @@ Response shape (captured live):
       "correlationId": "<string>",
       "durationMs": "<number>",
       "executedAt": "<string>",
-      "schemaVersion": "1.0.0"
+      "schemaVersion": "2.0.0"
     },
     "success": true
   },
@@ -1219,7 +1220,7 @@ Endpoint: `POST /api/v1/evaluate`
 | `checkpoint` |  | Declared checkpoint context |
 | `deployment` |  | Declared deployment context |
 | `architecture` |  | Declared architecture context |
-| `design` |  | Declared design context |
+| `design` |  | Declared design context (ADR-0104). design.topologyConfirmedRefs: string[] is the confirmed topology composition (GT-688). |
 | `externalReferences` |  | External reference facts |
 | `sdlcConfig` |  | Tenant SDLC configuration (Core resolves nothing) |
 | `customConstraints` |  | Tenant custom constraints |
@@ -1403,7 +1404,7 @@ Response shape (captured live):
         "verdict": "<string>"
       }
     ],
-    "schemaVersion": "1.0.0",
+    "schemaVersion": "2.0.0",
     "versions": {
       "core": "<string>"
     }

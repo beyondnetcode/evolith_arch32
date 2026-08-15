@@ -9447,3 +9447,27 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD:** una regla editada en la copia superviviente cambia el veredicto de una evaluación que la usa; la misma edición sobre una ruta borrada no cambia nada, porque la ruta ya no existe.
   - [ ] `GT-566` lleva una anotación que registra que su afirmación de «exactamente UN sitio» era falsa cuando cerró.
 - **Estado:** `PENDIENTE`
+
+#### GT-691
+
+**Título:** Una CVE ALTA vive en una dependencia transitiva que ningún override desplaza y que no tiene arreglo aguas arriba, y bloquea toda promoción a main
+
+- **Propósito:** Decidir, por escrito y con un disparador, qué se hace con una vulnerabilidad que el repositorio no puede parchear ni alcanzar — en vez de redescubrir el argumento en la siguiente promoción.
+- **Evidencia:** `CVE-2026-73643` — `js-yaml` `5.2.1`, corregida en `5.2.2`, ALTA — entra en el árbol por **un** camino: `@nestjs/swagger@11.4.6` declara `"js-yaml": "5.2.1"` **exacta** (`node_modules/@nestjs/swagger/package.json`, y el lockfile registra `dependencies["js-yaml"] = "5.2.1"` en esa entrada). **Se probaron cuatro formas de override el 2026-08-15, cada una borrando antes las entradas de `js-yaml` del `package-lock.json` —la trampa que registró `GT-636`— y ninguna la mueve:** la general `"js-yaml": "4.3.1"` (la regla que ya está en `package.json`), una clave por rango `"js-yaml@^5"`, una por especificador exacto `"js-yaml@5.2.1"`, y la anidada bajo el padre `"@nestjs/swagger": { "js-yaml": "5.2.2" }`. En las cuatro el lockfile sigue resolviendo `node_modules/@nestjs/swagger/node_modules/js-yaml → 5.2.1`. **No hay arreglo aguas arriba:** `npm view @nestjs/swagger versions` termina en `11.4.6` estable; lo posterior son `12.0.0-alpha.*`. **La única resolución que npm SÍ aplicó empuja a swagger a la `4.3.1` general** — un downgrade mayor de una dependencia que pincha exacta, para tapar un agujero que nada puede alcanzar. **La vía vulnerable no es alcanzable, medido y no supuesto:** el aviso exige `load()` o `loadAll()` sobre entrada no confiable (*«parsing a small YAML document can take exponential time when an application calls load() or loadAll()»*), y `grep -rhoE "yaml\.(load|safeLoad|dump|safeDump)[A-Za-z]*" node_modules/@nestjs/swagger/dist` devuelve **`1 yaml.dump` y cero `load`** — swagger emite el documento OpenAPI y no parsea nada.
+- **Casos de uso:**
+  - Una promoción a `main` queda bloqueada por la regla de code scanning con los ocho checks requeridos en verde — observado en el PR #501, con 67 pasando.
+  - Quien revisa pregunta si el producto embarca un DoS explotable y necesita el argumento de alcanzabilidad, no un número de versión.
+  - `@nestjs/swagger` 12 sale de alpha y alguien tiene que saber que esto estaba esperándola.
+  - Un intento futuro de override no debe repetir las cuatro formas ya medidas como inútiles.
+- **Impacto:** Dos costes, y el segundo es el que dura. El inmediato es que main no se puede mergear sin que un humano descarte una alerta. El duradero es que el argumento —imparcheable, inalcanzable, a la espera de un mayor aguas arriba— vive en un registro de conversación salvo que se escriba donde la siguiente persona mira.
+- **Resultado esperado:** o la dependencia se mueve (un `@nestjs/swagger` parcheado, o una forma de npm que sí desplace una pin exacta), o la alerta lleva un descarte registrado cuyo motivo sea la inalcanzabilidad medida, con disparador de reevaluación.
+- **Ficheros afectados:** `package.json`, `package-lock.json`, `src/apps/core-api/package.json`
+- **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-15 mientras se promocionaba `GT-688` a main. **Deliberadamente NO arreglado:** el único cambio que npm aceptó era el downgrade mayor descrito arriba, y embarcarlo dentro de una promoción de topología habría colado un riesgo de runtime en un cambio ajeno. **El descarte es decisión del dueño y no se tomó aquí** — un agente no descarta una alerta de seguridad. **`main` y `develop` son idénticos en esta dependencia** (ambos llevan `@nestjs/swagger/node_modules/js-yaml → 5.2.1`), así que ninguna promoción la ha introducido nunca; el «nuevas alertas en código que cambia este PR» del check es un artefacto de comparar contra una base que ya la tiene.
+- **Criterios de aceptación:**
+  - [ ] O `js-yaml` resuelve a `5.2.2` o posterior bajo `@nestjs/swagger`, demostrado con la entrada del lockfile y no con una intención en `package.json`, o la alerta lleva un descarte cuyo motivo registrado sea la inalcanzabilidad medida aquí.
+  - [ ] Si se descarta, queda escrito un disparador de reevaluación — un `@nestjs/swagger` 12 estable, o cualquier cambio que haga que este repositorio llame a `load()`/`loadAll()` sobre YAML que no escribió.
+  - [ ] **FALSABILIDAD:** la afirmación de inalcanzabilidad se vuelve a medir, no se hereda — que `yaml.load` o `yaml.loadAll` aparezca en `@nestjs/swagger/dist`, o que entre en el árbol un segundo consumidor de `js-yaml@5.x`, invalida esta fila y la reabre como exposición real.
+  - [ ] Las cuatro formas de override inútiles quedan registradas, para que el siguiente intento empiece donde este paró y no lo repita.
+- **Estado:** `PENDIENTE`

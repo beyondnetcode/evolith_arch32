@@ -9,7 +9,15 @@ export { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.rep
 // GT-648 — the corpus is deployment state; a long-running surface must load it once.
 export { CachingRulesetRepository } from './caching-ruleset.repository';
 export { WebhookAdapter } from './webhook.adapter';
-export { FileWaiverStore } from './file-waiver-store.provider';
+export {
+  FileWaiverStore,
+  DEFAULT_WAIVER_STORE_RELPATH,
+  resolveWaiverStorePath,
+  openWaiverStore,
+  openWaiverStoreForRead,
+  MissingWaiverStoreError,
+} from './file-waiver-store.provider';
+export { loadCodeownersFromWorkspace } from './codeowners-loader.provider';
 export {
   MoscowPrioritizationService,
   MoscowItem,

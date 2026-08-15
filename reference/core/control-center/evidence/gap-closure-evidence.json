@@ -10080,6 +10080,36 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed, and none could be: the change deletes a dependency rather than adding one. The test previously depended on git AND on the remote-tracking ref origin/develop being present and pointing at the pre-fix artifact — an external, mutable input. It now reads a file committed in this repository, using only node:fs, which the file already imported. The fixture itself is inert data with no imports. Nothing is imported by relative path from domain code: this is a harness test reading a harness fixture, and the corpus JSON under src/rulesets is untouched."
+    },
+    {
+      "id": "GT-677",
+      "closedAt": "2026-08-14",
+      "closureCommit": "943b798c",
+      "evidence": [
+        "src/packages/core-domain/src/domain/waiver.ts",
+        "src/packages/core-domain/src/evaluation/drift-gate.ts",
+        "src/packages/core-domain/src/evaluation/sarif-exporter.ts",
+        "src/packages/infra-providers/src/file-waiver-store.provider.ts",
+        "src/packages/infra-providers/src/codeowners-loader.provider.ts",
+        "src/sdk/cli/src/commands/evaluate/evaluate.command.ts",
+        "src/sdk/cli/src/commands/waiver/waiver.command.ts",
+        "src/packages/mcp-server/src/tools/evaluate.tool.ts",
+        "src/sdk/cli/src/commands/waiver/waiver-drift-roundtrip.spec.ts",
+        "src/sdk/cli/src/commands/waiver/waiver-doc-claim.spec.ts",
+        "src/tests/contract/waiver-suppression-parity.spec.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, REPRODUCED BEFORE IT WAS ACTED ON: on a temp workspace, `node src/sdk/cli/dist/main.js evaluate --workspace $W --format drift --evidence $W/ev.json` -> exit 2, manifest `blockingFailures 95 · frozen 0 · waiverRef undefined`, and no 'Waived findings' section, WITH an approved waiver present for a fingerprint the run cites. Cause enumerated by grep rather than inferred: `evaluateDriftGate` carries `waivers?: IWaiverStore` (drift-gate.ts:90) and the three production call sites -- evaluate.command.ts:174, evaluate.command.ts:204, mcp-server/src/tools/evaluate.tool.ts:138 -- all omitted it; the only sites passing `waivers:` were drift-gate.spec.ts:105,117. `FileWaiverStore` had exactly one non-spec consumer, waiver.command.ts:110, the command that WRITES waivers.",
+        "CRITERION 1, OBSERVED END TO END through the shipped commands rather than by seeding a store: fingerprint parsed out of the PR body (`[fp `a670fcba5dccb53f`]`), then `waiver request -w $W --ref W-9 --fingerprint a670fcba5dccb53f ... --expires 2099-01-01T00:00:00.000Z` and `waiver approve -w $W --ref W-9 --by owner` RUN FROM /tmp (a foreign cwd), writing to $W/.evolith/waivers.json. Re-run: header `94 blocking architecture violations` (95 -> 94, exactly one), body `- GOV-000 — waiver `W-9`@v1, expires 2099-01-01T00:00:00.000Z` inside the 'Waived findings' section, manifest `blockingFailures 94 · frozen 1 · waiverRef W-9`.",
+        "CRITERION 2: a workspace whose blocking findings were ALL waived through the real writer against the DEFAULT store exits 0 -- `EXIT=0`, `blockingFailures 0 · frozen 95 · status pass`, body `:white_check_mark: No blocking architecture violations.`",
+        "CRITERION 3, THE FOUR NEGATIVES, each asserted and each proven load-bearing: requested-but-unapproved (drift-gate.spec.ts:126), rejected (drift-gate.spec.ts:143, via rejectWaiver), expired (drift-gate.spec.ts, sarif-exporter.spec.ts:313, mcp evaluate.tool.spec.ts) and non-matching fingerprint (drift-gate.spec.ts:159, asserting `unmatchedWaivers` and the 'matched no finding' warning). MUTATION: `isWaiverActive` -> `return true` turns T1, T2 and both sarif negatives RED; reverted. Removing `waivers:` from either CLI call site, from the evidence emitter or from the MCP tool turns the round-trip, contract and MCP suites RED; each reverted.",
+        "CRITERION 5, MEASURED ACROSS DIRECTORIES: the writer previously resolved `resolve(process.cwd(), ...)` and, run from /private/var/.../tmp.FLu7VgxV6h, wrote the store next to the CALLER. Both sides now resolve through `resolveWaiverStorePath` anchored on the workspace; the criterion-1 run above approves from /tmp and suppresses in $W, and the MCP server spawned with `cwd: '/'` and only `workspaceRef` set still picks up the workspace store.",
+        "CRITERION 6, AND THE TEST PROVEN FALSIFIABLE: `waiver-doc-claim.spec.ts` asserts the docblock's claim against the wiring. Mutating the MCP call site to an ad hoc `new FileWaiverStore(...)` turns 2 of its cases RED (`Tests: 2 failed, 1474 passed`); restoring returns `Tests: 1476 passed`.",
+        "A DEFECT IN THIS FIX, found by adversarial verification of the fix itself and closed here: `--waivers <relative-path>` resolved against the CURRENT directory, found nothing, and a missing file was read as an EMPTY store -- measured `cd /private/tmp && evaluate --workspace $W --waivers .evolith/waivers.json` -> `blocking 95 frozen 0`, suppressing nothing while reporting success, which is GT-677's own silent no-op one level down. Readers now use `openWaiverStoreForRead`: the same command now exits 1 with VALIDATION_FAILED naming both the requested and the resolved path. Three cases in file-waiver-store.provider.spec.ts pin it, including the negative twin that the DEFAULT path must NOT throw.",
+        "SUITES, after: core-domain 157/1861, infra-providers 19/167, cli 105/1476, cli e2e 18/133, mcp-server 63/570, contracts 6/113, test:contract 3/47 -- all green."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. The fix is wiring plus one new pure function: `freezeWaivedViolations` in core-domain (no imports beyond what waiver.ts already had), a resolver and a reader-opener in infra-providers (`node:fs`/`node:path` only), and a CODEOWNERS loader that reuses core-domain’s existing `parseCodeowners`. `IWaiverStore` is a synchronous port already owned by the domain, so passing it at three call sites crosses no new boundary: infra-providers already depended on core-domain, and both the CLI and the MCP server already depended on infra-providers. Nothing new reaches the network, the clock or a process — expiry is compared against `result.evaluatedAt`, which the orchestrator already supplies."
     }
   ]
 }

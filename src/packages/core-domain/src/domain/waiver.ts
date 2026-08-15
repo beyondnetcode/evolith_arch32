@@ -236,3 +236,41 @@ export function applyWaivers(
   }
   return { retained, suppressed };
 }
+
+/** Violations with waived ones marked `frozen`, the audit trail, and waivers that matched nothing. */
+export interface FreezeWaivedResult {
+  /** Same order/identity as the input; suppressed entries carry `frozen: true`. */
+  readonly violations: readonly Violation[];
+  readonly suppressed: readonly WaiverSuppression[];
+  /**
+   * `waiverRef`s ACTIVE at `now` whose fingerprint matched no violation in this run.
+   * A typo'd or stale fingerprint is otherwise a SILENT no-op — the exact failure mode
+   * GT-677 measured (94 → 94) — so it is reported instead of swallowed.
+   */
+  readonly unmatched: readonly string[];
+}
+
+/**
+ * Apply waivers and FREEZE the suppressed violations. The single mechanism behind both
+ * `evaluateDriftGate` and `emitEvaluationEvidence`, so the PR comment and the `--evidence`
+ * manifest cannot disagree about which findings a waiver suppressed. Pure: `now` is supplied.
+ */
+export function freezeWaivedViolations(
+  violations: readonly Violation[],
+  store: IWaiverStore,
+  now: string,
+): FreezeWaivedResult {
+  const { suppressed } = applyWaivers(violations, store, now);
+  const suppressedFps = new Set(suppressed.map((s) => s.violation.fingerprint));
+  const frozen = violations.map((v) => (suppressedFps.has(v.fingerprint) ? { ...v, frozen: true } : v));
+  const present = new Set(violations.map((v) => v.fingerprint));
+  const unmatched = [
+    ...new Set(
+      store
+        .all()
+        .filter((w) => isWaiverActive(w, now) && !present.has(w.fingerprint))
+        .map((w) => w.waiverRef),
+    ),
+  ].sort();
+  return { violations: frozen, suppressed, unmatched };
+}

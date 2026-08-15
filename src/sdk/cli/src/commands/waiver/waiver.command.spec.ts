@@ -1,8 +1,9 @@
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { WaiverCommand } from './waiver.command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { ConfigService } from '../../infrastructure/config/config.service';
 
 /**
  * GT-562 — the `waiver` command had ZERO tests, which is the worst place in the
@@ -24,6 +25,16 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 function buildPromptService(): PromptService {
   return new PromptService();
+}
+
+/**
+ * GT-677 — the command now resolves its store against the WORKSPACE, whose default is
+ * the profile's satellite. A real {@link ConfigService} here would read the developer's
+ * own profile and write the test's waivers into their satellite; the stub keeps every
+ * case anchored on the temp dir.
+ */
+function buildConfigService(profile: Record<string, unknown> = {}): ConfigService {
+  return { getProfile: () => profile } as unknown as ConfigService;
 }
 
 const FUTURE = '2099-01-01T00:00:00.000Z';
@@ -59,7 +70,7 @@ describe('WaiverCommand', () => {
     // The command resolves its store relative to cwd; pin it to the temp dir.
     cwdSpy = jest.spyOn(process, 'cwd').mockReturnValue(workdir);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined);
-    command = new WaiverCommand(buildPromptService());
+    command = new WaiverCommand(buildPromptService(), buildConfigService());
   });
 
   afterEach(() => {
@@ -347,6 +358,49 @@ describe('WaiverCommand', () => {
       expect(custom[0].waiverRef).toBe('W-1');
     });
 
+    /**
+     * GT-677 · T6 — the anchor. The writer used to resolve `.evolith/waivers.json`
+     * against `process.cwd()` while `evolith evaluate` read it from the workspace, so
+     * a waiver approved from a CI step's working directory suppressed nothing.
+     */
+    it('T6 · resolves the store against the WORKSPACE, not the cwd', async () => {
+      const elsewhere = mkdtempSync(join(tmpdir(), 'evolith-elsewhere-'));
+      cwdSpy.mockReturnValue(elsewhere);
+      try {
+        await command.executeCommand(['request'], {
+          ref: 'W-1', fingerprint: 'fp', reason: 'r', by: 'u', expires: FUTURE,
+          workspace: workdir,
+        });
+
+        // Written under the WORKSPACE…
+        expect(JSON.parse(readFileSync(storePath, 'utf8'))[0].waiverRef).toBe('W-1');
+        // …and nothing under the cwd it happened to run from.
+        expect(existsSync(join(elsewhere, '.evolith', 'waivers.json'))).toBe(false);
+      } finally {
+        cwdSpy.mockReturnValue(workdir);
+        rmSync(elsewhere, { recursive: true, force: true });
+      }
+    });
+
+    it('T6 · falls back to the profile satellite when no --workspace is given', async () => {
+      const satellite = mkdtempSync(join(tmpdir(), 'evolith-satellite-'));
+      const elsewhere = mkdtempSync(join(tmpdir(), 'evolith-elsewhere-'));
+      cwdSpy.mockReturnValue(elsewhere);
+      const scoped = new WaiverCommand(buildPromptService(), buildConfigService({ satellite }));
+      try {
+        await scoped.executeCommand(['request'], {
+          ref: 'W-2', fingerprint: 'fp', reason: 'r', by: 'u', expires: FUTURE,
+        });
+
+        expect(JSON.parse(readFileSync(join(satellite, '.evolith', 'waivers.json'), 'utf8'))[0].waiverRef).toBe('W-2');
+        expect(existsSync(join(elsewhere, '.evolith', 'waivers.json'))).toBe(false);
+      } finally {
+        cwdSpy.mockReturnValue(workdir);
+        rmSync(satellite, { recursive: true, force: true });
+        rmSync(elsewhere, { recursive: true, force: true });
+      }
+    });
+
     it('starts from an empty store when the waiver file is corrupt, so nothing is suppressed by accident', async () => {
       // Failing CLOSED matters: a lost waiver re-blocks its finding, which is
       // the safe direction. The opposite (crash, or a phantom suppression) is not.
@@ -500,6 +554,7 @@ describe('WaiverCommand', () => {
       ['parseBy', 'jdoe'],
       ['parseExpires', FUTURE],
       ['parseStore', 'custom.json'],
+      ['parseWorkspace', '/tmp/ws'],
     ])('%s returns the value as-is', (method, value) => {
       expect((command as unknown as Record<string, (v: string) => string>)[method](value)).toBe(value);
     });

@@ -1153,7 +1153,7 @@
       },
       "mcp": {
         "exposed": false,
-        "exempt": "waiver approval is a human governance act; exposing it to autonomous agents would let the evaluated party clear its own findings"
+        "exempt": "waiver ISSUANCE/APPROVAL is a human governance act; exposing it to autonomous agents would let the evaluated party clear its own findings. GT-677: the exemption covers the write lifecycle only — `evolith-evaluate` READS the same store and honours an approved, unexpired waiver, so suppression is at parity with the CLI."
       },
       "rest": {
         "exposed": false,

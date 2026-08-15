@@ -9,7 +9,7 @@
 import type { ToolSchema } from './api.catalog';
 
 /** sha256 of the manifest operation catalog these schemas were generated from. */
-export const GENERATED_TOOL_SCHEMAS_SHA256 = '7ae01e03e13f55fe6ac00b5686867a88a29959f969160af79b2bc5dc93685199';
+export const GENERATED_TOOL_SCHEMAS_SHA256 = 'e557b65205ef2a3c33d322a4649585809cd61237ddd6ddb3b66df41499ef59cf';
 
 export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
   "evolith-adr-create": {
@@ -3247,6 +3247,10 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
         "corePath": {
           "type": "string",
           "description": "Optional explicit path to the Evolith Core repository"
+        },
+        "waiverStore": {
+          "type": "string",
+          "description": "Optional waiver store path (default: <workspaceRef>/.evolith/waivers.json). Read-only: this tool honours approved waivers, it cannot create or approve them (GT-677)."
         },
         "tenant": {
           "type": "object",

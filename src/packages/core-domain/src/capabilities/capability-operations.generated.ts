@@ -3363,6 +3363,10 @@ export const CAPABILITY_OPERATIONS: readonly CapabilityOperation[] = [
           "type": "string",
           "description": "Optional explicit path to the Evolith Core repository"
         },
+        "waiverStore": {
+          "type": "string",
+          "description": "Optional waiver store path (default: <workspaceRef>/.evolith/waivers.json). Read-only: this tool honours approved waivers, it cannot create or approve them (GT-677)."
+        },
         "tenant": {
           "type": "object",
           "description": "Opaque tenant context { tenantId }"

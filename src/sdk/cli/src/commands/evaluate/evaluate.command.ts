@@ -6,6 +6,7 @@ import { RulesetValidatorService } from '@beyondnet/evolith-core-domain/applicat
 import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
 import { randomUUID } from 'node:crypto';
 import type { IFileSystem, ILogger, IConfigParser } from '@beyondnet/evolith-core-domain/domain/interfaces';
+import type { IWaiverStore } from '@beyondnet/evolith-core-domain/domain/waiver';
 import {
   EvaluationOrchestrator,
   createDefaultKindEvaluators,
@@ -13,7 +14,6 @@ import {
   emitEvaluationEvidence,
   evaluateDriftGate,
   PrCommentFallbackPublisher,
-  parseCodeowners,
   DRIFT_GATE_SOURCE,
   type CodeownersRule,
   type EvaluationContext,
@@ -23,6 +23,9 @@ import {
 import {
   createEvaluationIngestClientFromEnv,
   depositEvaluation,
+  loadCodeownersFromWorkspace,
+  openWaiverStoreForRead,
+  MissingWaiverStoreError,
   type TrackerEvaluationIngestClient,
 } from '@beyondnet/evolith-infra-providers';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -45,6 +48,7 @@ interface EvaluateCommandOptions {
   topology?: string;
   format?: string;
   evidence?: string;
+  waivers?: string;
 }
 
 /**
@@ -147,12 +151,47 @@ export class EvaluateCommand extends BaseEvolithCommand {
       schemaVersion: result.schemaVersion,
     });
 
+    // GT-677: ONE anchor for every workspace-relative input this command reads —
+    // CODEOWNERS and the waiver store. The writer (`evolith waiver`) resolves the
+    // store with the same function against the same workspace, which is what makes
+    // an approved waiver visible here regardless of the cwd it was approved from.
+    const workspaceRoot = path.resolve(ctx.workspaceRef ?? process.cwd());
+    let waiverStore: IWaiverStore;
+    try {
+      // Reading, not writing: an explicit `--waivers` path that is not there must be a
+      // loud user error. Adversarial verification of this very fix measured the opposite
+      // — `--waivers .evolith/waivers.json` from outside the workspace resolved somewhere
+      // empty and the run reported `blocking 95 frozen 0`, suppressing nothing while
+      // looking successful. That is GT-677's own defect one level down.
+      waiverStore = openWaiverStoreForRead(workspaceRoot, options?.waivers);
+    } catch (err) {
+      if (err instanceof MissingWaiverStoreError) {
+        console.log(
+          JSON.stringify(
+            createErrorEnvelope('VALIDATION_FAILED', err.message, {
+              command: 'evolith evaluate',
+              executedAt: result.evaluatedAt,
+              durationMs: 0,
+              correlationId: result.correlationId ?? `cli-eval-${result.evaluatedAt}`,
+              schemaVersion: result.schemaVersion,
+            }),
+            null,
+            2,
+          ),
+        );
+        process.exit(1);
+      }
+      throw err;
+    }
+
     // GT-518: emit the enforcer-evidence manifest (EVD-01..03 via the unified evidence
     // normalizer) as a side output when requested — independent of the stdout format so
     // SARIF stays a pure SARIF log. Carries the same evidence shape every surface produces.
     if (options?.evidence) {
       const fs = await import('fs-extra');
-      const manifest = emitEvaluationEvidence(result, DRIFT_GATE_SOURCE);
+      // GT-677: the manifest is the artifact CI reads for blockingFailures/frozen. Emitting it
+      // waiver-blind while the gate suppresses would make the two disagree inside one run.
+      const manifest = emitEvaluationEvidence(result, DRIFT_GATE_SOURCE, { waivers: waiverStore });
       await fs.writeFile(path.resolve(options.evidence), JSON.stringify(manifest, null, 2), 'utf-8');
     }
 
@@ -170,8 +209,8 @@ export class EvaluateCommand extends BaseEvolithCommand {
       // (resolved from CODEOWNERS), print the PR-comment body and exit non-zero on
       // block. The live Checks-API publish is deploy-gated behind IChecksPublisher;
       // this is the mandated deploy-gate-free fallback (never a silent no-op).
-      const codeowners = await this.loadCodeowners(ctx.workspaceRef ?? process.cwd());
-      const decision = evaluateDriftGate({ result, codeowners });
+      const codeowners = await this.loadCodeowners(workspaceRoot);
+      const decision = evaluateDriftGate({ result, codeowners, waivers: waiverStore });
       const published = await new PrCommentFallbackPublisher().publish(decision);
       console.log(published.body);
       // GT-604: deposit BEFORE the exit. A run that blocks is precisely the run whose
@@ -203,7 +242,8 @@ export class EvaluateCommand extends BaseEvolithCommand {
       result,
       violations: evaluateDriftGate({
         result,
-        codeowners: await this.loadCodeowners(ctx.workspaceRef ?? process.cwd()),
+        codeowners: await this.loadCodeowners(workspaceRoot),
+        waivers: waiverStore,
       }).evidence.violations,
       surface: 'cli',
       correlationId: envelope.meta.correlationId,
@@ -252,25 +292,11 @@ export class EvaluateCommand extends BaseEvolithCommand {
   }
 
   /**
-   * Load and parse the repo's CODEOWNERS (for drift-gate owner enrichment) from the
-   * conventional locations under the workspace. Returns `[]` when none exists — owner
-   * resolution degrades to "unassigned" rather than failing the gate.
+   * Load the repo's CODEOWNERS for drift-gate owner enrichment. Delegates to the shared
+   * infra loader (GT-677) so the MCP surface resolves owners from the same candidate list.
    */
   private async loadCodeowners(workspaceRef: string): Promise<readonly CodeownersRule[]> {
-    const fs = await import('fs-extra');
-    const root = path.resolve(workspaceRef);
-    const candidates = ['.github/CODEOWNERS', 'CODEOWNERS', 'docs/CODEOWNERS'];
-    for (const rel of candidates) {
-      const full = path.join(root, rel);
-      try {
-        if (await fs.pathExists(full)) {
-          return parseCodeowners(await fs.readFile(full, 'utf-8'));
-        }
-      } catch {
-        // Unreadable CODEOWNERS is non-fatal — the gate still blocks, owner is just unassigned.
-      }
-    }
-    return [];
+    return loadCodeownersFromWorkspace(workspaceRef);
   }
 
   private async buildContext(options?: EvaluateCommandOptions): Promise<EvaluationContext> {
@@ -340,6 +366,15 @@ export class EvaluateCommand extends BaseEvolithCommand {
     description: 'Write the enforcer-evidence manifest (EVD-01..03) to a file (GT-518)',
   })
   parseEvidence(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--waivers [path]',
+    description:
+      'Waiver store path (default: <workspace>/.evolith/waivers.json). Approved, unexpired, fingerprint-matching waivers suppress findings (GT-677)',
+  })
+  parseWaivers(val: string): string {
     return val;
   }
 }

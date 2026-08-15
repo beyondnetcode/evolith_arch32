@@ -1,6 +1,5 @@
 import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
-import { resolve } from 'node:path';
 import chalk from 'chalk';
 import {
   approveWaiver,
@@ -16,9 +15,14 @@ import {
   type ErrorCode,
   type OutputMeta,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
-import { FileWaiverStore } from '@beyondnet/evolith-infra-providers';
+import {
+  DEFAULT_WAIVER_STORE_RELPATH,
+  FileWaiverStore,
+  openWaiverStore,
+} from '@beyondnet/evolith-infra-providers';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { ConfigService } from '../../infrastructure/config/config.service';
 import {
   CliUsageError,
   exitCodeForErrorCode,
@@ -32,13 +36,12 @@ interface WaiverOptions {
   by?: string;
   expires?: string;
   store?: string;
+  workspace?: string;
   format?: string;
   /** GT-618 — correlationId of the VERDICT this waiver suspends. */
   correlationId?: string;
   json?: boolean;
 }
-
-const DEFAULT_STORE = '.evolith/waivers.json';
 
 /** A waiver as it appears on the wire: the stored record plus its time-derived reading. */
 interface WaiverView extends Waiver {
@@ -55,9 +58,15 @@ interface WaiverView extends Waiver {
  *   evolith waiver revise   --ref W-1 --by jdoe --expires <iso>
  *   evolith waiver list     [--fingerprint <fp>]
  *
- * Persistence is the file-backed {@link FileWaiverStore}, so a `waiverRef` an evaluation
- * finding cites survives across CI/CLI runs. The drift gate (`evolith evaluate --format
- * drift`) consumes the SAME store to suppress an approved, unexpired waiver.
+ * Persistence is the file-backed {@link FileWaiverStore}, resolved by `resolveWaiverStorePath`
+ * at `<workspace>/.evolith/waivers.json` (override: `--store`). `evolith evaluate` — the
+ * `--format drift` gate, the `--evidence` manifest and the Tracker deposit — and the MCP
+ * `evolith-evaluate` tool resolve the SAME path with the SAME function and pass the store to
+ * `evaluateDriftGate`, so an approved, unexpired, fingerprint-matching waiver suppresses the
+ * finding, marks it `frozen` and drops `blockingFailures`.
+ *
+ * GT-677: this paragraph was false from GT-518 until 2026-08-14 — both halves were built and
+ * never connected. `waiver-doc-claim.spec.ts` fails if the claim and the wiring diverge again.
  *
  * GT-618 — this command CANCELS governance, and it was the one command outside the
  * ADR-0073 envelope: no `--format`, a raw array on stdout, no `success`, no `meta`,
@@ -69,8 +78,8 @@ interface WaiverView extends Waiver {
  */
 @Command({ name: 'waiver', description: 'Manage evaluation waivers (request/approve/revise/list) for waiverRef suppression' })
 export class WaiverCommand extends BaseEvolithCommand {
-  constructor(promptService: PromptService) {
-    super('WaiverCommand', promptService);
+  constructor(promptService: PromptService, configService?: ConfigService) {
+    super('WaiverCommand', promptService, configService);
   }
 
   async executeCommand(passedParam: string[], options?: WaiverOptions): Promise<void> {
@@ -107,7 +116,11 @@ export class WaiverCommand extends BaseEvolithCommand {
     json: boolean,
     meta: () => OutputMeta,
   ): Promise<void> {
-    const store = new FileWaiverStore(resolve(process.cwd(), options?.store ?? DEFAULT_STORE));
+    // GT-677: the workspace is the anchor, resolved by the SAME function `evolith evaluate`
+    // uses. Anchoring the writer to process.cwd() while the reader anchored elsewhere is how
+    // an approved waiver suppressed nothing on every shipped path.
+    const workspaceRoot = options?.workspace || this.profile.satellite || process.cwd();
+    const store = openWaiverStore(workspaceRoot, options?.store);
     const now = new Date().toISOString();
 
     switch (action) {
@@ -217,7 +230,15 @@ export class WaiverCommand extends BaseEvolithCommand {
   parseBy(v: string): string { return v; }
   @Option({ flags: '--expires [iso]', description: 'Hard expiry (ISO-8601 UTC)' })
   parseExpires(v: string): string { return v; }
-  @Option({ flags: '--store [path]', description: `Waiver store path (default: ${DEFAULT_STORE})` })
+  @Option({
+    flags: '-w, --workspace [path]',
+    description: 'Workspace the waiver store belongs to (default: profile satellite, else cwd)',
+  })
+  parseWorkspace(v: string): string { return v; }
+  @Option({
+    flags: '--store [path]',
+    description: `Waiver store path override (default: <workspace>/${DEFAULT_WAIVER_STORE_RELPATH})`,
+  })
   parseStore(v: string): string { return v; }
   @Option({
     flags: '-f, --format <string>',

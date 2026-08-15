@@ -78,8 +78,22 @@ export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.free
   // saying so in a commit. Both values below were read off a FRESH build: the
   // suite is green against a stale `dist` and red against a rebuilt one, which
   // is how GT-659 nearly shipped the wrong pair.
-  operationsSha256: '7ae01e03e13f55fe6ac00b5686867a88a29959f969160af79b2bc5dc93685199',
-  sha256: '1ca58a31d0b0ca12af06a4eafe9d3f82738c009bb8c460609a49c1b0971ea1c6',
+  // GT-677 — re-pinned for an ARGUMENT, not an operation: `evolith-evaluate` gained an
+  // optional `waiverStore` (the MCP surface now READS the same waiver store the CLI
+  // writes, so an approved waiver suppresses a finding on both). The operation count is
+  // unchanged at 52; only that tool's inputSchema grew, which is exactly what
+  // `operationsSha256` exists to detect — the same re-pin GT-659 made when
+  // `evolith-validate` gained `select`.
+  //
+  // Previous, for the record: GT-660 pinned
+  //   operations 7ae01e03…, manifest 1ca58a31…
+  // when `evolith-ruleset-list` was added as the 52nd operation.
+  //
+  // Both values below were read off a FRESH build (`rm tsconfig.tsbuildinfo` + rebuild of
+  // core-domain/mcp, then `node .harness/scripts/generate-capability-operations.mjs`):
+  // this suite is green against a stale `dist` and red against a rebuilt one.
+  operationsSha256: 'e557b65205ef2a3c33d322a4649585809cd61237ddd6ddb3b66df41499ef59cf',
+  sha256: '51da6f3f06e68878655d19ad2fe6805ff837a0a57f656f6fd6ab319faa24bf68',
 }) as CapabilityManifestShape;
 
 /**

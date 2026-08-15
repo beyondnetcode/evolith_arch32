@@ -182,7 +182,12 @@ describe('producer machine-contract manifest (GT-573 AC3)', () => {
 
         const text = readFileSync(target, 'utf8');
         const stale = text.replace(
-          new RegExp(`(\\|\\s*\`evaluation-result\`\\s*\\|\\s*)${pinned!.version.replace(/\./g, '\\.')}`),
+          // Escape EVERY regex metacharacter, not just the dot. CodeQL flagged the
+          // dot-only form (`Incomplete string escaping or encoding`, alert 412): a
+          // backslash in the input would survive into the pattern. The input here is a
+          // semver asserted two lines above, so nothing could reach it today — which is
+          // exactly why the partial escape looked fine and stayed wrong.
+          new RegExp(`(\\|\\s*\`evaluation-result\`\\s*\\|\\s*)${pinned!.version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`),
           '$10.0.1',
         );
         // The table row must actually have changed, or the case proves nothing.

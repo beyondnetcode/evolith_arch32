@@ -9565,3 +9565,28 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **FALSIFIABILITY:** the unreachability claim is re-measured, not inherited — `yaml.load` or `yaml.loadAll` appearing anywhere in `@nestjs/swagger/dist`, or a second consumer of `js-yaml@5.x` entering the tree, invalidates this row and reopens it as a real exposure.
   - [ ] The four ineffective override forms stay recorded, so the next attempt starts where this one stopped rather than repeating it.
 - **Status:** `PENDING`
+
+#### GT-692
+
+**Title:** Every deployable image ships the full development dependency tree, and it is large enough to exhaust a CI runner's disk
+
+- **Purpose:** Ship a runtime image that carries what the runtime needs, so a consumer can load it on an ordinary runner.
+- **Evidence:** `src/apps/core-api/Dockerfile:20` runs `npm ci --legacy-peer-deps` — the whole tree, dev included — and the runner stage copies it verbatim: `COPY --from=builder /repo/node_modules ./node_modules`. There is no `--omit=dev`, no `npm prune --production` and no second install; `grep -nE "npm (ci|install|prune)|--omit|--production" src/apps/core-api/Dockerfile` returns the single `npm ci` and nothing else. **Measured on this tree: `node_modules` is 650 MB**, and the packages the image carries are demonstrably not runtime ones — `typescript` 24 MB, `eslint` 5.1 MB, `@types/node` 2.5 MB, `@sinonjs/commons` 216 KB, `jest` — **none of which is a production dependency of `core-api`** (checked against its `package.json` `dependencies`). **Observed failing, three times, in another repository's CI:** the Tracker's `Deploy (kind + Helm + smoke)` job failed on PR #149, on its clean rerun, and twice on PR #150, every time as `ctr: failed to extract layer … no space left on device` while importing `ghcr.io/beyondnetcode/evolith-core-api` into the kind node. The paths it died on name the cause outright: `/repo/node_modules/@types/node/quic.d.ts` and `/repo/node_modules/@sinonjs/commons/types/prototypes/array.d.ts` — a TypeScript declaration file and a **test-double library** being unpacked into a production image.
+- **Use cases:**
+  - A satellite's CI brings the Core up in kind to test the seam against a real Core, and the import exhausts the runner before anything is exercised.
+  - An operator pulls the image on a small node and pays minutes of transfer for tooling the process never loads.
+  - A security reviewer asks why a runtime image contains `eslint`, `jest` and `typescript`, and the honest answer is that nothing prunes them.
+  - The same Dockerfile shape is used by the other deployable images, so the cost is repeated per image.
+- **Impact:** The immediate cost is that a consumer's pipeline cannot load the image at all — measured three times, and the job fails BEFORE it exercises anything, so it verifies nothing in either direction. The lasting cost is attack surface: a production image that carries a compiler, a linter and a test framework offers far more than it runs. It also interacts with [`GT-691`](./gap-reference-catalog.md#gt-691) — every dev dependency in the image is a dependency a scanner will flag, whether or not the runtime can reach it.
+- **Expected outcome:** the runtime stage carries production dependencies only, the image is measurably smaller, and the consumer's kind import succeeds on a standard runner.
+- **Affected files:** `src/apps/core-api/Dockerfile`, `src/packages/mcp-server/Dockerfile`, `src/sdk/cli/Dockerfile`, `src/apps/agent-runtime-api/Dockerfile`
+- **Component:** `Infra` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-15 from three consecutive failures of a DIFFERENT repository's CI (`evolith_tracker` PRs #149 and #150) — the defect is ours and it was found by a consumer, which is the shape worth noting: nothing in this repository measures the size of what it publishes. **Deliberately not fixed in the promotion that found it:** pruning the runtime tree changes what every deployable image contains and needs its own verification — [`GT-647`](./gap-reference-catalog.md#gt-647) is the precedent for how a copy-list change breaks an image at startup, and that row's lesson was that the fix must be verified by BOOTING, not by reading the diff.
+- **Acceptance criteria:**
+  - [ ] The runtime stage of each deployable image carries production dependencies only, by an `--omit=dev` install or an equivalent, and the mechanism is the same in all of them.
+  - [ ] The image is measurably smaller, with the before and after sizes recorded — a claim of "smaller" without both numbers does not close this.
+  - [ ] **FALSIFIABILITY, and it must be a BOOT not a build:** each affected image is started and serves a real request afterwards, per [`GT-647`](./gap-reference-catalog.md#gt-647), whose whole finding was that a hand-maintained copy list produces an image that builds green and dies at `require` time.
+  - [ ] The consumer's failing job is re-run against the new image and the import completes; the literal `no space left on device` failure and the passing run are both recorded.
+  - [ ] A check fails when a deployable image grows past a declared budget, so the next regression is caught here rather than in someone else's pipeline.
+- **Status:** `PENDING`

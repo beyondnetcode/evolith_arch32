@@ -9471,3 +9471,28 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD:** la afirmación de inalcanzabilidad se vuelve a medir, no se hereda — que `yaml.load` o `yaml.loadAll` aparezca en `@nestjs/swagger/dist`, o que entre en el árbol un segundo consumidor de `js-yaml@5.x`, invalida esta fila y la reabre como exposición real.
   - [ ] Las cuatro formas de override inútiles quedan registradas, para que el siguiente intento empiece donde este paró y no lo repita.
 - **Estado:** `PENDIENTE`
+
+#### GT-692
+
+**Título:** Toda imagen desplegable embarca el árbol completo de dependencias de desarrollo, y es lo bastante grande como para agotar el disco de un runner de CI
+
+- **Propósito:** Publicar una imagen de runtime que lleve lo que el runtime necesita, para que un consumidor pueda cargarla en un runner corriente.
+- **Evidencia:** `src/apps/core-api/Dockerfile:20` ejecuta `npm ci --legacy-peer-deps` —el árbol entero, desarrollo incluido— y el stage de runtime lo copia tal cual: `COPY --from=builder /repo/node_modules ./node_modules`. No hay `--omit=dev`, ni `npm prune --production`, ni una segunda instalación; `grep -nE "npm (ci|install|prune)|--omit|--production" src/apps/core-api/Dockerfile` devuelve ese único `npm ci` y nada más. **Medido en este árbol: `node_modules` ocupa 650 MB**, y los paquetes que la imagen transporta no son de runtime — `typescript` 24 MB, `eslint` 5,1 MB, `@types/node` 2,5 MB, `@sinonjs/commons` 216 KB, `jest` — **ninguno es dependencia de producción de `core-api`** (comprobado contra las `dependencies` de su `package.json`). **Observado fallando tres veces en el CI de OTRO repositorio:** el job `Deploy (kind + Helm + smoke)` del Tracker falló en el PR #149, en su rerun limpio y dos veces en el PR #150, siempre como `ctr: failed to extract layer … no space left on device` al importar `ghcr.io/beyondnetcode/evolith-core-api` en el nodo de kind. Las rutas en las que murió nombran la causa sin ambigüedad: `/repo/node_modules/@types/node/quic.d.ts` y `/repo/node_modules/@sinonjs/commons/types/prototypes/array.d.ts` — un fichero de declaraciones de TypeScript y una **librería de dobles de test** desempaquetándose en una imagen de producción.
+- **Casos de uso:**
+  - El CI de un satélite levanta el Core en kind para probar la costura contra un Core real, y la importación agota el runner antes de ejercitar nada.
+  - Un operador se descarga la imagen en un nodo pequeño y paga minutos de transferencia por herramientas que el proceso nunca carga.
+  - Quien revisa seguridad pregunta por qué una imagen de runtime contiene `eslint`, `jest` y `typescript`, y la respuesta honesta es que nada los poda.
+  - La misma forma de Dockerfile la usan las demás imágenes desplegables, así que el coste se repite por imagen.
+- **Impacto:** El coste inmediato es que el pipeline de un consumidor no puede ni cargar la imagen —medido tres veces— y el job falla ANTES de ejercitar nada, así que no verifica nada en ninguna dirección. El coste duradero es superficie de ataque: una imagen de producción que lleva un compilador, un linter y un framework de tests ofrece mucho más de lo que ejecuta. Además interactúa con [`GT-691`](./gap-reference-catalog.es.md#gt-691): cada dependencia de desarrollo en la imagen es una dependencia que un escáner señalará, pueda o no alcanzarla el runtime.
+- **Resultado esperado:** el stage de runtime lleva solo dependencias de producción, la imagen es medidamente más pequeña, y la importación en kind del consumidor termina en un runner estándar.
+- **Ficheros afectados:** `src/apps/core-api/Dockerfile`, `src/packages/mcp-server/Dockerfile`, `src/sdk/cli/Dockerfile`, `src/apps/agent-runtime-api/Dockerfile`
+- **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-15 a partir de tres fallos consecutivos del CI de OTRO repositorio (`evolith_tracker`, PRs #149 y #150) — el defecto es nuestro y lo encontró un consumidor, que es la forma que merece anotarse: nada en este repositorio mide el tamaño de lo que publica. **Deliberadamente no arreglado en la promoción que lo encontró:** podar el árbol de runtime cambia lo que contiene cada imagen desplegable y exige su propia verificación — [`GT-647`](./gap-reference-catalog.es.md#gt-647) es el precedente de cómo un cambio en la lista de copiado rompe una imagen al arrancar, y la lección de aquella fila fue que el arreglo se verifica ARRANCANDO, no leyendo el diff.
+- **Criterios de aceptación:**
+  - [ ] El stage de runtime de cada imagen desplegable lleva solo dependencias de producción, por una instalación con `--omit=dev` o equivalente, y el mecanismo es el mismo en todas.
+  - [ ] La imagen es medidamente más pequeña, con los tamaños antes y después registrados — decir «más pequeña» sin ambas cifras no cierra esto.
+  - [ ] **FALSABILIDAD, y tiene que ser un ARRANQUE y no un build:** cada imagen afectada se levanta y sirve una petición real después, conforme a [`GT-647`](./gap-reference-catalog.es.md#gt-647), cuyo hallazgo entero fue que una lista de copiado mantenida a mano produce una imagen que compila en verde y muere en tiempo de `require`.
+  - [ ] El job fallido del consumidor se vuelve a ejecutar contra la nueva imagen y la importación termina; se registran tanto el `no space left on device` literal como la ejecución que pasa.
+  - [ ] Un check falla cuando una imagen desplegable crece por encima de un presupuesto declarado, para que la próxima regresión se cace aquí y no en el pipeline de otro.
+- **Estado:** `PENDIENTE`

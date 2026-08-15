@@ -100,7 +100,7 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // registry serves, whether a signature verifies) is NOT in the pack at all; it
   // is named in the ruleset's `notEvaluableHere` block, so the corpus did not
   // grow by four rules and six promises.
-  'native-handler': 170,
+  'native-handler': 171,
   'documentation-only': 137,
   'unimplemented-native': 52,
   'needs-external-system': 20,

@@ -1,12 +1,13 @@
 import { IFileSystem } from '../../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext } from '../../evaluator.interface';
-import { SubResult, PASSED, SKIPPED, asRecord, asStringArray, isRestrictedAccess, isPositiveNumber, pathsOverlap, readJsonConfig, declaredDirectoryIsPopulated, declaredFileHasContent } from './shared';
+import { SubResult, PASSED, SKIPPED, asRecord, asStringArray, isRestrictedAccess, isPositiveNumber, pathsOverlap, readJsonConfig, declaredDirectoryIsPopulated, declaredFileHasContent, findDeclaredBoundaryBreaches } from './shared';
 
 export const AGENT_CATEGORIES = new Set([
   'agent-identity', 'agent-sandbox', 'agent-prompt-boundaries', 'agent-tool-approval',
   'agent-sandbox-limits', 'agent-context-trust', 'agent-action-accountability',
   'agent-operational-budgets', 'agent-credential-lifecycle',
+  'agent-sandbox-observed',
 ]);
 
 export async function evaluateAgentRule(rule: NormalizedRule, ctx: WorkspaceEvaluationContext, fs: IFileSystem): Promise<SubResult> {
@@ -102,6 +103,25 @@ export async function evaluateAgentRule(rule: NormalizedRule, ctx: WorkspaceEval
         || (revocation?.onIncident !== 'immediate' && revocation?.onIncident !== 'scheduled')
         || !isPositiveNumber(revocation?.maxPropagationSeconds)) {
         return fail('Expected positive delegation TTL, rotation cadence, and bounded incident revocation');
+      }
+      return PASSED;
+    }
+    case 'agent-sandbox-observed': {
+      // GT-683 — the other half of AAI-R02, and deliberately a SEPARATE rule.
+      // R02's own text says `agent.config.json MUST declare`, and the handler
+      // honours that literally; redefining it to mean "and the code agrees" would
+      // change a shipped rule's meaning in silence. This one reads the code.
+      const sandbox = asRecord(config?.sandbox);
+      const claimsRestriction = isRestrictedAccess(sandbox?.network) || isRestrictedAccess(sandbox?.process);
+      // No claim, no contradiction. A descriptor that never promised a boundary is
+      // judged by R02, which fails it there -- not twice, and not here.
+      if (!claimsRestriction) return SKIPPED;
+      const roots = asStringArray(config?.implementationRoots);
+      if (roots.length === 0) return SKIPPED;
+      const breaches = await findDeclaredBoundaryBreaches(fs, ctx.satellitePath, roots);
+      if (breaches.length > 0) {
+        const first = breaches.slice(0, 3).map((b) => `${b.file}:${b.line} — ${b.evidence}`).join('; ');
+        return fail(`Declared a restricted sandbox and the implementation contradicts it (${breaches.length} occurrence(s)): ${first}`);
       }
       return PASSED;
     }

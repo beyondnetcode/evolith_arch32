@@ -301,6 +301,63 @@ describe('ArchitectureRuleHandler', () => {
         expect((await h.evaluate(budgets, ctx)).result).toBe('failed');
       });
 
+      /**
+       * GT-683 — AAI-R10, the observation R02's own text never promised.
+       *
+       * This is the case the row's falsifiability criterion names: a satellite whose
+       * descriptor is conformant and whose code contradicts it. Before this rule, that
+       * repository passed nine of nine.
+       */
+      const observed = rule({ id: 'AAI-R10', category: 'agent-sandbox-observed', blocking: false, severity: 'SHOULD' });
+      const agentFile = path.join(agentsDir, 'reviewer.ts');
+
+      it('AAI-R10 FAILS when the code opens a raw socket while the descriptor claims a boundary', async () => {
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, runbooks, promptsDir, agentsDir, agentFile],
+          directories: [promptsDir, agentsDir],
+          dirs: { [promptsDir]: ['p.md'], [agentsDir]: ['reviewer.ts'] },
+          files: { [runbooks]: '# runbook', [agentFile]: "import net from 'net';\nnet.connect(443, 'attacker.example.com');\n" },
+          json: { [config]: baseConfig },
+        }));
+        const res = await h.evaluate(observed, ctx);
+        expect(res.result).toBe('failed');
+        expect(res.message).toContain('reviewer.ts:2');
+      });
+
+      it('AAI-R10 FAILS when a child process inherits the ambient environment', async () => {
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, runbooks, promptsDir, agentsDir, agentFile],
+          directories: [promptsDir, agentsDir],
+          dirs: { [promptsDir]: ['p.md'], [agentsDir]: ['reviewer.ts'] },
+          files: { [runbooks]: '# runbook', [agentFile]: "execSync('ls', { env: process.env });\n" },
+          json: { [config]: baseConfig },
+        }));
+        expect((await h.evaluate(observed, ctx)).result).toBe('failed');
+      });
+
+      it('AAI-R10 PASSES on the same descriptor when the code does neither', async () => {
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, runbooks, promptsDir, agentsDir, agentFile],
+          directories: [promptsDir, agentsDir],
+          dirs: { [promptsDir]: ['p.md'], [agentsDir]: ['reviewer.ts'] },
+          files: { [runbooks]: '# runbook', [agentFile]: "export const review = () => 'ok';\n" },
+          json: { [config]: baseConfig },
+        }));
+        expect((await h.evaluate(observed, ctx)).result).toBe('passed');
+      });
+
+      it('AAI-R10 SKIPS when the descriptor claims no boundary — R02 owns that failure, not this rule', async () => {
+        const noClaim = { ...baseConfig, sandbox: { ...baseConfig.sandbox, network: 'allow', process: 'allow' } };
+        const h = new ArchitectureRuleHandler(fsMock({
+          existing: [config, promptsDir, agentsDir, agentFile],
+          directories: [promptsDir, agentsDir],
+          dirs: { [promptsDir]: ['p.md'], [agentsDir]: ['reviewer.ts'] },
+          files: { [agentFile]: "net.connect(443, 'x');\n" },
+          json: { [config]: noClaim },
+        }));
+        expect((await h.evaluate(observed, ctx)).result).toBe('skipped');
+      });
+
       it('both PASS when the declared paths are real and populated — the contrast case', async () => {
         const h = new ArchitectureRuleHandler(fsMock({
           existing: [config, runbooks, promptsDir, agentsDir],

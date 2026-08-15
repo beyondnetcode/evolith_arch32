@@ -8,7 +8,7 @@ import {
   DRIFT_GATE_PASS_EXIT_CODE,
 } from './drift-gate';
 import { parseCodeowners } from '../domain/codeowners';
-import { requestWaiver, approveWaiver, InMemoryWaiverStore } from '../domain/waiver';
+import { requestWaiver, approveWaiver, rejectWaiver, InMemoryWaiverStore } from '../domain/waiver';
 import { evaluationResultToViolations } from './sarif-exporter';
 
 function makeResult(overrides: Partial<EvaluationResult> = {}): EvaluationResult {
@@ -118,6 +118,77 @@ describe('evaluateDriftGate — waiver suppression (AC3)', () => {
     expect(decision.blocked).toBe(true);
     expect(decision.exitCode).toBe(DRIFT_GATE_BLOCK_EXIT_CODE);
     expect(decision.waived).toHaveLength(0);
+  });
+
+  // GT-677 — the NEGATIVES. `applyWaivers` passed its green path for months while the
+  // product suppressed nothing, so only these prove the gate consults waiver STATE and
+  // not merely the presence of a record.
+  it('T1 · a requested-but-unapproved waiver does NOT suppress', () => {
+    const store = new InMemoryWaiverStore([
+      requestWaiver({
+        waiverRef: 'W-42',
+        fingerprint: fp,
+        reason: 'pending review',
+        requestedBy: 'alice',
+        requestedAt: '2026-07-01T00:00:00.000Z',
+        expiresAt: '2026-08-01T00:00:00.000Z',
+      }),
+    ]);
+    const decision = evaluateDriftGate({ result, codeowners, waivers: store, now: '2026-07-15T00:00:00.000Z' });
+    expect(decision.blocked).toBe(true);
+    expect(decision.waived).toHaveLength(0);
+    expect(decision.evidence.blockingFailures).toBe(1);
+  });
+
+  it('T2 · a rejected waiver does NOT suppress', () => {
+    const store = new InMemoryWaiverStore([
+      rejectWaiver(
+        requestWaiver({
+          waiverRef: 'W-42',
+          fingerprint: fp,
+          reason: 'denied by the owner',
+          requestedBy: 'alice',
+          requestedAt: '2026-07-01T00:00:00.000Z',
+          expiresAt: '2026-08-01T00:00:00.000Z',
+        }),
+      ),
+    ]);
+    const decision = evaluateDriftGate({ result, codeowners, waivers: store, now: '2026-07-15T00:00:00.000Z' });
+    expect(decision.blocked).toBe(true);
+    expect(decision.waived).toHaveLength(0);
+    expect(decision.evidence.blockingFailures).toBe(1);
+  });
+
+  it('T3 · an approved waiver whose fingerprint does not match does NOT suppress, and is REPORTED as unmatched', () => {
+    const store = new InMemoryWaiverStore([
+      approveWaiver(
+        requestWaiver({
+          waiverRef: 'W-42',
+          // A mistyped/stale fingerprint. Before GT-677 this was indistinguishable from
+          // "not approved yet": both were a silent no-op.
+          fingerprint: 'deadbeefdeadbeef',
+          reason: 'typo in the fingerprint',
+          requestedBy: 'alice',
+          requestedAt: '2026-07-01T00:00:00.000Z',
+          expiresAt: '2026-08-01T00:00:00.000Z',
+        }),
+        'bob',
+        '2026-07-02T00:00:00.000Z',
+      ),
+    ]);
+    const decision = evaluateDriftGate({ result, codeowners, waivers: store, now: '2026-07-15T00:00:00.000Z' });
+    expect(decision.blocked).toBe(true);
+    expect(decision.waived).toHaveLength(0);
+    expect(decision.evidence.blockingFailures).toBe(1);
+    expect(decision.unmatchedWaivers).toContain('W-42');
+    expect(decision.prCommentBody).toContain('matched no finding');
+  });
+
+  it('T4 · the PR comment prints the fingerprint the waiver command needs', () => {
+    const decision = evaluateDriftGate({ result, codeowners });
+    const match = /\[fp `([0-9a-f]{16})`\]/.exec(decision.prCommentBody);
+    expect(match).not.toBeNull();
+    expect(match?.[1]).toBe(fp);
   });
 });
 

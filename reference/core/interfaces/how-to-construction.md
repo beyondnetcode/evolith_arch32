@@ -803,6 +803,7 @@ Command: `evolith-cli evaluate`
 | `-t, --topology [id]` | Topology reference/override |
 | `-f, --format [string]` | Output format (json | text | sarif | drift). Default: json |
 | `--evidence [path]` | Write the enforcer-evidence manifest (EVD-01..03) to a file (GT-518) |
+| `--waivers [path]` | Waiver store path (default: <workspace>/.evolith/waivers.json). Approved, unexpired, fingerprint-matching waivers suppress findings (GT-677) |
 
 Example:
 ```bash
@@ -985,6 +986,7 @@ Tool: `evolith-evaluate`
 | `kinds` | array |  | Evaluation kinds (e.g. ['gate','compliance']) |
 | `workspaceRef` | string |  | Opaque workspace reference (locally: a path). Default: cwd. |
 | `corePath` | string |  | Optional explicit path to the Evolith Core repository |
+| `waiverStore` | string |  | Optional waiver store path (default: <workspaceRef>/.evolith/waivers.json). Read-only: this tool honours approved waivers, it cannot create or approve them (GT-677). |
 | `tenant` | object |  | Opaque tenant context { tenantId } |
 | `product` | object |  | Opaque product context { productId } |
 | `initiative` | object |  | Opaque initiative context { initiativeId } |

@@ -29,7 +29,7 @@ import {
 import { enrichViolationsWithCompliance } from '../domain/compliance';
 import { enrichViolationsWithCodeowners, type CodeownersRule } from '../domain/codeowners';
 import { enrichViolationsWithOwner, type OwnershipEntry } from '../domain/ownership';
-import { applyWaivers, type IWaiverStore, type Waiver } from '../domain/waiver';
+import { freezeWaivedViolations, type IWaiverStore } from '../domain/waiver';
 
 /** Exit code CI honors when the gate blocks a merge (mirrors the enforce edit-gate convention). */
 export const DRIFT_GATE_BLOCK_EXIT_CODE = 1;
@@ -74,6 +74,8 @@ export interface DriftGateDecision {
   readonly citations: readonly DriftCitation[];
   /** Findings suppressed by an active waiver (audit trail). */
   readonly waived: readonly DriftWaivedFinding[];
+  /** waiverRefs active at `now` that matched NO finding in this run (stale/typo'd fingerprint). */
+  readonly unmatchedWaivers: readonly string[];
   /** Markdown PR-comment body — the deploy-gate-free fallback for the Checks API. */
   readonly prCommentBody: string;
   /** Auditable evidence manifest (EVD-01..03); waived findings are `frozen` so they do not block. */
@@ -115,13 +117,16 @@ function renderCitationLine(c: DriftCitation): string {
   const subject = c.isAdr ? `**${c.ref}** violated` : `rule **${c.ref}** violated`;
   const owner = c.owner ? ` — owner ${c.owner}` : ' — owner: unassigned (add a CODEOWNERS entry)';
   const where = c.file ? ` \`${c.file}\`` : '';
-  return `- ${subject}${owner}:${where} ${c.message}`;
+  // The fingerprint is the ONLY key `evolith waiver request --fingerprint` accepts, and no
+  // other surface a human reads printed it. Without it the waiver flow is unusable by hand.
+  return `- ${subject}${owner}:${where} ${c.message} [fp \`${c.fingerprint}\`]`;
 }
 
 function renderPrComment(decision: {
   blocked: boolean;
   citations: readonly DriftCitation[];
   waived: readonly DriftWaivedFinding[];
+  unmatchedWaivers: readonly string[];
 }): string {
   const lines: string[] = ['## Evolith architecture drift gate'];
   if (!decision.blocked) {
@@ -130,7 +135,12 @@ function renderPrComment(decision: {
     const n = decision.citations.length;
     lines.push('', `:no_entry: **Blocked** — ${n} blocking architecture violation${n === 1 ? '' : 's'}:`, '');
     for (const c of decision.citations) lines.push(renderCitationLine(c));
-    lines.push('', 'Resolve the violation, or file a waiver (`waiverRef`) approved by the owner.');
+    lines.push(
+      '',
+      'Resolve the violation, or waive it by the `fp` above:',
+      '`evolith waiver request --ref W-1 --fingerprint <fp> --reason "…" --by <you> --expires <iso>`, ' +
+        'then `evolith waiver approve --ref W-1 --by <owner>`.',
+    );
   }
   if (decision.waived.length > 0) {
     lines.push('', '<details><summary>Waived findings (suppressed until expiry)</summary>', '');
@@ -138,6 +148,13 @@ function renderPrComment(decision: {
       lines.push(`- ${w.ruleId} — waiver \`${w.waiverRef}\`@v${w.waiverVersion}, expires ${w.expiresAt}`);
     }
     lines.push('', '</details>');
+  }
+  if (decision.unmatchedWaivers.length > 0) {
+    lines.push(
+      '',
+      `:warning: ${decision.unmatchedWaivers.length} approved waiver(s) matched no finding in this run ` +
+        `(stale or mistyped fingerprint): ${decision.unmatchedWaivers.join(', ')}.`,
+    );
   }
   return lines.join('\n');
 }
@@ -167,22 +184,22 @@ export function evaluateDriftGate(input: DriftGateInput): DriftGateDecision {
   // 2. Suppress waived findings, keeping the audit trail. A suppressed violation is marked
   //    `frozen` so the evidence manifest counts it as non-blocking (GT-517 semantics).
   const waived: DriftWaivedFinding[] = [];
-  let evidenceViolations = violations;
+  const unmatchedWaivers: string[] = [];
+  // GT-677: `freezeWaivedViolations` returns a readonly view, so the local must admit one.
+  let evidenceViolations: readonly Violation[] = violations;
   if (input.waivers) {
-    const { suppressed } = applyWaivers(violations, input.waivers, now);
-    const suppressedByFp = new Map<string, Waiver>(suppressed.map((s) => [s.violation.fingerprint, s.waiver]));
-    evidenceViolations = violations.map((v) => {
-      const waiver = suppressedByFp.get(v.fingerprint);
-      if (!waiver) return v;
+    const frozen = freezeWaivedViolations(violations, input.waivers, now);
+    evidenceViolations = frozen.violations;
+    for (const s of frozen.suppressed) {
       waived.push({
-        fingerprint: v.fingerprint,
-        ruleId: v.ruleId,
-        waiverRef: waiver.waiverRef,
-        waiverVersion: waiver.version,
-        expiresAt: waiver.expiresAt,
+        fingerprint: s.violation.fingerprint,
+        ruleId: s.violation.ruleId,
+        waiverRef: s.waiver.waiverRef,
+        waiverVersion: s.waiver.version,
+        expiresAt: s.waiver.expiresAt,
       });
-      return { ...v, frozen: true };
-    });
+    }
+    unmatchedWaivers.push(...frozen.unmatched);
   }
 
   // 3. Blocking = retained (non-frozen) `error` violations.
@@ -204,13 +221,14 @@ export function evaluateDriftGate(input: DriftGateInput): DriftGateDecision {
     waiverRef: waived.length === 1 ? waived[0].waiverRef : undefined,
   });
 
-  const prCommentBody = renderPrComment({ blocked, citations, waived });
+  const prCommentBody = renderPrComment({ blocked, citations, waived, unmatchedWaivers });
 
   return {
     blocked,
     exitCode: blocked ? DRIFT_GATE_BLOCK_EXIT_CODE : DRIFT_GATE_PASS_EXIT_CODE,
     citations,
     waived,
+    unmatchedWaivers,
     prCommentBody,
     evidence,
   };

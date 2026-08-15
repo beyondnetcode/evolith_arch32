@@ -8,6 +8,7 @@ import { EVALUATION_RESULT_SCHEMA_VERSION } from './contracts/evaluation-result'
 import { Verdict } from '../domain/verdict/verdict';
 import { ENFORCER_EVIDENCE_EVD_COVERAGE } from '../domain/violation';
 import { ingestSarif, type SarifLog as IngesterSarifLog } from '../application/validators/enforcement/sarif-ingester';
+import { approveWaiver, requestWaiver, InMemoryWaiverStore } from '../domain/waiver';
 import {
   emitEvaluationEvidence,
   exportEvaluationResultToSarif,
@@ -254,5 +255,66 @@ describe('emitEvaluationEvidence (GT-518 · EAG-13 — AC2 evidence EVD-01..03)'
       message: 'msg',
     });
     expect(manifest.violations[0].fingerprint).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  // GT-677 — the board row's own reproduction read `blockingFailures`/`frozen` OUT OF THIS
+  // MANIFEST, which never calls `evaluateDriftGate`. Wiring only the gate would have left
+  // 94 → 94 unchanged and the fix would have looked failed.
+  describe('waiver suppression (GT-677)', () => {
+    const RESULT = makeResult({
+      overallVerdict: Verdict.FAIL,
+      outcome: 'rejected',
+      gaps: [gap({ requirementRef: 'ADR-0002', location: 'src/a.ts:1:1' })],
+    });
+    // Derived, never hand-written: the fingerprint is an implementation detail of makeViolation.
+    const fp = emitEvaluationEvidence(RESULT, 'drift-gate').violations[0].fingerprint;
+    const requested = requestWaiver({
+      waiverRef: 'W-42',
+      fingerprint: fp,
+      reason: 'temporary',
+      requestedBy: 'alice',
+      // Pinned RELATIVE to RESULT.evaluatedAt (2026-07-12), which is the default `now`.
+      requestedAt: '2026-07-01T00:00:00.000Z',
+      expiresAt: '2026-08-01T00:00:00.000Z',
+    });
+    const approved = approveWaiver(requested, 'bob', '2026-07-02T00:00:00.000Z');
+
+    it('T5 · freezes a waived finding and drops blockingFailures', () => {
+      const manifest = emitEvaluationEvidence(RESULT, 'drift-gate', {
+        waivers: new InMemoryWaiverStore([approved]),
+      });
+      expect(manifest.violations[0].frozen).toBe(true);
+      expect(manifest.blockingFailures).toBe(0);
+      expect(manifest.status).toBe('pass');
+      expect(manifest.waiverRef).toBe('W-42');
+      // The producer is an asserted contract elsewhere (evaluate.command.spec.ts:155).
+      expect(manifest.producer).toBe('evolith-core');
+    });
+
+    it('T5-neg · a requested-but-unapproved waiver leaves the finding blocking', () => {
+      const manifest = emitEvaluationEvidence(RESULT, 'drift-gate', {
+        waivers: new InMemoryWaiverStore([requested]),
+      });
+      expect(manifest.violations[0].frozen).toBeFalsy();
+      expect(manifest.blockingFailures).toBe(1);
+      expect(manifest.status).toBe('fail');
+      expect(manifest.waiverRef).toBeUndefined();
+    });
+
+    it('T5-neg · an EXPIRED approved waiver leaves the finding blocking', () => {
+      const manifest = emitEvaluationEvidence(RESULT, 'drift-gate', {
+        waivers: new InMemoryWaiverStore([approved]),
+        // Past `expiresAt`, still expressed relative to the result's own clock.
+        now: '2026-08-02T00:00:00.000Z',
+      });
+      expect(manifest.violations[0].frozen).toBeFalsy();
+      expect(manifest.blockingFailures).toBe(1);
+    });
+
+    it('T5-neg · no store at all behaves exactly as before (no accidental suppression)', () => {
+      const manifest = emitEvaluationEvidence(RESULT, 'drift-gate');
+      expect(manifest.violations[0].frozen).toBeFalsy();
+      expect(manifest.blockingFailures).toBe(1);
+    });
   });
 });

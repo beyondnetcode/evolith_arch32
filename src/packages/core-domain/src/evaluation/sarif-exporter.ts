@@ -31,6 +31,7 @@ import {
   type Violation,
 } from '../domain/violation';
 import { enrichViolationsWithCompliance } from '../domain/compliance';
+import { freezeWaivedViolations, type IWaiverStore } from '../domain/waiver';
 
 /** SARIF `result.level` vocabulary this exporter emits (a subset of the spec). */
 export type SarifLevel = 'error' | 'warning' | 'note';
@@ -254,9 +255,27 @@ export function evaluationResultToViolations(result: EvaluationResult, source: s
  * (EVD-03: status, blockingFailures). `generatedAt` is taken from `result.evaluatedAt`
  * (pure — no clock). `source` labels the evidence origin (e.g. a ruleset/gate ref).
  */
-export function emitEvaluationEvidence(result: EvaluationResult, source: string): EnforcerEvidenceManifest {
+/** GT-677 — optional waiver suppression, so `--evidence` and the drift gate agree. */
+export interface EmitEvaluationEvidenceOptions {
+  readonly waivers?: IWaiverStore;
+  /** Expiry instant (ISO-8601 UTC). Defaults to `result.evaluatedAt`, like the drift gate. */
+  readonly now?: string;
+}
+
+export function emitEvaluationEvidence(
+  result: EvaluationResult,
+  source: string,
+  options?: EmitEvaluationEvidenceOptions,
+): EnforcerEvidenceManifest {
   // GT-525: attribute each violation to its compliance control(s) before emitting evidence.
-  const violations = enrichViolationsWithCompliance(evaluationResultToViolations(result, source));
+  const enriched = enrichViolationsWithCompliance(evaluationResultToViolations(result, source));
+  // GT-677: the SAME mechanism the drift gate uses — a waived finding is `frozen`, so EVD-03's
+  // blockingFailures drops here exactly as it drops in the gate's evidence.
+  const frozen = options?.waivers
+    ? freezeWaivedViolations(enriched, options.waivers, options.now ?? result.evaluatedAt)
+    : undefined;
+  const violations = frozen?.violations ?? enriched;
+  const waiverRefs = [...new Set((frozen?.suppressed ?? []).map((s) => s.waiver.waiverRef))];
 
   const evaluatedRules = [...new Set(result.rulesExecuted.map((r) => r.ruleId))].sort();
   const sourceRef =
@@ -271,5 +290,6 @@ export function emitEvaluationEvidence(result: EvaluationResult, source: string)
     producer: EVALUATION_EVIDENCE_PRODUCER,
     violations,
     evaluatedRules: evaluatedRules.length > 0 ? evaluatedRules : undefined,
+    waiverRef: waiverRefs.length === 1 ? waiverRefs[0] : undefined,
   });
 }

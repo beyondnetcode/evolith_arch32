@@ -7,6 +7,8 @@ import {
   NestLoggerProvider,
   createEvaluationIngestClientFromEnv,
   depositEvaluation,
+  loadCodeownersFromWorkspace,
+  openWaiverStoreForRead,
 } from '@beyondnet/evolith-infra-providers';
 import {
   EvaluationOrchestrator,
@@ -41,6 +43,11 @@ export class EvaluateTool implements McpTool {
         kinds: { type: 'array', items: { type: 'string' }, description: "Evaluation kinds (e.g. ['gate','compliance'])" },
         workspaceRef: { type: 'string', description: 'Opaque workspace reference (locally: a path). Default: cwd.' },
         corePath: { type: 'string', description: 'Optional explicit path to the Evolith Core repository' },
+        waiverStore: {
+          type: 'string',
+          description:
+            'Optional waiver store path (default: <workspaceRef>/.evolith/waivers.json). Read-only: this tool honours approved waivers, it cannot create or approve them (GT-677).',
+        },
         tenant: { type: 'object', description: 'Opaque tenant context { tenantId }' },
         product: { type: 'object', description: 'Opaque product context { productId }' },
         initiative: { type: 'object', description: 'Opaque initiative context { initiativeId }' },
@@ -130,12 +137,22 @@ export class EvaluateTool implements McpTool {
     // configured to talk to a Tracker — a standalone run, not a failure — and a
     // failed deposit never changes what this tool returns: an agent must not see a
     // different verdict because a ledger was down.
+    // GT-677: same workspace anchor the CLI uses. MCP runs against a local path
+    // (`workspaceRef`, defaulted above), so a file-backed store is meaningful here.
+    const workspaceRoot = path.resolve(ctx.workspaceRef ?? process.cwd());
+
     await depositEvaluation({
       client: createEvaluationIngestClientFromEnv(process.env),
       result,
       // The canonical, owner-enriched violation set — the same one the drift gate
       // blocks on, so the ledger's accountable owner is the one a PR comment names.
-      violations: evaluateDriftGate({ result }).evidence.violations,
+      // GT-677: `codeowners` was missing (the comment above was false) and `waivers`
+      // was missing (an approved waiver never reached the ledger's frozen bit).
+      violations: evaluateDriftGate({
+        result,
+        codeowners: loadCodeownersFromWorkspace(workspaceRoot),
+        waivers: openWaiverStoreForRead(workspaceRoot, args.waiverStore as string | undefined),
+      }).evidence.violations,
       surface: 'mcp',
       producerVersion: `evolith-mcp@${CORE_VERSION}`,
       correlationId,

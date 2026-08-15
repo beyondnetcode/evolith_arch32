@@ -1,4 +1,4 @@
-import { OpaEvaluator, CONTEXT_AWARE_VIOLATION_PREFIXES } from './opa-evaluator';
+import { OpaEvaluator, violationBelongsToRule } from './opa-evaluator';
 import { createMockFileSystem, createMockLogger } from '../../../test/mocks';
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext } from './evaluator.interface';
@@ -168,90 +168,6 @@ describe('OpaEvaluator', () => {
   });
 });
 
-/**
- * GT-688 AC5 — the attribution table is hand-maintained, and a missing entry is
- * SILENT: the policy fires in the wasm, no rule claims its violations, and the
- * rule referencing it is reported `passed`. That is a false pass, which is the
- * class this corpus exists to catch.
- *
- * Measured 2026-08-15 while closing GT-688: 31 of the 33 shipped policies emit
- * namespaced ids and only 4 are mapped. The other 27 have exactly the same
- * defect as `TPC-01` had, for any satellite whose gate references them. That is
- * NOT fixed here — expanding this slice to rewrite the attribution model would
- * make an unreviewable diff out of a one-line gap — it is registered as its own
- * row, and this test is what stops it from being forgotten: the unmapped set is
- * written down, so adding a policy or mapping one is a deliberate edit rather
- * than a silent drift.
- */
-describe('the violation attribution table · GT-688', () => {
-  const OPA_DIR = path.resolve(__dirname, '../../../../../../rulesets/opa');
-
-  /** policy id (as `deriveRuleId` produces it) → the id prefixes it emits */
-  function prefixesEmittedByPolicy(): Map<string, Set<string>> {
-    const out = new Map<string, Set<string>>();
-    for (const file of fs.readdirSync(OPA_DIR)) {
-      if (!file.endsWith('.rego') || file === 'main.rego' || file.includes('test')) continue;
-      const ids = [...fs.readFileSync(path.join(OPA_DIR, file), 'utf8').matchAll(/"id":\s*"([A-Z][A-Z0-9]*)-/g)];
-      if (ids.length === 0) continue;
-      out.set(`opa-${file.replace(/\.rego$/, '')}`, new Set(ids.map((m) => `${m[1]}-`)));
-    }
-    return out;
-  }
-
-  it('reads real policies, so an empty scan cannot pass this vacuously', () => {
-    expect(prefixesEmittedByPolicy().size).toBeGreaterThanOrEqual(30);
-  });
-
-  it('MAPS `topology-composition`, whose absence made AC5 unmeetable', () => {
-    const emitted = prefixesEmittedByPolicy().get('opa-topology-composition');
-    expect([...(emitted ?? [])]).toContain('TPC-');
-    expect(CONTEXT_AWARE_VIOLATION_PREFIXES['opa-topology-composition']).toBe('TPC-');
-  });
-
-  it('every mapped prefix is one the policy actually emits', () => {
-    const emitted = prefixesEmittedByPolicy();
-    for (const [policy, prefix] of Object.entries(CONTEXT_AWARE_VIOLATION_PREFIXES)) {
-      expect([policy, [...(emitted.get(policy) ?? [])]]).toEqual([policy, expect.arrayContaining([prefix])]);
-    }
-  });
-
-  it('the UNMAPPED policies are the ones we know about — a new one must be a deliberate choice', () => {
-    const unmapped = [...prefixesEmittedByPolicy().keys()]
-      .filter((p) => !(p in CONTEXT_AWARE_VIOLATION_PREFIXES))
-      .sort();
-    // Each of these drops its violations for a satellite that references it.
-    // Shrinking this list is progress; growing it silently is the regression.
-    expect(unmapped).toEqual([
-      'opa-abac-mcp-tool-access',
-      'opa-anti-corruption-layer',
-      'opa-capability-source-interface',
-      'opa-ci-cd',
-      'opa-cicd-quality-gates',
-      'opa-cli-core-parity',
-      'opa-cli-exit-code-taxonomy',
-      'opa-cli-readiness',
-      'opa-cli-release-readiness',
-      'opa-engineering-manifesto',
-      'opa-evidence',
-      'opa-executive-scorecards',
-      'opa-gitflow-branching',
-      'opa-governance',
-      'opa-hexagonal-architecture',
-      'opa-knowledge-intake',
-      'opa-mcp',
-      'opa-multi-runtime',
-      'opa-multi-tenancy',
-      'opa-open-core-boundary',
-      'opa-probabilistic-evidence-admissibility',
-      'opa-protocol-selection',
-      'opa-repository-taxonomy',
-      'opa-satellite-contracts',
-      'opa-taxonomy',
-      'opa-telemetry-evidence',
-      'opa-version-pinning',
-    ]);
-  });
-});
 
 /**
  * GT-688 AC5 — the criterion is "a policy can discriminate on a topology present
@@ -305,5 +221,174 @@ describe('TPC-01 reaches the verdict · GT-688 AC5', () => {
     });
 
     expect(results[0].result).toBe('passed');
+  });
+});
+
+/**
+ * GT-693 — attribution is now DERIVED, not listed.
+ *
+ * The test this replaces pinned 27 policy names that the hand-maintained prefix
+ * table did not cover, so that the rot at least failed loudly. Its premise is gone:
+ * `main.rego` tags every aggregated violation with the policy that emitted it,
+ * using exactly the id `deriveRuleId` builds from that policy's path, so a new
+ * policy is attributed the moment it is aggregated and no list needs updating.
+ *
+ * What replaces it is the invariant that makes that true, asserted against the
+ * real files: every aggregation rule carries a tag, and every tag equals the
+ * derived id of the file declaring the package it aggregates. Adding an import to
+ * `main.rego` without a tag — the one way to re-create the defect — fails here.
+ */
+describe('every policy in the bundle is attributable · GT-693', () => {
+  const OPA_DIR = path.resolve(__dirname, '../../../../../../rulesets/opa');
+  const MAIN = path.join(OPA_DIR, 'main.rego');
+
+  /** `deriveRuleId`'s transform, from `satellite-evaluation-pipeline.service.ts`. */
+  const deriveRuleId = (relPath: string) =>
+    relPath.replace(/^.*rulesets\//, '').replace(/\.rego$/, '').replace(/[^a-zA-Z0-9_-]/g, '-');
+
+  function packageToFile(): Map<string, string> {
+    const out = new Map<string, string>();
+    const walk = (dir: string) => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) { walk(full); continue; }
+        if (!entry.name.endsWith('.rego')) continue;
+        const pkg = fs.readFileSync(full, 'utf8').split('\n').find((l) => l.startsWith('package '));
+        if (pkg) out.set(pkg.slice('package '.length).trim(), full);
+      }
+    };
+    walk(OPA_DIR);
+    return out;
+  }
+
+  const main = () => fs.readFileSync(MAIN, 'utf8');
+  const imports = () =>
+    [...main().matchAll(/^import data\.evolith\.([\w.]+)\.violations as (\w+)$/gm)]
+      .map((m) => ({ pkg: m[1], alias: m[2] }));
+  const aggregations = () =>
+    [...main().matchAll(/^violations contains (\{[^}]*\}|v) if \{\n\tv := (\w+)\[_\]\n\}$/gm)]
+      .map((m) => ({ head: m[1], alias: m[2] }));
+
+  it('reads the real bundle, so an empty scan cannot pass this vacuously', () => {
+    expect(imports().length).toBeGreaterThanOrEqual(30);
+    expect(aggregations().length).toBe(imports().length);
+  });
+
+  it('EVERY aggregated policy carries provenance — an untagged one is the old defect', () => {
+    const untagged = aggregations().filter((a) => !a.head.includes('"policy"')).map((a) => a.alias);
+    expect(untagged).toEqual([]);
+  });
+
+  it("every tag equals the id `deriveRuleId` builds from that policy's own path", () => {
+    const files = packageToFile();
+    const wrong: string[] = [];
+    for (const { pkg, alias } of imports()) {
+      const file = files.get(`evolith.${pkg}`);
+      expect([pkg, file !== undefined]).toEqual([pkg, true]);
+      const expected = deriveRuleId(file!);
+      const agg = aggregations().find((a) => a.alias === alias);
+      const tag = agg?.head.match(/"policy":\s*"([^"]+)"/)?.[1];
+      if (tag !== expected) wrong.push(`${alias}: tagged ${tag ?? '<none>'}, derives to ${expected}`);
+    }
+    expect(wrong).toEqual([]);
+  });
+});
+
+/**
+ * GT-693 AC4 — the two id ranges that no id-based scheme can resolve.
+ *
+ * `CLI-RR-01..05` are emitted by BOTH `cli-readiness` and `cli-release-readiness`;
+ * `TAX-05..11` by both `taxonomy` and `repository-taxonomy`. 10 of the corpus's 197
+ * ids collide. Under the old prefix scheme a gate referencing one of them would have
+ * claimed the other's findings and reported them under the wrong rule — a verdict
+ * that names the wrong policy is worse than a missing one, because it sends the
+ * operator to the wrong file.
+ */
+describe('colliding ids resolve to the policy that emitted them · GT-693 AC4', () => {
+  const readiness = { id: 'CLI-RR-01', message: 'from cli-readiness', policy: 'opa-cli-readiness' };
+  const release = { id: 'CLI-RR-01', message: 'from cli-release-readiness', policy: 'opa-cli-release-readiness' };
+
+  it('attributes each to its own policy and NOT to the other', () => {
+    expect(violationBelongsToRule(readiness, 'opa-cli-readiness')).toBe(true);
+    expect(violationBelongsToRule(readiness, 'opa-cli-release-readiness')).toBe(false);
+    expect(violationBelongsToRule(release, 'opa-cli-release-readiness')).toBe(true);
+    expect(violationBelongsToRule(release, 'opa-cli-readiness')).toBe(false);
+  });
+
+  it('does the same for the TAX- range', () => {
+    const tax = { id: 'TAX-05', message: 'x', policy: 'opa-taxonomy' };
+    expect(violationBelongsToRule(tax, 'opa-taxonomy')).toBe(true);
+    expect(violationBelongsToRule(tax, 'opa-repository-taxonomy')).toBe(false);
+  });
+
+  it('falls back to the legacy scheme ONLY when a violation carries no provenance', () => {
+    // A bundle compiled before GT-693. The four legacy entries still work…
+    expect(violationBelongsToRule({ id: 'DOD-01', message: 'x' }, 'opa-dod')).toBe(true);
+    // …and everything else still fails to attribute, which is the defect this
+    // fallback deliberately does NOT paper over: a stale wasm must not look healthy.
+    expect(violationBelongsToRule({ id: 'DEP-01', message: 'x' }, 'opa-version-pinning')).toBe(false);
+  });
+});
+
+/**
+ * GT-693 AC2 — a violation that no evaluated rule claims must be SURFACED, not
+ * dropped. Before this, `violations.filter(...)` simply matched nothing and the
+ * finding ceased to exist: there was no way, from any output, to tell "the policy
+ * found nothing" apart from "the policy found something and we lost it".
+ *
+ * Reported at debug rather than warn on purpose. For a partial rule selection most
+ * violations legitimately belong to policies the run never asked about, so warning
+ * would fire on every healthy run and be muted within a week. What AC2 requires is
+ * that the information EXIST and name its policy, which it now does.
+ */
+describe('an unclaimed violation is named, not dropped · GT-693 AC2', () => {
+  const wasmMock = require('@open-policy-agent/opa-wasm');
+
+  const ruleFor = (id: string): NormalizedRule => ({
+    id, severity: 'MUST', category: 'version-pinning', title: id,
+    description: 'gate rule', blocking: true, sourceFile: 'gate.json',
+  });
+
+  it('names the orphan AND the policy that emitted it', async () => {
+    const fs = createMockFileSystem();
+    const logger = createMockLogger();
+    fs.setFile(path.join('/core', 'rulesets', 'opa', 'policy.wasm'), 'fake-wasm-orphan');
+    (wasmMock.loadPolicy as jest.Mock).mockResolvedValueOnce({
+      evaluate: () => [{ result: [
+        { id: 'DEP-01', message: 'claimed', policy: 'opa-version-pinning' },
+        { id: 'MTN-04', message: 'nobody asked about this one', policy: 'opa-multi-tenancy' },
+      ] }],
+    });
+
+    const results = await new OpaEvaluator(fs, logger).evaluateAll(
+      [ruleFor('opa-version-pinning')],
+      { satellitePath: '/satellite', corePath: '/core' },
+    );
+
+    // The rule that WAS asked about gets its own violation and only its own.
+    expect(results[0].result).toBe('failed');
+    expect(results[0].message).toBe('claimed');
+
+    const debug = logger.getLogsByLevel('DEBUG').map((l) => l.message).join(' ');
+    expect(debug).toMatch(/matched no evaluated rule/);
+    expect(debug).toMatch(/opa-multi-tenancy: MTN-04/);
+    // …and it must NOT claim the one that was attributed.
+    expect(debug).not.toMatch(/DEP-01/);
+  });
+
+  it('says nothing when every violation found an owner', async () => {
+    const fs = createMockFileSystem();
+    const logger = createMockLogger();
+    fs.setFile(path.join('/core', 'rulesets', 'opa', 'policy.wasm'), 'fake-wasm-no-orphan');
+    (wasmMock.loadPolicy as jest.Mock).mockResolvedValueOnce({
+      evaluate: () => [{ result: [{ id: 'DEP-01', message: 'claimed', policy: 'opa-version-pinning' }] }],
+    });
+
+    await new OpaEvaluator(fs, logger).evaluateAll(
+      [ruleFor('opa-version-pinning')],
+      { satellitePath: '/satellite', corePath: '/core' },
+    );
+
+    expect(logger.getLogsByLevel('DEBUG').map((l) => l.message).join(' ')).not.toMatch(/matched no evaluated rule/);
   });
 });

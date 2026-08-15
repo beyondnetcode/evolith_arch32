@@ -182,4 +182,72 @@ describe('ValidateSatelliteUseCase', () => {
       expect(options.rulesetRepo).toBe(source.engine.rulesetRepo);
     });
   });
+
+  /**
+   * GT-688 item 1 — the PIPELINE path had the same defect the block above fixes
+   * for the standard path, and it was invisible because `execute` returns into
+   * `executeWithPipeline` BEFORE it ever looks at `engine`.
+   *
+   * The consequence a user sees: `evolith validate --engine opa -t <topology>`
+   * accepts the flag, documents it in `--help`, and evaluates natively anyway.
+   * A verifier drove the product surfaces with a recording OPA sidecar and
+   * measured ZERO requests. Silently answering with a different engine than the
+   * one asked for is worse than refusing, because the verdict looks legitimate.
+   */
+  describe('the pipeline path honours the engine it was given · GT-688', () => {
+    const manifest = { satellitePath: '/satellite', corePath: '/core', kinds: [] } as any;
+
+    function sourceValidator() {
+      return {
+        validate: jest.fn().mockResolvedValue(mockResult),
+        loadRulesetById: jest.fn().mockResolvedValue([]),
+        fs: { name: 'fs' },
+        logger: { name: 'logger', debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn() },
+        configParser: { name: 'configParser' },
+        engine: { rulesetRepo: { name: 'repo' } },
+        processRunner: { run: jest.fn() },
+        metrics: { recordDuration: jest.fn() },
+      } as unknown as jest.Mocked<RulesetValidatorService>;
+    }
+
+    it('BUILDS AN OPA VALIDATOR when the caller asked for OPA', async () => {
+      const source = sourceValidator();
+      const Ctor = RulesetValidatorService as unknown as jest.Mock;
+      Ctor.mockClear();
+
+      await new ValidateSatelliteUseCase(source)
+        .execute({ satellitePath: '/satellite', manifest, engine: 'opa' })
+        .catch(() => undefined); // the pipeline itself needs a real disk; the construction is what is asserted
+
+      expect(Ctor).toHaveBeenCalledTimes(1);
+      expect(Ctor.mock.calls[0][0].engineType).toBe('opa');
+    });
+
+    it('still defaults to native when no engine was named', async () => {
+      const source = sourceValidator();
+      const Ctor = RulesetValidatorService as unknown as jest.Mock;
+      Ctor.mockClear();
+
+      await new ValidateSatelliteUseCase(source)
+        .execute({ satellitePath: '/satellite', manifest })
+        .catch(() => undefined);
+
+      expect(Ctor.mock.calls[0][0].engineType).toBe('native');
+    });
+
+    it('CARRIES THE ENFORCER SUBSYSTEM on this path too', async () => {
+      const source = sourceValidator();
+      const Ctor = RulesetValidatorService as unknown as jest.Mock;
+      Ctor.mockClear();
+
+      await new ValidateSatelliteUseCase(source)
+        .execute({ satellitePath: '/satellite', manifest, engine: 'opa' })
+        .catch(() => undefined);
+
+      const options = Ctor.mock.calls[0][0];
+      // Same GT-664 loss, on the path that documented block never covered.
+      expect(options.processRunner).toBe(source.processRunner);
+      expect(options.metrics).toBe(source.metrics);
+    });
+  });
 });

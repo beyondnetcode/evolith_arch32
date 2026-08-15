@@ -149,7 +149,10 @@ export class EvaluateCommand extends BaseEvolithCommand {
       executedAt: result.evaluatedAt,
       durationMs: 0,
       correlationId: result.correlationId ?? `cli-eval-${result.evaluatedAt}`,
-      schemaVersion: result.schemaVersion,
+      // GT-688 — the ENVELOPE version, not the result's. Copying
+      // `result.schemaVersion` made this one command claim `2.0.0` while its ten
+      // siblings reported `1.0.0` for the same envelope contract.
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });
 
     // GT-677: ONE anchor for every workspace-relative input this command reads —
@@ -174,7 +177,10 @@ export class EvaluateCommand extends BaseEvolithCommand {
               executedAt: result.evaluatedAt,
               durationMs: 0,
               correlationId: result.correlationId ?? `cli-eval-${result.evaluatedAt}`,
-              schemaVersion: result.schemaVersion,
+              // GT-688 — the ENVELOPE version, not the result's. Copying
+      // `result.schemaVersion` made this one command claim `2.0.0` while its ten
+      // siblings reported `1.0.0` for the same envelope contract.
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
             }),
             null,
             2,

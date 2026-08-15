@@ -159,3 +159,35 @@ describe('EvaluateCommand --evidence (GT-518 — evidence manifest EVD-01..03)',
     await fs.remove(out);
   });
 });
+
+/**
+ * GT-688 item 4 — the RESULT schema bumped to 2.0.0 to carry a topology
+ * composition, and the bump leaked into the ENVELOPE's `meta.schemaVersion`,
+ * which describes the envelope and nothing else. Every other command reports
+ * `OUTPUT_ENVELOPE_SCHEMA_VERSION`; `evolith evaluate` reported whatever the
+ * result carried, so one command's envelope silently claimed a different
+ * contract version than its ten siblings.
+ *
+ * Why no existing test caught it: the fixture above pins the mocked result at
+ * `schemaVersion: '1.0.0'`, which happens to EQUAL the envelope constant, so the
+ * two were indistinguishable. These cases set them apart on purpose.
+ */
+describe('the envelope reports the ENVELOPE schema version · GT-688', () => {
+  const ENVELOPE_VERSION = '1.0.0';
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    evaluateMock.mockResolvedValue(RESULT);
+  });
+
+  it('does NOT copy the result schema version into meta', async () => {
+    evaluateMock.mockResolvedValue({ ...RESULT, schemaVersion: '2.0.0' });
+    const { command, log } = setup();
+    await command.executeCommand([], { format: 'json' });
+    const body = JSON.parse(log.mock.calls[log.mock.calls.length - 1][0] as string);
+
+    expect(body.meta.schemaVersion).toBe(ENVELOPE_VERSION);
+    // …and the result's own version is still reachable where it belongs.
+    expect(body.data.schemaVersion).toBe('2.0.0');
+  });
+});

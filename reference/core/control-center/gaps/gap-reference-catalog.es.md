@@ -9447,3 +9447,52 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD:** una regla editada en la copia superviviente cambia el veredicto de una evaluación que la usa; la misma edición sobre una ruta borrada no cambia nada, porque la ruta ya no existe.
   - [ ] `GT-566` lleva una anotación que registra que su afirmación de «exactamente UN sitio» era falsa cuando cerró.
 - **Estado:** `PENDIENTE`
+
+#### GT-691
+
+**Título:** Una CVE ALTA vive en una dependencia transitiva que ningún override desplaza y que no tiene arreglo aguas arriba, y bloquea toda promoción a main
+
+- **Propósito:** Decidir, por escrito y con un disparador, qué se hace con una vulnerabilidad que el repositorio no puede parchear ni alcanzar — en vez de redescubrir el argumento en la siguiente promoción.
+- **Evidencia:** `CVE-2026-73643` — `js-yaml` `5.2.1`, corregida en `5.2.2`, ALTA — entra en el árbol por **un** camino: `@nestjs/swagger@11.4.6` declara `"js-yaml": "5.2.1"` **exacta** (`node_modules/@nestjs/swagger/package.json`, y el lockfile registra `dependencies["js-yaml"] = "5.2.1"` en esa entrada). **Se probaron cuatro formas de override el 2026-08-15, cada una borrando antes las entradas de `js-yaml` del `package-lock.json` —la trampa que registró `GT-636`— y ninguna la mueve:** la general `"js-yaml": "4.3.1"` (la regla que ya está en `package.json`), una clave por rango `"js-yaml@^5"`, una por especificador exacto `"js-yaml@5.2.1"`, y la anidada bajo el padre `"@nestjs/swagger": { "js-yaml": "5.2.2" }`. En las cuatro el lockfile sigue resolviendo `node_modules/@nestjs/swagger/node_modules/js-yaml → 5.2.1`. **No hay arreglo aguas arriba:** `npm view @nestjs/swagger versions` termina en `11.4.6` estable; lo posterior son `12.0.0-alpha.*`. **La única resolución que npm SÍ aplicó empuja a swagger a la `4.3.1` general** — un downgrade mayor de una dependencia que pincha exacta, para tapar un agujero que nada puede alcanzar. **La vía vulnerable no es alcanzable, medido y no supuesto:** el aviso exige `load()` o `loadAll()` sobre entrada no confiable (*«parsing a small YAML document can take exponential time when an application calls load() or loadAll()»*), y `grep -rhoE "yaml\.(load|safeLoad|dump|safeDump)[A-Za-z]*" node_modules/@nestjs/swagger/dist` devuelve **`1 yaml.dump` y cero `load`** — swagger emite el documento OpenAPI y no parsea nada.
+- **Casos de uso:**
+  - Una promoción a `main` queda bloqueada por la regla de code scanning con los ocho checks requeridos en verde — observado en el PR #501, con 67 pasando.
+  - Quien revisa pregunta si el producto embarca un DoS explotable y necesita el argumento de alcanzabilidad, no un número de versión.
+  - `@nestjs/swagger` 12 sale de alpha y alguien tiene que saber que esto estaba esperándola.
+  - Un intento futuro de override no debe repetir las cuatro formas ya medidas como inútiles.
+- **Impacto:** Dos costes, y el segundo es el que dura. El inmediato es que main no se puede mergear sin que un humano descarte una alerta. El duradero es que el argumento —imparcheable, inalcanzable, a la espera de un mayor aguas arriba— vive en un registro de conversación salvo que se escriba donde la siguiente persona mira.
+- **Resultado esperado:** o la dependencia se mueve (un `@nestjs/swagger` parcheado, o una forma de npm que sí desplace una pin exacta), o la alerta lleva un descarte registrado cuyo motivo sea la inalcanzabilidad medida, con disparador de reevaluación.
+- **Ficheros afectados:** `package.json`, `package-lock.json`, `src/apps/core-api/package.json`
+- **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-15 mientras se promocionaba `GT-688` a main. **Deliberadamente NO arreglado:** el único cambio que npm aceptó era el downgrade mayor descrito arriba, y embarcarlo dentro de una promoción de topología habría colado un riesgo de runtime en un cambio ajeno. **El descarte es decisión del dueño y no se tomó aquí** — un agente no descarta una alerta de seguridad. **`main` y `develop` son idénticos en esta dependencia** (ambos llevan `@nestjs/swagger/node_modules/js-yaml → 5.2.1`), así que ninguna promoción la ha introducido nunca; el «nuevas alertas en código que cambia este PR» del check es un artefacto de comparar contra una base que ya la tiene.
+- **Criterios de aceptación:**
+  - [ ] O `js-yaml` resuelve a `5.2.2` o posterior bajo `@nestjs/swagger`, demostrado con la entrada del lockfile y no con una intención en `package.json`, o la alerta lleva un descarte cuyo motivo registrado sea la inalcanzabilidad medida aquí.
+  - [ ] Si se descarta, queda escrito un disparador de reevaluación — un `@nestjs/swagger` 12 estable, o cualquier cambio que haga que este repositorio llame a `load()`/`loadAll()` sobre YAML que no escribió.
+  - [ ] **FALSABILIDAD:** la afirmación de inalcanzabilidad se vuelve a medir, no se hereda — que `yaml.load` o `yaml.loadAll` aparezca en `@nestjs/swagger/dist`, o que entre en el árbol un segundo consumidor de `js-yaml@5.x`, invalida esta fila y la reabre como exposición real.
+  - [ ] Las cuatro formas de override inútiles quedan registradas, para que el siguiente intento empiece donde este paró y no lo repita.
+- **Estado:** `PENDIENTE`
+
+#### GT-692
+
+**Título:** Toda imagen desplegable embarca el árbol completo de dependencias de desarrollo, y es lo bastante grande como para agotar el disco de un runner de CI
+
+- **Propósito:** Publicar una imagen de runtime que lleve lo que el runtime necesita, para que un consumidor pueda cargarla en un runner corriente.
+- **Evidencia:** `src/apps/core-api/Dockerfile:20` ejecuta `npm ci --legacy-peer-deps` —el árbol entero, desarrollo incluido— y el stage de runtime lo copia tal cual: `COPY --from=builder /repo/node_modules ./node_modules`. No hay `--omit=dev`, ni `npm prune --production`, ni una segunda instalación; `grep -nE "npm (ci|install|prune)|--omit|--production" src/apps/core-api/Dockerfile` devuelve ese único `npm ci` y nada más. **Medido en este árbol: `node_modules` ocupa 650 MB**, y los paquetes que la imagen transporta no son de runtime — `typescript` 24 MB, `eslint` 5,1 MB, `@types/node` 2,5 MB, `@sinonjs/commons` 216 KB, `jest` — **ninguno es dependencia de producción de `core-api`** (comprobado contra las `dependencies` de su `package.json`). **Observado fallando tres veces en el CI de OTRO repositorio:** el job `Deploy (kind + Helm + smoke)` del Tracker falló en el PR #149, en su rerun limpio y dos veces en el PR #150, siempre como `ctr: failed to extract layer … no space left on device` al importar `ghcr.io/beyondnetcode/evolith-core-api` en el nodo de kind. Las rutas en las que murió nombran la causa sin ambigüedad: `/repo/node_modules/@types/node/quic.d.ts` y `/repo/node_modules/@sinonjs/commons/types/prototypes/array.d.ts` — un fichero de declaraciones de TypeScript y una **librería de dobles de test** desempaquetándose en una imagen de producción.
+- **Casos de uso:**
+  - El CI de un satélite levanta el Core en kind para probar la costura contra un Core real, y la importación agota el runner antes de ejercitar nada.
+  - Un operador se descarga la imagen en un nodo pequeño y paga minutos de transferencia por herramientas que el proceso nunca carga.
+  - Quien revisa seguridad pregunta por qué una imagen de runtime contiene `eslint`, `jest` y `typescript`, y la respuesta honesta es que nada los poda.
+  - La misma forma de Dockerfile la usan las demás imágenes desplegables, así que el coste se repite por imagen.
+- **Impacto:** El coste inmediato es que el pipeline de un consumidor no puede ni cargar la imagen —medido tres veces— y el job falla ANTES de ejercitar nada, así que no verifica nada en ninguna dirección. El coste duradero es superficie de ataque: una imagen de producción que lleva un compilador, un linter y un framework de tests ofrece mucho más de lo que ejecuta. Además interactúa con [`GT-691`](./gap-reference-catalog.es.md#gt-691): cada dependencia de desarrollo en la imagen es una dependencia que un escáner señalará, pueda o no alcanzarla el runtime.
+- **Resultado esperado:** el stage de runtime lleva solo dependencias de producción, la imagen es medidamente más pequeña, y la importación en kind del consumidor termina en un runner estándar.
+- **Ficheros afectados:** `src/apps/core-api/Dockerfile`, `src/packages/mcp-server/Dockerfile`, `src/sdk/cli/Dockerfile`, `src/apps/agent-runtime-api/Dockerfile`
+- **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-15 a partir de tres fallos consecutivos del CI de OTRO repositorio (`evolith_tracker`, PRs #149 y #150) — el defecto es nuestro y lo encontró un consumidor, que es la forma que merece anotarse: nada en este repositorio mide el tamaño de lo que publica. **Deliberadamente no arreglado en la promoción que lo encontró:** podar el árbol de runtime cambia lo que contiene cada imagen desplegable y exige su propia verificación — [`GT-647`](./gap-reference-catalog.es.md#gt-647) es el precedente de cómo un cambio en la lista de copiado rompe una imagen al arrancar, y la lección de aquella fila fue que el arreglo se verifica ARRANCANDO, no leyendo el diff.
+- **Criterios de aceptación:**
+  - [ ] El stage de runtime de cada imagen desplegable lleva solo dependencias de producción, por una instalación con `--omit=dev` o equivalente, y el mecanismo es el mismo en todas.
+  - [ ] La imagen es medidamente más pequeña, con los tamaños antes y después registrados — decir «más pequeña» sin ambas cifras no cierra esto.
+  - [ ] **FALSABILIDAD, y tiene que ser un ARRANQUE y no un build:** cada imagen afectada se levanta y sirve una petición real después, conforme a [`GT-647`](./gap-reference-catalog.es.md#gt-647), cuyo hallazgo entero fue que una lista de copiado mantenida a mano produce una imagen que compila en verde y muere en tiempo de `require`.
+  - [ ] El job fallido del consumidor se vuelve a ejecutar contra la nueva imagen y la importación termina; se registran tanto el `no space left on device` literal como la ejecución que pasa.
+  - [ ] Un check falla cuando una imagen desplegable crece por encima de un presupuesto declarado, para que la próxima regresión se cace aquí y no en el pipeline de otro.
+- **Estado:** `PENDIENTE`

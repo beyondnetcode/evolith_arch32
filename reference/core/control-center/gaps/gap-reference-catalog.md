@@ -9541,3 +9541,52 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **FALSIFIABILITY:** a rule edited in the surviving copy changes the verdict of an evaluation that uses it; the same edit applied to a deleted path changes nothing, because the path is gone.
   - [ ] `GT-566` carries an annotation recording that its "exactly ONE place" claim was false when it closed.
 - **Status:** `PENDING`
+
+#### GT-691
+
+**Title:** A HIGH CVE sits in a transitive dependency that no override can move and that has no upstream fix, and it blocks every promotion to main
+
+- **Purpose:** Decide, in writing and on a trigger, what happens to a vulnerability the repository can neither patch nor reach — instead of rediscovering the argument on the next promotion.
+- **Evidence:** `CVE-2026-73643` — `js-yaml` `5.2.1`, fixed in `5.2.2`, HIGH — reaches the tree through **one** path: `@nestjs/swagger@11.4.6` declares `"js-yaml": "5.2.1"` **exactly** (`node_modules/@nestjs/swagger/package.json`, and the lockfile records `dependencies["js-yaml"] = "5.2.1"` on that entry). **Four override forms were tried on 2026-08-15, each with the `js-yaml` entries deleted from `package-lock.json` first — the trap `GT-636` recorded — and none moves it:** the blanket `"js-yaml": "4.3.1"` (the rule already in `package.json`), a range key `"js-yaml@^5"`, a spec key `"js-yaml@5.2.1"`, and the parent-scoped `"@nestjs/swagger": { "js-yaml": "5.2.2" }`. In all four the lockfile still resolves `node_modules/@nestjs/swagger/node_modules/js-yaml → 5.2.1`. **No upstream fix exists:** `npm view @nestjs/swagger versions` ends at `11.4.6` stable, everything after it is `12.0.0-alpha.*`. **The only resolution npm DID apply pushes swagger onto the blanket `4.3.1`** — a major downgrade of a dependency it pins exactly, to close a hole nothing can reach. **The vulnerable path is not reachable, measured rather than assumed:** the advisory requires `load()` or `loadAll()` on untrusted input (*"parsing a small YAML document can take exponential time when an application calls load() or loadAll()"*), and `grep -rhoE "yaml\.(load|safeLoad|dump|safeDump)[A-Za-z]*" node_modules/@nestjs/swagger/dist` returns **`1 yaml.dump` and zero `load`** — swagger emits the OpenAPI document and parses nothing.
+- **Use cases:**
+  - A promotion to `main` is blocked by the code-scanning rule while every one of the eight required checks is green — observed on PR #501, 67 passing.
+  - A reviewer asks whether the product ships an exploitable DoS and needs the reachability argument, not a version number.
+  - `@nestjs/swagger` 12 leaves alpha and someone must know this was waiting on it.
+  - A future override attempt must not repeat the four forms already measured as ineffective.
+- **Impact:** Two costs, and the second is the one that lasts. The immediate one is that main is unmergeable without a human dismissing an alert. The lasting one is that the argument — unpatchable, unreachable, waiting on an upstream major — lives in a chat log unless it is written where the next person looks.
+- **Expected outcome:** either the dependency moves (a patched `@nestjs/swagger`, or an npm form that actually displaces an exact pin), or the alert carries a recorded dismissal whose reason is the measured unreachability, with a trigger to re-evaluate.
+- **Affected files:** `package.json`, `package-lock.json`, `src/apps/core-api/package.json`
+- **Component:** `Infra` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-15 while promoting `GT-688` to main. **Deliberately NOT fixed:** the only change npm accepted was the major downgrade described above, and shipping that inside a topology promotion would have smuggled a runtime risk into an unrelated change. **The dismissal is an owner decision and was not taken here** — an agent does not dismiss a security alert. **`main` and `develop` are identical on this dependency** (both carry `@nestjs/swagger/node_modules/js-yaml → 5.2.1`), so no promotion has ever introduced it; the check's "new alerts in code changed by this pull request" is an artifact of comparing against a base that already has it.
+- **Acceptance criteria:**
+  - [ ] Either `js-yaml` resolves to `5.2.2` or later under `@nestjs/swagger`, proven by the lockfile entry and not by a `package.json` intention, or the alert carries a dismissal whose recorded reason is the unreachability measured here.
+  - [ ] If dismissed, a re-evaluation trigger is written down — a stable `@nestjs/swagger` 12, or any change that makes this repository call `load()`/`loadAll()` on YAML it did not author.
+  - [ ] **FALSIFIABILITY:** the unreachability claim is re-measured, not inherited — `yaml.load` or `yaml.loadAll` appearing anywhere in `@nestjs/swagger/dist`, or a second consumer of `js-yaml@5.x` entering the tree, invalidates this row and reopens it as a real exposure.
+  - [ ] The four ineffective override forms stay recorded, so the next attempt starts where this one stopped rather than repeating it.
+- **Status:** `PENDING`
+
+#### GT-692
+
+**Title:** Every deployable image ships the full development dependency tree, and it is large enough to exhaust a CI runner's disk
+
+- **Purpose:** Ship a runtime image that carries what the runtime needs, so a consumer can load it on an ordinary runner.
+- **Evidence:** `src/apps/core-api/Dockerfile:20` runs `npm ci --legacy-peer-deps` — the whole tree, dev included — and the runner stage copies it verbatim: `COPY --from=builder /repo/node_modules ./node_modules`. There is no `--omit=dev`, no `npm prune --production` and no second install; `grep -nE "npm (ci|install|prune)|--omit|--production" src/apps/core-api/Dockerfile` returns the single `npm ci` and nothing else. **Measured on this tree: `node_modules` is 650 MB**, and the packages the image carries are demonstrably not runtime ones — `typescript` 24 MB, `eslint` 5.1 MB, `@types/node` 2.5 MB, `@sinonjs/commons` 216 KB, `jest` — **none of which is a production dependency of `core-api`** (checked against its `package.json` `dependencies`). **Observed failing, three times, in another repository's CI:** the Tracker's `Deploy (kind + Helm + smoke)` job failed on PR #149, on its clean rerun, and twice on PR #150, every time as `ctr: failed to extract layer … no space left on device` while importing `ghcr.io/beyondnetcode/evolith-core-api` into the kind node. The paths it died on name the cause outright: `/repo/node_modules/@types/node/quic.d.ts` and `/repo/node_modules/@sinonjs/commons/types/prototypes/array.d.ts` — a TypeScript declaration file and a **test-double library** being unpacked into a production image.
+- **Use cases:**
+  - A satellite's CI brings the Core up in kind to test the seam against a real Core, and the import exhausts the runner before anything is exercised.
+  - An operator pulls the image on a small node and pays minutes of transfer for tooling the process never loads.
+  - A security reviewer asks why a runtime image contains `eslint`, `jest` and `typescript`, and the honest answer is that nothing prunes them.
+  - The same Dockerfile shape is used by the other deployable images, so the cost is repeated per image.
+- **Impact:** The immediate cost is that a consumer's pipeline cannot load the image at all — measured three times, and the job fails BEFORE it exercises anything, so it verifies nothing in either direction. The lasting cost is attack surface: a production image that carries a compiler, a linter and a test framework offers far more than it runs. It also interacts with [`GT-691`](./gap-reference-catalog.md#gt-691) — every dev dependency in the image is a dependency a scanner will flag, whether or not the runtime can reach it.
+- **Expected outcome:** the runtime stage carries production dependencies only, the image is measurably smaller, and the consumer's kind import succeeds on a standard runner.
+- **Affected files:** `src/apps/core-api/Dockerfile`, `src/packages/mcp-server/Dockerfile`, `src/sdk/cli/Dockerfile`, `src/apps/agent-runtime-api/Dockerfile`
+- **Component:** `Infra` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-15 from three consecutive failures of a DIFFERENT repository's CI (`evolith_tracker` PRs #149 and #150) — the defect is ours and it was found by a consumer, which is the shape worth noting: nothing in this repository measures the size of what it publishes. **Deliberately not fixed in the promotion that found it:** pruning the runtime tree changes what every deployable image contains and needs its own verification — [`GT-647`](./gap-reference-catalog.md#gt-647) is the precedent for how a copy-list change breaks an image at startup, and that row's lesson was that the fix must be verified by BOOTING, not by reading the diff.
+- **Acceptance criteria:**
+  - [ ] The runtime stage of each deployable image carries production dependencies only, by an `--omit=dev` install or an equivalent, and the mechanism is the same in all of them.
+  - [ ] The image is measurably smaller, with the before and after sizes recorded — a claim of "smaller" without both numbers does not close this.
+  - [ ] **FALSIFIABILITY, and it must be a BOOT not a build:** each affected image is started and serves a real request afterwards, per [`GT-647`](./gap-reference-catalog.md#gt-647), whose whole finding was that a hand-maintained copy list produces an image that builds green and dies at `require` time.
+  - [ ] The consumer's failing job is re-run against the new image and the import completes; the literal `no space left on device` failure and the passing run are both recorded.
+  - [ ] A check fails when a deployable image grows past a declared budget, so the next regression is caught here rather than in someone else's pipeline.
+- **Status:** `PENDING`

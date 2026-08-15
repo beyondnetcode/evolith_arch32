@@ -16,6 +16,7 @@ import {
   ApplicabilityContext,
   notApplicableReason,
   readSatelliteDeclaration,
+  resolveApplicabilityContext,
 } from './rule-applicability';
 
 describe('GT-571 · applicability is a pure decision with permissive defaults', () => {
@@ -143,5 +144,82 @@ describe('GT-571 — the generated ADR corpus is addressed to the Core', () => {
     expect(
       notApplicableReason(rule, { audience: 'core', declaredTopologies: [] }),
     ).toBeUndefined();
+  });
+});
+
+
+/**
+ * GT-688 — the inline composition must ADD to what the repository declares, and
+ * must never be able to take anything away.
+ *
+ * ADR-0101 makes the caller stateless: a Tracker/REST consumer has no
+ * `evolith.yaml` on disk, so the read below finds nothing and EVERY
+ * topology-scoped rule was silently excluded. `overrides.declaredTopologies` is
+ * how a declared composition reaches rule SELECTION at all.
+ */
+describe('GT-688 · resolveApplicabilityContext unions the declared composition', () => {
+  /** A memfs-ish stub: one file, at the satellite root. */
+  const depsWith = (manifest?: string) => ({
+    fs: {
+      exists: async (p: string) => manifest !== undefined && p === '/sat/evolith.yaml',
+      readFile: async () => manifest ?? '',
+      readdir: async () => [],
+      readdirNames: async () => [],
+      stat: async () => ({ isDirectory: () => false, isFile: () => true }),
+    } as never,
+    configParser: {
+      parse: (raw: string) => JSON.parse(raw) as Record<string, unknown>,
+    } as never,
+  });
+
+  // The declaration shape `readSatelliteDeclaration` reads. Parsed as JSON here
+  // because the stub parser is JSON — the YAML reader is exercised elsewhere.
+  const declaring = (topologies: string[]) =>
+    JSON.stringify({ spec: { design: { topology: { confirmed: topologies } } } });
+
+  it('unions the override with the disk declaration, never substituting it', async () => {
+    const ctx = await resolveApplicabilityContext(
+      depsWith(declaring(['modular-monolith'])),
+      '/sat',
+      '/core',
+      '/',
+      { declaredTopologies: ['agentic-ai'] },
+    );
+    expect([...ctx.declaredTopologies].sort()).toEqual(['agentic-ai', 'modular-monolith']);
+  });
+
+  it('an EMPTY override leaves the disk declaration standing', async () => {
+    const ctx = await resolveApplicabilityContext(
+      depsWith(declaring(['modular-monolith'])),
+      '/sat',
+      '/core',
+      '/',
+      { declaredTopologies: [] },
+    );
+    expect(ctx.declaredTopologies).toEqual(['modular-monolith']);
+  });
+
+  it('carries the composition for a satellite with NO evolith.yaml at all', async () => {
+    // The ADR-0101 case: this used to yield `[]`, i.e. every topology rule excluded.
+    const ctx = await resolveApplicabilityContext(depsWith(undefined), '/sat', '/core', '/', {
+      declaredTopologies: ['modular-monolith', 'agentic-ai'],
+    });
+    expect([...ctx.declaredTopologies].sort()).toEqual(['agentic-ai', 'modular-monolith']);
+  });
+
+  it('de-duplicates an override that repeats a disk-declared topology', async () => {
+    const ctx = await resolveApplicabilityContext(
+      depsWith(declaring(['modular-monolith'])),
+      '/sat',
+      '/core',
+      '/',
+      { declaredTopologies: ['modular-monolith'] },
+    );
+    expect(ctx.declaredTopologies).toEqual(['modular-monolith']);
+  });
+
+  it('omitting the override is exactly the pre-GT-688 behaviour', async () => {
+    const ctx = await resolveApplicabilityContext(depsWith(declaring(['microservices'])), '/sat', '/core', '/');
+    expect(ctx.declaredTopologies).toEqual(['microservices']);
   });
 });

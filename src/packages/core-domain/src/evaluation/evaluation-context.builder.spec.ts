@@ -1,5 +1,27 @@
 import { evaluationFactsFromContext, manifestFromWorkspace } from './evaluation-context.builder';
 import type { EvaluationContext } from './contracts';
+import { OpaInputBuilder } from '../application/validators/evaluators/opa-input-builder';
+import type { IFileSystem } from '../domain/interfaces';
+
+/** GT-688 — a filesystem that finds nothing, so the built input is facts-only. */
+const opaStubFs = (): IFileSystem =>
+  ({
+    readFile: async () => '',
+    readFileBuffer: async () => Buffer.alloc(0),
+    writeFile: async () => {},
+    exists: async () => false,
+    existsSync: () => false,
+    readJson: async () => ({}),
+    writeJson: async () => {},
+    mkdir: async () => {},
+    readdir: async () => [],
+    readdirNames: async () => [],
+    copy: async () => {},
+    ensureDir: async () => {},
+    ensureFile: async () => {},
+    stat: async () => ({ isDirectory: () => false, isFile: () => true }),
+    remove: async () => {},
+  }) as unknown as IFileSystem;
 
 const ctx = (over: Partial<EvaluationContext>): EvaluationContext =>
   ({ kinds: ['gate'], workspaceRef: 'ws://x', ...over }) as EvaluationContext;
@@ -181,5 +203,82 @@ describe('manifestFromWorkspace facts threading (GT-380 L1c)', () => {
   it('leaves manifest.facts undefined for a minimal context', () => {
     const m = manifestFromWorkspace(ctx({}), ws);
     expect(m.facts).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GT-688 — topology ARITY. The pre-fix builder wrote `topology: ctx.topologyRef`
+// and nothing else, so a consumer that confirmed a composition in `design` had
+// it truncated to `undefined` before the pipeline ever saw it.
+// ---------------------------------------------------------------------------
+
+describe('GT-688 · the confirmed composition survives the manifest and the OPA input', () => {
+  const ws = { satellitePath: '/sat', corePath: '/core' };
+
+  it('a three-topology composition reaches the manifest and the OPA input intact', async () => {
+    const composition = ['modular-monolith', 'agentic-ai', 'event-driven'];
+    const m = manifestFromWorkspace(
+      ctx({
+        kinds: ['gate', 'topology', 'design'] as any,
+        gateId: 'g1',
+        design: { topologyConfirmedRefs: composition },
+      }),
+      ws,
+    );
+
+    expect(m.topologies).toEqual(composition);
+    // The scalar survives as the PRIMARY member, because `resolvedTopology` and
+    // the ADR-0073 envelope are scalar display fields with live readers.
+    expect(m.topology).toBe('modular-monolith');
+
+    // …and it reaches the BUILT OPA input document, not merely the source object.
+    const input = (await new OpaInputBuilder(opaStubFs()).build({
+      satellitePath: ws.satellitePath,
+      corePath: ws.corePath,
+      facts: m.facts,
+    } as any)) as any;
+    expect(input.context.topologyConfirmedRefs).toEqual(composition);
+  });
+
+  it('a scalar-only context produces a byte-identical OPA context to pre-GT-688, plus its shorthand', () => {
+    const context = evaluationFactsFromContext(
+      ctx({ gateId: 'g1', topologyRef: 'modular-monolith' }),
+    )?.context;
+
+    expect(context).toEqual({
+      gateId: 'g1',
+      topologyRef: 'modular-monolith',
+      topologyConfirmedRefs: ['modular-monolith'],
+    });
+
+    // Removing the ONE new key leaves exactly the pre-GT-688 object.
+    const { topologyConfirmedRefs, ...preGt688 } = context as Record<string, unknown>;
+    expect(preGt688).toEqual({ gateId: 'g1', topologyRef: 'modular-monolith' });
+  });
+
+  it('a design-only context still projects facts', () => {
+    // Without the `declared`-trigger edit this returns undefined, and
+    // `topology-composition.rego` would be handed an absent `input.context` and
+    // go green having judged nothing.
+    const facts = evaluationFactsFromContext(
+      ctx({ kinds: ['design'] as any, workspaceRef: '/w', design: { topologyConfirmedRefs: ['event-driven'] } }),
+    );
+    expect(facts).toBeDefined();
+    expect(facts?.context?.topologyConfirmedRefs).toEqual(['event-driven']);
+  });
+
+  it('the plural wins over a disagreeing scalar', () => {
+    const m = manifestFromWorkspace(
+      ctx({ topologyRef: 'serverless', design: { topologyConfirmedRefs: ['event-driven'] } }),
+      ws,
+    );
+    expect(m.topologies).toEqual(['event-driven']);
+    expect(m.topology).toBe('event-driven');
+  });
+
+  it('declares nothing for a context that declares no topology at all', () => {
+    const m = manifestFromWorkspace(ctx({}), ws);
+    expect(m.topologies).toBeUndefined();
+    expect(m.topology).toBeUndefined();
   });
 });

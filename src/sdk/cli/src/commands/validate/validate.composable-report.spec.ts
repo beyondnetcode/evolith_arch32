@@ -19,7 +19,6 @@ let sdlcResult: unknown = { mode: 'sdlc', status: 'passed', rulesChecked: 0, iss
 jest.mock(
   '@beyondnet/evolith-core-domain/application/validators/modes/sdlc-validation.mode',
   () => ({ SdlcValidationMode: jest.fn(() => makeMode('sdlc', sdlcResult)) }),
-  { virtual: true },
 );
 const inert = (name: string) => ({
   [`${name}Mode`]: jest.fn(() => ({ name, canHandle: () => false, validate: async () => ({}) })),
@@ -27,22 +26,18 @@ const inert = (name: string) => ({
 jest.mock(
   '@beyondnet/evolith-core-domain/application/validators/modes/architecture-validation.mode',
   () => ({ ArchitectureValidationMode: inert('architecture').architectureMode }),
-  { virtual: true },
 );
 jest.mock(
   '@beyondnet/evolith-core-domain/application/validators/modes/ruleset-validation.mode',
   () => ({ RulesetValidationMode: jest.fn(() => ({ name: 'ruleset', canHandle: () => false, validate: async () => ({ mode: 'ruleset', status: 'passed', rulesChecked: 0, issues: [] }) })) }),
-  { virtual: true },
 );
 jest.mock(
   '@beyondnet/evolith-core-domain/application/validators/modes/adr-validation.mode',
   () => ({ AdrValidationMode: jest.fn(() => ({ name: 'adr', canHandle: () => false, validate: async () => ({}) })) }),
-  { virtual: true },
 );
 jest.mock(
   '@beyondnet/evolith-core-domain/application/validators/modes/adhoc-validation.mode',
   () => ({ AdhocValidationMode: jest.fn(() => ({ name: 'adhoc', canHandle: () => false, validate: async () => ({}) })) }),
-  { virtual: true },
 );
 
 import { ValidateCommand } from './validate.command';

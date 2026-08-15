@@ -48,7 +48,10 @@ export interface CapabilityManifestShape {
 export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.freeze({
   name: 'evolith-core',
   version: CONTRACTS_PACKAGE_VERSION,
-  schemaVersion: '1.0.0',
+  // GT-688 — tracks EVALUATION_RESULT_SCHEMA_VERSION, which went MAJOR because
+  // `results.topology` became an array. `evaluationKinds` below is unchanged:
+  // the existing `topology` kind simply returns more, so no new kind was added.
+  schemaVersion: '2.0.0',
   evaluationKinds: Object.freeze([
     'gate',
     'artifact',
@@ -92,8 +95,22 @@ export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.free
   // Both values below were read off a FRESH build (`rm tsconfig.tsbuildinfo` + rebuild of
   // core-domain/mcp, then `node .harness/scripts/generate-capability-operations.mjs`):
   // this suite is green against a stale `dist` and red against a rebuilt one.
-  operationsSha256: 'e557b65205ef2a3c33d322a4649585809cd61237ddd6ddb3b66df41499ef59cf',
-  sha256: '51da6f3f06e68878655d19ad2fe6805ff837a0a57f656f6fd6ab319faa24bf68',
+  // GT-688 — re-pinned for an ARGUMENT plus a schemaVersion bump, not an operation:
+  // `evolith-evaluate` gained an optional `design` object (the MCP surface can now
+  // express the CONFIRMED TOPOLOGY COMPOSITION the REST DTO has always accepted, so
+  // `design.topologyConfirmedRefs` is expressible on all three surfaces). The
+  // operation count is unchanged at 52; `operationsSha256` moves because that tool's
+  // inputSchema grew, and `sha256` moves for that AND for `schemaVersion` 1.0.0→2.0.0.
+  //
+  // Previous, for the record: GT-677 pinned
+  //   operations e557b652…, manifest 51da6f3f…
+  // when `evolith-evaluate` gained `waiverStore`.
+  //
+  // Both values below were read off a FRESH build (`rm tsconfig.tsbuildinfo` + rebuild of
+  // core-domain/mcp, then `node .harness/scripts/generate-capability-operations.mjs`):
+  // this suite is green against a stale `dist` and red against a rebuilt one.
+  operationsSha256: 'd41453e4c14100a7e25800b12804079035674e88bd388076a4b31c812f89b58b',
+  sha256: '07e387a3dd1e607f46bb8bdcb9b029a10ff234ba53d4b5782092c635829545f0',
 }) as CapabilityManifestShape;
 
 /**

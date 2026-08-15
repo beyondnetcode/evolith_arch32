@@ -54,7 +54,12 @@ export class EvaluateTool implements McpTool {
         phaseId: { type: 'string', description: 'Canonical SDLC phase id (discovery|design|construction|qa|release)' },
         gateId: { type: 'string', description: 'Gate id to evaluate' },
         rulesetRef: { type: 'string', description: 'Versioned ruleset reference' },
-        topologyRef: { type: 'string', description: 'Topology reference/override' },
+        topologyRef: { type: 'string', description: 'Topology reference/override (single-element shorthand for design.topologyConfirmedRefs)' },
+        design: {
+          type: 'object',
+          description:
+            'Design facet (ADR-0104). Carries the confirmed topology composition as design.topologyConfirmedRefs: string[]. Same field and shape the REST EvaluationContextDto accepts (GT-688).',
+        },
         executionMode: { type: 'string', description: 'manual | hybrid | agentic' },
         correlationId: { type: 'string', description: 'Consumer correlation id (echoed)' },
       },
@@ -80,6 +85,10 @@ export class EvaluateTool implements McpTool {
       gateId: args.gateId as string | undefined,
       rulesetRef: args.rulesetRef as string | undefined,
       topologyRef: args.topologyRef as string | undefined,
+      // GT-688: MCP could not express a composition at all — the handler maps
+      // field by field with no spread, so anything not listed is dropped in
+      // silence (there is no argument validation at dispatch).
+      design: args.design as EvaluationContext['design'],
       executionMode: args.executionMode as EvaluationContext['executionMode'],
       correlationId: args.correlationId as string | undefined,
     };

@@ -10,6 +10,7 @@ import {
 import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResult } from './evaluators/evaluator.interface';
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
+import type { EvaluationFacts } from '../../domain/satellite-manifest';
 import { NormalizedRule as CorpusRule } from '../../domain/models/normalized-rule';
 import {
   ApplicabilityContext,
@@ -311,15 +312,28 @@ export class RuleEvaluationEngine {
    * `skipped`, which GT-569 reserves for "the engine tried and could not".
    *
    * With no filter the behaviour is byte-for-byte the pre-GT-571 one.
+   *
+   * GT-688 — `facts` are the DECLARED facts the consumer sent inline, projected
+   * by `evaluation-context.builder.ts`. They belong on the workspace context
+   * because that is the only object `OpaInputBuilder.build` reads: without them
+   * `input.context` is absent from the input document every corpus policy sees,
+   * so a policy that discriminates on a declared fact (GT-688's
+   * `topology-composition.rego`, and GT-380's `input.context` consumers before
+   * it) decides nothing and reports green. The gate path
+   * (`satellite-evaluation-pipeline.evaluateGate`) has passed them since GT-380;
+   * this path had not, which is why they reached one half of the engine only.
+   *
+   * Absent ⇒ byte-for-byte the pre-GT-688 input document.
    */
   async discoverAndEvaluate(
     satellitePath: string,
     corePath: string,
     filter?: RuleApplicabilityFilter,
     selection?: RulesetSelection,
+    facts?: EvaluationFacts,
   ): Promise<CorpusEvaluation> {
     const rules = await this.rulesetRepo.loadAllRulesets(corePath);
-    const ctx: WorkspaceEvaluationContext = { satellitePath, corePath };
+    const ctx: WorkspaceEvaluationContext = { satellitePath, corePath, ...(facts ? { facts } : {}) };
 
     // GT-659 — the caller's selection is applied BEFORE applicability, because
     // the two answer different questions: selection is "which rulesets did you

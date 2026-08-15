@@ -85,10 +85,28 @@ export interface SatelliteManifest {
   corePath?: string;
 
   /**
-   * Optional topology override. If omitted, the pipeline auto-detects
-   * by analyzing the satellite's tech stack against the topology catalog.
+   * Optional topology override — the PRIMARY member of `topologies`, kept as a
+   * scalar because `PipelineVerdict.resolvedTopology` and the ADR-0073 envelope
+   * are scalar display fields with live CLI/MCP readers. If omitted and no
+   * composition is declared, the pipeline auto-detects by analyzing the
+   * satellite's tech stack against the topology catalog.
+   *
+   * GT-688: never set independently of `topologies`. When a composition is
+   * present this is `topologies[0]`.
    */
   topology?: string;
+
+  /**
+   * GT-688 — the CONFIRMED topology composition. One entry per topology the
+   * consumer declared (`EvaluationContext.design.topologyConfirmedRefs`, or the
+   * single-element shorthand `topologyRef`).
+   *
+   * This is the field that reaches rule SELECTION: the pipeline hands it to
+   * `RulesetValidatorService.validate` as an applicability override, unioned
+   * with whatever `evolith.yaml` declares on disk. `topology` alone reaches
+   * only the display envelope and selects nothing.
+   */
+  topologies?: readonly string[];
 
   /**
    * Optional SDLC phase. If provided, the pipeline evaluates only

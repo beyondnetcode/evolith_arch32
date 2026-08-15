@@ -25,7 +25,7 @@ node .harness/scripts/ci/10-validate-contract-conformance.mjs --consumer src/rul
 | `gate-evidence` | 1.0.0 | `src/rulesets/schema/gate-evidence.schema.json` | Evidence attached to a gate decision. |
 | `output-envelope` | 1.0.0 | `src/rulesets/schema/output-envelope.schema.json` | The ADR-0073 transport envelope every surface returns. |
 | `evaluation-context` | 1.2.0 | `src/rulesets/schema/evaluation-context.schema.json` | The evaluate REQUEST — what a consumer sends to `POST /api/v1/evaluate`. |
-| `evaluation-result` | 1.1.0 | `src/rulesets/schema/evaluation-result.schema.json` | The evaluate RESPONSE — the canonical `EvaluationResult` carried in `data`. |
+| `evaluation-result` | 2.0.0 | `src/rulesets/schema/evaluation-result.schema.json` | The evaluate RESPONSE — the canonical `EvaluationResult` carried in `data`. |
 
 The last two were added for GT-573. Before that, the flagship integration's request and response had no pinned schema on either side of the wire, which is how the Core could answer with a different envelope than the consumer bound and leave both CIs green.
 

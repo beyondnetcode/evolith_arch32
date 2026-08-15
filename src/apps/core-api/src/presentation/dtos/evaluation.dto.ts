@@ -251,7 +251,11 @@ export class EvaluationContextDto {
   @IsObject()
   architecture?: Readonly<Record<string, unknown>>;
 
-  @ApiPropertyOptional({ description: 'Declared design context' })
+  @ApiPropertyOptional({
+    description:
+      'Declared design context (ADR-0104). design.topologyConfirmedRefs: string[] is the confirmed topology composition (GT-688).',
+    example: { topologyConfirmedRefs: ['modular-monolith', 'agentic-ai'] },
+  })
   @IsOptional()
   @IsObject()
   design?: Readonly<Record<string, unknown>>;

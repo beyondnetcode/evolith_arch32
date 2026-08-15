@@ -9,7 +9,7 @@
 
 import type { EvaluationFacts, SatelliteManifest } from '../domain/satellite-manifest';
 import { toLegacyPhaseId } from '../domain/sdlc/phase-id';
-import type { EvaluationContext } from './contracts';
+import { confirmedTopologies, type EvaluationContext } from './contracts';
 import type {
   IWorkspaceReferenceResolver,
   ResolvedWorkspace,
@@ -20,10 +20,20 @@ export function manifestFromWorkspace(
   ctx: EvaluationContext,
   workspace: ResolvedWorkspace,
 ): SatelliteManifest {
+  // GT-688: the composition is the unit of truth; the scalar is its first
+  // member. Setting BOTH is deliberate — `topology` feeds the scalar display
+  // envelope (`resolvedTopology`, read by CLI validate.command.ts:578 and MCP
+  // validate.tool.ts:144), `topologies` feeds rule SELECTION. Because
+  // `topology` is now always set whenever the consumer declared anything, the
+  // regex fallback at satellite-evaluation-pipeline.service.ts:354 — which
+  // returns the literal string "confirmed" on a canonical satellite manifest —
+  // is no longer reachable from a context that declares a composition.
+  const topologies = confirmedTopologies(ctx);
   return {
     satellitePath: workspace.satellitePath,
     corePath: workspace.corePath,
-    topology: ctx.topologyRef,
+    topology: topologies[0],
+    ...(topologies.length ? { topologies } : {}),
     // Canonical phaseId; the pipeline normalizes to the legacy f1..f5 keying.
     phase: ctx.phaseId,
     // GT-380 L1c: project the declared facts so they reach the OPA input.
@@ -112,6 +122,13 @@ export function evaluationFactsFromContext(ctx: EvaluationContext): EvaluationFa
     // `probabilistic-evidence-admissibility.rego` an empty corpus and go green
     // having refused nothing — the exact false green this row exists to prevent.
     !!ctx.qualitySignals?.length ||
+    // GT-688: a CONFIRMED COMPOSITION is a declared fact and joins the trigger,
+    // like GT-584's qualityEvidence and unlike GT-586's requester. The
+    // difference is the same one: a requester only labels a verdict, whereas the
+    // composition is what `topology-composition.rego` discriminates on. A
+    // design-only context that projected no facts would hand that policy an
+    // absent `input.context` and go green having judged nothing.
+    !!ctx.design?.topologyConfirmedRefs?.length ||
     hasKeys(ctx.sdlcConfig) ||
     hasKeys(ctx.customConstraints);
   if (!declared) return undefined;
@@ -134,7 +151,17 @@ export function evaluationFactsFromContext(ctx: EvaluationContext): EvaluationFa
   if (ctx.initiative) context.initiative = ctx.initiative;
   if (ctx.phaseId) context.phaseId = ctx.phaseId;
   if (ctx.gateId) context.gateId = ctx.gateId;
+  // GT-688 — BOTH arities reach `input.context`. `topologyRef` is preserved
+  // byte-for-byte for every pre-GT-688 caller (a scalar-only context still
+  // yields exactly `{topologyRef}` plus its single-element composition);
+  // `topologyConfirmedRefs` is the composition a policy discriminates on.
+  // `facts.context` is an open record on both the Zod schema
+  // (satellite-manifest.schema.ts) and the JSON schema
+  // (satellite-manifest.schema.json "context".additionalProperties: true), so
+  // this needs no schema change and nothing strips it.
+  const declaredTopologies = confirmedTopologies(ctx);
   if (ctx.topologyRef) context.topologyRef = ctx.topologyRef;
+  if (declaredTopologies.length) context.topologyConfirmedRefs = declaredTopologies;
   if (ctx.executionMode) context.executionMode = ctx.executionMode;
   // GT-586: attribution reaches the policy input so a rule can discriminate on WHO
   // asked (human vs agent) and on WHICH revision. Deliberately NOT part of the

@@ -25,7 +25,7 @@ node .harness/scripts/ci/10-validate-contract-conformance.mjs --consumer src/rul
 | `gate-evidence` | 1.0.0 | `src/rulesets/schema/gate-evidence.schema.json` | La evidencia adjunta a una decisión de gate. |
 | `output-envelope` | 1.0.0 | `src/rulesets/schema/output-envelope.schema.json` | El sobre de transporte ADR-0073 que devuelve toda superficie. |
 | `evaluation-context` | 1.2.0 | `src/rulesets/schema/evaluation-context.schema.json` | La PETICIÓN de evaluación — lo que un consumidor envía a `POST /api/v1/evaluate`. |
-| `evaluation-result` | 1.1.0 | `src/rulesets/schema/evaluation-result.schema.json` | La RESPUESTA de evaluación — el `EvaluationResult` canónico que viaja en `data`. |
+| `evaluation-result` | 2.0.0 | `src/rulesets/schema/evaluation-result.schema.json` | La RESPUESTA de evaluación — el `EvaluationResult` canónico que viaja en `data`. |
 
 Los dos últimos se añadieron por GT-573. Hasta entonces la petición y la respuesta de la integración insignia no tenían schema fijado en ningún lado del cable, y por eso el Core podía responder con un sobre distinto del que el consumidor enlazaba dejando ambos CI en verde.
 

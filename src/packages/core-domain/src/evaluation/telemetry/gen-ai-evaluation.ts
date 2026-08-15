@@ -122,14 +122,17 @@ function draftsFor(result: EvaluationResult): EventDraft[] {
     const verdicts = r.checkpoint.map((c) => c.verdict);
     drafts.push({ kind: 'checkpoint', verdict: worstVerdict(verdicts), score: passRatio(verdicts) });
   }
+  // GT-688 — `topology` is an ARRAY now, so it folds like its four sibling
+  // arrays instead of emitting one draft that under-reports the composition.
+  if (r.topology?.length) {
+    const verdicts = r.topology.map((t) => t.verdict);
+    drafts.push({ kind: 'topology', verdict: worstVerdict(verdicts), score: passRatio(verdicts) });
+  }
   if (r.architecture) {
     drafts.push({ kind: 'architecture', verdict: r.architecture.verdict });
   }
   if (r.blueprint) {
     drafts.push({ kind: 'blueprint', verdict: r.blueprint.verdict });
-  }
-  if (r.topology) {
-    drafts.push({ kind: 'topology', verdict: r.topology.verdict });
   }
   if (r.deployment) {
     drafts.push({ kind: 'deployment', verdict: r.deployment.verdict });

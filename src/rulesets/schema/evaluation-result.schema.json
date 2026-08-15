@@ -20,7 +20,7 @@
         "evidence": { "type": "array", "items": { "$ref": "#/definitions/evidenceResult" } },
         "architecture": { "$ref": "#/definitions/architectureResult" },
         "blueprint": { "$ref": "#/definitions/blueprintResult" },
-        "topology": { "$ref": "#/definitions/topologyResult" },
+        "topology": { "type": "array", "items": { "$ref": "#/definitions/topologyResult" } },
         "checkpoint": { "type": "array", "items": { "$ref": "#/definitions/checkpointResult" } },
         "deployment": { "$ref": "#/definitions/deploymentResult" },
         "compliance": { "$ref": "#/definitions/complianceResult" },

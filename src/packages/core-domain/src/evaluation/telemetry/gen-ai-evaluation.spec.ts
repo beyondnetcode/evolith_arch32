@@ -175,3 +175,52 @@ describe('the pinned manifest covers what is emitted', () => {
     }
   });
 });
+
+/**
+ * GT-688 — `results.topology` became an ARRAY, so it must FOLD like its four
+ * sibling arrays (gate/artifact/evidence/checkpoint) instead of emitting one
+ * draft that describes whichever entry happened to be looked at. Nothing
+ * asserted the draft count before, which is why the singular reader survived.
+ */
+describe('GT-688 · a topology composition folds into ONE draft over N verdicts', () => {
+  const entry = (topologyRef: string, verdict: Verdict) => ({
+    topologyRef,
+    verdict,
+    conformant: verdict === Verdict.PASS,
+    gaps: [],
+    recommendations: [],
+  });
+
+  it('emits exactly one topology draft, at the WORST verdict, scored by pass ratio', () => {
+    const events = toGenAiEvaluationEvents(
+      result({
+        results: {
+          topology: [
+            entry('modular-monolith', Verdict.PASS),
+            entry('agentic-ai', Verdict.FAIL),
+            entry('event-driven', Verdict.PASS),
+          ],
+        },
+      } as Partial<EvaluationResult>),
+    );
+
+    const topologyEvents = events.filter((e) => e.attributes['evolith.evaluation.kind'] === 'topology');
+    expect(topologyEvents).toHaveLength(1);
+    expect(topologyEvents[0].attributes['gen_ai.evaluation.score.label']).toBe(Verdict.FAIL);
+    expect(topologyEvents[0].attributes['gen_ai.evaluation.score.value']).toBeCloseTo(2 / 3, 10);
+  });
+
+  it('a single-topology composition still emits one draft at that verdict', () => {
+    const events = toGenAiEvaluationEvents(
+      result({ results: { topology: [entry('modular-monolith', Verdict.PASS)] } } as Partial<EvaluationResult>),
+    );
+    const topologyEvents = events.filter((e) => e.attributes['evolith.evaluation.kind'] === 'topology');
+    expect(topologyEvents).toHaveLength(1);
+    expect(topologyEvents[0].attributes['gen_ai.evaluation.score.label']).toBe(Verdict.PASS);
+  });
+
+  it('emits no topology draft when no topology was evaluated', () => {
+    const events = toGenAiEvaluationEvents(result({ results: {} }));
+    expect(events.filter((e) => e.attributes['evolith.evaluation.kind'] === 'topology')).toHaveLength(0);
+  });
+});

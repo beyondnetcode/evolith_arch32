@@ -17,6 +17,12 @@
  */
 
 import { Verdict } from '../domain/verdict/verdict';
+import {
+  confirmedTopologies,
+  progressiveAxisMembers,
+  topologyRefIsShadowed,
+} from './contracts/evaluation-context';
+import type { TopologyEvaluationResult } from './contracts/evaluation-result';
 import { CANONICAL_PHASE_IDS, normalizePhaseId } from '../domain/sdlc/phase-id';
 import type { PhaseId } from '../domain/sdlc/phase-id';
 import { renderChain, summarizeRepoFacts } from './contracts/repo-facts';
@@ -351,7 +357,7 @@ export function createCheckpointKindEvaluator(
   };
 }
 
-/** topology kind — validates ctx.topologyRef against the Core catalog → TopologyEvaluationResult. */
+/** topology kind — validates the CONFIRMED COMPOSITION against the Core catalog. */
 export function createTopologyKindEvaluator(
   topologyCatalog: TopologyCatalogService,
   resolveCorePath: () => string,
@@ -360,34 +366,107 @@ export function createTopologyKindEvaluator(
     kind: 'topology',
     evaluate: async (ctx, ws) => {
       const corePath = ws.corePath ?? resolveCorePath();
-      if (!ctx.topologyRef) {
+      // GT-688: the composition is the unit. `ctx.topologyRef` survives as a
+      // single-element shorthand inside `confirmedTopologies`.
+      const confirmed = confirmedTopologies(ctx);
+      if (confirmed.length === 0) {
         return { verdict: Verdict.SKIP, results: {} };
       }
-      const found = await topologyCatalog.get(corePath, ctx.topologyRef);
-      const conformant = !!found;
-      const verdict = conformant ? Verdict.PASS : Verdict.FAIL;
-      const gaps = conformant
-        ? []
-        : [{
-            id: 'TOPOLOGY_UNKNOWN',
-            requirementRef: ctx.topologyRef,
-            severity: 'error' as const,
-            message: `Topology "${ctx.topologyRef}" not found in the Core catalog.`,
-          }];
-      const recommendations = conformant
-        ? [{ id: 'topology', kind: 'topology' as const, message: `Topology "${ctx.topologyRef}" is applicable.` }]
-        : [{
-            id: 'topology-options',
-            kind: 'topology' as const,
-            message: 'Pick a topology from the Core catalog.',
-            references: (await topologyCatalog.list(corePath)).map((m) => m.metadata.id),
-          }];
-      return {
-        verdict,
-        results: { topology: { topologyRef: ctx.topologyRef, verdict, conformant, gaps, recommendations } },
-        gaps,
-        recommendations,
-      };
+
+      // GT-688 — the progressive axis is EXCLUSIVE. `notApplicableReason`
+      // (rule-applicability.ts) is an OR over declared topologies, so a
+      // composition naming two progressive members would put MM-R01 ("Single
+      // Deployment Unit") and MS-R01 in scope on ONE repository — both blocking,
+      // both unsatisfiable.
+      //
+      // The ENFORCING copy of this refusal lives in
+      // `ruleset-validator.service.ts`, beside the union it refers to, because a
+      // refusal raised only here is bypassed by any caller that does not request
+      // the `topology` kind — and `evaluate` requests `['gate','compliance']`.
+      // What follows is the REPORTING copy: the same verdict, expressed in the
+      // per-topology array a consumer of this kind reads.
+      const progressive = progressiveAxisMembers(confirmed);
+      const conflicted = new Set(progressive.length > 1 ? progressive : []);
+      const gaps: Gap[] = [];
+      const entries: TopologyEvaluationResult[] = [];
+      const recommendations: {
+        id: string;
+        kind: 'topology';
+        message: string;
+        references?: string[];
+      }[] = [];
+
+      const conflictGap: Gap | undefined = conflicted.size
+        ? {
+            id: 'TOPOLOGY_COMPOSITION_CONFLICT',
+            requirementRef: progressive.join('+'),
+            severity: 'error',
+            message:
+              `A composition may confirm at most ONE progressive-axis topology; got ${progressive.join(', ')}. ` +
+              `These are mutually exclusive on one repository (single deployment unit vs independently deployed services).`,
+          }
+        : undefined;
+      if (conflictGap) gaps.push(conflictGap);
+      if (topologyRefIsShadowed(ctx)) {
+        recommendations.push({
+          id: 'topology-scalar-shadowed',
+          kind: 'topology',
+          message:
+            `topologyRef "${ctx.topologyRef}" was ignored: design.topologyConfirmedRefs ` +
+            `[${confirmed.join(', ')}] takes precedence. Add it to the composition or drop the scalar.`,
+        });
+      }
+
+      const catalogue = await topologyCatalog.list(corePath);
+      for (const ref of confirmed) {
+        const found = await topologyCatalog.get(corePath, ref);
+        const inCatalog = !!found;
+        // GT-688 — `conformant` answers "is confirming THIS topology admissible
+        // for this repository", not "does the catalog list it". A member of a
+        // contradictory progressive pair is in the catalog and is still not
+        // admissible, and a consumer that folds the array
+        // (`results.topology.every(t => t.conformant)`) has to see the refusal;
+        // leaving these entries PASS/true contradicted the very gap the run
+        // raises. The conflict gap is carried on EVERY conflicting entry so the
+        // reason travels with the entry rather than only in the flat gap list.
+        const conflicting = conflicted.has(ref);
+        const conformant = inCatalog && !conflicting;
+        const entryGaps: Gap[] = [
+          ...(inCatalog
+            ? []
+            : [{
+                id: 'TOPOLOGY_UNKNOWN',
+                requirementRef: ref,
+                severity: 'error' as const,
+                message: `Topology "${ref}" not found in the Core catalog.`,
+              }]),
+          ...(conflicting && conflictGap ? [conflictGap] : []),
+        ];
+        // Only the catalog gap is promoted to the run-level list here; the
+        // conflict gap was pushed once above and must not be duplicated per entry.
+        if (!inCatalog) gaps.push(entryGaps[0]);
+        const entryRecs = conformant
+          ? [{ id: `topology-${ref}`, kind: 'topology' as const, message: `Topology "${ref}" is applicable.` }]
+          : [{
+              id: `topology-options-${ref}`,
+              kind: 'topology' as const,
+              message: conflicting
+                ? 'Confirm exactly ONE progressive-axis topology; compose the rest on other axes.'
+                : 'Pick a topology from the Core catalog.',
+              references: catalogue.map((m) => m.metadata.id),
+            }];
+        recommendations.push(...entryRecs);
+        entries.push({
+          topologyRef: ref,
+          verdict: conformant ? Verdict.PASS : Verdict.FAIL,
+          conformant,
+          gaps: entryGaps,
+          recommendations: entryRecs,
+        });
+      }
+
+      const verdict = gaps.length === 0 ? Verdict.PASS : Verdict.FAIL;
+      return { verdict, results: { topology: entries }, gaps, recommendations };
     },
   };
 }
@@ -535,13 +614,9 @@ export function createDesignKindEvaluator(
       if (!design) return { verdict: Verdict.SKIP, results: {} };
       const corePath = ws.corePath ?? resolveCorePath();
 
-      // Confirmed topology composition (mixed) — fall back to the single topologyRef.
-      const confirmed =
-        design.topologyConfirmedRefs && design.topologyConfirmedRefs.length > 0
-          ? [...design.topologyConfirmedRefs]
-          : ctx.topologyRef
-            ? [ctx.topologyRef]
-            : [];
+      // GT-688: the arity rule lives in ONE place now (`confirmedTopologies`).
+      // Behaviour is identical to the inline fallback this replaces, plus a de-dupe.
+      const confirmed = confirmedTopologies(ctx);
       const confirmedSet = new Set(confirmed);
 
       // Pre-resolve every referenced topology's designProfile once (stateless read).
@@ -686,13 +761,8 @@ export function createPhaseArtifactKindEvaluator(
       if (!phase) return { verdict: Verdict.SKIP, results: {} };
       const corePath = ws.corePath ?? resolveCorePath();
 
-      // Confirmed topology composition (mixed) — fall back to the single topologyRef.
-      const confirmed =
-        ctx.design?.topologyConfirmedRefs && ctx.design.topologyConfirmedRefs.length > 0
-          ? [...ctx.design.topologyConfirmedRefs]
-          : ctx.topologyRef
-            ? [ctx.topologyRef]
-            : [];
+      // GT-688: the arity rule lives in ONE place now (`confirmedTopologies`).
+      const confirmed = confirmedTopologies(ctx);
 
       // Pre-resolve each confirmed topology's phaseProfiles once (stateless read),
       // then hand the service a synchronous accessor.

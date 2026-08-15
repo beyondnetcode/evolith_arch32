@@ -3393,7 +3393,11 @@ export const CAPABILITY_OPERATIONS: readonly CapabilityOperation[] = [
         },
         "topologyRef": {
           "type": "string",
-          "description": "Topology reference/override"
+          "description": "Topology reference/override (single-element shorthand for design.topologyConfirmedRefs)"
+        },
+        "design": {
+          "type": "object",
+          "description": "Design facet (ADR-0104). Carries the confirmed topology composition as design.topologyConfirmedRefs: string[]. Same field and shape the REST EvaluationContextDto accepts (GT-688)."
         },
         "executionMode": {
           "type": "string",

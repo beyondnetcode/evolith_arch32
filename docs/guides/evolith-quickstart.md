@@ -1,68 +1,73 @@
-# Quickstart Guide: Evolith (Step by Step)
+# Quickstart
 
-This guide will help you install and run Evolith in **less than 5 minutes**, so you can start validating your code's architecture right away.
+> **Bilingual Navigation:** [Versión en Español](./evolith-quickstart.es.md)
 
----
+Three commands. No server to boot, no database, no cluster.
 
-## Step 1: Boot the Brain (Evolith Core API)
+## 1. Install
 
-The Core API is the central server containing your enterprise architecture rules. You must boot it up first so that clients can query it.
-
-You have two options to start it on your local machine:
-
-### Option A: Via Docker Compose (Fastest)
-Ideal for developers. This boots up the API and the minimum required PostgreSQL database.
-```bash
-docker-compose -f product/infra/docker-compose.yml up -d postgres
-```
-
-### Option B: Via Kubernetes / Helm (Full Environment)
-Ideal for production simulations or architects. This spins up the local cluster, the database, the API Gateway, and the Core API.
-```bash
-./.harness/scripts/run-core-local.sh
-```
-
-Once finished, the server will be listening on `http://localhost:30080`. You can view the generated API documentation at `http://localhost:30080/api/docs`.
-
----
-
-## Step 2: Install the Client (Evolith CLI)
-
-The CLI is the tool developers will use in their day-to-day workflow.
-
-1. Install the package globally using npm:
 ```bash
 npm install -g @beyondnet/evolith-cli
 ```
 
-2. Configure the server URL the CLI should point to (the one we booted in Step 1). You can do this by exporting an environment variable:
-```bash
-export EVOLITH_CORE_URL="http://localhost:30080/api/v1"
-```
+The package installs two equivalent bins: `evolith` (the documented name) and `evolith-cli`.
+Requires Node 20.
 
----
+## 2. Initialize a satellite
 
-## Step 3: Your First Validation
-
-Navigate to the root folder of any software project (satellite) you want to validate and run the validation command.
+A *satellite* is any repository governed by an Evolith Core. Initializing writes an
+`evolith.yaml` into the current directory and nothing else.
 
 ```bash
-cd my-backend-project
-evolith validate
+evolith init --name my-sat --yes
 ```
 
-**What happens behind the scenes?**
-The CLI will take the current state of your code, connect to the central Core API, and evaluate your project against the official OPA rules and ADRs of the company. In seconds, it will return a report indicating whether you comply with the standard or if there are any architecture violations.
+`--yes` runs without prompts, which is also implied by a non-TTY stdin or `--format json`.
+To scaffold into a new directory instead, pass it positionally: `evolith init my-sat --yes`.
+`--dry-run` writes nothing.
 
----
+## 3. Validate
 
-## Step 4: (Optional) Connect your AI Agent
-
-Evolith isn't just for humans. You can connect your AI-powered code editor (Cursor, Claude Desktop, etc.) so it "understands" your architecture.
-
-To start the MCP server, simply run:
 ```bash
-evolith mcp start
+evolith validate --engine opa
 ```
 
-Then, in your Cursor or Claude Desktop settings, add this local MCP server. From that moment on, your AI Agent will know which patterns to use, which libraries are forbidden, and how it should structure the code before writing a single line.
+Real output from `@beyondnet/evolith-cli@1.3.0` against a freshly initialized satellite, in a
+container with nothing but Node:
+
+```
+Rules: 133 checked / 26 skipped / 0 errored / 159 total
+37 blocking issue(s)
+exit code 2
+```
+
+## What the numbers mean
+
+**Expect findings on the first run.** A freshly initialized satellite is a baseline, not a
+pass: many rules assume a fuller repository than a phase-0 project has.
+
+The number that matters is **skipped**. Those 26 rules were not evaluated, so their result is
+*unknown* -- not *passed*. Nine of the 37 blocking issues are exactly that: rules the engine
+could not decide, reported as failures rather than rounded up into the green. Most linters do
+not draw this distinction, which is why their coverage and their compliance look identical.
+
+Exit codes are a taxonomy, not a boolean:
+
+| Code | Meaning |
+|:---:|---|
+| `0` | passed |
+| `1` | the tool failed -- no verdict was produced |
+| `2` | the gate blocked -- a real verdict, and it says no |
+| `3` | invalid invocation -- nothing was evaluated |
+
+`1` and `3` are **not** weaker forms of `2`. They mean your repository was never examined.
+
+## Next steps
+
+- Narrow what runs: `evolith rulesets` lists the packs, and `--select <ref>` evaluates only
+  the ones you name. Naming nothing evaluates the whole corpus this Core carries, reported as
+  `selection.source: core-default`.
+- Put it in CI: see [Use it as a PR gate](../../README.md#use-it-as-a-pr-gate).
+- Serve it to an AI agent: `npx -y @beyondnet/evolith-mcp` over stdio.
+- Run the Core API yourself -- only needed for the REST surface and multi-repository
+  scenarios, never for the CLI: [Self-hosting the Core API](./self-hosting-core-api.md).

@@ -46,3 +46,23 @@ violations contains {"id": "AAI-R09", "severity": "MUST", "title": "Satellite Cr
 	not input.satellite.agenticAi.hasCredentialLifecycle
 	message := "agent.config.json must declare credentialLifecycle with positive delegation TTL, rotation cadence, and bounded incident revocation (AAI-R09)."
 }
+
+# GT-683 AC6 — AAI-R10, the rule that reads the code the descriptor points at.
+#
+# The other nine compare fields. This one fires when the descriptor CLAIMS a
+# restricted boundary and the declared `implementationRoots` contain a raw socket
+# or a child process inheriting the ambient environment — the literal inverse of
+# what AAI-R02 and AAI-R05 ask for.
+#
+# OPA cannot read a directory, so `opa-input-builder` performs the scan and hands
+# the result across as one boolean, exactly as it does for the other nine. When the
+# descriptor makes no restriction claim the builder reports `true` and this stays
+# silent: no claim, no contradiction, and AAI-R02 already owns that failure.
+#
+# ADVISORY (`blocking: false`) and the reason is our own honesty: this repository's
+# `agent.config.json` marks AAI-R02 `partial` for process access, so shipping this
+# blocking would turn our own CI red on day one and teach everyone to waive it.
+violations contains {"id": "AAI-R10", "severity": "SHOULD", "title": "Observed Sandbox Boundary", "blocking": false, "message": message} if {
+	input.satellite.agenticAi.hasNoSandboxBoundaryBreach == false
+	message := "declared implementationRoots contain an outbound socket or an environment-inheriting child process while agent.config.json claims a restricted sandbox (AAI-R10)."
+}

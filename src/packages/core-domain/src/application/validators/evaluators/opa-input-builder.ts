@@ -1,7 +1,11 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../domain/interfaces';
 import { WorkspaceEvaluationContext } from './evaluator.interface';
-import { declaredDirectoryIsPopulated, declaredFileHasContent } from './handlers/architecture/shared';
+import {
+  declaredDirectoryIsPopulated,
+  declaredFileHasContent,
+  findDeclaredBoundaryBreaches,
+} from './handlers/architecture/shared';
 
 export class OpaInputBuilder {
   constructor(private readonly fs: IFileSystem) {}
@@ -179,8 +183,28 @@ export class OpaInputBuilder {
       hasTrustedContextPolicy: contextPolicy?.untrustedContent === 'data-only' && contextPolicy?.provenanceRequired === true && contextPolicy?.toolOutputSchemaValidation === true,
       hasAccountableActions: toolPolicy?.capabilityDelegation === 'scoped-and-expiring' && audit?.appendOnly === true && audit?.correlationId === 'required',
       hasOperationalBudgets: this.isPositiveNumber(budgets?.maxPromptTokens) && this.isPositiveNumber(budgets?.maxCompletionTokens) && this.isPositiveNumber(budgets?.maxContextWindowTokens) && this.isPositiveNumber(concurrency?.maxInFlight) && this.isPositiveNumber(concurrency?.perToolMaxInFlight) && runbooksExists,
+      // GT-683 AC6 — the OPA half of AAI-R10. OPA cannot read a directory, so the
+      // scan happens here and crosses as one boolean, exactly like the other nine.
+      //
+      // `true` when the descriptor makes NO restriction claim: no claim, no
+      // contradiction, and AAI-R02 already owns that failure. Reporting `false`
+      // there would double-count one defect as two.
+      hasNoSandboxBoundaryBreach: await this.hasNoSandboxBoundaryBreach(root, sandbox, implementationRoots),
       hasCredentialLifecycle: this.isPositiveNumber(credentials?.delegationMaxTtlSeconds) && this.isPositiveNumber(credentials?.rotationCadenceDays) && (revocation?.onIncident === 'immediate' || revocation?.onIncident === 'scheduled') && this.isPositiveNumber(revocation?.maxPropagationSeconds),
     };
+  }
+
+  /** GT-683 AC6 — see the `hasNoSandboxBoundaryBreach` field above. */
+  private async hasNoSandboxBoundaryBreach(
+    root: string,
+    sandbox: Record<string, unknown> | null | undefined,
+    implementationRoots: readonly string[],
+  ): Promise<boolean> {
+    const claimsRestriction =
+      this.isRestrictedAccess(sandbox?.network) || this.isRestrictedAccess(sandbox?.process);
+    if (!claimsRestriction || implementationRoots.length === 0) return true;
+    const breaches = await findDeclaredBoundaryBreaches(this.fs, root, implementationRoots);
+    return breaches.length === 0;
   }
 
   private async readServerlessConfiguration(root: string): Promise<Record<string, boolean>> {

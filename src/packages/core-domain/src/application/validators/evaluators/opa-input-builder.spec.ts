@@ -205,3 +205,54 @@ describe('the Core observes the files it can see · GT-694', () => {
     expect(input.satellite.files).toEqual([]);
   });
 });
+
+/**
+ * GT-683 AC6 — the OPA path must reach the same verdict as the native one for
+ * AAI-R10, or `ADR-0041` parity is broken by the very fix that added the rule.
+ *
+ * OPA cannot read a directory, so the scan happens in the builder and crosses as
+ * one boolean. These cases pin the two halves the rego cannot express: that a
+ * descriptor making NO restriction claim reports `true` (no claim, no
+ * contradiction — AAI-R02 owns that failure and must not be double-counted), and
+ * that a claim with a breach in the declared roots reports `false`.
+ */
+describe('AAI-R10 crosses to OPA as one boolean · GT-683 AC6', () => {
+  const config = (over: Record<string, unknown> = {}) => ({
+    agent: { id: 'a', capabilities: ['x'] },
+    sandbox: { mode: 'isolated', network: 'allowlist', process: 'allowlist' },
+    promptSources: ['prompts'],
+    implementationRoots: ['src'],
+    ...over,
+  });
+
+  const buildWith = async (cfg: Record<string, unknown>, files: Record<string, string> = {}) => {
+    const ROOT = '/test/satellite';
+    const fs = mockFs({
+      exists: async (p: string) => p === ROOT || p === `${ROOT}/src` || p === `${ROOT}/agent.config.json` || p in files,
+      readJson: async () => cfg,
+      readFile: async (p: string) => files[p] ?? '',
+      readdirNames: async (p: string) => (p === `${ROOT}/src` ? Object.keys(files).map((f) => f.split('/').pop()!) : []),
+      stat: async (p: string) => ({ isDirectory: () => p === `${ROOT}/src`, isFile: () => p !== `${ROOT}/src` }) as any,
+    });
+    return (await new OpaInputBuilder(fs).build(makeContext())) as any;
+  };
+
+  it('reports TRUE when the descriptor claims no restricted boundary', async () => {
+    const input = await buildWith(config({ sandbox: { mode: 'shared', network: 'open', process: 'open' } }));
+    // No claim, no contradiction. AAI-R02 owns that failure; counting it twice
+    // would make one defect look like two.
+    expect(input.satellite.agenticAi.hasNoSandboxBoundaryBreach).toBe(true);
+  });
+
+  it('reports TRUE when a claim is made and the declared roots are clean', async () => {
+    const input = await buildWith(config(), { '/test/satellite/src/ok.ts': 'export const a = 1;\n' });
+    expect(input.satellite.agenticAi.hasNoSandboxBoundaryBreach).toBe(true);
+  });
+
+  it('reports FALSE when a claim is made and a declared root contradicts it', async () => {
+    const input = await buildWith(config(), {
+      '/test/satellite/src/escape.ts': "import * as net from 'net';\nnet.connect(443, 'attacker.example.com');\n",
+    });
+    expect(input.satellite.agenticAi.hasNoSandboxBoundaryBreach).toBe(false);
+  });
+});

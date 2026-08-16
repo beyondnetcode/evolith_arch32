@@ -26,7 +26,8 @@
       "description": "An Agentic AI satellite MUST provide agent.config.json with a stable agent.id and a non-empty capabilities array.",
       "rationale": "A governed agent cannot be reviewed, authorized, or audited when its identity and intended capabilities are implicit.",
       "validationQuery": "Read agent.config.json and require agent.id plus at least one declared capability.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "AAI-R02",
@@ -36,7 +37,8 @@
       "description": "agent.config.json MUST declare an isolated sandbox and set both network and process access to deny or allowlist.",
       "rationale": "An agent requires a least-privilege execution boundary before it can invoke tools or handle untrusted content.",
       "validationQuery": "Require sandbox.mode=isolated and sandbox.network and sandbox.process in {deny, allowlist}.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "AAI-R03",
@@ -46,7 +48,8 @@
       "description": "agent.config.json MUST declare non-empty promptSources and implementationRoots that do not overlap.",
       "rationale": "Keeping prompts separate from deterministic implementation logic makes prompt changes reviewable and prevents hidden policy from leaking into application code.",
       "validationQuery": "Require non-empty promptSources and implementationRoots arrays; no configured path may be an ancestor or descendant of a path in the other array.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "observed"
     },
     {
       "id": "AAI-R04",
@@ -56,7 +59,8 @@
       "description": "agent.config.json MUST set toolPolicy.mutative to approval-required.",
       "rationale": "Mutative actions must remain behind an explicit human or policy-governed approval boundary.",
       "validationQuery": "Require toolPolicy.mutative=approval-required.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "AAI-R05",
@@ -66,7 +70,8 @@
       "description": "agent.config.json MUST require ephemeral execution and positive duration, memory, and CPU limits in sandbox.",
       "rationale": "Isolation without bounded lifetime and resources still permits persistence, denial of service, and uncontrolled cost.",
       "validationQuery": "Require sandbox.ephemeral=true plus positive maxDurationSeconds, maxMemoryMb, and maxCpuCores values.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "AAI-R06",
@@ -76,7 +81,8 @@
       "description": "agent.config.json MUST declare contextPolicy.untrustedContent=data-only, provenanceRequired=true, and toolOutputSchemaValidation=true.",
       "rationale": "Retrieved context and tool output can be attacker-controlled and must not silently become instructions or authority.",
       "validationQuery": "Require the three contextPolicy fields and their safe values.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "AAI-R07",
@@ -86,7 +92,8 @@
       "description": "agent.config.json MUST require scoped-and-expiring capability delegation and append-only action evidence with correlation IDs.",
       "rationale": "An agent action must be attributable, revocable, and reconstructible without relying on the prompt transcript.",
       "validationQuery": "Require toolPolicy.capabilityDelegation=scoped-and-expiring, audit.appendOnly=true, and audit.correlationId=required.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "AAI-R08",
@@ -96,7 +103,8 @@
       "description": "agent.config.json MUST declare operationalBudgets with positive maxPromptTokens, maxCompletionTokens, maxContextWindowTokens, an mcpToolConcurrency object with positive maxInFlight and perToolMaxInFlight, and a non-empty runbooksPath that points at a readable runbook document.",
       "rationale": "Without quantitative ceilings the topology cannot reason about token overflow, MCP tool stampedes, or hung agents, and operators have no documented recovery path to point to during an incident.",
       "validationQuery": "Require operationalBudgets.{maxPromptTokens,maxCompletionTokens,maxContextWindowTokens} > 0, operationalBudgets.mcpToolConcurrency.{maxInFlight,perToolMaxInFlight} > 0, and operationalBudgets.runbooksPath naming a file that exists on disk.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "observed"
     },
     {
       "id": "AAI-R09",
@@ -106,7 +114,8 @@
       "description": "agent.config.json MUST declare credentialLifecycle with a positive delegationMaxTtlSeconds, a positive rotationCadenceDays, revocation.onIncident in {immediate, scheduled}, and a positive revocation.maxPropagationSeconds.",
       "rationale": "Delegated agent credentials must rotate on a cadence and be revocable within a bounded window so a compromised satellite cannot retain authority indefinitely.",
       "validationQuery": "Require credentialLifecycle.delegationMaxTtlSeconds > 0, credentialLifecycle.rotationCadenceDays > 0, credentialLifecycle.revocation.onIncident in {immediate, scheduled}, and credentialLifecycle.revocation.maxPropagationSeconds > 0.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "AAI-R10",
@@ -116,7 +125,8 @@
       "description": "When agent.config.json declares restricted network or process access, the declared implementationRoots MUST NOT contain a raw outbound socket or a child process that inherits the ambient environment.",
       "rationale": "AAI-R02 asks the descriptor to DECLARE a boundary and is satisfied by the declaration alone, which is what its own text says. This rule is the other half: it reads the code the descriptor points at and reports a contradiction between what a satellite claims and what it does. It cannot prove isolation -- no static read can -- but it can prove a claim false, and that is the asymmetry worth enforcing.",
       "validationQuery": "When sandbox.network or sandbox.process is deny/allowlist, scan implementationRoots for raw socket creation (net.connect, net.createConnection, tls.connect, dgram.createSocket) and for child_process spawns inheriting process.env; report file and line.",
-      "blocking": false
+      "blocking": false,
+      "assurance": "observed"
     }
   ]
 }

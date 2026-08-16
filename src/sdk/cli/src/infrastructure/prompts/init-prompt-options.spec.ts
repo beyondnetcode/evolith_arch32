@@ -75,9 +75,9 @@ describe('validateProjectName', () => {
     expect(validateProjectName('a')).toBeUndefined();
   });
 
-  it('returns Spanish error messages', () => {
-    expect(validateProjectName('')).toContain('Por favor ingresa');
-    expect(validateProjectName('a b')).toContain('espacios');
-    expect(validateProjectName('1x')).toContain('letra');
+  it('returns English error messages', () => {
+    expect(validateProjectName('')).toContain('Please enter');
+    expect(validateProjectName('a b')).toContain('must not contain spaces');
+    expect(validateProjectName('1x')).toContain('must start with a letter');
   });
 });

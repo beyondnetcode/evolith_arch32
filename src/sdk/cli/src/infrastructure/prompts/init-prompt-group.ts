@@ -13,7 +13,7 @@ export async function runInitPromptGroup(
   const selection = await p.group(
     {
       projectName: () => p.text({
-        message: 'Nombre del proyecto:',
+        message: 'Project name:',
         placeholder: 'my-satellite-repo',
         validate: validateProjectName,
       }),
@@ -21,7 +21,7 @@ export async function runInitPromptGroup(
       runtime: () => {
         const runtimes = catalog.loadRuntimeCatalog();
         return p.select({
-          message: 'Selecciona el runtime principal:',
+          message: 'Select the primary runtime:',
           options: runtimes.map((r) => ({ value: r.id, label: `${r.name} (${r.defaultVersion})`, hint: r.language })),
           initialValue: 'nodejs',
         });
@@ -30,7 +30,7 @@ export async function runInitPromptGroup(
       monorepo: () => {
         const monorepos = catalog.getMonorepoOptions();
         return p.select({
-          message: 'Selecciona la estrategia de monorepo:',
+          message: 'Select the monorepo strategy:',
           options: monorepos.map((m) => ({ value: m.id, label: m.name, hint: m.description })),
           initialValue: 'none',
         });
@@ -39,7 +39,7 @@ export async function runInitPromptGroup(
       architecture: () => {
         const architectures = catalog.getArchitecturePatterns();
         return p.select({
-          message: 'Selecciona el patrón arquitectónico:',
+          message: 'Select the architecture pattern:',
           options: architectures.map((a) => ({ value: a.id, label: a.name, hint: a.description })),
           initialValue: 'clean',
         });
@@ -50,7 +50,7 @@ export async function runInitPromptGroup(
         const runtime = runtimes.find((r) => r.id === results.runtime);
         const databases = runtime?.databases || [];
         return p.select({
-          message: 'Selecciona el tipo de base de datos:',
+          message: 'Select the database type:',
           options: databases.map((db) => ({ value: db.id, label: db.name, hint: db.orm || db.type || '' })),
           initialValue: catalog.getDefaultDatabase(results.runtime ?? ''),
         });
@@ -59,21 +59,21 @@ export async function runInitPromptGroup(
       apiProtocol: () => {
         const protocols = catalog.getApiProtocols();
         return p.select({
-          message: 'Selecciona el protocolo de API:',
+          message: 'Select the API protocol:',
           options: protocols.map((pr) => ({ value: pr.id, label: pr.name, hint: pr.description })),
           initialValue: 'rest',
         });
       },
 
-      ciCd: () => p.select({ message: 'Selecciona la plataforma de CI/CD:', options: CI_CD_OPTIONS, initialValue: 'github' }),
-      observability: () => p.select({ message: 'Selecciona el nivel de observabilidad:', options: OBSERVABILITY_OPTIONS, initialValue: 'otel' }),
-      features: () => p.multiselect({ message: '¿Qué características base quieres incluir?', options: FEATURE_OPTIONS, required: false }),
-      agents: () => p.multiselect({ message: '¿Qué agentes de Evolith deseas configurar?', options: AGENT_OPTIONS, required: false }),
-      confirmInit: () => p.confirm({ message: '¿Comenzar inicialización con las opciones seleccionadas?', initialValue: true }),
+      ciCd: () => p.select({ message: 'Select the CI/CD platform:', options: CI_CD_OPTIONS, initialValue: 'github' }),
+      observability: () => p.select({ message: 'Select the observability level:', options: OBSERVABILITY_OPTIONS, initialValue: 'otel' }),
+      features: () => p.multiselect({ message: 'Which base features do you want to include?', options: FEATURE_OPTIONS, required: false }),
+      agents: () => p.multiselect({ message: 'Which Evolith agents do you want to configure?', options: AGENT_OPTIONS, required: false }),
+      confirmInit: () => p.confirm({ message: 'Start initialisation with the selected options?', initialValue: true }),
     },
     {
       onCancel: () => {
-        p.cancel('Operación cancelada.');
+        p.cancel('Operation cancelled.');
         throw new UserCancelledError();
       },
     },

@@ -2,6 +2,14 @@
   "name": "@beyondnet/evolith-sdk",
   "version": "2.0.0",
   "description": "Typed client library for the Evolith Core REST API and MCP tools",
+  "keywords": [
+    "evolith",
+    "architecture-governance",
+    "policy-as-code",
+    "sdk",
+    "rest-client",
+    "typescript"
+  ],
   "author": "",
   "license": "MIT",
   "main": "dist/index.js",

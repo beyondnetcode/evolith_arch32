@@ -2,45 +2,86 @@
   "_comment": "Evolith Tool Catalog per Phase - Extensible, runtime-aware",
   "catalogVersion": "1.0.0",
   "lastUpdated": "2026-06-06",
-
   "phases": {
     "phase-0": {
       "description": "Foundation - Repository initialized",
-      "gateChecks": ["evolith.yaml exists", "coreRef.version pinned"],
-      "artifacts": ["evolith.yaml", "README.md", "evolith-product-vision-master.md"]
+      "gateChecks": [
+        "evolith.yaml exists",
+        "coreRef.version pinned"
+      ],
+      "artifacts": [
+        "evolith.yaml",
+        "README.md",
+        "evolith-product-vision-master.md"
+      ]
     },
-
     "phase-1": {
       "description": "Structure - Project scaffolded",
-      "gateChecks": ["package.json exists", "src/ directory exists", "bilingual README"],
-      "artifacts": ["package.json", "src/", "README.es.md"],
-
+      "gateChecks": [
+        "package.json exists",
+        "src/ directory exists",
+        "bilingual README"
+      ],
+      "artifacts": [
+        "package.json",
+        "src/",
+        "README.es.md"
+      ],
       "toolGroups": {
         "runtime": {
-          "question": "¿Qué runtime usarás?",
+          "question": "Which runtime will you use?",
           "defaultOption": "nodejs",
           "optionsFromCatalog": true,
           "toolMapping": {
-            "nodejs": ["tsc", "jest", "eslint", "prettier"],
-            "typescript": ["tsc", "jest", "eslint", "prettier"],
-            "dotnet": ["dotnet CLI", "xUnit", "dotnet-format"],
-            "python": ["pytest", "black", "ruff", "mypy"]
+            "nodejs": [
+              "tsc",
+              "jest",
+              "eslint",
+              "prettier"
+            ],
+            "typescript": [
+              "tsc",
+              "jest",
+              "eslint",
+              "prettier"
+            ],
+            "dotnet": [
+              "dotnet CLI",
+              "xUnit",
+              "dotnet-format"
+            ],
+            "python": [
+              "pytest",
+              "black",
+              "ruff",
+              "mypy"
+            ]
           }
         },
         "monorepo": {
-          "question": "¿Monorepo? (Convention: None para projects pequeños)",
+          "question": "Monorepo? (Convention: None for small projects)",
           "defaultOption": "none",
           "optionsFromCatalog": true,
           "toolMapping": {
-            "nx": ["nx", "@nx/js", "@nx/node"],
-            "npm-workspaces": ["npm"],
-            "pnpm-workspaces": ["pnpm"],
-            "rush": ["@microsoft/rush"],
+            "nx": [
+              "nx",
+              "@nx/js",
+              "@nx/node"
+            ],
+            "npm-workspaces": [
+              "npm"
+            ],
+            "pnpm-workspaces": [
+              "pnpm"
+            ],
+            "rush": [
+              "@microsoft/rush"
+            ],
             "none": []
           }
         },
         "architecture": {
-          "question": "¿Patrón de arquitectura?",
+          "question": "Architecture pattern?",
           "defaultOption": "clean",
           "optionsFromCatalog": true,
           "scaffoldCommands": {
@@ -51,280 +92,695 @@
           }
         },
         "database": {
-          "question": "¿Base de datos?",
+          "question": "Database?",
           "defaultOption": "postgresql",
           "optionsFromCatalog": true,
           "toolMapping": {
-            "postgresql": ["typeorm", "pg", "ef-core", "sqlalchemy"],
-            "mongodb": ["mongoose", "mongodb-driver", "mongo"],
-            "sqlserver": ["ef-core", "mssql"],
-            "sqlite": ["better-sqlite3", "ef-core"]
+            "postgresql": [
+              "typeorm",
+              "pg",
+              "ef-core",
+              "sqlalchemy"
+            ],
+            "mongodb": [
+              "mongoose",
+              "mongodb-driver",
+              "mongo"
+            ],
+            "sqlserver": [
+              "ef-core",
+              "mssql"
+            ],
+            "sqlite": [
+              "better-sqlite3",
+              "ef-core"
+            ]
           }
         },
         "apiProtocol": {
-          "question": "¿Protocolo API?",
+          "question": "API protocol?",
           "defaultOption": "rest",
           "optionsFromCatalog": true,
           "toolMapping": {
-            "rest": ["swagger", "openapi"],
-            "graphql": ["apollo", "graphql"],
-            "grpc": ["grpc-tools", "protobuf"]
+            "rest": [
+              "swagger",
+              "openapi"
+            ],
+            "graphql": [
+              "apollo",
+              "graphql"
+            ],
+            "grpc": [
+              "grpc-tools",
+              "protobuf"
+            ]
           }
         }
       },
-
       "defaultTools": {
-        "nodejs": ["typescript", "jest", "eslint", "prettier", "husky"],
-        "typescript": ["typescript", "jest", "eslint", "prettier", "husky"],
-        "dotnet": [".NET SDK", "xUnit", "dotnet-format"],
-        "python": ["pytest", "black", "ruff", "mypy"]
+        "nodejs": [
+          "typescript",
+          "jest",
+          "eslint",
+          "prettier",
+          "husky"
+        ],
+        "typescript": [
+          "typescript",
+          "jest",
+          "eslint",
+          "prettier",
+          "husky"
+        ],
+        "dotnet": [
+          ".NET SDK",
+          "xUnit",
+          "dotnet-format"
+        ],
+        "python": [
+          "pytest",
+          "black",
+          "ruff",
+          "mypy"
+        ]
       }
     },
-
     "phase-2": {
       "description": "Governance - Rulesets and ACL configured",
-      "gateChecks": ["rulesets/ exists", "ACL rules present", ".harness/ exists"],
-      "artifacts": ["rulesets/", ".harness/", "acl/"],
-
+      "gateChecks": [
+        "rulesets/ exists",
+        "ACL rules present",
+        ".harness/ exists"
+      ],
+      "artifacts": [
+        "rulesets/",
+        ".harness/",
+        "acl/"
+      ],
       "toolGroups": {
         "acl": {
-          "question": "¿Validación ACL?",
+          "question": "ACL validation?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí", "description": "Anti-Corruption Layer con validación de esquemas" },
-            { "value": "minimal", "label": "Mínimo", "description": "Solo logging de transformaciones" },
-            { "value": "no", "label": "No", "description": "Avanzar sin validación ACL" }
+            {
+              "value": "yes",
+              "label": "Yes",
+              "description": "Anti-Corruption Layer with schema validation"
+            },
+            {
+              "value": "minimal",
+              "label": "Minimal",
+              "description": "Transformation logging only"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "Continue without ACL validation"
+            }
           ],
-          "tools": ["acl-schema-validator", "transformation-logger"]
+          "tools": [
+            "acl-schema-validator",
+            "transformation-logger"
+          ]
         },
         "adr": {
-          "question": "¿Sistema ADR?",
+          "question": "ADR system?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí", "description": "ADR completo con matriz y templates" },
-            { "value": "minimal", "label": "Mínimo", "description": "Solo registro sin template" },
-            { "value": "no", "label": "No", "description": "Avanzar sin ADR" }
+            {
+              "value": "yes",
+              "label": "Yes",
+              "description": "Full ADR system with matrix and templates"
+            },
+            {
+              "value": "minimal",
+              "label": "Minimal",
+              "description": "Registry only, no template"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "Continue without ADRs"
+            }
           ],
-          "tools": ["adr-create", "adr-matrix", "adr-template"]
+          "tools": [
+            "adr-create",
+            "adr-matrix",
+            "adr-template"
+          ]
         },
         "hooks": {
-          "question": "¿Git hooks?",
+          "question": "Git hooks?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí (Husky)", "description": "Pre-commit con validación Evolith" },
-            { "value": "lefthook", "label": "Lefthook", "description": "Alternativa multiplataforma" },
-            { "value": "no", "label": "No", "description": "Avanzar sin hooks" }
+            {
+              "value": "yes",
+              "label": "Yes (Husky)",
+              "description": "Pre-commit with Evolith validation"
+            },
+            {
+              "value": "lefthook",
+              "label": "Lefthook",
+              "description": "Alternativa multiplataforma"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "Continue without hooks"
+            }
           ],
-          "tools": ["husky", "lefthook"]
+          "tools": [
+            "husky",
+            "lefthook"
+          ]
         },
         "bilingual": {
-          "question": "¿Documentación bilingüe?",
+          "question": "Bilingual documentation?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí", "description": "EN + ES para toda la documentación" },
-            { "value": "es-only", "label": "Solo ES", "description": "Solo español" },
-            { "value": "no", "label": "No", "description": "Solo inglés" }
+            {
+              "value": "yes",
+              "label": "Yes",
+              "description": "EN + ES across all documentation"
+            },
+            {
+              "value": "es-only",
+              "label": "ES only",
+              "description": "Spanish only"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "English only"
+            }
           ],
-          "tools": ["check-bilingual-parity", "bilingual-coverage"]
+          "tools": [
+            "check-bilingual-parity",
+            "bilingual-coverage"
+          ]
         }
       },
-
-      "defaultTools": ["acl-schema-validator", "adr-registry", "husky", "validate-docs", "check-bilingual-parity"]
+      "defaultTools": [
+        "acl-schema-validator",
+        "adr-registry",
+        "husky",
+        "validate-docs",
+        "check-bilingual-parity"
+      ]
     },
-
     "phase-3": {
       "description": "Architecture - ADRs and Bounded Contexts defined",
-      "gateChecks": ["ADR exists", "ADR matrix updated", "Bounded context map defined"],
-      "artifacts": ["reference/core/architecture/adrs/", "bounded-context-map.json"],
-
+      "gateChecks": [
+        "ADR exists",
+        "ADR matrix updated",
+        "Bounded context map defined"
+      ],
+      "artifacts": [
+        "reference/core/architecture/adrs/",
+        "bounded-context-map.json"
+      ],
       "toolGroups": {
         "contextMapping": {
-          "question": "¿Context Mapping?",
+          "question": "Context mapping?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí", "description": "Bounded Context Map completo" },
-            { "value": "minimal", "label": "Mínimo", "description": "Solo lista de contextos" },
-            { "value": "no", "label": "No", "description": "Avanzar sin context mapping" }
+            {
+              "value": "yes",
+              "label": "Yes",
+              "description": "Full bounded context map"
+            },
+            {
+              "value": "minimal",
+              "label": "Minimal",
+              "description": "Context list only"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "Continue without context mapping"
+            }
           ],
-          "tools": ["context-mapper", "context-map-renderer"]
+          "tools": [
+            "context-mapper",
+            "context-map-renderer"
+          ]
         },
         "adrCreation": {
-          "question": "¿Creación ADR?",
+          "question": "ADR creation?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí", "description": "Templates y COMandos ADR" },
-            { "value": "manual", "label": "Manual", "description": "Solo templates, sin comandos" },
-            { "value": "no", "label": "No", "description": "Avanzar sin ADR tooling" }
+            {
+              "value": "yes",
+              "label": "Yes",
+              "description": "ADR templates and commands"
+            },
+            {
+              "value": "manual",
+              "label": "Manual",
+              "description": "Templates only, no commands"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "Continue without ADR tooling"
+            }
           ],
-          "tools": ["adr-create", "adr-template"]
+          "tools": [
+            "adr-create",
+            "adr-template"
+          ]
         },
         "contracts": {
-          "question": "¿Contracts Registry?",
+          "question": "Contracts registry?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí", "description": "Inter-context contracts documentados" },
-            { "value": "openapi", "label": "OpenAPI only", "description": "Contracts via OpenAPI spec" },
-            { "value": "no", "label": "No", "description": "Avanzar sin contract registry" }
+            {
+              "value": "yes",
+              "label": "Yes",
+              "description": "Documented inter-context contracts"
+            },
+            {
+              "value": "openapi",
+              "label": "OpenAPI only",
+              "description": "Contracts via OpenAPI spec"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "Continue without a contract registry"
+            }
           ],
-          "tools": ["contract-registry", "openapi-generator"]
+          "tools": [
+            "contract-registry",
+            "openapi-generator"
+          ]
         },
         "events": {
-          "question": "¿Event Schemas?",
+          "question": "Event schemas?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí", "description": "Event Schema Registry completo" },
-            { "value": "kafka", "label": "Kafka Schema Registry", "description": "Confluent Schema Registry" },
-            { "value": "no", "label": "No", "description": "Avanzar sin event schemas" }
+            {
+              "value": "yes",
+              "label": "Yes",
+              "description": "Full event schema registry"
+            },
+            {
+              "value": "kafka",
+              "label": "Kafka Schema Registry",
+              "description": "Confluent Schema Registry"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "Continue without event schemas"
+            }
           ],
-          "tools": ["event-schema-registry", "schema-validator"]
+          "tools": [
+            "event-schema-registry",
+            "schema-validator"
+          ]
         },
         "patterns": {
-          "question": "¿Patrones adicionales?",
+          "question": "Additional patterns?",
           "defaultOption": "none",
           "options": [
-            { "value": "none", "label": "Ninguno", "description": "Sin patrones adicionales" },
-            { "value": "event-sourcing", "label": "Event Sourcing", "description": "Event store para agregados" },
-            { "value": "cqrs", "label": "CQRS", "description": "Command Query Separation" },
-            { "value": " saga", "label": "Saga/Orchestration", "description": "Transacciones distribuidas" }
+            {
+              "value": "none",
+              "label": "None",
+              "description": "No additional patterns"
+            },
+            {
+              "value": "event-sourcing",
+              "label": "Event Sourcing",
+              "description": "Event store for aggregates"
+            },
+            {
+              "value": "cqrs",
+              "label": "CQRS",
+              "description": "Command Query Separation"
+            },
+            {
+              "value": " saga",
+              "label": "Saga/Orchestration",
+              "description": "Transacciones distribuidas"
+            }
           ],
-          "tools": ["event-store", "cqrs-projections", "saga-orchestrator"]
+          "tools": [
+            "event-store",
+            "cqrs-projections",
+            "saga-orchestrator"
+          ]
         }
       },
-
-      "defaultTools": ["context-mapper", "adr-create", "contract-registry", "event-schema-registry"]
+      "defaultTools": [
+        "context-mapper",
+        "adr-create",
+        "contract-registry",
+        "event-schema-registry"
+      ]
     },
-
     "phase-4": {
       "description": "Production - Container, CI/CD, Observability",
-      "gateChecks": ["Dockerfile exists", "CI/CD configured", "DORA metrics"],
-      "artifacts": ["Dockerfile", ".github/workflows/", "observability.config.json"],
-
+      "gateChecks": [
+        "Dockerfile exists",
+        "CI/CD configured",
+        "DORA metrics"
+      ],
+      "artifacts": [
+        "Dockerfile",
+        ".github/workflows/",
+        "observability.config.json"
+      ],
       "toolGroups": {
         "container": {
-          "question": "¿Container?",
+          "question": "Container?",
           "defaultOption": "docker",
           "options": [
-            { "value": "docker", "label": "Docker", "description": "Dockerfile + Docker Compose" },
-            { "value": "docker-kaniko", "label": "Docker + Kaniko", "description": "Build sin Docker daemon" },
-            { "value": "buildpacks", "label": "Cloud Native Buildpacks", "description": "Pack para builds automáticos" },
-            { "value": "none", "label": "No", "description": "Avanzar sin container" }
+            {
+              "value": "docker",
+              "label": "Docker",
+              "description": "Dockerfile + Docker Compose"
+            },
+            {
+              "value": "docker-kaniko",
+              "label": "Docker + Kaniko",
+              "description": "Build without a Docker daemon"
+            },
+            {
+              "value": "buildpacks",
+              "label": "Cloud Native Buildpacks",
+              "description": "Pack for automated builds"
+            },
+            {
+              "value": "none",
+              "label": "No",
+              "description": "Continue without a container"
+            }
           ],
-          "tools": ["dockerfile-generator", "docker-compose-dev"]
+          "tools": [
+            "dockerfile-generator",
+            "docker-compose-dev"
+          ]
         },
         "cicd": {
-          "question": "¿CI/CD?",
+          "question": "CI/CD?",
           "defaultOption": "github-actions",
           "options": [
-            { "value": "github-actions", "label": "GitHub Actions", "description": "Workflows en .github/workflows/" },
-            { "value": "gitlab-ci", "label": "GitLab CI", "description": ".gitlab-ci.yml" },
-            { "value": "azure-pipelines", "label": "Azure Pipelines", "description": "azure-pipelines.yml" },
-            { "value": "jenkins", "label": "Jenkins", "description": "Jenkinsfile" },
-            { "value": "none", "label": "No", "description": "Avanzar sin CI/CD" }
+            {
+              "value": "github-actions",
+              "label": "GitHub Actions",
+              "description": "Workflows en .github/workflows/"
+            },
+            {
+              "value": "gitlab-ci",
+              "label": "GitLab CI",
+              "description": ".gitlab-ci.yml"
+            },
+            {
+              "value": "azure-pipelines",
+              "label": "Azure Pipelines",
+              "description": "azure-pipelines.yml"
+            },
+            {
+              "value": "jenkins",
+              "label": "Jenkins",
+              "description": "Jenkinsfile"
+            },
+            {
+              "value": "none",
+              "label": "No",
+              "description": "Continue without CI/CD"
+            }
           ],
-          "tools": ["ci-workflow-generator", "cd-pipeline"]
+          "tools": [
+            "ci-workflow-generator",
+            "cd-pipeline"
+          ]
         },
         "orchestration": {
-          "question": "¿Orquestación?",
+          "question": "Orchestration?",
           "defaultOption": "none",
           "options": [
-            { "value": "none", "label": "None (dev/test)", "description": "Solo Docker, no K8s" },
-            { "value": "kubernetes", "label": "Kubernetes", "description": "Helm + manifests" },
-            { "value": "docker-swarm", "label": "Docker Swarm", "description": "Stack compose" }
+            {
+              "value": "none",
+              "label": "None (dev/test)",
+              "description": "Docker only, no K8s"
+            },
+            {
+              "value": "kubernetes",
+              "label": "Kubernetes",
+              "description": "Helm + manifests"
+            },
+            {
+              "value": "docker-swarm",
+              "label": "Docker Swarm",
+              "description": "Stack compose"
+            }
           ],
-          "tools": ["k8s-manifests", "helm-chart", "ingress-controller"]
+          "tools": [
+            "k8s-manifests",
+            "helm-chart",
+            "ingress-controller"
+          ]
         },
         "secrets": {
-          "question": "¿Secrets management?",
+          "question": "Secrets management?",
           "defaultOption": "env",
           "options": [
-            { "value": "env", "label": "Environment vars", "description": "Simple, file-based (.env)" },
-            { "value": "openbao", "label": "OpenBao", "description": "Dynamic secrets, rotation (Vault fork)" },
-            { "value": "aws-secrets", "label": "AWS Secrets Manager", "description": "Para AWS deployments" },
-            { "value": "azure-keyvault", "label": "Azure Key Vault", "description": "Para Azure deployments" }
+            {
+              "value": "env",
+              "label": "Environment vars",
+              "description": "Simple, file-based (.env)"
+            },
+            {
+              "value": "openbao",
+              "label": "OpenBao",
+              "description": "Dynamic secrets, rotation (Vault fork)"
+            },
+            {
+              "value": "aws-secrets",
+              "label": "AWS Secrets Manager",
+              "description": "For AWS deployments"
+            },
+            {
+              "value": "azure-keyvault",
+              "label": "Azure Key Vault",
+              "description": "For Azure deployments"
+            }
           ],
-          "tools": ["secrets-injector", "openbao-agent", "aws-secrets-sync"]
+          "tools": [
+            "secrets-injector",
+            "openbao-agent",
+            "aws-secrets-sync"
+          ]
         }
       },
-
-      "defaultTools": ["dockerfile", "github-actions", "otel-instrumentation", "env-secrets"]
+      "defaultTools": [
+        "dockerfile",
+        "github-actions",
+        "otel-instrumentation",
+        "env-secrets"
+      ]
     },
-
     "phase-5": {
       "description": "Observability - DORA metrics, alerting, dashboards",
-      "gateChecks": ["Metrics collected", "Traces instrumented", "Logs aggregated"],
-      "artifacts": ["grafana-dashboard.json", "alert-rules.yaml", "slo-config.json"],
-
+      "gateChecks": [
+        "Metrics collected",
+        "Traces instrumented",
+        "Logs aggregated"
+      ],
+      "artifacts": [
+        "grafana-dashboard.json",
+        "alert-rules.yaml",
+        "slo-config.json"
+      ],
       "toolGroups": {
         "tracing": {
-          "question": "¿Tracing?",
+          "question": "Tracing?",
           "defaultOption": "jaeger",
           "options": [
-            { "value": "jaeger", "label": "Jaeger", "description": "OpenTelemetry-compatible tracer" },
-            { "value": "zipkin", "label": "Zipkin", "description": "Legacy compatible" },
-            { "value": "aws-xray", "label": "AWS X-Ray", "description": "Para AWS" },
-            { "value": "none", "label": "No", "description": "Sin distributed tracing" }
+            {
+              "value": "jaeger",
+              "label": "Jaeger",
+              "description": "OpenTelemetry-compatible tracer"
+            },
+            {
+              "value": "zipkin",
+              "label": "Zipkin",
+              "description": "Legacy compatible"
+            },
+            {
+              "value": "aws-xray",
+              "label": "AWS X-Ray",
+              "description": "For AWS"
+            },
+            {
+              "value": "none",
+              "label": "No",
+              "description": "No distributed tracing"
+            }
           ],
-          "tools": ["jaeger-agent", "otel-collector-trace"]
+          "tools": [
+            "jaeger-agent",
+            "otel-collector-trace"
+          ]
         },
         "metrics": {
-          "question": "¿Metrics?",
+          "question": "Metrics?",
           "defaultOption": "prometheus",
           "options": [
-            { "value": "prometheus", "label": "Prometheus", "description": "Pull-based metrics" },
-            { "value": "datadog", "label": "Datadog", "description": "APM + metrics" },
-            { "value": "cloudwatch", "label": "CloudWatch", "description": "AWS metrics" },
-            { "value": "none", "label": "No", "description": "Sin metrics" }
+            {
+              "value": "prometheus",
+              "label": "Prometheus",
+              "description": "Pull-based metrics"
+            },
+            {
+              "value": "datadog",
+              "label": "Datadog",
+              "description": "APM + metrics"
+            },
+            {
+              "value": "cloudwatch",
+              "label": "CloudWatch",
+              "description": "AWS metrics"
+            },
+            {
+              "value": "none",
+              "label": "No",
+              "description": "No metrics"
+            }
           ],
-          "tools": ["prometheus-server", "node-exporter", "metrics-adapter"]
+          "tools": [
+            "prometheus-server",
+            "node-exporter",
+            "metrics-adapter"
+          ]
         },
         "logs": {
-          "question": "¿Log aggregation?",
+          "question": "Log aggregation?",
           "defaultOption": "loki",
           "options": [
-            { "value": "loki", "label": "Loki", "description": "Log aggregation, Prometheus-compatible" },
-            { "value": "elasticsearch", "label": "Elasticsearch", "description": "ELK stack" },
-            { "value": "cloudwatch-logs", "label": "CloudWatch Logs", "description": "AWS log aggregation" },
-            { "value": "none", "label": "No", "description": "Sin log aggregation" }
+            {
+              "value": "loki",
+              "label": "Loki",
+              "description": "Log aggregation, Prometheus-compatible"
+            },
+            {
+              "value": "elasticsearch",
+              "label": "Elasticsearch",
+              "description": "ELK stack"
+            },
+            {
+              "value": "cloudwatch-logs",
+              "label": "CloudWatch Logs",
+              "description": "AWS log aggregation"
+            },
+            {
+              "value": "none",
+              "label": "No",
+              "description": "No log aggregation"
+            }
           ],
-          "tools": ["loki", "promtail", "logcli"]
+          "tools": [
+            "loki",
+            "promtail",
+            "logcli"
+          ]
         },
         "visualization": {
-          "question": "¿Dashboards?",
+          "question": "Dashboards?",
           "defaultOption": "grafana",
           "options": [
-            { "value": "grafana", "label": "Grafana", "description": "Dashboards + alerting" },
-            { "value": "datadog-dashboards", "label": "Datadog", "description": "Dashboards Included" },
-            { "value": "none", "label": "No", "description": "Sin dashboards" }
+            {
+              "value": "grafana",
+              "label": "Grafana",
+              "description": "Dashboards + alerting"
+            },
+            {
+              "value": "datadog-dashboards",
+              "label": "Datadog",
+              "description": "Dashboards Included"
+            },
+            {
+              "value": "none",
+              "label": "No",
+              "description": "No dashboards"
+            }
           ],
-          "tools": ["grafana-server", "datasource-config", "dashboard-templates"]
+          "tools": [
+            "grafana-server",
+            "datasource-config",
+            "dashboard-templates"
+          ]
         },
         "alerting": {
-          "question": "¿Alerting?",
+          "question": "Alerting?",
           "defaultOption": "grafana-alerts",
           "options": [
-            { "value": "grafana-alerts", "label": "Grafana Alerting", "description": "Integrado con Grafana" },
-            { "value": "pagerduty", "label": "PagerDuty", "description": "Incident management" },
-            { "value": "opsgenie", "label": "OpsGenie", "description": "Alert routing" },
-            { "value": "none", "label": "No", "description": "Sin alerting configurado" }
+            {
+              "value": "grafana-alerts",
+              "label": "Grafana Alerting",
+              "description": "Integrated with Grafana"
+            },
+            {
+              "value": "pagerduty",
+              "label": "PagerDuty",
+              "description": "Incident management"
+            },
+            {
+              "value": "opsgenie",
+              "label": "OpsGenie",
+              "description": "Alert routing"
+            },
+            {
+              "value": "none",
+              "label": "No",
+              "description": "No alerting configured"
+            }
           ],
-          "tools": ["alert-rules", "notification-channel", "incident-routing"]
+          "tools": [
+            "alert-rules",
+            "notification-channel",
+            "incident-routing"
+          ]
         },
         "dora": {
-          "question": "¿DORA metrics?",
+          "question": "DORA metrics?",
           "defaultOption": "yes",
           "options": [
-            { "value": "yes", "label": "Sí", "description": "Deployment frequency, Lead time, MTTR, Change failure rate" },
-            { "value": "minimal", "label": "Mínimo", "description": "Solo deployment frequency" },
-            { "value": "no", "label": "No", "description": "Sin tracking DORA" }
+            {
+              "value": "yes",
+              "label": "Yes",
+              "description": "Deployment frequency, Lead time, MTTR, Change failure rate"
+            },
+            {
+              "value": "minimal",
+              "label": "Minimal",
+              "description": "Deployment frequency only"
+            },
+            {
+              "value": "no",
+              "label": "No",
+              "description": "No DORA tracking"
+            }
           ],
-          "tools": ["dora-collector", "dora-dashboard", "devopsyaml"]
+          "tools": [
+            "dora-collector",
+            "dora-dashboard",
+            "devopsyaml"
+          ]
         }
       },
-
-      "defaultTools": ["jaeger", "prometheus", "loki", "grafana", "otel-collector", "dora-metrics"]
+      "defaultTools": [
+        "jaeger",
+        "prometheus",
+        "loki",
+        "grafana",
+        "otel-collector",
+        "dora-metrics"
+      ]
     }
   },
-
   "toolMetadata": {
     "acl-schema-validator": {
       "description": "Valida datos externos contra esquemas Core",
@@ -332,27 +788,27 @@
       "phase": "phase-2"
     },
     "adr-create": {
-      "description": "Genera templates y comandos ADR",
+      "description": "Generates ADR templates and commands",
       "runtimeAgnostic": true,
       "phase": "phase-3"
     },
     "context-mapper": {
-      "description": "Define y documenta bounded contexts",
+      "description": "Define and document bounded contexts",
       "runtimeAgnostic": true,
       "phase": "phase-3"
     },
     "dockerfile-generator": {
-      "description": "Genera Dockerfile optimizado por runtime",
+      "description": "Generates a Dockerfile optimised per runtime",
       "runtimeAware": true,
       "phase": "phase-4"
     },
     "otel-instrumentation": {
-      "description": "Instrumentación OpenTelemetry",
+      "description": "OpenTelemetry instrumentation",
       "runtimeAware": true,
       "phase": "phase-4"
     },
     "dora-metrics": {
-      "description": "Colección automática de DORA metrics",
+      "description": "Automatic DORA metrics collection",
       "runtimeAgnostic": true,
       "phase": "phase-5"
     }

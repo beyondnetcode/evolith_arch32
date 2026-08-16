@@ -41,7 +41,7 @@ export class DriftCommand extends BaseEvolithCommand {
       const normalized = toLegacyLevel(options.level);
       if (!normalized) {
         throw new Error(
-          `Nivel desconocido: "${options.level}". Use un id del eje progresivo ` +
+          `Unknown level: "${options.level}". Use a progressive-axis id ` +
           `(modular-monolith, distributed-modules, microservices).`,
         );
       }
@@ -142,8 +142,8 @@ export class DriftCommand extends BaseEvolithCommand {
       console.log(`  ${chalk.red('⚠ LEVEL DRIFT DETECTED')}`);
     }
 
-    console.log(`\n${chalk.bold('Overall Score:')} ${this.getScoreColor(report.overallScore)}${report.overallScore}%`);
-    console.log(`${chalk.bold('Drift Severity:')} ${this.getSeverityColor(report.driftSeverity)}${report.driftSeverity.toUpperCase()}`);
+    console.log(`\n${chalk.bold('Overall Score:')} ${this.getScoreColor(report.overallScore)(`${report.overallScore}%`)}`);
+    console.log(`${chalk.bold('Drift Severity:')} ${this.getSeverityColor(report.driftSeverity)(report.driftSeverity.toUpperCase())}`);
 
     if (report.newViolations.length > 0) {
       console.log(chalk.red(`\n🆕 New Violations (${report.newViolations.length}):`));
@@ -181,14 +181,14 @@ export class DriftCommand extends BaseEvolithCommand {
     const { trend, entries } = await service.getDriftTrend(projectPath);
 
     console.log(chalk.bold('\n📈 Architecture Drift Trend\n'));
-    console.log(`${chalk.bold('Trend:')} ${this.getTrendColor(trend)}${trend.toUpperCase()}`);
+    console.log(`${chalk.bold('Trend:')} ${this.getTrendColor(trend)(trend.toUpperCase())}`);
 
     if (entries.length > 0) {
       console.log(`\n${chalk.gray('Last ' + entries.length + ' scans:')}`);
       for (const entry of entries) {
         const date = new Date(entry.timestamp).toLocaleDateString();
         const score = this.getScoreColor(entry.overallScore);
-        console.log(`  ${date} - Score: ${score}${entry.overallScore}% - Violations: ${entry.violationsCount} (${entry.blockingViolationsCount} blocking)`);
+        console.log(`  ${date} - Score: ${score(`${entry.overallScore}%`)} - Violations: ${entry.violationsCount} (${entry.blockingViolationsCount} blocking)`);
       }
     } else {
       console.log(chalk.gray('\nNo history available. Run drift detection first.'));
@@ -210,7 +210,7 @@ export class DriftCommand extends BaseEvolithCommand {
         const date = new Date(entry.timestamp).toLocaleString();
         console.log(`\n  ${chalk.cyan(date)}`);
         console.log(`    Level: ${entry.declaredLevel} → ${entry.detectedLevel}`);
-        console.log(`    Score: ${this.getScoreColor(entry.overallScore)}${entry.overallScore}%`);
+        console.log(`    Score: ${this.getScoreColor(entry.overallScore)(`${entry.overallScore}%`)}`);
         console.log(`    Violations: ${entry.violationsCount} (${entry.blockingViolationsCount} blocking)`);
       }
     }

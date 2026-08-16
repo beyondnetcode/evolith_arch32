@@ -10245,6 +10245,34 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. The work is one field added to each rule object in a shipped JSON, one Rego rule reading a boolean the input builder already had the primitives to compute, a column in two Markdown tables, and a guard plus two specs that read those files with node:fs. The boundary scanner reuses `findDeclaredBoundaryBreaches`, already in core-domain from the second wave, through the `IFileSystem` port the builder holds."
+    },
+    {
+      "id": "GT-696",
+      "closedAt": "2026-08-15",
+      "closureCommit": "72a10d0a",
+      "evidence": [
+        "src/rulesets/topologies/serverless/serverless.rules.json",
+        "src/rulesets/topologies/event-driven/event-driven.rules.json",
+        "src/rulesets/topologies/data-mesh/data-mesh.rules.json",
+        "src/rulesets/topologies/edge-computing/edge-computing.rules.json",
+        "src/rulesets/topologies/event-driven/README.md",
+        "src/rulesets/topologies/event-driven/README.es.md",
+        ".harness/scripts/ci/56-validate-assurance-disclosure.mjs",
+        "src/packages/core-domain/src/application/validators/evaluators/topology-assurance.spec.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, REPRODUCED BEFORE ANY CHANGE: a satellite containing exactly `evolith.yaml` plus one `event-driven.config.json` declaring every control true passed SIX BLOCKING rules -- ED-R01..ED-R06 -- including `ED-R02 Transactional Outbox`, with no outbox table, no publisher and no relay anywhere in the tree. ED-R07/R09 skipped, ED-R08 passed. Literal output recorded.",
+        "AC1 IS MET BY THE SECOND HALF OF ITS OWN WORDING -- 'a FAILED or explicitly `declared` verdict rather than a silent pass'. ED-R02 still returns `passed` and now carries `declared` in the shipped ruleset and in the buyer-facing README, so the verdict no longer claims more than it checked. Making it FAIL requires finding an outbox publisher by static analysis, which is exactly what this row deferred and why.",
+        "AC2/AC4: labels DERIVED from the code that decides each rule, never hand-listed. `topology-assurance.spec.ts` recomputes them from the handler sources. MUTATIONS: labelling ED-R02 `observed` turns 2 cases RED; hiding it behind `unevaluated` turns 3 RED, including the case asserting `unevaluated` is not a euphemism. Restored 5/5.",
+        "AC3 DEMONSTRATED AS ASKED: flipping ED-R02 to `observed` in the event-driven README alone exits guard 56 with 1, naming the rule and both values.",
+        "THE SPLIT, MEASURED: 2 observed, 17 declared, 10 unevaluated across 29 rules in four topologies. Only ED-R08 and DAM-R07 open the repository.",
+        "THIS ROW UNDERCOUNTED ITS OWN DEFECT: registered as 13 declaration-decided rules, measured as 17 -- 13 keyed by category through CONFIG_CATEGORIES plus four keyed by rule ID through TOPOLOGY_FLAG_RULES (ED-R04/R05/R06, DAM-R05), keyed on the id deliberately because two bare categories are shared across topologies with different files and flags. FOURTH aggregate count wrong in this family (GT-693, GT-694, GT-695, this); as in the other three the enumeration was right and the total was not.",
+        "THE CRITERION'S BINARY WAS WRONG AND IS REWRITTEN RATHER THAN FORCED, the same correction GT-694's AC2 needed: ten of the 29 rules are decided by NOTHING -- no handler branch claims their category, and the corpus triage already files them underspecified / unimplemented-native / needs-external-system. Calling those `declared` would be a third falsehood. `unevaluated` is now a first-class label, and the READMEs say what it means: shipped, and not enforced.",
+        "A HOLE IN MY OWN GUARD, FOUND BY DEMONSTRATING IT: stripping a topology's labels left guard 56 silent, because 'has not started labelling' and 'labels were deleted' looked identical. If the README already publishes assurances the labels existed, so their absence is a REGRESSION and now exits 1 -- verified by capturing the real exit code rather than one that had passed through a pipe.",
+        "SUITES: core-domain 1965, cli 1482, mcp 575, infra-providers 179, contracts 115. Governance suite 18/18, guard 42 reports 79 guards all classified."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. The work is one field added to each rule object in four shipped JSON files, a table inserted into eight Markdown documents, one guard generalised over a directory listing, and one spec that reads rulesets and handler sources with node:fs. No handler logic changed -- the same verdicts are produced on the same inputs, which is what makes the labelling a disclosure rather than a behaviour change."
     }
   ]
 }

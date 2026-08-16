@@ -4,7 +4,9 @@
   "title": "Edge Computing Topology Rules",
   "description": "Architectural rules for the Edge Computing topology.",
   "version": "1.0.0",
-  "topologies": ["edge-computing"],
+  "topologies": [
+    "edge-computing"
+  ],
   "effectiveDate": "2026-06-20",
   "rules": [
     {
@@ -13,7 +15,8 @@
       "category": "execution-security",
       "title": "Network Security Profile",
       "description": "Edge computing components MUST define a 'networkSecurity' profile in their config.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "unevaluated"
     },
     {
       "id": "EC-SEC-02",
@@ -21,7 +24,8 @@
       "category": "execution-mtls",
       "title": "mTLS Enforcement",
       "description": "mTLS must be enabled for all edge computing network communications.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "unevaluated"
     },
     {
       "id": "EC-R01",
@@ -29,7 +33,8 @@
       "category": "edge-computing-sync",
       "title": "Mandatory Synchronization Strategy",
       "description": "An Edge Computing satellite MUST provide edge-computing.config.json and declare syncStrategy (offline-first, eventual, or real-time-fallback).",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "EC-R02",
@@ -37,7 +42,8 @@
       "category": "edge-computing-isolation",
       "title": "Edge Node Isolation",
       "description": "edge-computing.config.json MUST declare edgeIsolation=true.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "EC-R03",
@@ -45,7 +51,8 @@
       "category": "edge-computing-conflict",
       "title": "Conflict Resolution Strategy",
       "description": "edge-computing.config.json MUST declare conflictResolution (last-write-wins, merge, or manual).",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     }
   ]
 }

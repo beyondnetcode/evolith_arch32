@@ -26,6 +26,22 @@ Event-driven integration is not permission to hide business workflows in infrast
 | Observability | Event flow must expose correlation, lag, failures, and replay evidence. |
 | Ownership | Event producers own event meaning; consumers own local reactions. |
 
+### What each verdict is worth
+
+**Read the `Assurance` column before you rely on a green tick.** `observed` means the evaluation opened the repository. `declared` means the verdict was decided by comparing a field in a declaration file: a satellite that declares a control it has not built will pass. `unevaluated` means no check decides that rule today — it is shipped, and it is not enforced. These are stated here rather than left for a buyer to discover, and a guard fails the build when this table and the shipped ruleset disagree.
+
+| Rule | Control | Assurance |
+|---|---|---|
+| ED-R01 | Strict AsyncAPI Contract | `declared` |
+| ED-R02 | Transactional Outbox | `declared` |
+| ED-R03 | Dead Letter Queue | `declared` |
+| ED-R04 | Event Ordering Guarantee | `declared` |
+| ED-R05 | Idempotent Consumer Contract | `declared` |
+| ED-R06 | Backward-Compatible Schema Evolution | `declared` |
+| ED-R07 | Retention Policy Declaration | `unevaluated` |
+| ED-R08 | Event Observability (Correlation and Trace Propagation) | `observed` |
+| ED-R09 | Explicit Consumer Group Registration | `unevaluated` |
+
 ## Required Authority
 
 | Artifact | Role |

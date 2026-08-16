@@ -31,6 +31,7 @@ import data.evolith.probabilistic_evidence_admissibility.violations as pea_viola
 import data.evolith.protocol_selection.violations as prot_violations
 import data.evolith.repository_taxonomy.violations as repo_tax_violations
 import data.evolith.satellite_contracts.violations as svc_violations
+import data.evolith.sdlc.coverage.violations as sdlc_coverage_violations
 import data.evolith.taxonomy.violations as taxonomy_violations
 import data.evolith.telemetry_evidence.violations as telemetry_violations
 import data.evolith.testing_pyramid.violations as tpy_violations
@@ -104,6 +105,15 @@ violations contains {"id": v.id, "message": v.message, "policy": "opa-capability
 
 violations contains {"id": v.id, "message": v.message, "policy": "opa-anti-corruption-layer"} if {
 	v := acl_violations[_]
+}
+
+# GT-675 AC4 — `sdlc/coverage.rego` compiled into the bundle and was UNREACHABLE at
+# runtime: `main.rego` never imported it, so the seven quality-threshold ids it
+# decides (QT-01..04, QT-06..08) were real corpus rules that no aggregation could
+# ever surface. A policy that builds and cannot be reached is the same false-coverage
+# defect one level down from the one this row is about.
+violations contains {"id": v.id, "message": v.message, "policy": "opa-sdlc-coverage"} if {
+	v := sdlc_coverage_violations[_]
 }
 
 violations contains {"id": v.id, "message": v.message, "policy": "opa-cicd-quality-gates"} if {

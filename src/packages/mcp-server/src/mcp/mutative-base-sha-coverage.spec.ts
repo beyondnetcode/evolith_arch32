@@ -1,3 +1,17 @@
+import { issueGrantForCall } from './approval-grant';
+
+/** GT-679 — mint the approval this call needs, bound to its own arguments. */
+function approvedArgs(tool: string, args: Record<string, unknown>): Record<string, unknown> {
+  const { token } = issueGrantForCall({
+    approver: 'coverage-approver@example.com',
+    principal: 'anonymous',
+    tenant: 'default',
+    tool,
+    args,
+  });
+  return { apply: true, approvalToken: token };
+}
+
 import { Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { trace } from '@opentelemetry/api';
@@ -133,8 +147,12 @@ describe('GT-606 — every mutative tool in the live registry is baseSha-protect
         satellitePath: repo,
         output: repo,
         baseSha: staleSha,
-        apply: true,
-        approvalToken: 'gt606-approval',
+        // GT-679 — a placeholder string is no longer an approval; the gate now
+        // verifies a server-issued grant bound to these very arguments. What this
+        // case asserts (baseSha coverage) is unchanged.
+        ...approvedArgs(tool.schema.name, {
+          path: repo, dir: repo, satellitePath: repo, output: repo, baseSha: staleSha,
+        }),
       });
       const env = result.structuredContent as any;
       verdicts.push({

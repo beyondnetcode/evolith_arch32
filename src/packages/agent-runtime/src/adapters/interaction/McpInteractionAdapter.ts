@@ -44,9 +44,20 @@ export class McpInteractionAdapter implements InteractionAdapterPort<McpToolInpu
       requested_by: (args.requestedBy as string | undefined) ?? (ctx.requestedBy as string | undefined),
       parameters: args,
       dry_run: args.dry_run === true || args.dryRun === true,
-      approval: args.approvalToken
-        ? { granted: true, approver: 'mcp' }
-        : undefined,
+      // GT-679 — a caller-supplied string is NOT an approval.
+      //
+      // This turned any non-empty `approvalToken` into `{granted: true, approver:
+      // 'mcp'}`, which would have pre-satisfied the agent-runtime approval check
+      // with an identity nobody authenticated and a decision nobody made. The
+      // approver was the literal string 'mcp' — an auditor asking who approved a
+      // `satellite-create` was answered with the name of the transport.
+      //
+      // The grant that authorises an MCP mutative call is minted and verified in
+      // the MCP server (`approval-grant.ts`), and it is not readable here: this
+      // adapter sees an opaque sealed blob, not a decision. So it now carries
+      // nothing, and the agent-runtime approval check does its own job rather
+      // than being handed a pre-granted answer.
+      approval: undefined,
     });
   }
 }

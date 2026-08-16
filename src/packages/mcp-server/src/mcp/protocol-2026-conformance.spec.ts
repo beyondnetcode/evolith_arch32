@@ -1,4 +1,5 @@
 import * as http from 'node:http';
+import { issueGrantForCall } from './approval-grant';
 import { McpServerService } from './mcp-server.service';
 import { MetricsService } from './metrics.service';
 import { ToolRegistryService } from './tool-registry.service';
@@ -99,6 +100,22 @@ function rpc(id: number | string, method: string, params: Record<string, unknown
       },
     },
   };
+}
+
+
+/**
+ * GT-679 — an approval this server issued, for the identity an API-key request
+ * authenticates as (`ADMIN_CONTEXT`), bound to the call's own arguments.
+ */
+function grantedArgs(tool: string, args: Record<string, unknown>): Record<string, unknown> {
+  const { token } = issueGrantForCall({
+    approver: 'release-manager@example.com',
+    principal: 'admin-api-key',
+    tenant: 'default',
+    tool,
+    args,
+  });
+  return { apply: true, approvalToken: token };
 }
 
 describe('MCP 2026-07-28 conformance over HTTP (GT-582)', () => {
@@ -236,7 +253,12 @@ describe('MCP 2026-07-28 conformance over HTTP (GT-582)', () => {
       expect(JSON.parse(result.content[0].text).success).toBe(true);
       // The tool ran exactly once, and only on the approved leg.
       expect(executed).toHaveLength(1);
-      expect(executed[0]).toMatchObject({ repo: 'alpha', apply: true, approvalToken: 'human-approved-1' });
+      // GT-679 — the forwarded approval is NOT the string the client sent: the
+      // server mints a grant once `verifyRequestState` has proved this is the
+      // request the human was shown and the human accepted.
+      expect(executed[0]).toMatchObject({ repo: 'alpha', apply: true });
+      expect(executed[0].approvalToken).not.toBe('human-approved-1');
+      expect(String(executed[0].approvalToken)).toMatch(/^evgrant1\./);
     });
 
     it('refuses a retry that skips the approval', async () => {
@@ -269,13 +291,55 @@ describe('MCP 2026-07-28 conformance over HTTP (GT-582)', () => {
         AUTH,
         rpc(1, 'tools/call', {
           name: 'evolith-scaffold',
-          arguments: { repo: 'beta', apply: true, approvalToken: 'direct-token' },
+          // GT-679 — the seam is unchanged; what it carries is not. A caller that
+          // already holds an approval still skips the round trip, but the
+          // approval is now a grant this server issued rather than any string.
+          arguments: { repo: 'beta', ...grantedArgs('evolith-scaffold', { repo: 'beta' }) },
         }),
       );
       // Pre-supplied approval: no round trip needed, the call completes at once.
       expect(JSON.parse(res.body).result.resultType).toBe('complete');
       expect(executed).toHaveLength(1);
-      expect(executed[0]).toMatchObject({ repo: 'beta', apply: true, approvalToken: 'direct-token' });
+      expect(executed[0]).toMatchObject({ repo: 'beta', apply: true });
+    });
+
+    /**
+     * GT-679 AC5 — ONE verifier, both protocol paths.
+     *
+     * The row named the inline shortcut at `stateless-rpc.ts` as a way past the
+     * gate. It is not one — both legs converge on `ops.callTool` — but that was
+     * only true in the weak sense while the gate accepted any non-empty string.
+     * This case fails the build if the two paths ever disagree about the same
+     * token, which is what "a token accepted on one path and refused on the
+     * other" means in practice.
+     */
+    it('refuses a made-up approval identically on the direct path and on the MRTR path', async () => {
+      executed.length = 0;
+
+      const direct = await request(port, 'POST', '/mcp', AUTH, rpc(1, 'tools/call', {
+        name: 'evolith-scaffold',
+        arguments: { repo: 'gamma', apply: true, approvalToken: 'a-string-the-caller-invented' },
+      }));
+      const directBody = JSON.parse(direct.body);
+      expect(directBody.result.isError).toBe(true);
+
+      const first = await request(port, 'POST', '/mcp', AUTH, rpc(2, 'tools/call', {
+        name: 'evolith-scaffold', arguments: { repo: 'gamma' },
+      }));
+      const requestState = JSON.parse(first.body).result.requestState;
+      const viaMrtr = await request(port, 'POST', '/mcp', AUTH, rpc(3, 'tools/call', {
+        name: 'evolith-scaffold',
+        arguments: { repo: 'gamma' },
+        requestState: 'evmrtr1.YWFhYWFhYWFhYWFh.YWFhYQ.YWFhYWFhYWFhYWFhYWFhYQ',
+        inputResponses: {
+          [APPROVAL_INPUT_KEY]: { action: 'accept', content: { approve: true, approvalToken: 'a-string-the-caller-invented' } },
+        },
+      }));
+      // A forged state is refused before any approval is minted, so the same
+      // made-up string reaches execution on NEITHER path.
+      expect(viaMrtr.status).toBe(400);
+      expect(requestState).toEqual(expect.any(String));
+      expect(executed).toEqual([]);
     });
   });
 

@@ -93,6 +93,9 @@ export {
   RulesetValidatorService,
   PhaseGateValidatorService,
   ArchitectureDriftService,
+  // GT-701 — the MCP composable tool builds a validator for the engine the caller
+  // asked for; without this it accepted `engine` and evaluated nothing.
+  rebuildValidatorForEngine,
 } from "@beyondnet/evolith-core-domain/application/validators";
 
 export {

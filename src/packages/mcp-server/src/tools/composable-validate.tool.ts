@@ -3,7 +3,8 @@
  * Exposes the composable validation engine as an MCP tool.
  */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
+import { RulesetValidatorService, rebuildValidatorForEngine } from '@beyondnet/evolith-core';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
 
 /**
@@ -14,6 +15,14 @@ import { McpTool, McpToolSchema } from '../mcp/tool.interface';
  */
 @Injectable()
 export class ComposableValidateTool implements McpTool {
+  /**
+   * GT-701 — `@Optional()` so a host that builds this tool without a validator
+   * still constructs; what it does NOT do is let the run look green. Without an
+   * evaluator the ruleset mode refuses and says so, instead of reporting every
+   * rule it managed to parse as passing.
+   */
+  constructor(@Optional() private readonly validator?: RulesetValidatorService) {}
+
   readonly schema: McpToolSchema = {
     name: 'evolith-composable-validate',
     description: 'Validate using the composable engine (GT-312). Supports multiple validation modes: SDLC, Architecture, Ruleset, ADR, Ad-hoc. Can combine modes.',
@@ -88,6 +97,9 @@ export class ComposableValidateTool implements McpTool {
       satellitePath: path,
       corePath,
       engine,
+      // GT-701 — `engine` was accepted here, merged into the context and read by
+      // nobody, so `engine: 'opa'` and `engine: 'native'` returned identical output.
+      evaluator: this.validator ? rebuildValidatorForEngine(this.validator, engine) : undefined,
       topology,
       phase,
       rulesetId: ruleset,

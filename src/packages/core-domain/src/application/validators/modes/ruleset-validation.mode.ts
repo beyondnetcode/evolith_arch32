@@ -34,7 +34,6 @@ export class RulesetValidationMode implements ValidationMode {
 
   async validate(context: ValidationContext): Promise<ModeValidationResult> {
     const issues: ModeValidationIssue[] = [];
-    let rulesChecked = 0;
 
     try {
       const { promises: fs } = await import('fs');
@@ -82,24 +81,23 @@ export class RulesetValidationMode implements ValidationMode {
       }
 
       const ruleset = JSON.parse(rulesetContent);
-      const rules = ruleset.rules || [];
+      const rules: Array<{ id?: string; title?: string }> = ruleset.rules || [];
+      const ruleIds = rules.map((rule, index) => rule.id || `RULESET-${rulesetId}-${index}`);
 
-      for (const rule of rules) {
-        rulesChecked++;
-        issues.push({
-          ruleId: rule.id || `RULESET-${rulesetId}-${rules.indexOf(rule)}`,
-          status: 'pass',
-          message: `Rule '${rule.id || rule.title}' loaded and registered`,
-          severity: 'info',
-        });
+      // GT-701 — parsing is not checking.
+      //
+      // This loop used to push `status: 'pass'` with "Rule '<id>' loaded and
+      // registered" for every rule it could read, and the mode returned
+      // `passed`. Measured on this repository the day it was fixed: the same
+      // satellite that `evolith validate` reported as FAILED with 112 issues came
+      // back from `evolith validate --composable --ruleset definition-of-done` as
+      // PASSED with "10 rules checked" — ten rules that were parsed and never
+      // evaluated. `--engine opa` produced byte-identical output, because no
+      // engine was involved on either run.
+      if (!context.evaluator) {
+        return this.refuse(rulesetId, ruleIds);
       }
-
-      issues.push({
-        ruleId: 'RULESET-LOADED',
-        status: 'pass',
-        message: `Ruleset '${rulesetId}' loaded successfully with ${rules.length} rules`,
-        severity: 'info',
-      });
+      return await this.evaluate(context, rulesetId, rulesetPath, ruleIds);
     } catch (error) {
       issues.push({
         ruleId: 'RULESET_VALIDATION_ERROR',
@@ -109,16 +107,141 @@ export class RulesetValidationMode implements ValidationMode {
       });
     }
 
-    const hasFailures = issues.some(i => i.status === 'fail');
-
+    // Only reachable when the `try` threw: every other path returns above.
     return {
       mode: 'ruleset',
-      status: hasFailures ? 'failed' : 'passed',
-      rulesChecked,
+      status: 'failed',
+      rulesChecked: 0,
       issues,
       metadata: {
         rulesetId: context.rulesetId,
+        evaluated: false,
       },
+    };
+  }
+
+  /**
+   * GT-701 — no evaluator, so no verdict.
+   *
+   * The rules are reported SKIPPED and named, never `pass`. `status: 'failed'` is
+   * deliberate and is GT-595 AC2 applied to this surface: a run that could not
+   * check its blocking rules must not be readable as green. A caller that wants a
+   * green light has to supply an evaluator.
+   */
+  private refuse(rulesetId: string, ruleIds: string[]): ModeValidationResult {
+    return {
+      mode: 'ruleset',
+      status: 'failed',
+      rulesChecked: 0,
+      rulesSkipped: ruleIds.length,
+      rulesErrored: 0,
+      rulesTotal: ruleIds.length,
+      skippedRuleIds: ruleIds,
+      issues: [{
+        ruleId: 'RULESET_NOT_EVALUATED',
+        status: 'fail',
+        severity: 'error',
+        message:
+          `Ruleset '${rulesetId}' was parsed (${ruleIds.length} rule(s)) but no evaluator was ` +
+          'supplied to the composable context, so not one of them was checked. Refusing rather ' +
+          'than reporting them as passing.',
+        remediation:
+          'Pass `evaluator` on the ValidationContext — a RulesetValidatorService built for the ' +
+          'requested engine satisfies it as-is.',
+      }],
+      metadata: { rulesetId, evaluated: false },
+    };
+  }
+
+  /**
+   * GT-701 — delegate to the engine the caller asked for.
+   *
+   * The selection ref is the corpus-relative path from {@link RULESET_ID_MAP},
+   * which `ruleMatchesRef` normalises (it strips a leading `rulesets/`) and
+   * matches against a rule's `sourceFile` on whole path segments.
+   */
+  private async evaluate(
+    context: ValidationContext,
+    rulesetId: string,
+    rulesetPath: string,
+    ruleIds: string[],
+  ): Promise<ModeValidationResult> {
+    const outcome = await context.evaluator!.validate(
+      context.satellitePath,
+      context.corePath,
+      { rulesetRef: rulesetPath },
+    );
+
+    const issues: ModeValidationIssue[] = outcome.issues.map((finding) => ({
+      ruleId: finding.ruleId,
+      // GT-595 AC2, and it survived one wrong version of this line: an
+      // unevaluated BLOCKING rule can never read as green. Measured before the
+      // correction — `--composable --ruleset definition-of-done` came back
+      // `passed` while reporting "Blocking rule did not run" for DOD-02 and
+      // DOD-08, because the admission had been softened to a warning.
+      //
+      // `evaluated` decides which COUNTER a rule lands in (checked or skipped),
+      // never whether the run may be called green. That is GT-699's partition
+      // and its docblock says so explicitly.
+      status: finding.blocking ? 'fail' : 'warn',
+      message: finding.description ? `${finding.title} — ${finding.description}` : finding.title,
+      severity: finding.blocking ? 'error' : finding.severity === 'COULD' ? 'info' : 'warning',
+      file: finding.file,
+    }));
+
+    // A `pass` is emitted ONLY for a rule this ruleset declares that the engine
+    // actually evaluated and had nothing to say about. Rules the engine skipped
+    // or errored on are excluded by name, not by arithmetic.
+    const accountedFor = new Set<string>([
+      ...outcome.issues.map((finding) => finding.ruleId),
+      ...(outcome.skippedRuleIds ?? []),
+      ...(outcome.erroredRuleIds ?? []),
+    ]);
+    const cleared = ruleIds.filter((id) => !accountedFor.has(id));
+    for (const ruleId of cleared) {
+      issues.push({
+        ruleId,
+        status: 'pass',
+        severity: 'info',
+        message: `Rule '${ruleId}' evaluated by the ${context.engine} engine with no finding`,
+      });
+    }
+
+    // The DENOMINATOR comes from the engine, not from this file.
+    //
+    // Deriving it here was wrong and measurable: `definition-of-done` declares 10
+    // rules in its JSON, and the engine's own accounting for the same selection
+    // came back 8 checked + 4 skipped = 12, because a ref selects by `sourceFile`
+    // across the normalised corpus and not by what one document happens to list.
+    // Publishing 10 as the total next to the engine's counts produced an
+    // arithmetic that did not add up — the class of number this whole row exists
+    // to stop. `acl` is the same case from the other side: no `rules[]` at all,
+    // and the engine still had two findings to report.
+    //
+    // GT-699 is applied on the way in: a finding the engine could not evaluate is
+    // an admission, so its rule is skipped, never checked.
+    const admitted = outcome.issues
+      .filter((finding) => finding.evaluated === false)
+      .map((finding) => finding.ruleId);
+    const engineSkipped = outcome.skippedRuleIds ?? [];
+    const skippedRuleIds = [...new Set([...engineSkipped, ...admitted])];
+    const rulesChecked = Math.max(0, outcome.rulesChecked - admitted.filter((id) => !engineSkipped.includes(id)).length);
+
+    return {
+      mode: 'ruleset',
+      status: issues.some((issue) => issue.status === 'fail')
+        ? 'failed'
+        : issues.some((issue) => issue.status === 'warn')
+          ? 'warning'
+          : 'passed',
+      rulesChecked,
+      rulesSkipped: skippedRuleIds.length,
+      rulesErrored: outcome.rulesErrored ?? (outcome.erroredRuleIds ?? []).length,
+      rulesTotal: outcome.rulesTotal ?? (rulesChecked + skippedRuleIds.length),
+      skippedRuleIds,
+      erroredRuleIds: outcome.erroredRuleIds ?? [],
+      issues,
+      metadata: { rulesetId, evaluated: true, engine: context.engine },
     };
   }
 }

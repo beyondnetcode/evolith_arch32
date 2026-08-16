@@ -10340,6 +10340,30 @@
       "dependencyRationale": "No dependency added or changed. One conditional moved to the top of an existing pure predicate, plus four spec cases. No control flow outside that function changed."
     },
     {
+      "id": "GT-701",
+      "closedAt": "2026-08-16",
+      "closureCommit": "e9e1ea0f",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
+        "src/packages/core-domain/src/application/validators/modes/validation-mode.interface.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.rebuild.ts",
+        "src/sdk/cli/src/commands/validate/validate.command.ts",
+        "src/packages/mcp-server/src/tools/composable-validate.tool.ts",
+        "src/apps/core-api/src/presentation/controllers/composable-validate.controller.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, REPRODUCED END TO END BEFORE ANY EDIT. Same satellite, same corpus root: `evolith validate --core . .` -> failed, 113 checked, 112 issues. `evolith validate --core src/sdk/cli . --composable --ruleset definition-of-done` -> PASSED, 'rulesChecked: 10', not one rule evaluated. Adding `--engine opa` changed nothing byte for byte.",
+        "SCOPE, MEASURED NOT INFERRED: `grep -rln 'RulesetValidatorService|OpaEvaluator|NativeEvaluator' modes/` returned NOTHING across all five modes; `context.engine` appeared exactly once in the directory, at composable-validation-engine.ts:77, where it is WRITTEN. The other four modes do run real file checks and can fail -- the uniformly-green verdict was ruleset mode alone, and that nuance is now in the row.",
+        "AFTER, SAME INPUTS: definition-of-done -> failed, 8 checked + 2 skipped = 10 total. repository-taxonomy -> failed, 8 + 2 = 10, with REAL findings (TAX-01 'Non-kebab-case filenames: Dockerfile, README.md', TAX-05 missing top-level directories). acl -> failed, 3 + 3 = 6, where before it returned `passed` having parsed a file that declares no rules[] at all.",
+        "AC3 PROOF THAT ENGINE IS CONSUMED: `--composable --ruleset repository-taxonomy` with `--engine opa` reports 10 checked; with `--engine native`, 8. Two different engines, two different answers, on identical input. Before this row the flag was accepted on three surfaces and read by none.",
+        "TWO DEFECTS IN THE FIX ITSELF, BOTH FOUND BY MEASURING AND NEITHER BY THE TESTS: (1) a blocking rule that did not run was mapped to `warn`, so definition-of-done came back `passed` while printing 'Blocking rule did not run: DOD-02' -- corrected to `fail`, which is GT-595 AC2 and what GT-699's own docblock already said; (2) the denominator was derived from the ruleset JSON (10 declared) next to engine counts that summed to 12, because a ref selects by sourceFile across the normalised corpus. The denominator now comes from the engine.",
+        "RED FIRST: 11 of the 13 rewritten spec cases fail against the previous mode (the 2 that pass are canHandle). The OLD spec asserted the defect -- `status: 'passed'` and `rulesChecked: 10` for rules nothing had evaluated -- which is why the bug survived: the test encoded it as the expectation.",
+        "DUPLICATION REMOVED WHILE HERE: `rebuildValidatorForEngine` was extracted from the two hand-copied constructions inside ValidateSatelliteUseCase. GT-664 was one of those copies dropping `processRunner` while the other kept it; three new call sites would have been three more chances to repeat it.",
+        "NOT THIS ROW: GT-675 (the OPA engine has no `skipped` outcome) is untouched and still PENDING. This row was split out of it precisely so a fix to one could not tick a criterion belonging to the other."
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-702",
       "closedAt": "2026-08-16",
       "closureCommit": "2e3a49de",

@@ -1,19 +1,84 @@
 set -e
 
 # ---------------------------------------------------------------------------
-# Where pre-commit left the push intent.
+# THIS HOOK USED TO PUSH SOMETHING OTHER THAN WHAT YOU ASKED IT TO.
 #
-# This used to be a hard-coded `.git/`, which only exists as a DIRECTORY in the
-# primary checkout. Inside a `git worktree`, `.git` is a FILE holding a
-# `gitdir:` pointer, so every `.git/EVOLITH_*` path is ENOTDIR: the reads found
-# nothing and the `rm -f` failed outright, which `set -e` turned into "every
-# push from a worktree is rejected" — the reason `--no-verify` became habitual.
+# `git push -u origin my-feature-branch` ran `git push origin develop`, because the
+# hook read a push INTENT recorded at commit time and never looked at the refs git
+# hands it on stdin. Measured on 2026-08-16: it fired three times in one session
+# against a feature branch, each time failing with `non-fast-forward` on develop —
+# which is the lucky outcome. With a fast-forwardable develop it would have pushed
+# it, and with `EVOLITH_PUSH_TARGET=main` it merges develop into main and pushes
+# BOTH before anyone sees a prompt.
 #
-# `git rev-parse --git-dir` resolves both layouts (`.git` here, the per-worktree
-# admin dir there), and per-worktree is the right scope: the push intent belongs
-# to the checkout that was committed in, not to every checkout in the repo.
+# For an outside contributor it is worse in a quieter way: the interactive default
+# is `d) develop`, so accepting defaults records an intent to push a branch they
+# cannot write to, and their first push fails with an error about somebody else's
+# release process.
+#
+# Two rules now, and they are checked before anything runs:
+#
+#   1. A NON-OWNER's push is never touched. The maintainer macros below are a
+#      convenience for the person who runs this project's releases; for everyone
+#      else this hook is advisory and returns 0.
+#   2. Even for an owner, the macro only fires when the branch being pushed is
+#      `develop` or `main`. Every dispatch path operates on those two branches;
+#      a feature-branch push is by definition not the release macro, so the hook
+#      gets out of the way and lets git push what was typed.
+#
+# Rule 2 is what makes `--no-verify` unnecessary, which matters: reaching for it
+# also switches off the Conventional Commits and DCO checks in commit-msg.
 # ---------------------------------------------------------------------------
+
+# `git rev-parse --git-dir` resolves both layouts: `.git` is a DIRECTORY in the
+# primary checkout and a FILE holding a `gitdir:` pointer inside a worktree, where
+# every hard-coded `.git/EVOLITH_*` path is ENOTDIR. Keep identical to pre-commit.
 GIT_DIR_PATH="$(git rev-parse --git-dir)"
+
+# ---------------------------------------------------------------------------
+# Rule 1 — owners only. Identical detection to pre-commit.
+# ---------------------------------------------------------------------------
+IS_OWNER=false
+OWNER_CONFIG=$(git config --global evolith.owner 2>/dev/null || echo "")
+GIT_USER_EMAIL=$(git config user.email 2>/dev/null || echo "")
+if [ "$OWNER_CONFIG" = "true" ] || [ "$OWNER_CONFIG" = "$GIT_USER_EMAIL" ]; then
+  IS_OWNER=true
+fi
+
+if [ "$IS_OWNER" != true ]; then
+  # Leave no stale intent behind, then get out of the way entirely.
+  rm -f "$GIT_DIR_PATH/EVOLITH_PUSH_TARGET" \
+        "$GIT_DIR_PATH/EVOLITH_CI_MODE" \
+        "$GIT_DIR_PATH/EVOLITH_MERGE_METHOD"
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# Rule 2 — what is actually being pushed.
+#
+# git feeds pre-push one line per ref on stdin:
+#     <local ref> <local sha> <remote ref> <remote sha>
+# A deletion arrives with a local ref of `(delete)`. Reading stdin consumes it,
+# which is fine: nothing downstream needs it.
+#
+# The read is guarded because stdin can legitimately be empty (`git push` with
+# nothing to do), and `set -e` must not turn that into a rejected push.
+# ---------------------------------------------------------------------------
+PUSHED_BRANCHES=""
+while read -r local_ref _local_sha _remote_ref _remote_sha || [ -n "$local_ref" ]; do
+  [ -z "$local_ref" ] && continue
+  case "$local_ref" in
+    refs/heads/*) PUSHED_BRANCHES="$PUSHED_BRANCHES ${local_ref#refs/heads/}" ;;
+    *) : ;;   # tags, and `(delete)` for a branch deletion — never the macro
+  esac
+done
+
+DISPATCHABLE=false
+for b in $PUSHED_BRANCHES; do
+  if [ "$b" = "develop" ] || [ "$b" = "main" ]; then
+    DISPATCHABLE=true
+  fi
+done
 
 TARGET=""
 MERGE_METHOD="merge"
@@ -27,6 +92,16 @@ fi
 rm -f "$GIT_DIR_PATH/EVOLITH_PUSH_TARGET" \
       "$GIT_DIR_PATH/EVOLITH_CI_MODE" \
       "$GIT_DIR_PATH/EVOLITH_MERGE_METHOD"
+
+if [ "$DISPATCHABLE" != true ]; then
+  # The common case, and the one that used to be broken. Say what was skipped and
+  # why, so a surprising no-op is legible rather than mysterious.
+  if [ -n "$TARGET" ] && [ "$TARGET" != "none" ]; then
+    echo "Push intent was '$TARGET', but this push is:${PUSHED_BRANCHES:- (no branches)}."
+    echo "Not a develop/main push — leaving it alone and skipping the release macro."
+  fi
+  exit 0
+fi
 
 if [ "$TARGET" = "none" ] || [ "$TARGET" = "" ]; then
   echo "No push requested. Commit only."

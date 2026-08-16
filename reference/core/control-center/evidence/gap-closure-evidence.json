@@ -10299,7 +10299,7 @@
     {
       "id": "GT-699",
       "closedAt": "2026-08-16",
-      "closureCommit": "c1c7cd10",
+      "closureCommit": "d9e63535",
       "evidence": [
         "src/packages/core-domain/src/application/validators/rule-evaluation-engine.ts",
         "src/packages/core-domain/src/application/validators/ruleset-validator.types.ts",

@@ -678,6 +678,22 @@ export function classifyExecutability(cmd, root = ROOT) {
     if (!SAFE_GIT_SUBS.has(sub)) return { executable: false, bucket: 'mutating', reason: `\`git ${sub}\` is not a read-only subcommand` };
     return { executable: false, bucket: 'history-dependent', reason: 'depends on the checkout depth and the branch under test' };
   }
+  // GT-675 — a REMOTE-TRACKING REF is not repository content.
+  //
+  // `node .harness/scripts/ci/66-validate-bilingual-sync.mjs --since origin/develop`
+  // was recorded as GT-702's evidence and runs fine on a feature branch, where
+  // `origin/develop` exists. On the `develop -> main` promotion it exited 1 in 40ms:
+  // the CI checkout for that pull request has no such ref, so the command failed on
+  // git resolution and not on anything it was written to check.
+  //
+  // This is exactly what the `history-dependent` bucket already means for `git`
+  // itself — "depends on the checkout depth and the branch under test" — and the
+  // only reason it did not apply is that the ref travelled as an ARGUMENT to a node
+  // script rather than as a git subcommand. Classifying, not skipping: the command
+  // stays in the census and is reported, it is simply not executed here.
+  if (cmd.tokens.some((t) => /^(?:origin|upstream)\/[A-Za-z0-9._\/-]+$/.test(t))) {
+    return { executable: false, bucket: 'history-dependent', reason: 'names a remote-tracking ref that a CI checkout need not have' };
+  }
   if (cmd.binRaw.includes('/') && !SAFE_BINARIES.has(cmd.bin)) {
     return { executable: false, bucket: 'external-binary', reason: `\`${cmd.binRaw}\` is a vendored binary, not a harness script` };
   }

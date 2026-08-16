@@ -5,6 +5,50 @@
 
 export type ValidationModeName = 'sdlc' | 'architecture' | 'ruleset' | 'adr' | 'adhoc';
 
+export interface EvaluatedRuleFinding {
+  readonly ruleId: string;
+  readonly severity: 'MUST' | 'SHOULD' | 'COULD';
+  readonly title: string;
+  readonly description?: string;
+  readonly file?: string;
+  readonly blocking: boolean;
+  /** GT-699 — `false` means the rule never ran; an admission, not a verdict. */
+  readonly evaluated?: boolean;
+}
+
+/** GT-701 — what a real evaluation returns to a mode. A subset of `ValidationResult`. */
+export interface RulesetEvaluationOutcome {
+  readonly status: 'passed' | 'failed' | 'warning';
+  readonly rulesChecked: number;
+  readonly rulesSkipped?: number;
+  readonly rulesErrored?: number;
+  readonly rulesTotal?: number;
+  readonly skippedRuleIds?: string[];
+  readonly erroredRuleIds?: string[];
+  readonly issues: readonly EvaluatedRuleFinding[];
+}
+
+/**
+ * GT-701 — the composable surface's route to an engine.
+ *
+ * Declared STRUCTURALLY and never imported as a class, so the modes keep their
+ * zero-argument constructors and core-domain's layering is untouched;
+ * `RulesetValidatorService` satisfies it as it stands, with no adapter.
+ *
+ * Optional on the context by necessity, not by taste — a host that cannot build
+ * a validator must still be able to call the surface. What is NOT optional is
+ * what happens then: a mode without an evaluator refuses. It does not report the
+ * rules it merely parsed as passing, which is the defect this port was added to
+ * end.
+ */
+export interface RulesetEvaluationPort {
+  validate(
+    satellitePath: string,
+    corePath?: string,
+    selection?: { readonly rulesetRef?: string; readonly policyRefs?: readonly string[] },
+  ): Promise<RulesetEvaluationOutcome>;
+}
+
 export interface ValidationContext {
   satellitePath: string;
   corePath?: string;
@@ -15,6 +59,14 @@ export interface ValidationContext {
   adrId?: string;
   filePath?: string;
   customRules?: unknown[];
+  /**
+   * GT-701 — supplied by the host, already built for {@link ValidationContext.engine}.
+   *
+   * The engine choice is honoured HERE, at construction, because a mode has no
+   * way to build an evaluator and `engine` was otherwise merged into this context
+   * and read by nobody on any of the three surfaces that accept it.
+   */
+  evaluator?: RulesetEvaluationPort;
 }
 
 export interface ModeValidationResult {

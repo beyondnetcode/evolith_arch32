@@ -4,6 +4,7 @@ import { IsString, IsOptional, MinLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
+import { RulesetValidatorService, rebuildValidatorForEngine } from '@beyondnet/evolith-core-domain/application/validators';
 
 export class ComposableValidateDto {
   @ApiProperty({ description: 'Opaque workspace reference issued by the Tracker BFF', example: 'op_01j7wq8e2n' })
@@ -45,7 +46,15 @@ export class ComposableValidateDto {
 @ApiTags('composable-validation')
 @Controller({ path: 'validate', version: '1' })
 export class ComposableValidateController {
-  constructor(private readonly workspaceResolver: WorkspaceReferenceResolverService) {}
+  constructor(
+    private readonly workspaceResolver: WorkspaceReferenceResolverService,
+    /**
+     * GT-701 — the endpoint accepted `engine` in its DTO and evaluated nothing:
+     * the composable modes only parsed ruleset JSON. `core-domain.module.ts`
+     * already provides this validator to every other controller.
+     */
+    private readonly validator: RulesetValidatorService,
+  ) {}
 
   @Post('composable')
   @HttpCode(HttpStatus.OK)
@@ -72,10 +81,12 @@ export class ComposableValidateController {
     engine.registerMode(new AdrValidationMode());
     engine.registerMode(new AdhocValidationMode());
 
+    const requestedEngine = body.engine ?? 'native';
     return engine.execute({
       satellitePath,
       corePath,
-      engine: body.engine ?? 'native',
+      engine: requestedEngine,
+      evaluator: rebuildValidatorForEngine(this.validator, requestedEngine),
       topology: body.topology,
       phase: body.phase,
       rulesetId: body.ruleset,

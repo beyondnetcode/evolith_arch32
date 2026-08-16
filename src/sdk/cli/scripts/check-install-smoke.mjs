@@ -44,7 +44,7 @@
  *   1 - an unresolvable specifier, a boot failure, a pack/install failure, or a vacuous scan
  */
 
-import { readdirSync, readFileSync, existsSync, mkdtempSync, mkdirSync, rmSync, renameSync } from 'node:fs';
+import { readdirSync, readFileSync, existsSync, mkdtempSync, mkdirSync, rmSync, renameSync, statSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
@@ -154,6 +154,72 @@ function run(cmd, args, opts = {}) {
  * @param {string} packageName
  * @param {boolean} boot whether to actually execute the binary
  */
+/**
+ * Non-code files a package cannot do its job without, per package.
+ *
+ * ## The defect this closes
+ *
+ * `@beyondnet/evolith-cli@1.2.2` shipped 87 `.rego` SOURCES and zero `policy.wasm`.
+ * `--engine opa` therefore fails closed on every rule from a clean install: the CLI
+ * boots, `--version` answers, every specifier resolves, and the one thing a user
+ * installed it to do cannot happen. Every check in this guard passed on that tarball.
+ *
+ * The cause is that `src/rulesets/opa/policy.wasm` is gitignored (root .gitignore:154),
+ * so a fresh CI checkout has no bundle, `copy-rulesets` copies the sources it can see,
+ * and nothing in the publish path ever compiled one. It is invisible to the maintainer,
+ * whose ignored working tree still holds a bundle from the last local build.
+ *
+ * ## Why a size floor and not just existence
+ *
+ * A zero-byte or truncated `policy.wasm` is the failure this would otherwise wave
+ * through — an aborted compile leaves a file behind. The floor is deliberately far
+ * below the real artifact (669 kB at the time of writing) so it catches "empty" and
+ * "stub" without becoming a tripwire that fails on legitimate optimisation.
+ */
+const REQUIRED_RUNTIME_ASSETS = {
+  '@beyondnet/evolith-cli': [
+    {
+      path: 'rulesets/opa/policy.wasm',
+      minBytes: 50_000,
+      why: 'the compiled Rego bundle. Without it `validate --engine opa` fails closed on every rule.',
+    },
+  ],
+};
+
+function verifyRuntimeAssets(packageDir, packageName) {
+  const required = REQUIRED_RUNTIME_ASSETS[packageName];
+  if (!required) return;
+
+  const missing = [];
+  for (const asset of required) {
+    const full = join(packageDir, asset.path);
+    if (!existsSync(full)) {
+      missing.push(`${asset.path} is ABSENT — ${asset.why}`);
+      continue;
+    }
+    const bytes = statSync(full).size;
+    if (bytes < asset.minBytes) {
+      missing.push(
+        `${asset.path} is ${bytes} byte(s), below the ${asset.minBytes} floor — ` +
+        `a truncated or stub artifact. ${asset.why}`,
+      );
+    }
+  }
+
+  if (missing.length > 0) {
+    fail([
+      `${packageName} installs and boots, but ships without ${missing.length} required runtime asset(s):`,
+      ...missing.map((m) => `    ${m}`),
+      '',
+      'A package that boots and cannot do its job is the failure this guard exists to catch:',
+      'every other check here passed on the 1.2.2 tarball that had no policy.wasm.',
+      'Run `npm run build:policy` before packing — the release workflow now does.',
+    ]);
+  }
+
+  console.log(`✓ ${required.length} required runtime asset(s) present and non-trivial.`);
+}
+
 function verifyTree(treeDir, packageName, boot, declaredSiblingDeps = null) {
   const packageDir = join(treeDir, 'node_modules', ...packageName.split('/'));
   if (!existsSync(packageDir)) {
@@ -194,6 +260,8 @@ function verifyTree(treeDir, packageName, boot, declaredSiblingDeps = null) {
   }
 
   console.log(`✓ ${specifiers.size} @beyondnet/* specifier(s) resolve in the clean install.`);
+
+  verifyRuntimeAssets(packageDir, packageName);
 
   if (!boot) return;
 

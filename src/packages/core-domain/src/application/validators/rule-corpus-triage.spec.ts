@@ -108,7 +108,11 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // would mean the native triage had started asserting something about a bundle
   // it never loaded.
   'native-handler': 171,
-  'documentation-only': 137,
+  // 137 -> 138 on 2026-08-16: ADR-0126's generated conformance ruleset. An accepted
+  // ADR owes one, `generate-adr-rulesets.mjs` wrote it, and it lands here for the same
+  // reason every generated ADR ruleset does — its validationQuery says nothing a native
+  // handler can execute. A decision written down, not a check that stopped working.
+  'documentation-only': 138,
   'unimplemented-native': 52,
   'needs-external-system': 20,
   'needs-runtime': 17,
@@ -238,9 +242,12 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // management) had no conformance ruleset at all, because nobody re-ran
     // `generate-adr-rulesets.mjs` after they were accepted. Regenerating for
     // GT-571 surfaced them, and this snapshot failing is what made it visible.
-    expect(SUMMARY.nonExecutable).toBe(151);
-    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 151);
-    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(151);
+    //
+    // 151 -> 152 on 2026-08-16: ADR-0126's generated conformance ruleset, the same +1
+    // recorded against `documentation-only` above.
+    expect(SUMMARY.nonExecutable).toBe(152);
+    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 152);
+    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(152);
   });
 
   it('names the blocking rules that can never produce a verdict', () => {
@@ -297,8 +304,11 @@ describe('GT-595 · the handler slice that landed', () => {
     // 133 -> 134 on 2026-08-02: ADR-0125 (GT-650). One ADR, one placeholder. The
     // `every(claims)` below is the assertion that matters — a new ADR must arrive
     // CLAIMED by the conformance handler, not land in the unclaimed pile.
+    // 134 -> 135 on 2026-08-16: ADR-0126 (the bilingual mandate narrows to an entry
+    // surface). Same shape as the ADR-0125 bump above — one accepted ADR, one generated
+    // conformance placeholder, claimed by the conformance handler.
     const adrConformance = CORPUS.filter(r => r.category === 'adr-conformance');
-    expect(adrConformance).toHaveLength(134);
+    expect(adrConformance).toHaveLength(135);
     expect(adrConformance.every(claims)).toBe(true);
   });
 

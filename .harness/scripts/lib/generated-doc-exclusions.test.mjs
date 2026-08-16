@@ -107,9 +107,38 @@ test('the live guard prints its exclusion ledger on every run', () => {
 // This is the regression the whole change exists to protect. If an exclusion is ever
 // widened until a hand-authored orphan slips through, this test fails.
 
-test('a hand-authored unpaired document under a non-excluded reference/ path FAILS the guard', () => {
+// ADR-0126 REPOINTED THIS PROBE, AND THE REASON MATTERS.
+//
+// It used to write `reference/core/architecture/zz-parity-probe-<pid>.md` and assert the
+// suite failed on it. After the mandate narrowed to the sixteen-document entry surface,
+// that path is deliberately released — so the probe stopped being caught, and the test
+// failed for the right reason: it was pinning the OLD contract.
+//
+// Deleting it would have removed the only proof that the orphan check catches anything at
+// all. So it now probes where the mandate still applies: an entry-surface document with its
+// Spanish half temporarily moved aside. The rename is restored in `finally`, and the file is
+// moved rather than deleted so a crashed run leaves it recoverable next to its original.
+test('an entry-surface document that loses its Spanish half FAILS the guard', () => {
+  const english = path.join(REPO_ROOT, 'reference/core/architecture/README.md');
+  const spanish = path.join(REPO_ROOT, 'reference/core/architecture/README.es.md');
+  assert.ok(fs.existsSync(english) && fs.existsSync(spanish),
+    'fixture pair must exist — it is one of the sixteen entry-surface documents');
+
+  const stashed = `${spanish}.stashed-by-test-${process.pid}`;
+  fs.renameSync(spanish, stashed);
+  try {
+    const { code, out } = runGuard();
+    assert.equal(code, 1, 'guard must fail on an unpaired ENTRY-SURFACE document');
+    assert.match(out, /README\.es\.md/, 'the guard must NAME the missing counterpart');
+  } finally {
+    fs.renameSync(stashed, spanish);
+  }
+});
+
+// The complement: outside the entry surface an orphan is released, not caught. Without
+// this, a future change that quietly re-widened the scope would still pass the test above.
+test('a hand-authored unpaired document OUTSIDE the entry surface is released (ADR-0126)', () => {
   const dir = path.join(REPO_ROOT, 'reference/core/architecture');
-  assert.ok(fs.existsSync(dir), 'fixture directory must exist and must not be excluded');
   const probe = path.join(dir, `zz-parity-probe-${process.pid}.md`);
   assert.ok(
     !GENERATED_DOC_EXCLUSIONS.some((e) => e.matches(path.relative(REPO_ROOT, probe).split(path.sep).join('/'))),
@@ -118,9 +147,8 @@ test('a hand-authored unpaired document under a non-excluded reference/ path FAI
 
   fs.writeFileSync(probe, '# Parity probe\n\nHand-authored, deliberately untranslated.\n');
   try {
-    const { code, out } = runGuard();
-    assert.equal(code, 1, 'guard must fail on an unpaired hand-authored document');
-    assert.match(out, new RegExp(path.basename(probe)), 'the guard must NAME the offending file');
+    const { code } = runGuard();
+    assert.equal(code, 0, 'an orphan outside the entry surface is released by ADR-0126, not caught');
   } finally {
     fs.rmSync(probe, { force: true });
   }
@@ -152,13 +180,23 @@ test('the OKF bundle exclusion is marker-verified, not count-pinned', () => {
   }
 });
 
-test('an unstamped file dropped into the OKF bundle FAILS the guard instead of inheriting its exemption', () => {
+// ADR-0126 CHANGED WHAT THIS TEST CAN CLAIM, AND THE LOSS IS STATED RATHER THAN HIDDEN.
+//
+// Marker verification is intact: an unstamped intruder is still DETECTED, still NAMED, and
+// still reported as kept in scope rather than inheriting a path-based exemption. That is the
+// property this test was written for and it still holds.
+//
+// What no longer holds is the exit code. The orphan GATE now covers only the sixteen
+// entry-surface documents, so an unpaired intruder in a generated tree is reported and does
+// not fail the build. That is a real reduction in enforcement, accepted by ADR-0126 and
+// written down here so the next reader does not mistake a green run for an empty report.
+test('an unstamped file dropped into the OKF bundle is DETECTED and named, not silently exempted', () => {
   const probe = path.join(REPO_ROOT, 'reference/knowledge/okf', `zz-parity-probe-${process.pid}.md`);
   // Deliberately OKF-shaped: valid frontmatter, plausible location. Only the banner is missing.
   fs.writeFileSync(probe, '---\ntype: Concept\ntitle: Sneaked in\n---\n\n# Sneaked in\n\nHand-authored.\n');
   try {
     const { code, out } = runGuard();
-    assert.equal(code, 1, 'a file without the projector banner must not be exempt');
+    assert.equal(code, 0, 'ADR-0126: reported, but no longer a gate failure outside the entry surface');
     assert.match(out, new RegExp(path.basename(probe)), 'the guard must NAME the offending file');
     assert.match(out, /\[knowledge-okf-bundle\][\s\S]*do NOT carry the marker/);
     // And the real bundle keeps its exemption — one intruder must not nuke the whole entry.
@@ -168,12 +206,12 @@ test('an unstamped file dropped into the OKF bundle FAILS the guard instead of i
   }
 });
 
-test('an unstamped file dropped into a generated tree FAILS the guard rather than inheriting its exemption', () => {
+test('an unstamped file dropped into a generated tree is DETECTED, not path-exempted', () => {
   const probe = path.join(REPO_ROOT, 'reference/wiki', `zz-parity-probe-${process.pid}.md`);
   fs.writeFileSync(probe, '# Sneaked in\n\nNo generator banner. Must not be exempt.\n');
   try {
     const { code, out } = runGuard();
-    assert.equal(code, 1, 'path-based membership alone must not exempt a file');
+    assert.equal(code, 0, 'ADR-0126: reported, not a gate failure — path-based membership still must not exempt it');
     assert.match(out, new RegExp(path.basename(probe)));
     assert.match(out, /do NOT carry the marker/);
   } finally {

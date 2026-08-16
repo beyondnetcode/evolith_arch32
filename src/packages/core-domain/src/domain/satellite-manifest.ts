@@ -41,6 +41,19 @@ export interface EvaluationFacts {
     readonly status: string;
     readonly expirationDate?: string;
   }[];
+  /**
+   * GT-694 — satellite facts the Core cannot observe, merged into
+   * `input.satellite` for the policies whose schemas require them.
+   *
+   * Thirteen shipped OPA categories require facets no directory listing can
+   * produce — CI gate configuration, tenancy enforcement, DORA numbers, branch
+   * protection — and without this channel every one of them failed input-schema
+   * validation and never reached its policy. `ADR-0101` makes the Core a stateless
+   * engine that receives its context, so these belong to the caller.
+   *
+   * An observed key always wins over a declared one of the same name.
+   */
+  readonly satellite?: Readonly<Record<string, unknown>>;
   /** Opaque tenant echo for the gate audit field (`input.tenantId`). */
   readonly tenantId?: string;
   /** ISO-8601 date for waiver-expiry comparison (`input.evaluationDate`). */

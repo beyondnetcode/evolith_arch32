@@ -26,7 +26,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
-| 2 | Área de mayor riesgo | `Core Domain` tiene la mayor carga ponderada abierta. | [GT-676](../gaps/gap-reference-catalog.es.md#gt-676), [GT-675](../gaps/gap-reference-catalog.es.md#gt-675), [GT-683](../gaps/gap-reference-catalog.es.md#gt-683), [GT-674](../gaps/gap-reference-catalog.es.md#gt-674), [GT-687](../gaps/gap-reference-catalog.es.md#gt-687), [GT-678](../gaps/gap-reference-catalog.es.md#gt-678), +1 |
+| 2 | Área de mayor riesgo | `Core Domain` tiene la mayor carga ponderada abierta. | [GT-676](../gaps/gap-reference-catalog.es.md#gt-676), [GT-675](../gaps/gap-reference-catalog.es.md#gt-675), [GT-683](../gaps/gap-reference-catalog.es.md#gt-683), [GT-674](../gaps/gap-reference-catalog.es.md#gt-674), [GT-687](../gaps/gap-reference-catalog.es.md#gt-687), [GT-695](../gaps/gap-reference-catalog.es.md#gt-695), +1 |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-671](../gaps/gap-reference-catalog.es.md#gt-671), [GT-676](../gaps/gap-reference-catalog.es.md#gt-676), [GT-684](../gaps/gap-reference-catalog.es.md#gt-684) |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-671](../gaps/gap-reference-catalog.es.md#gt-671), [GT-676](../gaps/gap-reference-catalog.es.md#gt-676), [GT-684](../gaps/gap-reference-catalog.es.md#gt-684), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-670](../gaps/gap-reference-catalog.es.md#gt-670), [GT-675](../gaps/gap-reference-catalog.es.md#gt-675), [GT-680](../gaps/gap-reference-catalog.es.md#gt-680), [GT-681](../gaps/gap-reference-catalog.es.md#gt-681), +5 |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-674](../gaps/gap-reference-catalog.es.md#gt-674), [GT-685](../gaps/gap-reference-catalog.es.md#gt-685), [GT-686](../gaps/gap-reference-catalog.es.md#gt-686), [GT-687](../gaps/gap-reference-catalog.es.md#gt-687), +11 |
@@ -42,14 +42,14 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-08-08 |
-| Gaps totales | 692 |
-| Gaps cerrados | 657 |
+| Gaps totales | 693 |
+| Gaps cerrados | 658 |
 | Gaps pendientes | 35 |
 | P0 abiertos | 1 |
 | P1 abiertos | 13 |
 | P2 abiertos | 17 |
 | Cierre total | 94.9% |
-| Registros de evidencia de cierre | 639 |
+| Registros de evidencia de cierre | 640 |
 | Readiness registrado | 4 PASS |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |

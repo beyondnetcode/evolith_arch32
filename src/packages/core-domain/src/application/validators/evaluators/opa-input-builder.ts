@@ -25,6 +25,13 @@ export class OpaInputBuilder {
         hasDependabot: await this.fs.exists(path.join(ctx.satellitePath, '.github', 'dependabot.yml')),
         hasRenovate: await this.fs.exists(path.join(ctx.satellitePath, '.renovaterc.json')),
         directories: await this.getTopLevelDirs(ctx.satellitePath),
+        // GT-694 — `governance.rego` builds `{file | file := input.satellite.files[_]}`
+        // and asks whether `DECISIONS.md` is among them (INH-04, INH-06). That is a
+        // top-level file listing, so asking a caller to declare it would be asking
+        // them to tell us what is already in front of us. ALWAYS an array, never
+        // absent: to a Rego comprehension an absent key makes the rule undefined
+        // rather than false, which is a different verdict.
+        files: await this.getTopLevelFiles(ctx.satellitePath),
         hasContracts: await this.fs.exists(path.join(ctx.satellitePath, 'contracts')),
         hasAcl: await this.fs.exists(path.join(ctx.satellitePath, 'acl')),
         hasEvents: await this.fs.exists(path.join(ctx.satellitePath, 'events')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'events')),
@@ -87,6 +94,27 @@ export class OpaInputBuilder {
       if (facts.qualityEvidence) merged.qualityEvidence = facts.qualityEvidence;
       if (facts.qualityAdmissibilityPolicy) {
         merged.qualityAdmissibilityPolicy = facts.qualityAdmissibilityPolicy;
+      }
+
+      // GT-694 — the caller may supply satellite facts the Core cannot observe.
+      //
+      // 14 facets that shipped input schemas REQUIRE were never emitted here, so 13
+      // categories failed schema validation and never reached their policy at all:
+      // `multi-tenancy` answered `OPA Input Schema Validation Failed: data/satellite
+      // must have required property 'multiTenancy'` instead of a verdict.
+      //
+      // Most of those are not the Core's to derive. Whether a pipeline requires a
+      // review before merge, whether tenant filtering is applied, what the DORA
+      // numbers are — none of it is visible in a directory listing, and ADR-0101
+      // makes this a stateless engine that RECEIVES its context. So the fix is the
+      // channel, not thirteen collectors.
+      //
+      // PRECEDENCE IS ASYMMETRIC ON PURPOSE: an observed key always beats a declared
+      // one. A satellite claiming it has no lockfile while a lockfile sits in the
+      // tree must not be believed — GT-683's lesson, applied on the input side
+      // instead of re-learned later.
+      if (facts.satellite) {
+        merged.satellite = { ...facts.satellite, ...(merged.satellite as Record<string, unknown>) };
       }
     }
     return input;
@@ -217,6 +245,19 @@ export class OpaInputBuilder {
       const normalizedRight = rightPath.replace(/\\+|\/+/g, '/').replace(/\/$/, '');
       return normalizedLeft === normalizedRight || normalizedLeft.startsWith(`${normalizedRight}/`) || normalizedRight.startsWith(`${normalizedLeft}/`);
     }));
+  }
+
+  /** GT-694 — the file half of {@link getTopLevelDirs}; see the `files:` comment. */
+  private async getTopLevelFiles(dir: string): Promise<string[]> {
+    if (!await this.fs.exists(dir)) return [];
+    const entries = await this.fs.readdirNames(dir);
+    const files: string[] = [];
+    for (const entry of entries) {
+      if (entry === '.' || entry === '..') continue;
+      const stat = await this.fs.stat(path.join(dir, entry));
+      if (!stat.isDirectory()) files.push(entry);
+    }
+    return files;
   }
 
   private async getTopLevelDirs(dir: string): Promise<string[]> {

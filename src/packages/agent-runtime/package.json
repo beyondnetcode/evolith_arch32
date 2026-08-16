@@ -2,6 +2,7 @@
   "name": "@beyondnet/evolith-agent-runtime",
   "version": "1.2.0",
   "description": "Evolith Agent Runtime — decoupled agentic layer that operates Evolith Core through Ports & Adapters (.harness, Core Evaluation, OPA, Tracker, Memory, Scheduler, Hermes). Hexagonal; no runtime/LLM technology is a domain dependency.",
+  "keywords": ["evolith","architecture-governance","policy-as-code","ai-agents","agent-runtime","llm","governed-ai"],
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

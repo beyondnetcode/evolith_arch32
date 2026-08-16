@@ -2,6 +2,7 @@
   "name": "@beyondnet/evolith-infra-providers",
   "version": "1.2.0",
   "description": "Shared infrastructure providers for Evolith Core",
+  "keywords": ["evolith","architecture-governance","infrastructure","providers","policy-as-code"],
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

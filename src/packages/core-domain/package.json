@@ -2,6 +2,7 @@
   "name": "@beyondnet/evolith-core-domain",
   "version": "1.2.0",
   "description": "Shared Domain and Application logic for Evolith Core",
+  "keywords": ["evolith","architecture-governance","policy-as-code","opa","rego","architecture-fitness-functions","adr","ddd"],
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -2,6 +2,7 @@
   "name": "@beyondnet/evolith-repo-facts",
   "version": "1.2.0",
   "description": "Evolith RepoFacts extractor — builds the canonical structural fact base (module graph + symbol graph) OUTSIDE the stateless Core and emits it content-hashed for inline delivery on the EvaluationContext (GT-589 / ADR-0101).",
+  "keywords": ["evolith","architecture-governance","static-analysis","repository-analysis","architecture-drift"],
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

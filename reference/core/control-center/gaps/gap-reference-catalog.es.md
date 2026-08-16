@@ -8892,7 +8892,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Una regla escrita sobrevive a `evolith upgrade` (depende de [`GT-673`](./gap-reference-catalog.es.md#gt-673)) y se demuestra con un test que actualiza y vuelve a evaluar.
   - [ ] La regla lleva su procedencia — qué hallazgo recurrente la motivó y quién la aprobó — para que una entrada del ratchet sea auditable y no folclore.
   - [ ] Un test negativo demuestra que una regla escrita puede FALLAR de verdad sobre un sujeto; una regla que solo pasa es el caso vacío que este board no deja de encontrar.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 **CORRECCIÓN DE ALCANCE 2026-08-14, desde la ola de benchmarking ultracode — una afirmación de esta fila fue REFUTADA y el residuo es más estrecho de lo registrado.** Una regla escrita íntegramente fuera del repositorio Core SÍ puede ejecutarse hoy, por dos caminos cableados en producción y sin tocar código del Core, y ambos se ejecutaron: (1) una regla con id nuevo `ACME-04`, `category: "boundary"` y una cláusula escrita devolvió un veredicto `failed` real a través de `NativeEvaluator`, porque `ModuleBoundaryRuleHandler.canHandle` reclama por CLÁUSULA y no por id (`:35-42`), igual que los handlers de conformidad ADR y arquitectura; (2) una regla con id nuevo y `enforce: {engine: 'enforcer', tool: 'Trivy'}` devolvió `failed | 1 violation(s) from Trivy`, porque los bloques `enforce` se normalizan desde `GT-632` y las tres superficies inyectan un ejecutor de procesos. **Lo que sí sobrevive, y lo que esta fila acota ahora:** un tenant no puede registrar un EJECUTOR nuevo — `createEnforcerAdapters` es una factoría fija de seis entradas (`enforcer-subsystem.ts:40-53`) sin punto de inyección, y tres grafías distintas de gancho de registro no encontraron nada fuera de specs — y no hay documentación orientada al tenant de los dos caminos que ya funcionan. El criterio 1 se mantiene tal cual; el titular honesto es la ausencia de una superficie de autoría SOPORTADA y DOCUMENTADA y de extensibilidad de ejecutores, no una incapacidad de ejecutar.
 
@@ -8919,7 +8919,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Los waivers que caducaron sin adjudicar se EXCLUYEN y se cuentan aparte, para que el silencio nunca se lea como acuerdo.
   - [ ] `evolith calibrate report` corre de extremo a extremo sobre el corpus exportado en un test, y sigue negándose a citar una tasa por debajo de su suelo de n declarado.
   - [ ] El exportador se demuestra falsable: un corpus con un desacuerdo plantado produce la matriz esperada, y quitar esa fila la cambia.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-671
 
@@ -8969,7 +8969,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Una fuente ausente o ilegible HACE FALLAR al generador; nunca se renderiza como cero.
   - [ ] El generador es un enlace declarado de la cadena de `46-validate-derived-artifact-order`, para que una página desactualizada sea un check rojo y no un bochorno.
   - [ ] Se publica por el pipeline de documentación existente; sin hosting nuevo ni dominio nuevo.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-673
 
@@ -8994,7 +8994,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Un `conflict` no se aplica por defecto; aplicarlo exige un flag explícito y nombra cada fichero que va a sobrescribir.
   - [ ] Un test scaffoldea un satélite, edita un fichero scaffoldeado, actualiza y afirma que la edición SOBREVIVE — observado fallando contra el código actual antes del arreglo.
   - [ ] El satélite puede reportar su divergencia respecto a upstream sin ejecutar un upgrade.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-674
 
@@ -9018,7 +9018,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Una superficie puede aportar la evidencia inline, conforme a `ADR-0101` — el Core sigue sin estado y no lee el sistema de ficheros para ello.
   - [ ] El adaptador se ejercita contra un fixture con un payload real del proveedor y no contra un objeto construido a mano, para que el mapeo quede probado contra una forma real.
   - [ ] Si se juzga que el cable no merece la pena, el puerto y el adaptador se BORRAN y la decisión queda registrada — un puerto sin consumidor no se deja en pie como capacidad aparente.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 
 #### GT-675
@@ -9142,7 +9142,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Todo override que cambió una ejecución se nombra en el resultado con de→a, aprobador y caducidad, comprobado no vacío para una ejecución con override y **vacío en vez de ausente** para una limpia.
   - [ ] Un override que elimina un criterio bloqueante se rechaza con un id de issue nombrado, observado fallando en un test.
   - [ ] `src/rulesets/tenants/README.md` se corrige o se borra; un documento que describe una aplicación inexistente es peor que ningún documento.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-679
 
@@ -9169,7 +9169,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Ambos caminos de protocolo llegan a un solo verificador: un test de paridad donde un token aceptado en el dispatch pero rechazado en el atajo inline de `stateless-rpc.ts` hace fallar el build.
   - [ ] La línea de auditoría responde «quién aprobó» con identidad de aprobador e id del registro de canje, con el token en crudo aún redactado para que las aserciones de `GT-332` sigan pasando.
   - [ ] `McpInteractionAdapter.ts:47-49` deja de convertir una cadena del llamante en `{granted: true, approver: 'mcp'}`.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-680
 
@@ -9195,7 +9195,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD:** un test hace fallar el append durable (ruta de solo lectura o adaptador que lanza) y afirma tanto que el veredicto de la herramienta no cambia como que el fallo se hace visible, mostrado poniéndose rojo al quitar la rama de fallo.
   - [ ] **FALSABILIDAD:** un test reescribe una línea existente del ledger y afirma que el camino de lectura reporta manipulación; si hace falta custodia de claves, esa mitad se difiere a [`GT-588`](./gap-reference-catalog.es.md#gt-588) por escrito en vez de marcarse.
   - [ ] `GT-321` y `GT-221` llevan una anotación que registra que `JsonlAuditRepository` tenía cero instanciaciones y los loggers de recursos y prompts cero llamantes de producción cuando se cerraron.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-681
 
@@ -9221,7 +9221,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Los metadatos de las keys sobreviven a un reinicio, o el servicio lleva el mismo aviso explícito de producción que ya imprime `audit-logger.ts:37-42`, con el test de reinicio registrando cuál de los dos resultados ocurrió.
   - [ ] `evolith-evaluate` y el CLI aceptan y reenvían `requester`, y un payload depositado desde esa ejecución lleva un `requestedBy` no vacío verificado contra la procedencia de campos del ingest.
   - [ ] **NEGATIVO:** sin solicitante aportado por el llamante y sin principal autenticado, `requestedBy` queda **ausente, no un marcador** — la regla «ausente entra, ausente sale» que `GT-586` ya aplica a `repositoryRevision`.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-682
 
@@ -9247,7 +9247,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD:** borrar cualquiera de los registros MCP pone rojo el spec de paridad del catálogo, demostrado en el registro de cierre; y se observa al ABAC DENEGANDO una de las herramientas nuevas para un rol sin autoridad de waiver contra el `policy.wasm` **compilado** y no contra el `.rego` fuente, mostrando tanto la denegación como el permiso.
   - [ ] Una decisión escrita registra si la persistencia de waivers pertenece a la superficie REST sin estado; si no, la exclusión queda registrada en el README de interfaces y aplicada por la tabla de bindings, nunca en silencio.
   - [ ] El registro de cierre muestra un waiver aprobado suprimiendo un hallazgo en ambas superficies, o declara por escrito que esta fila porta una operación de solo escritura porque [`GT-677`](./gap-reference-catalog.es.md#gt-677) no ha aterrizado.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-683
 
@@ -9308,7 +9308,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD (observado fallando primero):** se añade un fixture con forma de inyección y un spec afirma que se marca como no confiable y se valla — se acredita solo cuando ese spec queda registrado FALLANDO contra el emisor actual, mostrando el texto crudo sin vallar.
   - [ ] Quitar el campo de confianza pone rojo al menos un test, registrado borrándolo, nombrando el test que falla y restaurándolo.
   - [ ] El banner de estado de implementación de ADR-0082 sale de `none` y se corrige su afirmación desactualizada de que ningún evaluador atiende esa categoría; `44-validate-adr-implementation-status` pasa.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-685
 
@@ -9333,7 +9333,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] La siembra vive dentro del despliegue: tras levantar el stack, una llamada de knowledge-search devuelve al menos un chunk con un `sourceFile` bajo `reference/`, con la respuesta literal registrada.
   - [ ] **FALSABILIDAD:** con el almacén parado, la misma llamada se observa FALLANDO — un rechazo o un error de conexión visible. Un envelope de éxito con cero resultados falsifica el arreglo; un corpus vacío en silencio es justo lo que la factoría de conocimiento se escribió para evitar.
   - [ ] El quickstart deja de nombrar un comando que no existe, o esta fila declara por escrito que el quickstart queda fuera de alcance.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-686
 
@@ -9359,7 +9359,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD:** revertir un sitio a `durationMs: 0` y correr el guard produce una salida FALLIDA, pegada en el registro de cierre.
   - [ ] La comprobación rechaza `durationMs: 0` como VALOR en una ejecución cuyo reloj de pared no fue cero, no solo una clave ausente.
   - [ ] **SIN COSTE INVENTADO:** un payload que emita `costUsd: 0` o `totalTokens: 0` sin señal de IA se rechaza; ausente debe seguir siendo distinguible de cero.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-687
 
@@ -9385,7 +9385,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **ANTI-VACUIDAD:** renombrar `Waiver.waiverRef` en el dominio pone rojo el spec de ingest en vez de dejar el cable sin origen en silencio.
   - [ ] La pata de vuelta queda nombrada: se especifica una ruta de lectura del lado Tracker y `calibrate` puede alimentarse de ella, con un test que dirige el comando contra un fetch simulado — o el aplazamiento al repositorio del Tracker queda por escrito.
   - [ ] Un waiver rechazado es representable y mapea a `humanBlocked: true`, afirmado en ambas polaridades — la trampa de la etiqueta confirmatoria de [`GT-670`](./gap-reference-catalog.es.md#gt-670).
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 
 #### GT-688
@@ -9452,7 +9452,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] Un documento de composición de una sola topología es expresable.
   - [ ] Los estados de producto documentados en `topology-dimensions.md` tienen fixtures, y el guard falla cuando una composición documentada no lo tiene.
   - [ ] **FALSABILIDAD:** hacer ilegal un par en un manifiesto y una evaluación que lo use debe FALLAR; si sigue pasando, el validador no está en el camino de evaluación y esta fila no se cierra.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-690
 
@@ -9476,7 +9476,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] `$schema` resuelve para cada copia superviviente.
   - [ ] **FALSABILIDAD:** una regla editada en la copia superviviente cambia el veredicto de una evaluación que la usa; la misma edición sobre una ruta borrada no cambia nada, porque la ruta ya no existe.
   - [ ] `GT-566` lleva una anotación que registra que su afirmación de «exactamente UN sitio» era falsa cuando cerró.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-691
 
@@ -9525,7 +9525,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD, y tiene que ser un ARRANQUE y no un build:** cada imagen afectada se levanta y sirve una petición real después, conforme a [`GT-647`](./gap-reference-catalog.es.md#gt-647), cuyo hallazgo entero fue que una lista de copiado mantenida a mano produce una imagen que compila en verde y muere en tiempo de `require`.
   - [ ] El job fallido del consumidor se vuelve a ejecutar contra la nueva imagen y la importación termina; se registran tanto el `no space left on device` literal como la ejecución que pasa.
   - [ ] Un check falla cuando una imagen desplegable crece por encima de un presupuesto declarado, para que la próxima regresión se cace aquí y no en el pipeline de otro.
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-693
 
@@ -9737,7 +9737,7 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
 - **OCTAVO DEFECTO DEL DETECTOR: la prueba de `published-api` no seguía cadenas de re-exportación.** Buscaba el nombre literal en `src/index.ts` y se perdía `export * from './adapters/index'`. Seguir las cadenas mueve **14 entradas** a `published-api` — incluida `PlatformDetectionService`, que esta fila describía como **«referenciada por nada»** y que se exporta desde la raíz de su paquete. **Es la segunda vez que esta fila publica una falsa verificación a mano**, y ambas quedan corregidas en su sitio.
 - **REVISADO, Y ESTE ES EL NÚMERO QUE IMPORTA:** `published-api` **14**, `built-tested-unwired` **17** (15 clases distintas en 16 cierres), `singleton-nobody-imports` **6**, `dead` **0**. El cubo `dead` queda vacío — sus dos miembros eran exportaciones publicadas.
 - **De 59 supuestos hallazgos a 15 clases distintas de deuda real, tras ocho correcciones del detector, todas encontradas triando y ninguna escribiendo el detector.** El instrumento construido para cazar sobre-afirmaciones sobre-afirmó por un factor de cuatro, y solo la verificación entrada por entrada lo destapó. Es lo más útil que produjo esta fila, y sostiene la regla general que la auditoría ya insinuaba: **una medición no es evidencia hasta que algo ha intentado refutarla.**
-- **Estado:** `PENDIENTE`
+- **Estado:** `DIFERIDO`
 
 #### GT-699
 

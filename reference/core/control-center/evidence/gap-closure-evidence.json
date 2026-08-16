@@ -10384,7 +10384,7 @@
     {
       "id": "GT-703",
       "closedAt": "2026-08-16",
-      "closureCommit": "PENDING",
+      "closureCommit": "ccbcbd30",
       "evidence": [
         ".harness/scripts/ci/46-validate-derived-artifact-order.mjs",
         ".harness/scripts/ci/46-validate-derived-artifact-order.test.mjs"

@@ -91,6 +91,18 @@ const allowedDirectories = new Set([
   // Product documentation corpus.
   "docs",
   "product",
+  // Claude Code plugin marketplace. BOTH of these are forced to the root by the
+  // ecosystem, not chosen: `/plugin marketplace add <owner>/<repo>` looks for
+  // `.claude-plugin/marketplace.json` at the repository root and nowhere else,
+  // and a plugin `source` written as a relative path resolves against the
+  // MARKETPLACE ROOT -- the directory containing `.claude-plugin/` -- so the
+  // plugin tree it points at is a root-level `plugins/`. Putting either
+  // elsewhere does not fail loudly; the marketplace simply does not resolve.
+  //
+  // Note the component directories (`skills/`, `commands/`, `agents/`) live
+  // INSIDE the plugin, never inside `.claude-plugin/`, which silently breaks it.
+  ".claude-plugin",
+  "plugins",
   "examples",
   "wiki"
 ]);

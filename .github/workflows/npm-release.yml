@@ -220,3 +220,68 @@ jobs:
             cat /tmp/plan.json 2>/dev/null | jq . || echo '{}'
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------------
+  # MCP registry (registry.modelcontextprotocol.io)
+  #
+  # Runs only on a tag push, and only after `publish` succeeded: the registry
+  # VERIFIES OWNERSHIP by fetching registry.npmjs.org/<pkg>/<version> and reading
+  # a top-level `mcpName` out of THAT version's document. Publishing here before
+  # npm has the version, or against a version whose tarball predates the mcpName
+  # field, fails with "NPM package is missing required 'mcpName' field".
+  #
+  # Auth is OIDC, not a secret: `mcp-publisher login github-oidc` exchanges the
+  # Actions token for a namespace grant on io.github.<repository_owner>/*, which
+  # for this repository is io.github.beyondnetcode/*. The interactive
+  # `login github` device flow is the thing this job exists to avoid.
+  #
+  # A published version is IMMUTABLE. Re-running this job for a version already
+  # in the registry is a no-op-by-failure, not a silent overwrite, so the step is
+  # allowed to fail without failing the release.
+  # ---------------------------------------------------------------------------
+  publish-mcp-registry:
+    name: Publish to the MCP registry
+    needs: release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz \
+            | tar -xz -C /usr/local/bin mcp-publisher
+          mcp-publisher --version
+
+      - name: The published npm version must already carry mcpName
+        working-directory: src/packages/mcp-server
+        run: |
+          set -euo pipefail
+          VERSION=$(node -p "require('./package.json').version")
+          EXPECTED=$(node -p "require('./package.json').mcpName")
+          PUBLISHED=$(curl -fsSL "https://registry.npmjs.org/@beyondnet/evolith-mcp/${VERSION}" | jq -r '.mcpName // "ABSENT"')
+          echo "version=${VERSION} expected=${EXPECTED} published=${PUBLISHED}"
+          if [ "$PUBLISHED" != "$EXPECTED" ]; then
+            echo "::error::npm @beyondnet/evolith-mcp@${VERSION} reports mcpName='${PUBLISHED}', expected '${EXPECTED}'. The registry reads this from the VERSION document, so publishing would be rejected."
+            exit 1
+          fi
+
+      - name: Validate server.json against the published schema
+        working-directory: src/packages/mcp-server
+        run: mcp-publisher validate
+
+      - name: Publish
+        working-directory: src/packages/mcp-server
+        continue-on-error: true
+        run: |
+          mcp-publisher login github-oidc
+          mcp-publisher publish
+
+      - name: Confirm the listing resolves
+        run: |
+          sleep 15
+          curl -fsS 'https://registry.modelcontextprotocol.io/v0/servers?search=evolith' \
+            | jq -r '.servers[]? | "\(.name)  \(.version)"' || echo "not listed yet"

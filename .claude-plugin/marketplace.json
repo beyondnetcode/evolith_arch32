@@ -1,0 +1,36 @@
+{
+  "name": "evolith",
+  "owner": {
+    "name": "BeyondNet",
+    "url": "https://github.com/beyondnetcode"
+  },
+  "plugins": [
+    {
+      "name": "evolith-governance",
+      "description": "Executable architecture governance for agents: validate a repository against rulesets, ADRs and SDLC phase gates, and read the verdict together with its coverage. A rule that was not evaluated is reported as UNKNOWN, never as passed.",
+      "version": "1.3.1",
+      "source": "./plugins/evolith-governance",
+      "author": {
+        "name": "BeyondNet",
+        "url": "https://github.com/beyondnetcode"
+      },
+      "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+      "repository": "https://github.com/beyondnetcode/evolith_arch32",
+      "license": "MIT",
+      "keywords": [
+        "architecture-governance",
+        "policy-as-code",
+        "opa",
+        "rego",
+        "adr",
+        "compliance"
+      ],
+      "mcpServers": {
+        "evolith": {
+          "command": "npx",
+          "args": ["-y", "@beyondnet/evolith-mcp"]
+        }
+      }
+    }
+  ]
+}

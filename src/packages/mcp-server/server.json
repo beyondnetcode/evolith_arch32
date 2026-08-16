@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.beyondnetcode/evolith",
+  "title": "Evolith Architecture Governance",
+  "description": "Executable architecture governance: an unevaluated rule is reported as a failure, never a pass.",
+  "version": "1.3.1",
+  "websiteUrl": "https://beyondnetcode.github.io/evolith_arch32/",
+  "repository": {
+    "url": "https://github.com/beyondnetcode/evolith_arch32",
+    "source": "github",
+    "id": "1232316757",
+    "subfolder": "src/packages/mcp-server"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@beyondnet/evolith-mcp",
+      "version": "1.3.1",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

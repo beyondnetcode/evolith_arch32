@@ -1,4 +1,12 @@
 {
   "$comment": "GT-656 — declared retitles of gap TITLES, read by 49-validate-gap-id-allocation. A collision is exempt ONLY when an entry here reproduces BOTH titles exactly, so an exemption covers one retitle and never an id: a genuine collision landing on the same number still fails. Entries are classified active / spent / rot; rot is fatal, and an entry whose retitle has reached the base branch is SPENT and must be deleted. This array is empty and that is the healthy state — the registry is for retitles in flight, not a record of past ones. The history of a retitle lives in the row it changed and in git, which is where a reader looks for it.",
-  "retitles": []
+  "retitles": [
+    {
+      "id": "GT-675",
+      "from": "The OPA engine reports `passed` for every rule no compiled policy can decide, inverting the verdict against the native engine on the same input",
+      "to": "The OPA engine has no `skipped` outcome at all, so every rule it cannot decide is reported `passed` — 234 of 411, 65 of them blocking",
+      "declaredAt": "2026-08-16",
+      "reason": "The original headline named the wrong mechanism, and a fix built on it would have missed the worst cases. Measured 2026-08-16 by five parallel probes: `observability/telemetry-evidence` has 8 non-test .rego files and `acl/anti-corruption-layer` has 10, and OPA reports passed / rulesSkipped: 0 for every rule in both while native skips 4 and 3 — those rules are INSIDE the bundle, so the defect is not \"no compiled policy can decide\". `OpaEvaluator` contains no `skipped` path at all (grep -c skipped: 0, against 3 in native-evaluator.ts) while RuleEvaluationOutcome declares it. The size was rebaselined at the same time — 234 undecidable of 411, 65 blocking — because every earlier figure was measured against an engine the GT-700 regression had crippled."
+    }
+  ]
 }

@@ -27,7 +27,7 @@ violations contains {"id": "SPACE-02", "message": "Satellite performance (P95 la
 }
 
 violations contains {"id": "SPACE-03", "message": "Team cognitive load survey not completed or score not recorded in satellite scorecards"} if {
-	not input.satellite.scorecards.cognitivLoadSurveyCompleted
+	not input.satellite.scorecards.cognitiveLoadSurveyCompleted
 }
 
 violations contains {"id": "SPACE-04", "message": "Collaboration index (cross-team PRs and shared ADRs) not computed — required for SPACE executive review"} if {

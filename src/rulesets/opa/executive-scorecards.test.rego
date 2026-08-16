@@ -13,7 +13,7 @@ compliant_input := {"satellite": {"scorecards": {
 	"executiveSponsorAssigned": true,
 	"architectureDriftIndex": 5,
 	"performanceDashboardLinked": true,
-	"cognitivLoadSurveyCompleted": true,
+	"cognitiveLoadSurveyCompleted": true,
 	"collaborationIndexComputed": true,
 }}}
 

@@ -3,22 +3,53 @@
   "$id": "https://evolith.dev/schema/opa/multi-runtime.input.schema.json",
   "title": "Multi-Runtime OPA Policy Input Schema",
   "type": "object",
-  "required": ["satellite"],
+  "required": [
+    "satellite"
+  ],
   "properties": {
     "satellite": {
       "type": "object",
-      "required": ["runtime"],
+      "required": [
+        "runtime"
+      ],
       "properties": {
         "runtime": {
           "type": "object",
-          "required": ["selectionDocumented", "webApisNotNodeJs", "highComputeNotDotNet", "hasDirectRuntimeDependency", "syncInteropNotGrpc", "contractsCentralized"],
+          "required": [
+            "selectionDocumented",
+            "webApisNotNodeJs",
+            "highComputeNotDotNet",
+            "hasDirectRuntimeDependency",
+            "syncInteropNotGrpc",
+            "contractsCentralized"
+          ],
           "properties": {
-            "selectionDocumented": { "type": "boolean" },
-            "webApisNotNodeJs": { "type": "boolean" },
-            "highComputeNotDotNet": { "type": "boolean" },
-            "hasDirectRuntimeDependency": { "type": "boolean" },
-            "syncInteropNotGrpc": { "type": "boolean" },
-            "contractsCentralized": { "type": "boolean" }
+            "selectionDocumented": {
+              "type": "boolean"
+            },
+            "webApisNotNodeJs": {
+              "type": "boolean"
+            },
+            "highComputeNotDotNet": {
+              "type": "boolean"
+            },
+            "hasDirectRuntimeDependency": {
+              "type": "boolean"
+            },
+            "syncInteropNotGrpc": {
+              "type": "boolean"
+            },
+            "contractsCentralized": {
+              "type": "boolean"
+            },
+            "mobileHardwareNotKotlin": {
+              "type": "boolean",
+              "description": "Read by multi-runtime.rego. Declared by GT-695."
+            },
+            "asyncInteropNotMessageBroker": {
+              "type": "boolean",
+              "description": "Read by multi-runtime.rego. Declared by GT-695."
+            }
           }
         }
       }

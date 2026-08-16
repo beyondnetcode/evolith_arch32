@@ -9033,12 +9033,12 @@ The declaration has one hole — a pack that does not declare — and the direct
 - **Principal:** `S` · **Interest:** `HIGH` · **Basis:** `estimate`
 - **Provenance:** Registered 2026-08-14 from the same benchmark as [`GT-669`](./gap-reference-catalog.md#gt-669). The claim "there is no post-publish check" was measured and is FALSE — one exists — so this row is scoped to what the existing check cannot see: a single `--help` at release time, never repeated.
 - **Acceptance criteria:**
-  - [ ] A scheduled workflow installs `@beyondnet/evolith-cli@latest` from the registry in a clean container with no repository checkout on the resolution path, and runs `init` then `validate`.
-  - [ ] The assertion is a real ADR-0073 envelope with a verdict, not a zero exit code — the weak-oracle failure recorded in [`GT-625`](./gap-reference-catalog.md#gt-625).
-  - [ ] The same run exercises `@beyondnet/evolith-mcp@latest` over stdio and asserts a real gate verdict, reusing `gate-verdict.assert.js` rather than a second oracle.
-  - [ ] A red canary surfaces somewhere a human reads; a permanently red scheduled workflow is the failure mode [`GT-635`](./gap-reference-catalog.md#gt-635) records.
-  - [ ] Proven falsifiable: run against a version known to be broken (`cli@1.2.0`, [`GT-625`](./gap-reference-catalog.md#gt-625)) and OBSERVED red, not argued to be.
-- **Status:** `PENDING`
+  - [x] A scheduled workflow installs the CLI from the registry in a clean environment with no repository checkout on the resolution path, and runs `init` then `validate`. **MET** — `.github/workflows/published-canary.yml`, daily at 06:30 UTC plus `workflow_dispatch` with a version input. The checkout carries only the assertion and the script; the packages are installed into a throwaway prefix and driven from a temp directory, which is the point — `GT-625` shipped an uninstallable CLI because the workspace symlink hid it from every suite.
+  - [x] The assertion is a real ADR-0073 envelope with a verdict, not a zero exit code. **MET** — the canary requires `data.status ∈ {passed, failed, warning}` AND `rulesTotal > 0`, so an install that shipped no rulesets fails even when it exits 0. A non-zero exit is treated as a verdict, not a failure: a satellite with blocking findings exits 2 by design.
+  - [ ] The same run exercises the published MCP server over stdio and asserts a real gate verdict, reusing `gate-verdict.assert.js`. **NOT MET, and it is why this row stays open.** The canary does exercise it over stdio and does call that oracle, but the published package cannot produce a verdict: `@beyondnet/evolith-mcp@1.2.2` declares `files: ["dist/", "README.md", "LICENSE"]` and ships **no ruleset corpus**, so `evolith-gate-evaluate` answers `RULESET_NOT_FOUND` and `evolith-validate` "could not locate the Evolith ruleset corpus", while `evolith-metrics` works. Split out as [`GT-705`](./gap-reference-catalog.md#gt-705). The assertion is KEPT and exempted only on that exact symptom, so any other failure still fails the run and the assertion becomes load-bearing the day `GT-705` ships — a blanket skip would have been the permanently-green twin of `GT-635`'s permanently-red workflow.
+  - [x] A red canary surfaces somewhere a human reads. **MET** — a failing scheduled run opens a `published-canary` issue, or comments on the open one rather than duplicating it, and a green run comments and closes it. A thread nobody closes is a thread nobody believes.
+  - [x] Proven falsifiable, OBSERVED red. **MET, with a fixture that was measured rather than assumed.** The criterion named `cli@1.2.0`; measured, that version installs, runs `init` and returns a valid envelope on this path, so it is not the broken fixture the row believed. `cli@1.1.0` is, on three independent counts: it publishes no `evolith` binary (only `evolith-cli`, so every documented invocation fails), its `init --name` writes a subdirectory so no `evolith.yaml` appears where the canary looks, and `validate --format json` **truncates its own envelope through a pipe** — 65 386 bytes of a document that is 163 622 to a file, while `1.2.2` writes 69 465 through the same pipe and parses. Green against `latest`, red against `1.1.0`, both observed.
+- **Status:** `IN-PROGRESS`
 
 #### GT-672
 
@@ -9983,4 +9983,38 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] Each of the 16 known conflicts is either fixed or carries a written reason; a bulk baseline with one shared justification does not satisfy this.
   - [ ] It reuses `diffDecisions` / `diffCoverage` rather than adding a third comparison, and is instrumented per `42-validate-guard-denominators` with `assertScannedPerSource({ native, opa })`.
   - [ ] The host is on the required-check path, not the schedule-only parity workflow — measured cost is ~17 s.
+- **Status:** `PENDING`
+
+#### GT-705
+
+**Title:** The published MCP server ships no ruleset corpus, so 48 of its 50 tools cannot do governance work from a clean install
+
+- **Purpose:** Make the MCP server people install able to answer the tools it announces.
+- **Evidence, measured 2026-08-16 by `GT-671`'s canary on its first real run against the registry.** From a throwaway npm prefix, driving `@beyondnet/evolith-mcp@1.2.2` over stdio:
+
+  | call | result |
+  |---|---|
+  | `tools/list` | **50** tools announced |
+  | `evolith-gate-evaluate` | `RULESET_NOT_FOUND` — `ENOENT … /evolith/reference/governance/sdlc/gates` |
+  | `evolith-validate` | `INTERNAL_ERROR` — *"Could not locate the Evolith ruleset corpus"* |
+  | `evolith-metrics` | works — it needs no corpus |
+
+- **The cause is in the package manifest, not in the code.** `@beyondnet/evolith-mcp` declares `files: ["dist/", "README.md", "LICENSE"]`, and none of its five `@beyondnet/*` dependencies carries the corpus either. Only `@beyondnet/evolith-cli` ships one, through its `copy-rulesets` prebuild — which is why the CLI half of the same canary is green (`145` rules loaded) while the MCP half is not.
+- **Why no suite caught it:** the in-tree MCP smoke runs against the repository, where the corpus is on disk. That is exactly the tree-versus-tarball asymmetry [`GT-671`](./gap-reference-catalog.md#gt-671) exists to expose, and this row is its first catch.
+- **Use cases:**
+  - An agent is pointed at the published MCP server, sees 50 tools, and every governance call fails.
+  - A tenant follows the MCP setup documentation and concludes the product does not work.
+  - A release goes out with a corpus change and nothing downstream can observe it, because the server never had a corpus to change.
+- **Impact:** The MCP surface is the agent-facing product. Announcing 50 tools and answering 2 is worse than announcing 2, because the failure appears at call time, inside someone else's agent.
+- **Expected outcome:** the published MCP package resolves a ruleset corpus — shipped in its own `files`, or taken from a dependency that ships one, or documented as a required `corePath` the server refuses to start without.
+- **Affected files:** `src/packages/mcp-server/package.json`, `src/packages/mcp-server/scripts/**`, `.github/workflows/npm-release.yml`
+- **Component:** `MCP Server` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-16 from `GT-671`'s canary, which measured it rather than inferring it. Split out rather than folded into `GT-671`: that row is about *having* a scheduled check on the published artifact, this one is about *what the check found*, and merging them would let the canary's existence tick a criterion about the product being installable.
+- **Acceptance criteria:**
+  - [ ] **FALSIFIABILITY:** from a clean npm prefix with no repository on disk, `evolith-gate-evaluate` over stdio returns a real gate verdict, asserted by `gate-verdict.assert.js`. The same call is recorded failing before the fix.
+  - [ ] `evolith-validate` over the published MCP server returns an envelope with `rulesTotal > 0`.
+  - [ ] The corpus the server resolves is the one the release published — not a copy that can drift, and not a path that only exists in a developer checkout.
+  - [ ] If the answer is "the server requires an explicit corePath", it REFUSES to start without one rather than announcing 50 tools it cannot serve.
+  - [ ] `GT-671`'s canary drops its known-limitation exemption in the same change, so the gate assertion becomes load-bearing.
 - **Status:** `PENDING`

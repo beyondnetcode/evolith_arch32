@@ -102,21 +102,33 @@ export function replaceRegoSet(regoSource, setName, tools) {
   const close = regoSource.indexOf('}', open);
   if (close < 0) fail([`rego set '${setName}' is not terminated.`]);
 
+  // TAB, not spaces: `opa fmt` indents set members with a tab, and a generator that
+  // emits anything else puts its own output permanently on `opa fmt --list`. That was
+  // the state until 2026-08-16, and the cost is not cosmetic. The only way to clear
+  // the listing is `opa fmt -w`, which rewrites this block into a form the generator
+  // does not emit — so the NEXT `--check` reports drift that no tool actually caused.
+  // A generator whose output its own formatter rejects teaches people to ignore one
+  // of the two, and the one they would learn to ignore is the parity check that keeps
+  // fifteen tools from going FORBIDDEN in production.
+  const indent = '\t';
   const body = [
     '',
-    '  # GENERATED from AbacEvaluator.toolProjection() — do not edit by hand.',
-    '  # Regenerate: node .harness/scripts/generate-abac-tool-sets.mjs',
+    `${indent}# GENERATED from AbacEvaluator.toolProjection() — do not edit by hand.`,
+    `${indent}# Regenerate: node .harness/scripts/generate-abac-tool-sets.mjs`,
     ...(setName === 'deploy_tools'
       ? [
-          "  # NOTE: classifyTool ALSO treats any name containing 'deploy', 'publish'",
-          '  # or `merge` as deploy. That heuristic is not enumerable and is NOT',
-          '  # mirrored here. Dispatch requires native AND opa, so a name only the',
-          '  # heuristic knows is denied by this policy — never granted by one side.',
+          `${indent}# NOTE: classifyTool ALSO treats any name containing 'deploy', 'publish'`,
+          `${indent}# or \`merge\` as deploy. That heuristic is not enumerable and is NOT`,
+          `${indent}# mirrored here. Dispatch requires native AND opa, so a name only the`,
+          `${indent}# heuristic knows is denied by this policy — never granted by one side.`,
         ]
       : []),
-    // No trailing comma: a rego set literal tolerates it on parse, but keeping the
-    // emitted form identical to hand-written rego avoids arguing about it later.
-    ...tools.map((t, i) => `  "${t}"${i === tools.length - 1 ? '' : ','}`),
+    // TRAILING comma on the last member, for the same reason as the tab: `opa fmt`
+    // puts one there when a set literal spans lines. The original note here said
+    // omitting it kept the emitted form "identical to hand-written rego" — but the
+    // formatter is what decides that, and it disagreed, which is how this block ended
+    // up unformattable-in-place.
+    ...tools.map((t) => `${indent}"${t}",`),
     '',
   ].join('\n');
 

@@ -87,9 +87,18 @@ npm run test:contract
 
 Before you submit a Pull Request, you must adhere to these absolute rules. The CI gates listed in each section will block your PR if violated.
 
-### A. Mandatory Bilingual Parity
+### A. Bilingual Parity on the Entry Surface
 
-Evolith operates globally. **Every documentation file must have an English (`.md`) and a Spanish (`.es.md`) version.** They must be structurally identical: the same number of `##` and `###` headers (the `04-check-bilingual-parity.mjs` gate counts depth-2 and depth-3 headings only; the top-level `#` title is not counted). The Docs Agent can assist you with this translation.
+**This rule changed on 2026-08-16 ([ADR-0126](./reference/core/architecture/adrs/core/0126-bilingual-entry-surface.md)) and is much smaller than it used to be.** It used to require a Spanish twin for every English document under `reference/` — 783 pairs. It now applies to **sixteen** documents: the landing and community-health files, the `reference/` hubs linked from the README, and the gap board. They are listed by name in [`.harness/scripts/lib/bilingual-scope.mjs`](./.harness/scripts/lib/bilingual-scope.mjs).
+
+If you are editing one of those sixteen, edit both halves in the same pull request: they must carry the same number of `##` and `###` headings (the top-level `#` title is not counted), the Spanish file must actually read as Spanish, and block tags (`<div>`, `<details>`, `<table>`) must open and close. **If you are editing anything else, there is nothing to mirror** — write in whichever language the file is in.
+
+The guards say out loud what they no longer check, so you can tell an unenforced file from a verified one:
+
+```
+bilingual scope (ADR-0126): 16/16 entry-surface document(s) enforced; 784 EN/ES pair(s)
+outside the entry surface were NOT evaluated — their state is unknown, not verified.
+```
 
 ### B. No Emojis or Decorative Characters
 
@@ -255,7 +264,28 @@ If you only want to report a finding and not track it yourself, open an issue in
 1. **Branching:** Follow [ADR-0050](./reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.md). Feature work flows into `develop`, and `develop` is promoted to `main`. Prefix your branches correctly (e.g., `feature/`, `docs/`, `fix/`).
 2. **ADR Updates:** If your PR introduces an architectural change or a new tool, it *must* be accompanied by an update to an existing ADR or a new ADR following [ADR-0068](./reference/core/architecture/adrs/core/0068-documentation-release-gitflow.md).
 3. **Commit Messages:** We use semantic versioning and release-please. Your commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification, using types such as `feat`, `fix`, `docs`, `ci`, and `chore` (e.g., `feat:`, `docs:`, `fix:`).
-4. **Issues:** Open an issue before large changes so the design can be discussed. Reference the relevant `GT-###` gap identifier when your work closes a tracked gap — see Section 6 for how to file one.
-5. **Code Review:** All PRs require review. Our automated workflows post coverage impact, structural validation, and Winston agentic review results on your PR.
+4. **Sign your commits off (DCO):** see the section below. `git commit -s` does it.
+5. **Issues:** Open an issue before large changes so the design can be discussed. Reference the relevant `GT-###` gap identifier when your work closes a tracked gap — see Section 6 for how to file one.
+6. **Code Review:** All PRs require review. Our automated workflows post coverage impact, structural validation, and Winston agentic review results on your PR.
+
+### Developer Certificate of Origin
+
+Every commit must carry a `Signed-off-by` line. Add it automatically:
+
+```bash
+git commit -s -m "docs: fix the broken quickstart link"
+```
+
+That appends one line using your `user.name` and `user.email`:
+
+```
+Signed-off-by: Ada Lovelace <ada@example.com>
+```
+
+**What you are certifying.** That you wrote the change, or have the right to submit it under this repository's MIT licence — the full text is the [Developer Certificate of Origin 1.1](https://developercertificate.org/). It is a statement about provenance, not an assignment: **you keep the copyright in your contribution.**
+
+**Why a DCO and not a CLA.** A Contributor Licence Agreement would mean a form to sign before your first line of code is read, which is a poor trade for a project this size — and this project sells itself on traceability, so having no provenance record at all was the wrong place to be. A sign-off line costs one flag and answers the question an adopter's legal review actually asks.
+
+Forgot it? `git commit --amend -s` fixes the last commit; `git rebase --signoff <base>` fixes a branch.
 
 Thank you for helping us evolve the core!

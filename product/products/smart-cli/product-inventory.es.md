@@ -7,7 +7,7 @@ Inventario generado de la superficie instalable de Evolith CLI y MCP. No editar 
 
 | Campo | Valor |
 |---|---|
-| Package | `@beyondnet/evolith-cli@1.2.2` |
+| Package | `@beyondnet/evolith-cli@1.3.0` |
 | Binary | `evolith`, `evolith-cli` |
 | CLI commands | 38 |
 | MCP tools | 52 |

@@ -10380,6 +10380,33 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. One guard script using node:child_process, node:fs, node:path and node:url plus the repo's own .harness/scripts/lib/coverage.mjs, and two steps added to an existing workflow job. No package.json touched."
+    },
+    {
+      "id": "GT-675",
+      "closedAt": "2026-08-16",
+      "closureCommit": "42d60d4a",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts",
+        "src/packages/core-domain/src/application/validators/rule-evaluability.ts",
+        ".harness/scripts/compile-opa-wasm.mjs",
+        ".harness/scripts/ci/parity-gate.mjs",
+        ".harness/scripts/ci/27-opa-parity-gate.mjs",
+        "src/rulesets/opa/main.rego"
+      ],
+      "validationCommands": [
+        "THE FALSIFIABILITY PAIR, BOTH OUTPUTS RECORDED. BEFORE: `validate --core . . --select src/rulesets/security/injection-prevention.rules.json --engine opa` -> exit 0, status passed, rulesChecked 2, rulesSkipped 0, while native returned exit 2 / failed / 2 blocking on the same input. AFTER: exit 2, failed, rulesChecked 0, rulesSkipped 2 -- identical to native. `security/path-containment` behaves the same in both directions.",
+        "WHOLE CORPUS. BEFORE: native 113 checked / 241 skipped / 112 issues / 82 blocking against OPA 354 / 0 / 51 / 31 -- `rulesSkipped: 0` was the signature of a class with no skip path at all. AFTER: OPA 187 / 167 / 177 / 47.",
+        "THE STRUCTURAL PROPERTY, which is what actually closes this row: every rule OPA reports `passed` is one the shipped bundle declares it can decide. Measured across the corpus -- 0 exceptions of 288 named ids. The single apparent exception, GOV-RULE-NON-EXECUTABLE, is a synthetic id the ENGINE emits (rule-evaluation-engine.ts:505), not a corpus rule, and was verified as a probe artefact rather than assumed to be one.",
+        "AC3, THE BUNDLE ANSWERS FOR ITSELF: `compile-opa-wasm.mjs` parses every policy with `opa parse --format json` -- the compiler's own AST -- and compiles the result into `evolith/manifest/declared_rule_ids`. Verified by loading the shipped policy.wasm: 238 ids (203 emitted + 35 gate ids), entrypoint index 2. Deliberately NOT a table in the evaluator: CONTEXT_AWARE_VIOLATION_PREFIXES is what that becomes, and GT-700 proved forgetting an entry fails GREEN.",
+        "AC4: `sdlc/coverage.rego` emitted QT-01..04 and QT-06..08 and `main.rego` never imported it -- compiled into the bundle, unreachable at runtime. Wiring it moved the aggregated corpus from 266 to 274 violation literals and from 196 to 203 distinct ids, closing the gap to the all-non-test figure EXACTLY, which is the evidence it was the only policy in that state. The build now refuses the state, not just this instance.",
+        "AC5 WAS REWRITTEN DURING THE WORK AND THIS IS THE RECORD. As written it asked that ids `passed` on one engine and `skipped` on the other reach 0. Measured after the fix that number is 82 -- 65 rules OPA decides and native cannot, 17 the reverse -- and driving it to 0 would demand coverage parity ADR-0041 explicitly never promised. The metric that IS the defect went to 0 instead, by construction, and is stated above with its denominator.",
+        "AC7, OBSERVED RED ON THE REAL REGRESSION: rebuilt policy.wasm without the `-e evolith/manifest/declared_rule_ids` entrypoint and re-ran guard 27 -- it failed naming both shipped bundles ('does not expose ... Rules no policy decides will be reported as PASSED'). Restored, green again. Also red under 43-validate-guard-negative-fixtures' empty sandbox via assertScannedPerSource, and accepted by 42-validate-guard-denominators.",
+        "MUTATION ON THE NEW LIBRARY ASSERTION: flipping diffCoverage's predicate from `outcome === 'passed'` to a value that never occurs turned 2 of the 14 parity-gate tests red; restoring returned 14/14.",
+        "SUITES AFTER: core-domain 1987/1987 (165 suites), mcp-server 575, core-api 163, cli 1482; `opa test` 265/265; guards 27, 42, 43, 08 green; iso-5055-mapping 9/9 after recapturing the native evaluability snapshot in the order its own error message prescribes.",
+        "NOT THIS ROW: the dual-engine corpus sweep AC7 also described is GT-704, registered with the 16 verdict conflicts it would catch. Splitting rather than ticking is deliberate -- GT-675 was itself rewritten because its original AC5 was satisfiable while the worst case stayed live."
+      ]
     }
   ]
 }

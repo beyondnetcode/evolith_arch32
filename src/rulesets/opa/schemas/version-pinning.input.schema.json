@@ -3,35 +3,76 @@
   "$id": "https://evolith.dev/schema/opa/version-pinning.input.schema.json",
   "title": "Version Pinning OPA Policy Input Schema",
   "type": "object",
-  "required": ["satellite"],
+  "required": [
+    "satellite"
+  ],
   "properties": {
     "satellite": {
       "type": "object",
-      "required": ["packageJson", "workspacePackageJsons"],
+      "required": [
+        "packageJson",
+        "workspacePackageJsons"
+      ],
       "properties": {
         "packageJson": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "properties": {
-            "dependencies": { "type": "object", "additionalProperties": { "type": "string" } },
-            "devDependencies": { "type": "object", "additionalProperties": { "type": "string" } }
+            "dependencies": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "devDependencies": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "overrides": {
+              "type": "object",
+              "description": "Read by version-pinning.rego. Declared by GT-695."
+            }
           }
         },
         "workspacePackageJsons": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["path", "content"],
+            "required": [
+              "path",
+              "content"
+            ],
             "properties": {
-              "path": { "type": "string" },
+              "path": {
+                "type": "string"
+              },
               "content": {
                 "type": "object",
                 "properties": {
-                  "dependencies": { "type": "object", "additionalProperties": { "type": "string" } },
-                  "devDependencies": { "type": "object", "additionalProperties": { "type": "string" } }
+                  "dependencies": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "devDependencies": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
           }
+        },
+        "overridesRationaleDocumented": {
+          "type": "boolean",
+          "description": "Read by version-pinning.rego. Declared by GT-695."
         }
       }
     }

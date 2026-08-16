@@ -3,21 +3,49 @@
   "$id": "https://evolith.dev/schema/opa/protocol-selection.input.schema.json",
   "title": "Protocol Selection OPA Policy Input Schema",
   "type": "object",
-  "required": ["satellite"],
+  "required": [
+    "satellite"
+  ],
   "properties": {
     "satellite": {
       "type": "object",
-      "required": ["protocol"],
+      "required": [
+        "protocol"
+      ],
       "properties": {
         "protocol": {
           "type": "object",
-          "required": ["internalServiceCallsNotGrpc", "publicApiNotRest", "graphqlInDomainLayer", "protoCentralized", "breakingChangesWithoutVersionBump"],
+          "required": [
+            "internalServiceCallsNotGrpc",
+            "publicApiNotRest",
+            "graphqlInDomainLayer",
+            "protoCentralized",
+            "breakingChangesWithoutVersionBump"
+          ],
           "properties": {
-            "internalServiceCallsNotGrpc": { "type": "boolean" },
-            "publicApiNotRest": { "type": "boolean" },
-            "graphqlInDomainLayer": { "type": "boolean" },
-            "protoCentralized": { "type": "boolean" },
-            "breakingChangesWithoutVersionBump": { "type": "boolean" }
+            "internalServiceCallsNotGrpc": {
+              "type": "boolean"
+            },
+            "publicApiNotRest": {
+              "type": "boolean"
+            },
+            "graphqlInDomainLayer": {
+              "type": "boolean"
+            },
+            "protoCentralized": {
+              "type": "boolean"
+            },
+            "breakingChangesWithoutVersionBump": {
+              "type": "boolean"
+            },
+            "bffUsesGraphqlAsGeneral": {
+              "type": "boolean",
+              "description": "Read by protocol-selection.rego. Declared by GT-695."
+            },
+            "fileUploadsNotGrpc": {
+              "type": "boolean",
+              "description": "Read by protocol-selection.rego. Declared by GT-695."
+            }
           }
         }
       }

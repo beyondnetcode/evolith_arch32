@@ -3,11 +3,15 @@
   "$id": "https://evolith.dev/schema/opa/gitflow-branching.input.schema.json",
   "title": "GitFlow Branching OPA Policy Input Schema",
   "type": "object",
-  "required": ["satellite"],
+  "required": [
+    "satellite"
+  ],
   "properties": {
     "satellite": {
       "type": "object",
-      "required": ["git"],
+      "required": [
+        "git"
+      ],
       "properties": {
         "git": {
           "type": "object",
@@ -21,13 +25,39 @@
             "higherEnvPrHasTwoApprovals"
           ],
           "properties": {
-            "branchNameInvalid": { "type": "boolean" },
-            "directPushToProtectedBranch": { "type": "boolean" },
-            "prHasMinimumReview": { "type": "boolean" },
-            "releaseTagInvalid": { "type": "boolean" },
-            "commitMessageInvalid": { "type": "boolean" },
-            "promotionSequenceInvalid": { "type": "boolean" },
-            "higherEnvPrHasTwoApprovals": { "type": "boolean" }
+            "branchNameInvalid": {
+              "type": "boolean"
+            },
+            "directPushToProtectedBranch": {
+              "type": "boolean"
+            },
+            "prHasMinimumReview": {
+              "type": "boolean"
+            },
+            "releaseTagInvalid": {
+              "type": "boolean"
+            },
+            "commitMessageInvalid": {
+              "type": "boolean"
+            },
+            "promotionSequenceInvalid": {
+              "type": "boolean"
+            },
+            "higherEnvPrHasTwoApprovals": {
+              "type": "boolean"
+            },
+            "featureBranchMergeNotSquashOrRebase": {
+              "type": "boolean",
+              "description": "Read by gitflow-branching.rego. Declared by GT-695."
+            },
+            "hotfixNotExpeditedPath": {
+              "type": "boolean",
+              "description": "Read by gitflow-branching.rego. Declared by GT-695."
+            },
+            "hasStaleBranchesAfterMerge": {
+              "type": "boolean",
+              "description": "Read by gitflow-branching.rego. Declared by GT-695."
+            }
           }
         }
       }

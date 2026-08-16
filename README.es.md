@@ -1,28 +1,106 @@
 <div align="center">
 
-# Evolith: Framework de Gobernanza Arquitectónica Ejecutable
+# Evolith Core
 
 > **Navegación Bilingüe:** [English](./README.md)
 
-[![Status](https://img.shields.io/badge/Status-Activo-brightgreen?style=for-the-badge)]()
-[![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
-[![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
+[![npm](https://img.shields.io/npm/v/@beyondnet/evolith-cli?label=%40beyondnet%2Fevolith-cli)](https://www.npmjs.com/package/@beyondnet/evolith-cli)
+[![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/ci-cd.yml?branch=main&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions/workflows/ci-cd.yml)
+[![License](https://img.shields.io/badge/license-MIT-informational)](./LICENSE)
 
-> **[Empieza aquí: instala el CLI y lanza tu primera comprobación](#inicio-rápido)** — tres comandos, sin levantar ningún servidor.
-
-<br/>
-
-<a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Abrir el diagrama interactivo — desplazar y hacer zoom">
-  <img src="./reference/core/sdlc/assets/master-view.svg"
-       alt="Visión General del Producto Evolith E2E — Composición Gobernada, Core de evaluación stateless, SDLC federado de cinco fases"
-       width="880"
-       style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
-</a>
-
-<sub>↑ Visión General del Producto Evolith E2E · <b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Abrir visor interactivo</a></b> — arrastra para desplazar · rueda para zoom · pantalla completa · <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+clic para nueva pestaña</sub>
+**Gobernanza de arquitectura ejecutable. Una regla que no se evaluó no es una regla que pasó.**
 
 </div>
+
+```bash
+npm install -g @beyondnet/evolith-cli
+evolith init --name my-sat --yes
+evolith validate --engine opa
+```
+
+[Inicio Rápido](#inicio-rápido) · [Atlas interactivo de arquitectura](https://beyondnetcode.github.io/evolith_arch32/) · [Cómo auditamos nuestras propias afirmaciones](./reference/core/control-center/adoption/pending-2026-08-16.md)
+
+---
+
+## Qué acaba de pasar
+
+Ese tercer comando evaluó el corpus de reglas de este propio repositorio contra un satélite
+recién inicializado, usando el bundle Rego compilado. Salida real de
+`@beyondnet/evolith-cli@1.3.0` en un contenedor con nada más que Node instalado:
+
+```
+Rules: 133 checked / 26 skipped / 0 errored / 159 total
+37 blocking issue(s)
+exit code 2
+
+  26 rule(s) were NOT evaluated - their result is UNKNOWN, not passed.
+```
+
+El Core carga **412 reglas**; el 159 de arriba es lo que la ejecución de este satélite
+seleccionó de ellas. Dos denominadores distintos, y un informe que los mezclara sería el
+defecto exacto que este proyecto existe para evitar.
+
+**Nueve de esos 37 issues bloqueantes son reglas que se saltaron.** No reglas que fallaron:
+reglas que el motor no pudo decidir, reportadas como fallo porque una regla bloqueante sin
+decidir no es una regla que pasa. Entre ellas están `SEC-INJ-01`, `SEC-INJ-02` y `SEC-PATH-01`.
+
+Esta es la idea entera. Todo linter de arquitectura y de políticas pasa en silencio las reglas
+que nunca evaluó, con lo que *cobertura* y *cumplimiento* producen el mismo verde. Evolith
+publica el denominador y se niega a redondearlo hacia arriba:
+
+- El bundle compilado declara qué ids de regla puede decidir, y `skipped` es un resultado de
+  primera clase, no la ausencia de una violación.
+- Una regla bloqueante que termina `skipped` hace fallar la ejecución. Ese invariante tiene su
+  propio test, escrito contra el código que no lo tenía:
+  [`blocking-skipped-invariant.spec.ts`](./src/packages/core-domain/src/application/validators/blocking-skipped-invariant.spec.ts).
+- Dos motores -- un evaluador nativo en TypeScript y Rego/WASM -- deben coincidir sobre
+  fixtures, o el CI falla.
+
+Los códigos de salida son una taxonomía, no un booleano: `0` pasa, `1` la herramienta falló,
+`2` la puerta bloqueó, `3` la invocaste mal. Una ejecución que no pudo producir un veredicto
+nunca reporta uno.
+
+---
+
+## Úsalo como puerta de PR
+
+```yaml
+- uses: beyondnetcode/evolith_arch32@v1
+  with:
+    fail-on-violation: true
+```
+
+Expone `compliance-status`, `violations-count`, `issues-count`, `exit-code` y `report-path`.
+`error` e `invalid-input` significan que el repositorio **no fue evaluado** -- no son formas
+más débiles de no-conforme, y el resumen del job lo dice con palabras.
+
+Como contexto vivo para un agente de IA, sobre stdio:
+
+```json
+{ "mcpServers": { "evolith": { "command": "npx", "args": ["-y", "@beyondnet/evolith-mcp"] } } }
+```
+
+---
+
+## Por qué no ArchUnit, Conftest o dependency-cruiser
+
+Úsalos. Son buenos, y Evolith no sustituye a ninguno.
+
+| Herramienta | Qué hace bien | En qué difiere Evolith |
+|---|---|---|
+| **ArchUnit / ts-arch** | Reglas de capas y dependencias como tests unitarios, en tu lenguaje | Las reglas viven fuera del código como datos, así que un mismo corpus gobierna muchos repositorios y un agente puede leerlo |
+| **Conftest / OPA** | Rego contra cualquier entrada estructurada | Evolith *es* OPA por debajo. Lo que añade es el corpus, la derivación de ADR a regla, y la contabilidad de cobertura |
+| **dependency-cruiser** | Reglas sobre el grafo de dependencias, rápido y enfocado | Corpus más amplio (gates SDLC, topologías, estándares de seguridad) y un rastro de evidencia por veredicto |
+| **Backstage Scorecards** | Chequeos de salud sobre todo el catálogo, con UI | Corre offline en CI sin catálogo que mantener, y bloquea un PR en vez de colorear un panel |
+
+**En qué es genuinamente distinto:** reporta lo que no pudo evaluar. Ninguna de las
+herramientas de arriba distingue "esta regla pasó" de "esta regla nunca corrió" en su código
+de salida.
+
+**Qué NO está construido todavía, para que no lo descubras tú:** la mitad de "el LLM propone,
+un verificador determinista dispone" es una dirección documentada, no comportamiento
+publicado. Ningún comando del CLI instalado alcanza un LLM. Ver
+[Egreso de Red y Manejo de Datos](#egreso-de-red-y-manejo-de-datos).
 
 ---
 
@@ -30,13 +108,13 @@
 
 - [¿Qué es Evolith?](#qué-es-evolith)
 - [¿Por qué Evolith?](#por-qué-evolith)
-- [Preguntas y Respuestas](#preguntas-y-respuestas)
 - [Conceptos Clave](#conceptos-clave)
 - [Ecosistema de Productos](#ecosistema-de-productos)
 - [Cómo Funciona](#cómo-funciona)
 - [Visión de Arquitectura](#visión-de-arquitectura)
 - [Componentes Principales](#componentes-principales)
 - [Inicio Rápido](#inicio-rápido)
+- [Preguntas y Respuestas](#preguntas-y-respuestas)
 - [Egreso de Red y Manejo de Datos](#egreso-de-red-y-manejo-de-datos)
 - [Documentación](#documentación)
 - [Casos de Uso](#casos-de-uso)
@@ -67,59 +145,6 @@ Evolith hace que la gobernanza sea **ejecutable**:
 
 ---
 
-## Preguntas y Respuestas
-
-<details>
-<summary><b>¿Qué es Evolith en una frase?</b></summary>
-<br/>
-Evolith es un <b>framework ejecutable de gobernanza arquitectónica</b> — se asegura de que las decisiones de arquitectura realmente se cumplan, automáticamente, ya sea que el código lo escriba un humano o un agente AI.
-</details>
-
-<details>
-<summary><b>¿Para qué lo usaría?</b></summary>
-<br/>
-<ol>
-<li><b>Feedback instantáneo</b> en decisiones arquitectónicas — ejecuta <code>evolith validate</code> y sabe en segundos si tu código cumple.</li>
-<li><b>Sin refactors sorpresa</b> — el drift arquitectónico se detecta en el gate, no seis meses después.</li>
-<li><b>Gobernanza a prueba de AI</b> — cuando un agente AI escribe código, Evolith asegura que siga las mismas reglas que un arquitecto senior.</li>
-</ol>
-</details>
-
-<details>
-<summary><b>¿Cuánto cuesta?</b></summary>
-<br/>
-La plataforma core es <b>completamente gratis</b> (licencia MIT): CLI, servidor MCP, Core API, Agent Runtime, 137 ADRs, 163 rulesets, 45 schemas. El único producto de pago es <b>Evolith Tracker</b> (gobernanza enterprise multi-tenant — aún no lanzado).
-</details>
-
-<details>
-<summary><b>¿Cómo empiezo?</b></summary>
-<br/>
-
-```bash
-npm install -g @beyondnet/evolith-cli
-evolith init --name my-sat --yes   # inicializa el directorio ACTUAL
-evolith validate                   # mismo directorio, sin `cd`
-```
-
-Sin base de datos, sin servidor, sin Docker.
-</details>
-
-<details>
-<summary><b>¿Qué topologías cubre?</b></summary>
-<br/>
-Evolith gobierna <b>8 topologías</b> en 5 dimensiones: Modular Monolith, Distributed Modules, Microservices (progressive-axis), Serverless, Edge Computing (execution), Event-Driven (integration), Data Mesh (data) y Agentic AI. Todas componibles.
-</details>
-
-<details>
-<summary><b>¿Cómo funciona con herramientas AI como Cursor o Claude?</b></summary>
-<br/>
-Evolith envía un servidor MCP dentro del CLI. Agrégalo a la configuración de tu herramienta AI y tu agente puede consultar reglas, validar código y evaluar gates — todo gobernado.
-</details>
-
-**[Q&A completo: 64 preguntas en 12 categorías →](./reference/core/sdlc/q-and-a.es.md)**
-
----
-
 ## Conceptos Clave
 
 | Concepto | Qué es |
@@ -147,7 +172,7 @@ Evolith se distribuye como una suite de productos coordinados sobre una base com
 | **[Evolith Core](reference/README.es.md)**        | Constitución neutral al proveedor: principios, ADRs, rulesets, topologías y contratos                                        |
 | **[Evolith CLI](product/products/smart-cli/README.es.md)**           | Aplicación local — valida código, ejecuta compuertas, gestiona ADRs, sirve MCP                                               |
 | **[Core API](product/products/core-api/README.es.md)**            | Servicio REST para consultas y evaluación de gobernanza de forma remota                                                      |
-| **[MCP Services](product/products/mcp-services/README.es.md)**        | Gobernanza como contexto en vivo para LLMs y agentes de IA (47 tools, 9 resources, 8 prompts)                                |
+| **[MCP Services](product/products/mcp-services/README.es.md)**        | Gobernanza como contexto en vivo para LLMs y agentes de IA (52 tools, 12 resources, 8 prompts)                                |
 | **[Agent Runtime](reference/core/architecture/foundations/README.es.md)**       | Capa de mediación agéntica — orquesta el Core mediante Puertos y Adaptadores; Hermes es uno de los adaptadores reemplazables |
 | **[Evolith Tracker](product/products/evolith-tracker/README.es.md)**     | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI                                           |
 | **[Narrativa Comercial](product/suite/vision/evolith-commercial-brochure.es.md)** | Estrategia de producto y monetización empresarial (Despliegue Hub & Spoke)                                                   |
@@ -188,6 +213,18 @@ Desarrollador / Agente de IA / Disparador Externo
 Todos los productos comparten los mismos artefactos definidos en **Evolith Core**.
 
 ---
+
+<div align="center">
+
+<a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Abrir el diagrama interactivo - desplazar y hacer zoom">
+  <img src="./reference/core/sdlc/assets/master-view.svg"
+       alt="Visión General del Producto Evolith E2E - Composición Gobernada, Core de evaluación stateless, SDLC federado de cinco fases"
+       width="880" />
+</a>
+
+<sub>Visión General del Producto Evolith E2E - <b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Abrir visor interactivo</a></b> - arrastra para desplazar, rueda para zoom, pantalla completa</sub>
+
+</div>
 
 ## Visión de Arquitectura
 
@@ -263,6 +300,59 @@ Las corridas legibles por máquina (`--format json`) nunca preguntan e imprimen 
 > **Espera hallazgos en el primer `validate`.** Un satélite recién inicializado es una línea base, no un aprobado: algunas reglas siguen asumiendo un layout de repositorio más completo y reportan hallazgos bloqueantes en un proyecto en fase 0. Llevar eso a cero se sigue en el [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.md) (GT-571).
 
 Evolith CLI se configura mediante **`evolith.yaml`**; ejecuta `evolith --help` para la lista vigente de comandos. Referencia completa: [Hub de Evolith CLI](./product/products/smart-cli/README.es.md)
+
+---
+
+## Preguntas y Respuestas
+
+<details>
+<summary><b>¿Qué es Evolith en una frase?</b></summary>
+<br/>
+Evolith es un <b>framework ejecutable de gobernanza arquitectónica</b> — se asegura de que las decisiones de arquitectura realmente se cumplan, automáticamente, ya sea que el código lo escriba un humano o un agente AI.
+</details>
+
+<details>
+<summary><b>¿Para qué lo usaría?</b></summary>
+<br/>
+<ol>
+<li><b>Feedback instantáneo</b> en decisiones arquitectónicas — ejecuta <code>evolith validate</code> y sabe en segundos si tu código cumple.</li>
+<li><b>Sin refactors sorpresa</b> — el drift arquitectónico se detecta en el gate, no seis meses después.</li>
+<li><b>Gobernanza a prueba de AI</b> — cuando un agente AI escribe código, Evolith asegura que siga las mismas reglas que un arquitecto senior.</li>
+</ol>
+</details>
+
+<details>
+<summary><b>¿Cuánto cuesta?</b></summary>
+<br/>
+La plataforma core es <b>completamente gratis</b> (licencia MIT): CLI, servidor MCP, Core API, Agent Runtime, 142 ADRs, 181 ficheros de ruleset con 412 reglas, 50 schemas de phase-gate. El único producto de pago es <b>Evolith Tracker</b> (gobernanza enterprise multi-tenant — aún no lanzado).
+</details>
+
+<details>
+<summary><b>¿Cómo empiezo?</b></summary>
+<br/>
+
+```bash
+npm install -g @beyondnet/evolith-cli
+evolith init --name my-sat --yes   # inicializa el directorio ACTUAL
+evolith validate                   # mismo directorio, sin `cd`
+```
+
+Sin base de datos, sin servidor, sin Docker.
+</details>
+
+<details>
+<summary><b>¿Qué topologías cubre?</b></summary>
+<br/>
+Evolith gobierna <b>8 topologías</b> en 5 dimensiones: Modular Monolith, Distributed Modules, Microservices (progressive-axis), Serverless, Edge Computing (execution), Event-Driven (integration), Data Mesh (data) y Agentic AI. Todas componibles.
+</details>
+
+<details>
+<summary><b>¿Cómo funciona con herramientas AI como Cursor o Claude?</b></summary>
+<br/>
+Evolith envía un servidor MCP dentro del CLI. Agrégalo a la configuración de tu herramienta AI y tu agente puede consultar reglas, validar código y evaluar gates — todo gobernado.
+</details>
+
+**[Q&A completo: 64 preguntas en 12 categorías →](./reference/core/sdlc/q-and-a.es.md)**
 
 ---
 

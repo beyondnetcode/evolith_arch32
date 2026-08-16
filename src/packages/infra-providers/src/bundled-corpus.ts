@@ -29,6 +29,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {
+  RULESETS_CANDIDATE_SUBPATHS,
   RULESETS_CORPUS_MARKERS,
   probeRulesetsLocationSync,
   describeRulesetsResolutionFailure,
@@ -69,9 +70,20 @@ export function findBundledCorpus(startDir: string): string | undefined {
   let dir = startDir;
   // Bounded so the walk can never escape past the filesystem root.
   for (let i = 0; i < 12; i++) {
-    const candidate = path.join(dir, 'rulesets');
-    if (fs.existsSync(path.join(dir, 'package.json')) && looksLikeCorpus(candidate)) {
-      return candidate;
+    // BOTH candidate layouts at every ancestor, not just `<dir>/rulesets`.
+    //
+    // Measured in CI, by my own error message: the mcp-server tests run in a
+    // repository checkout where the package has no bundled copy and the corpus
+    // lives at `<repo>/src/rulesets`. A walk that only probed `<dir>/rulesets`
+    // found nothing and refused — correct about what it looked for, wrong about
+    // where a corpus can be. The installed layout is `<pkg>/rulesets` and the
+    // monorepo one is `<repo>/src/rulesets`; both are legitimate, which is why
+    // `RULESETS_CANDIDATE_SUBPATHS` lists them.
+    if (fs.existsSync(path.join(dir, 'package.json'))) {
+      for (const subpath of RULESETS_CANDIDATE_SUBPATHS) {
+        const candidate = path.join(dir, ...subpath);
+        if (looksLikeCorpus(candidate)) return candidate;
+      }
     }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -105,9 +117,15 @@ export function resolveCorpus(options: { override?: string; fromDir: string }): 
 
   const bundled = findBundledCorpus(options.fromDir);
   if (bundled) {
-    // The package root is the parent of the bundled `rulesets/`. Consumers probe
-    // `${coreRoot}/rulesets/...`, so returning the parent keeps them unchanged.
-    return { coreRoot: path.dirname(bundled), rulesetsRoot: bundled, source: 'bundled' };
+    // The core root is the ancestor the corpus hangs off — `<pkg>` for
+    // `<pkg>/rulesets`, `<repo>` for `<repo>/src/rulesets`. Consumers probe both
+    // subpaths under it, so trimming the matched subpath (rather than taking the
+    // parent) keeps them working in either layout.
+    const trimmed = RULESETS_CANDIDATE_SUBPATHS
+      .map((sub) => ({ sub, suffix: path.sep + path.join(...sub) }))
+      .find(({ suffix }) => bundled.endsWith(suffix));
+    const coreRoot = trimmed ? bundled.slice(0, -trimmed.suffix.length) : path.dirname(bundled);
+    return { coreRoot, rulesetsRoot: bundled, source: 'bundled' };
   }
 
   throw new Error(

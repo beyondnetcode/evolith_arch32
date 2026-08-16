@@ -9,7 +9,7 @@
 | **Decisores** | Architecture Board |
 | **Historia técnica** | Un mandato de traducción de alcance repo-wide valorado en 783 pares, gastado en documentos que nadie abre, que además hacía fallar por construcción el primer PR de cualquier contribuyente externo |
 
-<!-- implementation-status: full -->
+<!-- implementation-status: .harness/scripts/lib/bilingual-scope.mjs,.harness/scripts/ci/suites/bilingual-suite.mjs,.harness/scripts/ci/66-validate-bilingual-sync.mjs -->
 > **Estado de implementación en este repositorio: completo** (2026-08-16).
 > El módulo de alcance es `.harness/scripts/lib/bilingual-scope.mjs`; ambos guards lo leen y ambos
 > imprimen el denominador liberado en cada ejecución. Verificado corriendo cada guard antes y

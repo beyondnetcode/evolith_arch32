@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { partitionByExclusions } from "./lib/generated-doc-exclusions.mjs";
+import { isEntrySurface } from "./lib/bilingual-scope.mjs";
 
 const root = process.cwd();
 const referenceDir = path.join(root, "reference");
@@ -245,9 +246,22 @@ const PARITY_EXEMPT_BASENAMES = new Set([
 ]);
 const isParityExempt = (f) => PARITY_EXEMPT_BASENAMES.has(path.basename(f));
 
-// Determine unpaired sets (used for the hard parity gate / exit code).
+// ADR-0126 — this dashboard was the THIRD enforcer of the repo-wide bilingual mandate and
+// the one the ADR missed. `04-check-bilingual-parity` and `66-validate-bilingual-sync` were
+// both narrowed to the sixteen-document entry surface; this file kept failing the build for
+// any English doc under `reference/` without a Spanish twin, independently of them.
+//
+// It surfaced the way these things do: three new documents under
+// `reference/core/control-center/adoption/` passed both narrowed guards and were rejected
+// here. Two guards saying one thing and a third saying the opposite is exactly the
+// inconsistency the ADR exists to end, so the gate now reads the same scope module they do.
+//
+// The MEASUREMENT is unchanged and still spans the whole corpus — the dashboard's job is to
+// report bilingual coverage, and narrowing what it counts would blind the very report that
+// tells you how much drift the ADR is accumulating. Only the GATE narrows.
 const unpairedEn = enFiles.filter(f => {
   if (isParityExempt(f)) return false;
+  if (!isEntrySurface(path.relative(root, f))) return false;
   const rel = path.relative(referenceDir, f);
   if (fs.existsSync(path.join(referenceDir, rel.replace(/\.md$/, ".es.md")))) return false;
   const parts = rel.split(path.sep);
@@ -260,6 +274,7 @@ const unpairedEn = enFiles.filter(f => {
 });
 const unpairedEs = esFiles.filter(f => {
   if (isParityExempt(f)) return false;
+  if (!isEntrySurface(path.relative(root, f))) return false;
   const enFile = esToEnPath(f);
   return !fs.existsSync(enFile);
 });

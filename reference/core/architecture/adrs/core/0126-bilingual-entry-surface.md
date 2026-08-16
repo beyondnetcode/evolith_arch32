@@ -9,7 +9,7 @@
 | **Deciders** | Architecture Board |
 | **Technical story** | A repo-wide translation mandate priced at 783 pairs, spent on documents nobody opens, that also made the first PR from an outside contributor fail by construction |
 
-<!-- implementation-status: full -->
+<!-- implementation-status: .harness/scripts/lib/bilingual-scope.mjs,.harness/scripts/ci/suites/bilingual-suite.mjs,.harness/scripts/ci/66-validate-bilingual-sync.mjs -->
 > **Implementation status in this repository: full** (2026-08-16).
 > The scope module is `.harness/scripts/lib/bilingual-scope.mjs`; both guards read it and both
 > print the released denominator on every run. Verified by running each guard before and after

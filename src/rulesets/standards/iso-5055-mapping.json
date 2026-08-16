@@ -12,24 +12,24 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 180,
-    "rules": 413,
+    "rulesetFiles": 181,
+    "rules": 414,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 413,
+    "rules": 414,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 376,
-    "adoptedFraction": 0.0896,
+    "noInternationalEquivalent": 377,
+    "adoptedFraction": 0.0894,
     "analyserAdoptable": 46,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1114,
-    "analyserAdoptableFractionIncludingPartial": 0.1671,
+    "analyserAdoptableFraction": 0.1111,
+    "analyserAdoptableFractionIncludingPartial": 0.1667,
     "byClass": {
       "architecture-decision": {
-        "rules": 163,
+        "rules": 164,
         "mapped": 12,
         "adoptable": 6
       },
@@ -146,7 +146,7 @@
         "adoptablePartialRuleIds": []
       },
       "documentation-only": {
-        "rules": 137,
+        "rules": 138,
         "mappedToIso5055": 9,
         "analyserAdoptable": 6,
         "analyserAdoptablePartial": 7,
@@ -3331,6 +3331,25 @@
       "ruleId": "CORE-0125-01",
       "sourceFile": "adr/generated/adr-0125-a-single-artifact-registry-keyed-by-slug.rules.json",
       "title": "Conform to ADR-0125: A Single Artifact Registry, Keyed by Slug",
+      "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0126-01",
+      "sourceFile": "adr/generated/adr-0126-the-bilingual-mandate-narrows-to-an-entry-surface.rules.json",
+      "title": "Conform to ADR-0126: The Bilingual Mandate Narrows to an Entry Surface",
       "severity": "MUST",
       "ruleClass": "architecture-decision",
       "iso5055": {

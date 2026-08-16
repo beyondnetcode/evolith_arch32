@@ -476,4 +476,88 @@ describe('DriftCommand', () => {
       expect(envelope.meta.command).toBe('evolith drift detect');
     });
   });
+
+  /**
+   * `getScoreColor`, `getSeverityColor` and `getTrendColor` RETURN a chalk function.
+   * Five call sites interpolated the returned function into a template literal instead
+   * of calling it, so the CLI printed the function's own source next to the number:
+   *
+   *     Overall Score: (...arguments_) => {...}10%
+   *     Drift Severity: (...arguments_) => {...}NONE
+   *
+   * Every existing test in this file passed throughout, because none of them looked at
+   * the rendered line — they asserted `stringContaining('Trend')`, which is true of the
+   * broken output too. So these assert the shape no correct render can have: a `=>` or a
+   * `[Function` in user-facing output means a function reached the string unevaluated.
+   *
+   * Verified non-vacuous by reverting one call site and watching each case fail.
+   */
+  describe('rendered output never contains an unevaluated function', () => {
+    const renderedLines = () =>
+      logSpy.mock.calls.map((c: any[]) => String(c[0])).join('\n');
+
+    const assertNoFunctionSource = () => {
+      const out = renderedLines();
+      expect(out).not.toContain('=>');
+      expect(out).not.toContain('[Function');
+      expect(out).not.toContain('arguments_');
+    };
+
+    it('does not leak a function into the drift report', async () => {
+      mockDetectDrift.mockResolvedValue({
+        ...defaultReport,
+        overallScore: 62,
+        driftSeverity: 'high' as const,
+        driftDetected: true,
+      });
+
+      await command.run([], {});
+
+      assertNoFunctionSource();
+      expect(renderedLines()).toContain('62%');
+      expect(renderedLines()).toContain('HIGH');
+    });
+
+    it('does not leak a function into the trend view', async () => {
+      mockGetDriftTrend.mockResolvedValue({
+        trend: 'improving',
+        entries: [
+          {
+            timestamp: '2024-01-01T00:00:00.000Z',
+            declaredLevel: 'F1',
+            detectedLevel: 'F1',
+            violationsCount: 2,
+            blockingViolationsCount: 0,
+            overallScore: 80,
+            violations: [],
+          },
+        ],
+      });
+
+      await command.run([], { trend: true });
+
+      assertNoFunctionSource();
+      expect(renderedLines()).toContain('IMPROVING');
+      expect(renderedLines()).toContain('80%');
+    });
+
+    it('does not leak a function into the history view', async () => {
+      mockGetDriftHistory.mockResolvedValue([
+        {
+          timestamp: '2024-01-01T00:00:00.000Z',
+          declaredLevel: 'F1',
+          detectedLevel: 'F1',
+          violationsCount: 2,
+          blockingViolationsCount: 0,
+          overallScore: 45,
+          violations: [],
+        },
+      ]);
+
+      await command.run([], { history: true });
+
+      assertNoFunctionSource();
+      expect(renderedLines()).toContain('45%');
+    });
+  });
 });

@@ -8,7 +8,7 @@
  * neither renamed nor removed (wire back-compat).
  *
  * Every assertion here fails against the pre-GT-569 command, which emitted only
- * `Reglas verificadas: <n>` and an envelope with no coverage fields at all.
+ * `Rules checked: <n>` and an envelope with no coverage fields at all.
  */
 
 import { ValidateCommand, withCoverageDenominator } from './validate.command';
@@ -161,7 +161,7 @@ describe('GT-569 · validate reports checked / skipped / errored / total', () =>
 
       await command.run([], { format: 'unknown' });
 
-      expect(infoLines().some(l => /2 verificadas.*3 omitidas.*1 con error.*6 en total/.test(l))).toBe(true);
+      expect(infoLines().some(l => /2 checked.*3 skipped.*1 errored.*6 total/.test(l))).toBe(true);
     });
 
     it('prints the denominator even on the clean path, so a green cannot hide 0/N', async () => {
@@ -176,8 +176,8 @@ describe('GT-569 · validate reports checked / skipped / errored / total', () =>
       // issue and the "no problems found" path is genuinely exercised.
       await command.run([], { format: 'unknown', ruleset: 'acl' });
 
-      expect(prompts.showSuccess).toHaveBeenCalledWith('No se encontraron problemas.');
-      expect(infoLines().some(l => /0 verificadas.*6 omitidas/.test(l))).toBe(true);
+      expect(prompts.showSuccess).toHaveBeenCalledWith('No issues found.');
+      expect(infoLines().some(l => /0 checked.*6 skipped/.test(l))).toBe(true);
     });
 
     it('says out loud that a skipped rule has an UNKNOWN outcome, not a passing one', async () => {
@@ -185,7 +185,7 @@ describe('GT-569 · validate reports checked / skipped / errored / total', () =>
 
       await command.run([], { format: 'unknown' });
 
-      expect(warnLines().some(l => l.includes('DESCONOCIDO'))).toBe(true);
+      expect(warnLines().some(l => l.includes('UNKNOWN'))).toBe(true);
     });
 
     it('names the rules whose evaluator crashed', async () => {

@@ -24,7 +24,7 @@ interface UpgradeCommandOptions {
 
 @Command({
   name: 'upgrade',
-  description: 'Actualiza el repositorio satélite cuando el upstream Evolith recibe nuevas reglas',
+  description: 'Upgrade the satellite repository when upstream Evolith ships new rules',
 })
 export class UpgradeCommand extends BaseEvolithCommand {
   constructor(
@@ -64,7 +64,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
     });
 
     if (!json) {
-      this.promptService.showIntro('Evolith SDK - Satélite Upgrade');
+      this.promptService.showIntro('Evolith SDK — Satellite Upgrade');
       this.promptService.startSpinner('Planning upgrade...');
     }
 
@@ -201,7 +201,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-d, --dry-run',
-    description: 'Ejecuta en modo simulacro sin alterar archivos',
+    description: 'Dry run: change nothing on disk',
   })
   parseDryRun(): boolean {
     return true;

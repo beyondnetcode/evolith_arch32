@@ -197,7 +197,7 @@ export class ValidateCommand extends BaseEvolithCommand {
     };
 
     if (!json) {
-      this.promptService.showIntro('Evolith SDK - Validación de Estándares');
+      this.promptService.showIntro('Evolith SDK — Standards Validation');
     }
 
     // ADR-0109: unified satellite resolution — explicit --satellite →
@@ -234,7 +234,7 @@ export class ValidateCommand extends BaseEvolithCommand {
         console.log(JSON.stringify(createErrorEnvelope('NOT_A_SATELLITE', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
       } else {
         this.promptService.showError(message);
-        this.promptService.showOutro('Validación abortada: no hay satélite.');
+        this.promptService.showOutro('Validation aborted: no satellite found.');
       }
       exitWith(exitCodeForErrorCode('NOT_A_SATELLITE'));
     }
@@ -259,14 +259,14 @@ export class ValidateCommand extends BaseEvolithCommand {
         process.exit(1);
       }
       this.promptService.showError(message);
-      this.promptService.showOutro('Validación abortada.');
+      this.promptService.showOutro('Validation aborted.');
       // GT-474: an aborted validation must exit non-zero. Returning silently
       // exited 0, so CI read "resolved no rulesets" as a passing gate.
       process.exit(1);
     }
 
     if (!json) {
-      this.promptService.startSpinner('Analizando repositorio...');
+      this.promptService.startSpinner('Analyzing repository...');
     }
 
     let result: ValidationResult;
@@ -462,7 +462,7 @@ export class ValidateCommand extends BaseEvolithCommand {
           console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', error.message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         } else {
           this.promptService.showError((error as Error).message);
-          this.promptService.showOutro('❌ Validación abortada: no se resolvió ningún ruleset del Core.');
+          this.promptService.showOutro('❌ Validation aborted: no Core ruleset resolved.');
         }
         process.exit(1);
       }
@@ -543,7 +543,7 @@ export class ValidateCommand extends BaseEvolithCommand {
         const path = await import('path');
         const resolvedOutput = path.resolve(options.output);
         await fs.writeFile(resolvedOutput, output, 'utf-8');
-        this.promptService.showSuccess(`Reporte guardado en ${options.output}`);
+        this.promptService.showSuccess(`Report written to ${options.output}`);
       } else {
         console.log(output);
       }
@@ -581,7 +581,7 @@ export class ValidateCommand extends BaseEvolithCommand {
         const path = await import('path');
         const resolvedOutput = path.resolve(options.output);
         await fs.writeFile(resolvedOutput, output, 'utf-8');
-        this.promptService.showSuccess(`Reporte guardado en ${options.output}`);
+        this.promptService.showSuccess(`Report written to ${options.output}`);
       } else {
         console.log(output);
       }
@@ -590,11 +590,11 @@ export class ValidateCommand extends BaseEvolithCommand {
     }
 
     if (composableResult) {
-      this.promptService.showInfo(`\nMotor Composable GT-312 — ${composableResult.status === 'passed' ? 'PASO' : composableResult.status === 'failed' ? 'FALLO' : 'ADVERTENCIAS'}`);
+      this.promptService.showInfo(`\nComposable engine GT-312 — ${composableResult.status === 'passed' ? 'PASSED' : composableResult.status === 'failed' ? 'FAILED' : 'WARNINGS'}`);
       this.promptService.showInfo(`Modos ejecutados: ${composableResult.modes.map((m: ModeValidationResult) => m.mode).join(', ')}`);
       this.promptService.showInfo(
-        `Reglas: ${composableResult.totalRulesChecked} verificadas, ${composableResult.failedRules} fallaron, ` +
-        `${composableResult.totalRulesSkipped} omitidas, ${composableResult.totalRulesErrored} con error, ` +
+        `Rules: ${composableResult.totalRulesChecked} checked, ${composableResult.failedRules} failed, ` +
+        `${composableResult.totalRulesSkipped} skipped, ${composableResult.totalRulesErrored} errored, ` +
         `${composableResult.totalRulesTotal} en total`,
       );
       this.promptService.showInfo(`Rendimiento: ${composableResult.performanceMs}ms`);
@@ -602,7 +602,7 @@ export class ValidateCommand extends BaseEvolithCommand {
       for (const mode of composableResult.modes) {
         const failedIssues = mode.issues.filter((i: ModeValidationIssue) => i.status === 'fail');
         if (failedIssues.length > 0) {
-          this.promptService.showWarning(`  Modo ${mode.mode}: ${failedIssues.length} fallos`);
+          this.promptService.showWarning(`  Mode ${mode.mode}: ${failedIssues.length} failures`);
           for (const issue of failedIssues) {
             const icon = issue.severity === 'error' ? 'RED' : issue.severity === 'warning' ? 'YELLOW' : 'BLUE';
             this.promptService.showWarning(`    [${icon}] [${issue.ruleId}] ${issue.message}`);
@@ -613,21 +613,21 @@ export class ValidateCommand extends BaseEvolithCommand {
         }
         const passedIssues = mode.issues.filter((i: ModeValidationIssue) => i.status === 'pass');
         if (passedIssues.length > 0 && format !== 'json') {
-          this.promptService.showInfo(`  Modo ${mode.mode}: ${passedIssues.length} reglas OK`);
+          this.promptService.showInfo(`  Mode ${mode.mode}: ${passedIssues.length} rules OK`);
         }
       }
     } else if (evaluationVerdict) {
       const maxRemediationWidth = 72;
       const truncate = (s: string) => s.length > maxRemediationWidth ? s.slice(0, maxRemediationWidth) + '...' : s;
 
-      this.promptService.showInfo(`\nPipeline de evaluacion — ${evaluationVerdict.passed ? 'PASO' : 'FALLO'}`);
+      this.promptService.showInfo(`\nEvaluation pipeline — ${evaluationVerdict.passed ? 'PASSED' : 'FAILED'}`);
       this.promptService.showInfo(`Topologia: ${evaluationVerdict.resolvedTopology || 'no detectada'}`);
       this.promptService.showInfo(`Gates: ${evaluationVerdict.summary.passedGates} / ${evaluationVerdict.summary.failedGates} / ${evaluationVerdict.summary.totalGates} total`);
-      this.promptService.showInfo(`Reglas: ${evaluationVerdict.summary.totalRules} verificadas, ${evaluationVerdict.summary.failedRules} fallaron`);
+      this.promptService.showInfo(`Rules: ${evaluationVerdict.summary.totalRules} checked, ${evaluationVerdict.summary.failedRules} failed`);
       for (const gate of evaluationVerdict.gates) {
         const failedEvals = gate.artifactEvaluations.filter((e: any) => !e.passed);
         if (failedEvals.length > 0) {
-          this.promptService.showWarning(`  Gate ${gate.gateName} (${gate.gateId}): ${failedEvals.length} fallos`);
+          this.promptService.showWarning(`  Gate ${gate.gateName} (${gate.gateId}): ${failedEvals.length} failures`);
           for (const ev of failedEvals) {
             const icon = ev.severity === 'error' ? 'RED' : ev.severity === 'warning' ? 'YELLOW' : 'BLUE';
             this.promptService.showWarning(`    [${icon}] [${ev.ruleId}] ${ev.artifact}`);
@@ -635,7 +635,7 @@ export class ValidateCommand extends BaseEvolithCommand {
             if (ev.remediation) {
               this.promptService.showInfo(`       Remedio:  ${truncate(ev.remediation)}`);
             }
-            this.promptService.showInfo(`       Severidad: ${ev.severity} | Gate: ${ev.gateRef} | Regla: ${ev.rulePath}`);
+            this.promptService.showInfo(`       Severity: ${ev.severity} | Gate: ${ev.gateRef} | Rule: ${ev.rulePath}`);
           }
         }
         const passedEvals = gate.artifactEvaluations.filter((e: any) => e.passed);
@@ -646,18 +646,18 @@ export class ValidateCommand extends BaseEvolithCommand {
     }
 
     if (result.status === 'failed') {
-      this.promptService.showOutro('❌ La validación ha fallado. Revise los errores arriba.');
+      this.promptService.showOutro('❌ Validation failed. See the errors above.');
       exitWith(CLI_EXIT_CODES.BLOCKED);
     } else if (result.status === 'warning') {
-      this.promptService.showOutro('⚠️ La validación ha terminado con advertencias.');
+      this.promptService.showOutro('⚠️ Validation finished with warnings.');
     } else {
-      this.promptService.showOutro('✅ El repositorio cumple con todos los estándares de Evolith.');
+      this.promptService.showOutro('✅ The repository meets every Evolith standard.');
     }
   }
 
   private printHumanReport(result: ValidationResult): void {
     if (result.issues.length === 0) {
-      this.promptService.showSuccess('No se encontraron problemas.');
+      this.promptService.showSuccess('No issues found.');
       // GT-569: "no issues" is NOT "everything was checked". The denominator is
       // printed even on the clean path, so a green can never hide 0/379.
       this.printCoverage(result);
@@ -668,18 +668,18 @@ export class ValidateCommand extends BaseEvolithCommand {
     const warnings = result.issues.filter(i => !i.blocking);
 
     if (blocking.length > 0) {
-      this.promptService.showError(`\\n${blocking.length} error(es) bloqueante(s):`);
+      this.promptService.showError(`\n${blocking.length} blocking error(s):`);
       for (const issue of blocking) {
         this.promptService.showError(`  [${issue.ruleId}] ${issue.title}`);
         this.promptService.showError(`    ${issue.description}`);
         if (issue.file) {
-          this.promptService.showError(`    Archivo: ${issue.file}`);
+          this.promptService.showError(`    File: ${issue.file}`);
         }
       }
     }
 
     if (warnings.length > 0) {
-      this.promptService.showWarning(`\\n${warnings.length} advertencia(es):`);
+      this.promptService.showWarning(`\n${warnings.length} warning(s):`);
       for (const issue of warnings) {
         this.promptService.showWarning(`  [${issue.ruleId}] ${issue.title}`);
         this.promptService.showWarning(`    ${issue.description}`);
@@ -688,7 +688,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
     this.printCoverage(result);
     if (result.coreRef.version) {
-      this.promptService.showInfo(`Core version pinneada: ${result.coreRef.version}`);
+      this.promptService.showInfo(`Pinned Core version: ${result.coreRef.version}`);
     }
   }
 
@@ -704,7 +704,7 @@ export class ValidateCommand extends BaseEvolithCommand {
     const total = result.rulesTotal ?? checked + skipped + errored;
 
     this.promptService.showInfo(
-      `\\nReglas: ${checked} verificadas / ${skipped} omitidas / ${errored} con error / ${total} en total`,
+      `\nRules: ${checked} checked / ${skipped} skipped / ${errored} errored / ${total} total`,
     );
 
     // GT-661 — the SCOPE, next to the counts, because the human reader is the
@@ -714,37 +714,37 @@ export class ValidateCommand extends BaseEvolithCommand {
     const selection = result.selection;
     if (selection?.source === 'caller') {
       this.promptService.showInfo(
-        `Alcance: seleccion del llamador — ${selection.rulesSelected} de ${selection.corpusTotal} regla(s), ` +
-        `ruleset(s): ${selection.matched.join(', ') || 'ninguno'}`,
+        `Scope: caller selection — ${selection.rulesSelected} of ${selection.corpusTotal} rule(s), ` +
+        `ruleset(s): ${selection.matched.join(', ') || 'none'}`,
       );
       if (selection.unmatched.length > 0) {
         this.promptService.showError(
-          `  ${selection.unmatched.length} ruleset(s) pedidos que este Core NO tiene: ${selection.unmatched.join(', ')}. ` +
-          'Nada se evaluo contra ellos — este reporte no dice nada sobre ellos. Ver `evolith rulesets`.',
+          `  ${selection.unmatched.length} ruleset(s) requested that this Core does NOT carry: ${selection.unmatched.join(', ')}. ` +
+          'Nothing was evaluated against them — this report says nothing about them. See `evolith rulesets`.',
         );
       }
     } else if (selection) {
       this.promptService.showInfo(
-        `Alcance: sin seleccion — se evaluo el corpus completo (${selection.corpusTotal} regla(s)), que es la ` +
-        'PROPUESTA de este Core, no una eleccion del tenant. Configura `select` en el perfil o pasa ' +
-        '`--select` para acotarlo; `evolith rulesets` lista lo disponible.',
+        `Scope: no selection — the whole corpus was evaluated (${selection.corpusTotal} rule(s)), which is this ` +
+        "Core's PROPOSAL, not a tenant choice. Set `select` in the profile or pass " +
+        '`--select` to narrow it; `evolith rulesets` lists what is available.',
       );
     }
     if (skipped > 0) {
       this.promptService.showWarning(
-        `  ${skipped} regla(s) NO se evaluaron — su resultado es DESCONOCIDO, no aprobado.`,
+        `  ${skipped} rule(s) were NOT evaluated — their result is UNKNOWN, not passed.`,
       );
     }
     if (errored > 0) {
       this.promptService.showError(
-        `  ${errored} regla(s) fallaron al EJECUTARSE (error del evaluador): ${(result.erroredRuleIds ?? []).join(', ')}`,
+        `  ${errored} rule(s) FAILED TO RUN (evaluator error): ${(result.erroredRuleIds ?? []).join(', ')}`,
       );
     }
   }
 
   @Option({
     flags: '-f, --format [string]',
-    description: 'Formato de salida (json, table, yaml, markdown)',
+    description: 'Output format (json, table, yaml, markdown)',
   })
   parseFormat(val: string): string {
     return val;
@@ -752,7 +752,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-o, --output [string]',
-    description: 'Ruta para guardar el reporte JSON',
+    description: 'Path to write the JSON report to',
   })
   parseOutput(val: string): string {
     return val;
@@ -760,7 +760,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-s, --satellite [path]',
-    description: 'Ruta al repositorio satélite (default: cwd)',
+    description: 'Path to the satellite repository (default: cwd)',
   })
   parseSatellite(val: string): string {
     return val;
@@ -768,7 +768,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-c, --core [path]',
-    description: 'Ruta al repositorio Evolith Core (default: auto-detect)',
+    description: 'Path to the Evolith Core repository (default: auto-detect)',
   })
   parseCore(val: string): string {
     return val;
@@ -811,9 +811,9 @@ export class ValidateCommand extends BaseEvolithCommand {
   @Option({
     flags: '--select <ref>',
     description:
-      'Evaluar SOLO el/los ruleset(s) indicados, por el ref que publica ' +
-      '`evolith rulesets` (repetible). Ausente ⇒ se usa `select` del perfil ' +
-      'del tenant; sin ninguno de los dos, el corpus completo, reportado como ' +
+      'Evaluate ONLY the named ruleset(s), by the ref `evolith rulesets` ' +
+      'publishes (repeatable). Absent ⇒ the tenant profile\u0027s `select` is used; ' +
+      'with neither, the whole corpus, reported as ' +
       '`selection.source: core-default`.',
   })
   parseSelect(val: string, previous: string[] = []): string[] {
@@ -822,7 +822,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-r, --ruleset [id]',
-    description: 'Validar ruleset específico (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability)',
+    description: 'Validate a specific ruleset (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability)',
   })
   parseRuleset(val: string): string {
     return val;
@@ -830,7 +830,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-a, --arch',
-    description: 'Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas)',
+    description: 'Validate architecture across the whole progressive axis (equivalent to the three progressive topologies)',
   })
   parseArchitecture(): boolean {
     return true;
@@ -839,7 +839,7 @@ export class ValidateCommand extends BaseEvolithCommand {
   @Option({
     flags: '-t, --topology [id]',
     description:
-      'Topología canónica a validar (repetible): modular-monolith, distributed-modules, ' +
+      'Canonical topology to validate (repeatable): modular-monolith, distributed-modules, ' +
       'microservices, serverless, edge-computing, event-driven, data-mesh, agentic-ai.',
   })
   parseTopology(val: string, acc?: string[]): string[] {
@@ -850,7 +850,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-e, --engine [engine]',
-    description: 'Motor de validación a utilizar: native (por defecto) u opa',
+    description: 'Validation engine to use: native (default) or opa',
   })
   parseEngine(val: string): string {
     return val;
@@ -867,8 +867,8 @@ export class ValidateCommand extends BaseEvolithCommand {
   @Option({
     flags: '--max-skipped-fraction <fraction>',
     description:
-      'Suelo de cobertura: falla si la fracción de reglas aplicables NO evaluadas supera este valor (0..1). '
-      + 'Sin el flag no se aplica ningún suelo.',
+      'Coverage floor: fail if the fraction of applicable rules NOT evaluated exceeds this value (0..1). '
+      + 'Without the flag no floor is applied.',
   })
   parseMaxSkippedFraction(val: string): number {
     const parsed = Number(val);
@@ -882,7 +882,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-m, --manifest [path]',
-    description: 'Ruta al SatelliteManifest JSON para evaluación end-to-end (activa pipeline GT-281)',
+    description: 'Path to the SatelliteManifest JSON for end-to-end evaluation (enables the GT-281 pipeline)',
   })
   parseManifest(val: string): string {
     return val;
@@ -898,7 +898,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '--adr [id]',
-    description: 'Validar contra reglas ADR específicas (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050)',
+    description: 'Validate against specific ADR rules (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050)',
   })
   parseAdr(val: string): string {
     return val;
@@ -906,7 +906,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '--file [path]',
-    description: 'Validar archivo individual (modo ad-hoc)',
+    description: 'Validate a single file (ad-hoc mode)',
   })
   parseFile(val: string): string {
     return val;
@@ -914,7 +914,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '--composable',
-    description: 'Usar motor de validación composable (GT-312) con resolución inteligente de modos',
+    description: 'Use the composable validation engine (GT-312) with smart mode resolution',
   })
   parseComposable(): boolean {
     return true;

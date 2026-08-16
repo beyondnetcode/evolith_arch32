@@ -171,7 +171,7 @@ describe('StandardsCommand', () => {
       await command.run([], { get: 'NONEXISTENT' });
 
       expect(p.log.error).toHaveBeenCalledWith(
-        expect.stringContaining('no encontrado')
+        expect.stringContaining('not found')
       );
     });
 

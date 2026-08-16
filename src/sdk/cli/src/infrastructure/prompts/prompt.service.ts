@@ -63,7 +63,7 @@ export class PromptService {
     );
     const result = await p.confirm({ message, initialValue });
     if (this.isCancelled(result)) {
-      p.cancel('Operación cancelada.');
+      p.cancel('Operation cancelled.');
       throw new UserCancelledError();
     }
     return result as boolean;
@@ -81,7 +81,7 @@ export class PromptService {
       validate: options.validate ? (value) => options.validate!(value ?? '') : undefined,
     });
     if (this.isCancelled(result)) {
-      p.cancel('Operación cancelada.');
+      p.cancel('Operation cancelled.');
       throw new UserCancelledError();
     }
     return result as string;
@@ -98,7 +98,7 @@ export class PromptService {
       options: options.options.map((option) => ({ ...option, label: option.label ?? option.value })) as Option<T>[],
     });
     if (this.isCancelled(result)) {
-      p.cancel('Operación cancelada.');
+      p.cancel('Operation cancelled.');
       throw new UserCancelledError();
     }
     return result as T;
@@ -116,7 +116,7 @@ export class PromptService {
       options: options.options.map((option) => ({ ...option, label: option.label ?? option.value })) as Option<T>[],
     });
     if (this.isCancelled(result)) {
-      p.cancel('Operación cancelada.');
+      p.cancel('Operation cancelled.');
       throw new UserCancelledError();
     }
     return result as T[];

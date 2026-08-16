@@ -27,7 +27,7 @@ interface ADRCommandOptions {
 
 @Command({
   name: 'adr',
-  description: 'Gestión de Architecture Decision Records (ADRs)',
+  description: 'Manage Architecture Decision Records (ADRs)',
 })
 export class ADRCommand extends BaseEvolithCommand {
   private readonly timer = new OperationTimer();
@@ -79,13 +79,13 @@ export class ADRCommand extends BaseEvolithCommand {
     }
 
     const action = await this.promptService.select({
-      message: '¿Qué acción deseas realizar?',
+      message: 'What would you like to do?',
       options: [
         { value: 'create', label: 'Crear ADR', hint: 'Nuevo Architecture Decision Record' },
-        { value: 'list', label: 'Listar ADRs', hint: 'Ver todos los ADRs' },
+        { value: 'list', label: 'List ADRs', hint: 'See every ADR' },
         { value: 'matrix', label: 'Ver Matriz', hint: 'Ver ADR Matrix summary' },
-        { value: 'get', label: 'Ver ADR', hint: 'Detalles de un ADR específico' },
-        { value: 'update', label: 'Actualizar Status', hint: 'Cambiar estado de un ADR' },
+        { value: 'get', label: 'View ADR', hint: 'Details of a specific ADR' },
+        { value: 'update', label: 'Actualizar Status', hint: 'Change an ADR status' },
       ],
     });
 
@@ -100,13 +100,13 @@ export class ADRCommand extends BaseEvolithCommand {
         await this.showMatrix(fs, json, meta, startedAt);
         break;
       case 'get':
-        const id = await this.promptService.text({ message: 'ID del ADR (ej: ADR-0001):' });
+        const id = await this.promptService.text({ message: 'ADR id (e.g. ADR-0001):' });
         await this.getADR(fs, id as string, json, meta, startedAt);
         break;
       case 'update':
-        const updateId = await this.promptService.text({ message: 'ID del ADR:' });
+        const updateId = await this.promptService.text({ message: 'ADR id:' });
         const newStatus = await this.promptService.select({
-          message: 'Nuevo estado:',
+          message: 'New status:',
           options: [
             { value: 'Accepted', label: 'Accepted' },
             { value: 'Deprecated', label: 'Deprecated' },
@@ -114,7 +114,7 @@ export class ADRCommand extends BaseEvolithCommand {
             { value: 'Amended', label: 'Amended' },
           ],
         });
-        const reason = await this.promptService.text({ message: 'Razón del cambio:' });
+        const reason = await this.promptService.text({ message: 'Reason for the change:' });
         await this.updateADR(fs, updateId as string, newStatus as string, reason as string, dryRun, json, meta, startedAt);
         break;
     }
@@ -124,33 +124,33 @@ export class ADRCommand extends BaseEvolithCommand {
     logger.info('Creating new ADR', { dryRun });
 
     const title = await this.promptService.text({
-      message: 'Título del ADR:',
+      message: 'ADR title:',
       placeholder: 'Use PostgreSQL as primary database',
-      validate: (v) => String(v).length < 5 ? 'Título demasiado corto' : undefined,
+      validate: (v) => String(v).length < 5 ? 'Title is too short' : undefined,
     }) as string;
 
     const context = await this.promptService.text({
-      message: 'Contexto (describe el problema):',
-      placeholder: 'Necesitamos decidir sobre la base de datos...',
+      message: 'Context (describe the problem):',
+      placeholder: 'We need to decide on the database...',
     }) as string;
 
     const decision = await this.promptService.text({
-      message: 'Decisión (qué se decidió):',
-      placeholder: 'Se decidió usar PostgreSQL porque...',
+      message: 'Decision (what was decided):',
+      placeholder: 'We decided to use PostgreSQL because...',
     }) as string;
 
     const positive = await this.promptService.text({
-      message: 'Consecuencias positivas (una por línea, separadas por pipe |):',
-      placeholder: 'Mejora rendimiento | Consistency',
+      message: 'Positive consequences (one per line, pipe-separated |):',
+      placeholder: 'Better performance | Consistency',
     }) as string;
 
     const negative = await this.promptService.text({
-      message: 'Consecuencias negativas (una por línea, separadas por pipe |):',
-      placeholder: 'Mayor complejidad | Costo adicional',
+      message: 'Negative consequences (one per line, pipe-separated |):',
+      placeholder: 'More complexity | Extra cost',
     }) as string;
 
     const tagsInput = await this.promptService.text({
-      message: 'Tags (separados por comma, opcional):',
+      message: 'Tags (comma-separated, optional):',
       placeholder: 'database, backend, infrastructure',
     }) as string;
 
@@ -161,7 +161,7 @@ export class ADRCommand extends BaseEvolithCommand {
     const service = new ADRService(fs, process.cwd());
 
     if (!json) {
-      this.promptService.startSpinner('Creando ADR...');
+      this.promptService.startSpinner('Creating ADR...');
     }
 
     try {
@@ -189,11 +189,11 @@ export class ADRCommand extends BaseEvolithCommand {
         if (dryRun) {
           this.promptService.showWarning(`[DRY-RUN] ADR ${adr.id} simulated creation`);
         } else {
-          this.promptService.showSuccess(`✓ ADR ${adr.id} creado exitosamente`);
+          this.promptService.showSuccess(`✓ ADR ${adr.id} created`);
         }
-        this.promptService.showInfo(`  Título: ${adr.title}`);
-        this.promptService.showInfo(`  Estado: ${adr.status}`);
-        this.promptService.showInfo(`  Archivo: reference/architecture/adrs/${adr.id}.md`);
+        this.promptService.showInfo(`  Title: ${adr.title}`);
+        this.promptService.showInfo(`  Status: ${adr.status}`);
+        this.promptService.showInfo(`  File: reference/architecture/adrs/${adr.id}.md`);
       }
     } catch (error) {
       if (!json) {
@@ -205,7 +205,7 @@ export class ADRCommand extends BaseEvolithCommand {
         const message = error instanceof Error ? error.message : String(error);
         console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
-        this.promptService.showError('✗ Error creando ADR');
+        this.promptService.showError('✗ Failed to create the ADR');
       }
     }
   }
@@ -232,7 +232,7 @@ export class ADRCommand extends BaseEvolithCommand {
     }
 
     if (adrs.length === 0) {
-      this.promptService.showWarning('No hay ADRs registrados. Usa "evolith adr --create" para crear el primero.');
+      this.promptService.showWarning('No ADRs registered. Run "evolith adr --create" to add the first one.');
       return;
     }
 
@@ -257,9 +257,9 @@ export class ADRCommand extends BaseEvolithCommand {
     if (!adr) {
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `ADR ${id} no encontrado`, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `ADR ${id} not found`, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
-        this.promptService.showError(`ADR ${id} no encontrado`);
+        this.promptService.showError(`ADR ${id} not found`);
       }
       return;
     }
@@ -287,7 +287,7 @@ export class ADRCommand extends BaseEvolithCommand {
     logger.info('Updating ADR status', { id, status, dryRun });
 
     if (!status) {
-      const message = 'Estado requerido. Usa --status <Accepted|Deprecated|Superseded|Amended>';
+      const message = 'A status is required. Use --status <Accepted|Deprecated|Superseded|Amended>';
       if (json) {
         process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
@@ -299,7 +299,7 @@ export class ADRCommand extends BaseEvolithCommand {
 
     const service = new ADRService(fs, process.cwd());
     if (!json) {
-      this.promptService.startSpinner(`Actualizando ADR ${id}...`);
+      this.promptService.startSpinner(`Updating ADR ${id}...`);
     }
 
     try {
@@ -322,11 +322,11 @@ export class ADRCommand extends BaseEvolithCommand {
           if (dryRun) {
             this.promptService.showWarning(`[DRY-RUN] ADR ${id} update simulated to ${status}`);
           } else {
-            this.promptService.showSuccess(`✓ ADR ${id} actualizado a ${status}`);
+            this.promptService.showSuccess(`✓ ADR ${id} updated to ${status}`);
           }
         }
       } else {
-        const message = `ADR ${id} no encontrado`;
+        const message = `ADR ${id} not found`;
         if (json) {
           process.exitCode = 1;
           console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
@@ -344,7 +344,7 @@ export class ADRCommand extends BaseEvolithCommand {
         const message = error instanceof Error ? error.message : String(error);
         console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
-        this.promptService.showError('✗ Error actualizando ADR');
+        this.promptService.showError('✗ Failed to update the ADR');
       }
     }
   }
@@ -391,7 +391,7 @@ export class ADRCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-l, --list',
-    description: 'Listar todos los ADRs',
+    description: 'List every ADR',
   })
   parseList(): boolean {
     return true;
@@ -399,7 +399,7 @@ export class ADRCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-g, --get [id]',
-    description: 'Ver ADR específico',
+    description: 'View a specific ADR',
   })
   parseGet(val: string): string {
     return val;
@@ -407,7 +407,7 @@ export class ADRCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-u, --update [id]',
-    description: 'Actualizar estado de ADR',
+    description: 'Update an ADR status',
   })
   parseUpdate(val: string): string {
     return val;
@@ -415,7 +415,7 @@ export class ADRCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-s, --status [status]',
-    description: 'Nuevo estado: Accepted, Deprecated, Superseded, Amended',
+    description: 'New status: Accepted, Deprecated, Superseded, Amended',
   })
   parseStatus(val: string): string {
     return val;
@@ -423,7 +423,7 @@ export class ADRCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-r, --reason [text]',
-    description: 'Razón del cambio de estado',
+    description: 'Reason for the status change',
   })
   parseReason(val: string): string {
     return val;
@@ -439,7 +439,7 @@ export class ADRCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-d, --dry-run',
-    description: 'Ejecuta en modo simulacro sin alterar archivos',
+    description: 'Dry run: change nothing on disk',
   })
   parseDryRun(): boolean {
     return true;

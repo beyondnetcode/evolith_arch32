@@ -28,11 +28,11 @@ export class FileManagerService {
       const destContent = await fs.readFile(destination, 'utf-8');
 
       if (sourceContent === destContent) {
-        return { status: 'skipped', message: `[SKIP] ${destination} ya cumple con el estándar.` };
+        return { status: 'skipped', message: `[SKIP] ${destination} already meets the standard.` };
       }
 
       if (!overwrite) {
-        return { status: 'conflict', message: `El archivo ${destination} ya existe y es distinto.` };
+        return { status: 'conflict', message: `${destination} already exists and differs.` };
       }
     }
 
@@ -40,7 +40,7 @@ export class FileManagerService {
       await fs.copy(source, destination, { overwrite: true });
       return { status: 'copied', message: `[CREADO/ACTUALIZADO] ${destination}` };
     } else {
-      return { status: 'skipped', message: `[DRY-RUN] Se crearía/actualizaría: ${destination}` };
+      return { status: 'skipped', message: `[DRY-RUN] Would create/update: ${destination}` };
     }
   }
 }

@@ -231,7 +231,7 @@ describe('ADRCommand', () => {
       await command.run([], { update: 'ADR-0001' });
 
       expect(p.log.error).toHaveBeenCalledWith(
-        expect.stringContaining('Estado requerido')
+        expect.stringContaining('A status is required')
       );
     });
 
@@ -518,7 +518,7 @@ describe('ADRCommand', () => {
       const warn = jest.spyOn(PromptService.prototype, 'showWarning').mockImplementation(() => undefined);
       mockList.mockResolvedValue([]);
       await command.executeCommand([], { list: true } as never);
-      expect(warn).toHaveBeenCalledWith(expect.stringMatching(/No hay ADRs/));
+      expect(warn).toHaveBeenCalledWith(expect.stringMatching(/No ADRs registered/));
       warn.mockRestore();
     });
 
@@ -552,7 +552,7 @@ describe('ADRCommand', () => {
     it('update sin --status explica que estados admite', async () => {
       const err = jest.spyOn(PromptService.prototype, 'showError').mockImplementation(() => undefined);
       await command.executeCommand([], { update: 'ADR-0001' } as never);
-      expect(err).toHaveBeenCalledWith(expect.stringMatching(/Estado requerido/));
+      expect(err).toHaveBeenCalledWith(expect.stringMatching(/A status is required/));
       err.mockRestore();
     });
 

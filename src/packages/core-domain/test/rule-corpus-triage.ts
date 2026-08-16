@@ -192,7 +192,14 @@ export function triageCorpus(rulesetsRoot: string = RULESETS_ROOT): CorpusTriage
  */
 export const SNAPSHOT_SHAPE_VERSION = '1.1.0';
 
-/** One reading order for the six classes, shared by `counts` and `validation`. */
+/**
+ * One reading order for the six NATIVE classes, shared by `counts` and `validation`.
+ *
+ * GT-675's `no-policy-in-bundle` is deliberately absent: this triage classifies the
+ * corpus against the native handler table, and that class is a statement the OPA
+ * bundle makes about itself at evaluation time. Adding it here would invent a
+ * seventh native category that no rule in the table can ever have.
+ */
 export const CLASS_ORDER: readonly RuleEvaluability[] = [
   'native-handler',
   'documentation-only',

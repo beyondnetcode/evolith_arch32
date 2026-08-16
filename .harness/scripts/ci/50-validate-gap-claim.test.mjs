@@ -21,7 +21,7 @@ import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-import {
+import { isPromotion,
   claimedIds,
   buildClaimMap,
   findContested,
@@ -654,5 +654,62 @@ describe('anti-vacuous floor', () => {
     assert.equal(r.status, 1, out);
     assert.match(out, /could not read the diff of 1 open pull request/);
     assert.match(out, /#7/);
+  });
+});
+
+
+/**
+ * GT-675's promotion is the fixture: a `develop` -> `main` pull request carries
+ * every board change since the last promotion, so without a carve-out it claims
+ * every id in flight and contests each one against the pull request doing the
+ * work. Measured: #537 was reported as contesting GT-703 with #536 — the PR
+ * closing GT-703 — purely because GT-703's already-merged registration row
+ * travelled inside it.
+ */
+describe('a promotion transports rows, it does not work them', () => {
+  const REGISTRATION_DIFF = [
+    'diff --git a/reference/core/control-center/gaps/gap-tracking.md b/reference/core/control-center/gaps/gap-tracking.md',
+    '--- a/reference/core/control-center/gaps/gap-tracking.md',
+    '+++ b/reference/core/control-center/gaps/gap-tracking.md',
+    '-| [`GT-703`](./gap-reference-catalog.md#gt-703) | row | — | — | `Core Domain` | Cross | P3 | S | `PENDING` |',
+    '+| [`GT-703`](./gap-reference-catalog.md#gt-703) | row | — | — | `Core Domain` | Cross | P3 | S | `DONE` |',
+  ].join('\n');
+
+  it('does not claim an id that only appears in its diff', () => {
+    const promotion = {
+      number: 537,
+      title: 'Promote to main: GT-675 closed',
+      headRefName: 'develop',
+      baseRefName: 'main',
+      body: '',
+      diff: REGISTRATION_DIFF,
+    };
+    assert.equal(isPromotion(promotion), true);
+    assert.deepEqual(claimsOf(promotion).diff, []);
+  });
+
+  it('still claims what it DECLARES, so it cannot smuggle one past the guard', () => {
+    const promotion = {
+      number: 537,
+      title: 'Promote to main: GT-675 closed',
+      headRefName: 'develop',
+      baseRefName: 'main',
+      body: 'Closes GT-702',
+      diff: REGISTRATION_DIFF,
+    };
+    assert.deepEqual(claimsOf(promotion).prose, ['GT-675', 'GT-702']);
+  });
+
+  it('an ordinary pull request with the SAME diff still claims from it', () => {
+    const ordinary = {
+      number: 536,
+      title: 'feat(ci): close the chain',
+      headRefName: 'gt703-chain-fix',
+      baseRefName: 'develop',
+      body: '',
+      diff: REGISTRATION_DIFF,
+    };
+    assert.equal(isPromotion(ordinary), false);
+    assert.ok(claimsOf(ordinary).diff.includes('GT-703'));
   });
 });

@@ -96,6 +96,22 @@ jobs:
       - name: Self-test for the bilingual language heuristic
         run: node --test .harness/scripts/ci/suites/bilingual-suite.test.mjs
 
+      # GT-702. The step above asks whether the ES file EXISTS, matches heading counts
+      # and is Spanish — all properties of the files as they stand, none of which can
+      # see that the two DISAGREE. On 2026-08-16 the EN catalog was corrected to 266
+      # violation literals while its ES twin kept asserting 251, and parity stayed
+      # green over the contradiction for the whole day.
+      #
+      # Runs against this branch's own range, so historical one-sided commits do not
+      # fail somebody else's PR. Depends on the `fetch-depth: 0` checkout above: with a
+      # shallow clone there is no range to read, and the guard's `assertScanned` call
+      # makes that a failure rather than a silent pass.
+      - name: Check bilingual pairs moved together
+        run: node .harness/scripts/ci/66-validate-bilingual-sync.mjs --since origin/${{ github.base_ref || 'main' }}
+
+      - name: Self-test for the bilingual sync guard
+        run: node .harness/scripts/ci/66-validate-bilingual-sync.mjs --self-test
+
       - name: Validate semantic tracking
         run: node .harness/scripts/ci/08-validate-tracking.mjs
 

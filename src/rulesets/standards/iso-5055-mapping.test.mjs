@@ -150,10 +150,31 @@ function pinnedByCore() {
     );
   }
 
+  // GT-675 — classes the NATIVE triage cannot produce are not part of this
+  // comparison. `no-policy-in-bundle` is a statement the compiled OPA bundle makes
+  // about its own scope at evaluation time; it is pinned at 0 in Core precisely
+  // because the native triage never emits it, and the snapshot this guard checks is
+  // a capture of the native triage. Comparing them would fail forever on a key that
+  // is 0 on one side and absent on the other, and the fix would be to weaken one of
+  // the two honest artifacts.
+  const OPA_ONLY_CLASSES = new Set(['no-policy-in-bundle']);
+
   const counts = {};
   for (const line of literal[1].split('\n')) {
     const entry = /^\s*'?([a-zA-Z-]+)'?\s*:\s*(\d+)\s*,?\s*$/.exec(line);
-    if (entry) counts[entry[1]] = Number(entry[2]);
+    if (!entry) continue;
+    if (OPA_ONLY_CLASSES.has(entry[1])) {
+      // Still asserted, just not against the native snapshot: a non-zero value here
+      // would mean the native triage had started classifying against a bundle.
+      if (Number(entry[2]) !== 0) {
+        throw new Error(
+          `PINNED_CLASS_COUNTS['${entry[1]}'] is ${entry[2]}, expected 0 — that class belongs to the OPA `
+            + 'bundle, and the native corpus triage must never produce it.',
+        );
+      }
+      continue;
+    }
+    counts[entry[1]] = Number(entry[2]);
   }
   if (Object.keys(counts).length === 0) {
     throw new Error(`Parsed the PINNED_CLASS_COUNTS block in ${path.basename(spec)} and read zero counts out of it.`);

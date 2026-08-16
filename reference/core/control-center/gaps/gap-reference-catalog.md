@@ -9734,3 +9734,50 @@ The declaration has one hole — a pack that does not declare — and the direct
 - **A HOLE IN MY OWN GUARD, FOUND BY DEMONSTRATING IT.** Stripping a topology's labels left guard 56 silent, because "has not started labelling" and "labels were deleted" looked identical to it. They are not: if the README already publishes assurances, the labels existed and their absence is a regression. Now exits 1 — verified by capturing the real exit code rather than one that had passed through a pipe, a trap this repository has recorded before.
 - **WHAT THIS DOES NOT CLAIM.** No rule became `observed`. Seventeen verdicts are still decided by reading a declaration, and a satellite that declares a control it has not built still passes — the change is that it now says so, in the ruleset and in the document a buyer reads. Turning any of the seventeen into a real observation needs the static analysis this row deferred, and that work is not done here.
 - **Status:** `DONE`
+
+#### GT-697
+
+**Title:** Nothing detects a gap closed against code production never reaches, so a false closure survives a mean of 44 days until a human re-reads the board
+
+- **Purpose:** Give the closure ledger a detector, so that discovering a wrong closure stops depending on one person re-reading it.
+- **Evidence:** **Measured 2026-08-15 by a ten-agent forensic audit of this repository, whose findings were then put through three adversarial refutation passes.** The loop the owner reported — "arreglo defectos y vuelven a salir" — is not churn: **the git-churn case was refuted outright.** The `71.1%` fix-of-fix rate is BELOW a permutation null of `88.3%`, and `feat` commits re-touch old files MORE (87.0%) than `fix` commits (83.0%); "nothing settles" was a censoring artifact of the 2026-07-04 mass move, and correctly conditioned **60.7% of eligible files have been untouched for 30+ days**; CI is not soft (**2 slack flags across 15 workflows**); and the harness guards are not toothless (**55 of 55 observed turning red against an empty fixture**). What survives is one asymmetry: **gaps close in a median of 0–1 days and a WRONG closure is detected in a mean of 43.8 days** (min 26, max 53) — `GT-158` 53d, `GT-221` 52d, `GT-266` 51d, `GT-321` 49d, `GT-518` 32d, `GT-566` 26d — and **every one of those six detections was a human re-reading, not a guard, a test or the engine.** `GT-321` is the archetype: closed against `AuditService`, whose only `new` in the repository is in its own specs.
+- **Use cases:**
+  - A closure names a service; six weeks later somebody asks whether it is wired, and the answer should not require re-reading the row.
+  - A future rewrite deletes the last call site of a class an old gap was closed against; the ledger should notice before a customer does.
+  - An auditor asks which closed gaps rest on unreachable code and gets a list rather than an opinion.
+- **Impact:** The ledger is monotone by construction — `08-validate-tracking` treats a closure record on a non-DONE row as a hard error, so `DONE` cannot be reversed and a regression can only be re-registered as a NEW id. Combined with a 40x detect/close asymmetry, the board grows while nothing appears to come back, which is precisely the experience of going in circles.
+- **Expected outcome:** the 44-day human detection becomes a sub-second mechanical one, running on every CI run, that can only get stricter.
+- **Affected files:** `.harness/scripts/ci/57-validate-closure-reachability.mjs`, `.harness/scripts/ci/closure-reachability-baseline.json`, `.harness/scripts/ci-runner.mjs`
+- **Component:** `Governance` · **Criticality:** P1 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `SEVERE` · **Basis:** `estimate`
+- **Provenance:** Registered and closed 2026-08-15 from the root-cause audit. **Registered P1 with `SEVERE` interest, stated rather than assumed:** every day it stands, closures accumulate that nothing re-checks, and the audit measured the cost precisely — 44 days per false closure, six known instances, all found by hand.
+- **Acceptance criteria:**
+  - [x] **FALSIFIABILITY:** the detector re-finds the closures the owner refuted by hand that have this shape — `GT-321` and `GT-266` — and does NOT fire on `AuditLogger`, which the same audit showed IS wired. All three verified.
+  - [x] The guard fails on a NEW unreachable closure, on a baseline entry that has become reachable, and on losing its own calibration cases. All three demonstrated by mutation.
+  - [x] It refuses a zero-element scan (`assertScanned` on both denominators) and is registered where CI runs it.
+  - [x] No report mode. Guard 41's `Exiting 0 … THIS IS NOT A PASS` is not repeated: the existing findings are frozen in a baseline that may only shrink.
+- **CLOSED 2026-08-15 — and the iteration is recorded because it is the finding.** The first heuristic (a closure's evidence file has no consumer) caught **0 of 6** known cases: re-export from a barrel counted as consumption. The second (dedup claimed, duplicate on disk) fired **4 times, all false** — on `src/sdk/cli/rulesets/**`, the copy `copy-rulesets` generates — and still missed `GT-566`; it was **killed rather than shipped**. What worked is narrower: an exported class in a closure's production evidence with no production call site. Two syntactic attempts to exclude framework classes both failed — a 4000-character decorator lookback missed `AppModule` at 4596, and "nearest preceding `@`" matched JSDoc and grew the baseline 70→76 — so the exclusion is by **file convention**, verified against the tree: 90 files, 111 classes, 78 decorated, the other 33 all DTOs. Final: **273 classes scanned across 643 closures, 59 unreachable, 0 framework false positives, calibration intact.**
+- **What this does NOT claim:** four of the six known false closures have shapes this detector cannot see — `GT-158` (a criterion naming a token nothing issues), `GT-518` (a criterion ticked with an inline `Remaining:` caveat), `GT-566` (a de-duplication claim with the duplicate still on disk), `GT-221`. Only the `GT-321`/`GT-266` shape is mechanised here. The `Remaining:` caveat detector was built and calibrated (**1 hit, exactly `GT-518`**) and is registered separately rather than bolted on.
+- **Status:** `DONE`
+
+#### GT-698
+
+**Title:** Fifty-nine closures rest on a class production never constructs, and the detector that found them cannot say which are dead code and which are merely unwired
+
+- **Purpose:** Turn a frozen baseline into a triaged one, so the number can start going down.
+- **Evidence:** **Measured 2026-08-15 by `57-validate-closure-reachability.mjs` on its first run:** 273 exported classes named as production evidence across 643 closure records; **59 have zero production call sites**, spread over 43 closures — 55 closed in June, 11 in July, 4 in August. Hand-verified samples: `LighthouseEvidenceProvider` (0 production uses, 13 spec mentions), `InMemoryEvaluationCache` (0 / 6), and `RulesetCorpusWarmupService` (**0 production uses and 0 spec mentions** — named as the evidence of a closure and referenced by nothing at all).
+- **Use cases:**
+  - Deciding, per class, whether to wire it, delete it, or reopen the gap that claimed it.
+  - Shrinking a baseline that today only proves the problem exists.
+- **Impact:** Each entry is a closure whose ticked criteria rest on code no runtime path reaches — the `GT-321` shape, which took 49 days to notice by hand. Until triaged, 43 rows on the board assert delivery that the repository cannot demonstrate.
+- **Expected outcome:** every baseline entry carries a disposition (`wired`, `deleted`, `reopened`, or `framework — with the reason`), and the file shrinks toward zero.
+- **Affected files:** `.harness/scripts/ci/closure-reachability-baseline.json`, and the 59 classes it names
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-15 from `GT-697`'s first run. **Not folded into that row:** building the detector and triaging 59 findings are different work, and mixing them would have made the detector's own calibration unreviewable. **P2 and not P1 because the detector now exists** — the bleeding is stopped even though the wound is not yet dressed: no NEW unreachable closure can land without failing CI.
+- **Acceptance criteria:**
+  - [ ] **FALSIFIABILITY:** the baseline is strictly smaller than 59 and every removed entry names what happened to it — wired, deleted, or its gap reopened. Both counts recorded.
+  - [ ] Every remaining entry carries a written disposition; none is left unexplained.
+  - [ ] `RulesetCorpusWarmupService`, which nothing references at all, is resolved first and its gap re-examined.
+  - [ ] Any entry that turns out to be a framework false positive moves the EXCLUSION into the guard, so the same class cannot reappear.
+- **Status:** `PENDING`

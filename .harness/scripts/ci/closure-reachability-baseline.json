@@ -1,0 +1,360 @@
+{
+  "$comment": "GT-697 — closures resting on a class production never reaches, frozen when the detector was written. This list may only SHRINK. Removing an entry requires either wiring the class or reopening the gap. Regenerate with --write-baseline ONLY when deliberately re-baselining, and say so in the commit.",
+  "capturedOn": "2026-08-15",
+  "entries": [
+    {
+      "gap": "GT-112",
+      "cls": "CommandExecutor",
+      "file": "src/sdk/cli/src/infrastructure/cli/command-executor.ts",
+      "closedAt": "2026-06-15"
+    },
+    {
+      "gap": "GT-112",
+      "cls": "PlatformDetectionService",
+      "file": "src/packages/core-domain/src/domain/services/index.ts",
+      "closedAt": "2026-06-15"
+    },
+    {
+      "gap": "GT-113",
+      "cls": "DefaultWorkflowDefinition",
+      "file": "src/packages/core-domain/src/domain/services/default-workflow-definition.ts",
+      "closedAt": "2026-06-15"
+    },
+    {
+      "gap": "GT-113",
+      "cls": "SyncService",
+      "file": "src/packages/core-domain/src/application/sync/sync.service.ts",
+      "closedAt": "2026-06-15"
+    },
+    {
+      "gap": "GT-180",
+      "cls": "PluginLoader",
+      "file": "src/sdk/cli/src/infrastructure/plugins/plugin-loader.ts",
+      "closedAt": "2026-06-22"
+    },
+    {
+      "gap": "GT-181",
+      "cls": "ToolDispatchService",
+      "file": "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+      "closedAt": "2026-06-22"
+    },
+    {
+      "gap": "GT-184",
+      "cls": "CommandExecutor",
+      "file": "src/sdk/cli/src/infrastructure/cli/command-executor.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-184",
+      "cls": "ErrorReporter",
+      "file": "src/sdk/cli/src/infrastructure/observability/error-reporter.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-184",
+      "cls": "OperationContext",
+      "file": "src/sdk/cli/src/infrastructure/observability/error-reporter.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-189",
+      "cls": "DefaultWorkflowDefinition",
+      "file": "src/packages/core-domain/src/domain/services/default-workflow-definition.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-189",
+      "cls": "PlatformDetectionService",
+      "file": "src/packages/core-domain/src/domain/services/index.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-189",
+      "cls": "ToolDispatchService",
+      "file": "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-190",
+      "cls": "CommandExecutor",
+      "file": "src/sdk/cli/src/infrastructure/cli/command-executor.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-194",
+      "cls": "MockConfigParser",
+      "file": "src/sdk/cli/src/test/mocks/index.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-194",
+      "cls": "MockFileSystem",
+      "file": "src/sdk/cli/src/test/mocks/index.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-194",
+      "cls": "MockLogger",
+      "file": "src/sdk/cli/src/test/mocks/index.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-194",
+      "cls": "SyncService",
+      "file": "src/packages/core-domain/src/application/sync/sync.service.ts",
+      "closedAt": "2026-06-23"
+    },
+    {
+      "gap": "GT-266",
+      "cls": "ApiKeyProvisioningService",
+      "file": "src/packages/mcp-server/src/mcp/api-key-provisioning.service.ts",
+      "closedAt": "2026-06-24"
+    },
+    {
+      "gap": "GT-296",
+      "cls": "PhaseTransitionService",
+      "file": "src/packages/core-domain/src/phases/phase-transition.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-297",
+      "cls": "CorpusResourceHandler",
+      "file": "src/packages/mcp-server/src/resources/corpus-resource.handler.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-298",
+      "cls": "WatcherService",
+      "file": "src/packages/mcp-server/src/watcher/watcher.service.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-308",
+      "cls": "PluginRegistry",
+      "file": "src/sdk/cli/src/plugins/plugin-registry.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-309",
+      "cls": "ContributionValidator",
+      "file": "src/sdk/cli/src/contributions/contribution-validator.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-315",
+      "cls": "InMemoryEventBus",
+      "file": "src/packages/core-domain/src/infrastructure/events/in-memory-event-bus.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-315",
+      "cls": "OutboxService",
+      "file": "src/packages/core-domain/src/infrastructure/events/outbox.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-316",
+      "cls": "PhaseStateMachine",
+      "file": "src/packages/core-domain/src/domain/lifecycle/phase-state-machine.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-317",
+      "cls": "ValidateWorkflowUseCase",
+      "file": "src/packages/core-domain/src/application/use-cases/validate-workflow.use-case.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-320",
+      "cls": "GateRoleEnforcer",
+      "file": "src/packages/core-domain/src/domain/rbac/gate-role-enforcer.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-321",
+      "cls": "AuditService",
+      "file": "src/packages/core-domain/src/application/services/audit.service.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-325",
+      "cls": "BlueprintBuilder",
+      "file": "src/packages/core-domain/src/domain/entities/blueprint.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-325",
+      "cls": "ValidateBlueprintUseCase",
+      "file": "src/packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-327",
+      "cls": "WebhookDispatcher",
+      "file": "src/packages/core-domain/src/infrastructure/webhook/webhook-dispatcher.ts",
+      "closedAt": "2026-06-26"
+    },
+    {
+      "gap": "GT-332",
+      "cls": "ToolDispatchService",
+      "file": "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-344",
+      "cls": "DefaultWorkflowDefinition",
+      "file": "src/packages/core-domain/src/domain/services/default-workflow-definition.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-346",
+      "cls": "CommandExecutor",
+      "file": "src/sdk/cli/src/infrastructure/cli/command-executor.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-346",
+      "cls": "DockerProvider",
+      "file": "src/sdk/cli/src/infrastructure/cli/providers/index.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-346",
+      "cls": "DotnetProvider",
+      "file": "src/sdk/cli/src/infrastructure/cli/providers/index.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-346",
+      "cls": "GitHubActionsProvider",
+      "file": "src/sdk/cli/src/infrastructure/cli/providers/index.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-346",
+      "cls": "NpmProvider",
+      "file": "src/sdk/cli/src/infrastructure/cli/providers/index.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-346",
+      "cls": "NxProvider",
+      "file": "src/sdk/cli/src/infrastructure/cli/providers/index.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-346",
+      "cls": "PythonProvider",
+      "file": "src/sdk/cli/src/infrastructure/cli/providers/index.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-352",
+      "cls": "ToolDispatchService",
+      "file": "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-370",
+      "cls": "SyncService",
+      "file": "src/packages/core-domain/src/application/sync/sync.service.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-372",
+      "cls": "SatelliteAuditService",
+      "file": "src/packages/core-domain/src/application/audit/satellite-audit.service.ts",
+      "closedAt": "2026-06-28"
+    },
+    {
+      "gap": "GT-401",
+      "cls": "AgentRuntimeFactory",
+      "file": "src/sdk/cli/src/infrastructure/agent/agent-runtime.factory.ts",
+      "closedAt": "2026-07-02"
+    },
+    {
+      "gap": "GT-402",
+      "cls": "AgentRuntimeFactory",
+      "file": "src/sdk/cli/src/infrastructure/agent/agent-runtime.factory.ts",
+      "closedAt": "2026-07-02"
+    },
+    {
+      "gap": "GT-512",
+      "cls": "InMemoryEvaluationCache",
+      "file": "src/packages/core-domain/src/application/validators/enforcement/provisioning.ts",
+      "closedAt": "2026-07-13"
+    },
+    {
+      "gap": "GT-514",
+      "cls": "StubProcessRunner",
+      "file": "src/packages/core-domain/src/application/validators/enforcement/enforcer.types.ts",
+      "closedAt": "2026-07-12"
+    },
+    {
+      "gap": "GT-530",
+      "cls": "LangfuseEvidenceAdapter",
+      "file": "src/packages/infra-providers/src/langfuse-evidence.adapter.ts",
+      "closedAt": "2026-07-13"
+    },
+    {
+      "gap": "GT-534",
+      "cls": "LighthouseEvidenceProvider",
+      "file": "src/packages/infra-providers/src/lighthouse-evidence.provider.ts",
+      "closedAt": "2026-07-13"
+    },
+    {
+      "gap": "GT-535",
+      "cls": "StructuralReviewProvider",
+      "file": "src/packages/agent-runtime/src/application/structural-review-provider.ts",
+      "closedAt": "2026-07-13"
+    },
+    {
+      "gap": "GT-56",
+      "cls": "MockPromptService",
+      "file": "src/sdk/cli/test/mock-prompt.service.ts",
+      "closedAt": "2026-06-14"
+    },
+    {
+      "gap": "GT-593",
+      "cls": "FileRunJournalAdapter",
+      "file": "src/packages/agent-runtime/src/adapters/journal/file-run-journal.adapter.ts",
+      "closedAt": "2026-07-28"
+    },
+    {
+      "gap": "GT-613",
+      "cls": "HeuristicStructuralReviewer",
+      "file": "src/packages/agent-runtime/src/adapters/review/heuristic-structural-reviewer.adapter.ts",
+      "closedAt": "2026-07-28"
+    },
+    {
+      "gap": "GT-648",
+      "cls": "RulesetCorpusWarmupService",
+      "file": "src/apps/core-api/src/application/services/ruleset-corpus-warmup.service.ts",
+      "closedAt": "2026-08-01"
+    },
+    {
+      "gap": "GT-649",
+      "cls": "ConsoleLoggerProvider",
+      "file": "src/packages/infra-providers/src/logger.provider.ts",
+      "closedAt": "2026-08-01"
+    },
+    {
+      "gap": "GT-649",
+      "cls": "NoOpLoggerProvider",
+      "file": "src/packages/infra-providers/src/logger.provider.ts",
+      "closedAt": "2026-08-01"
+    },
+    {
+      "gap": "GT-664",
+      "cls": "InMemoryEvaluationCache",
+      "file": "src/packages/core-domain/src/application/validators/enforcement/provisioning.ts",
+      "closedAt": "2026-08-09"
+    },
+    {
+      "gap": "GT-98",
+      "cls": "PluginLoader",
+      "file": "src/sdk/cli/src/infrastructure/plugins/plugin-loader.ts",
+      "closedAt": "2026-06-16"
+    }
+  ]
+}

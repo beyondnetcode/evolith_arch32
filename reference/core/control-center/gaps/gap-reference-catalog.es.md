@@ -9639,3 +9639,50 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
 - **UN AGUJERO EN MI PROPIO GUARD, ENCONTRADO AL DEMOSTRARLO.** Borrar las etiquetas de una topología dejaba mudo al guard 56, porque «aún no ha empezado a etiquetar» y «le borraron las etiquetas» le parecían lo mismo. No lo son: si el README ya publica garantías, las etiquetas existían y su ausencia es una regresión. Ahora sale 1 — verificado capturando el código de salida real y no uno que había pasado por una tubería, una trampa que este repositorio ya tiene registrada.
 - **LO QUE ESTO NO RECLAMA.** Ninguna regla pasó a `observed`. Diecisiete veredictos se siguen decidiendo leyendo una declaración, y un satélite que declara un control que no ha construido sigue pasando — el cambio es que ahora lo dice, en el ruleset y en el documento que lee quien compra. Convertir cualquiera de esas diecisiete en una observación real exige el análisis estático que esta fila difirió, y ese trabajo no se hace aquí.
 - **Estado:** `COMPLETADO`
+
+#### GT-697
+
+**Título:** Nada detecta un gap cerrado contra código que producción nunca alcanza, así que un cierre falso sobrevive una media de 44 días hasta que un humano relee el tablero
+
+- **Propósito:** Dar un detector al registro de cierres, para que descubrir un cierre equivocado deje de depender de que una persona lo relea.
+- **Evidencia:** **Medido el 2026-08-15 por una auditoría forense de diez agentes sobre este repositorio, cuyos hallazgos pasaron después por tres rondas de refutación adversarial.** El bucle que reporta el dueño —«arreglo defectos y vuelven a salir»— no es churn: **el caso del historial git quedó refutado.** La tasa de re-arreglo del `71,1%` está POR DEBAJO de un nulo por permutación del `88,3%`, y los commits `feat` retocan ficheros viejos MÁS (87,0%) que los `fix` (83,0%); lo de «aquí nada se estabiliza» era un artefacto de censura del movimiento masivo del 2026-07-04, y bien condicionado **el 60,7% de los ficheros elegibles llevan 30+ días intactos**; el CI no es blando (**2 banderas de holgura en 15 workflows**); y los guards del harness no son de cartón (**55 de 55 observados poniéndose rojos contra un fixture vacío**). Lo que sobrevive es una asimetría: **los gaps se cierran en una mediana de 0–1 días y un cierre EQUIVOCADO se detecta en una media de 43,8 días** (mín 26, máx 53) — `GT-158` 53d, `GT-221` 52d, `GT-266` 51d, `GT-321` 49d, `GT-518` 32d, `GT-566` 26d — y **las seis detecciones las hizo un humano releyendo, no un guard, ni un test, ni el motor.** `GT-321` es el arquetipo: cerrado contra `AuditService`, cuyo único `new` en el repositorio está en sus propios specs.
+- **Casos de uso:**
+  - Un cierre nombra un servicio; seis semanas después alguien pregunta si está cableado, y la respuesta no debería exigir releer la fila.
+  - Una reescritura futura borra el último call site de una clase contra la que se cerró un gap viejo; el registro debería enterarse antes que un cliente.
+  - Un auditor pregunta qué gaps cerrados descansan sobre código inalcanzable y recibe una lista, no una opinión.
+- **Impacto:** El registro es monótono por construcción — `08-validate-tracking` trata un registro de cierre en una fila no-DONE como error duro, así que `DONE` no se puede revertir y una regresión solo puede re-registrarse como id NUEVO. Junto a una asimetría de 40x entre cerrar y detectar, el tablero crece mientras nada parece volver, que es exactamente la experiencia de dar vueltas.
+- **Resultado esperado:** los 44 días de detección humana pasan a ser una detección mecánica de menos de un segundo, en cada corrida de CI, que solo puede volverse más estricta.
+- **Ficheros afectados:** `.harness/scripts/ci/57-validate-closure-reachability.mjs`, `.harness/scripts/ci/closure-reachability-baseline.json`, `.harness/scripts/ci-runner.mjs`
+- **Componente:** `Governance` · **Criticidad:** P1 · **Complejidad:** M
+- **Principal:** `M` · **Interés:** `SEVERE` · **Base:** `estimate`
+- **Procedencia:** Registrado y cerrado el 2026-08-15 desde la auditoría de causa raíz. **Registrado P1 con interés `SEVERE`, dicho en vez de asumido:** cada día que sigue en pie se acumulan cierres que nada vuelve a comprobar, y la auditoría midió el coste exacto — 44 días por cierre falso, seis casos conocidos, todos encontrados a mano.
+- **Criterios de aceptación:**
+  - [x] **FALSABILIDAD:** el detector reencuentra los cierres que el dueño refutó a mano con esta forma — `GT-321` y `GT-266` — y NO dispara sobre `AuditLogger`, que la misma auditoría mostró que SÍ está cableado. Los tres verificados.
+  - [x] El guard falla ante un cierre inalcanzable NUEVO, ante una entrada de la línea base que ha pasado a ser alcanzable, y ante la pérdida de sus propios casos de calibración. Los tres demostrados por mutación.
+  - [x] Rechaza un escaneo de cero elementos (`assertScanned` en los dos denominadores) y está registrado donde CI lo ejecuta.
+  - [x] Sin modo reporte. No se repite el `Exiting 0 … THIS IS NOT A PASS` del guard 41: los hallazgos existentes quedan congelados en una línea base que solo puede encoger.
+- **CERRADO el 2026-08-15 — y la iteración queda registrada porque ES el hallazgo.** La primera heurística (un fichero de evidencia sin consumidor) cazó **0 de 6** casos conocidos: una re-exportación desde un barrel contaba como consumo. La segunda (dedupe reclamado, duplicado en disco) disparó **4 veces, las 4 falsas** —sobre `src/sdk/cli/rulesets/**`, la copia que genera `copy-rulesets`— y seguía sin cazar `GT-566`; se **mató en vez de embarcarla**. Lo que funciona es más estrecho: una clase exportada en la evidencia de producción de un cierre, sin ningún call site en producción. Dos intentos sintácticos de excluir clases de framework fallaron —una ventana de 4.000 caracteres se perdió `AppModule` a 4.596, y «el `@` más cercano hacia atrás» casaba con JSDoc y engordó la línea base de 70 a 76— así que la exclusión es **por convención de fichero**, verificada contra el árbol: 90 ficheros, 111 clases, 78 decoradas, las otras 33 todas DTOs. Final: **273 clases escaneadas sobre 643 cierres, 59 inalcanzables, 0 falsos positivos de framework, calibración intacta.**
+- **Lo que esto NO reclama:** cuatro de los seis cierres falsos conocidos tienen formas que este detector no ve — `GT-158` (un criterio que nombra un token que nadie emite), `GT-518` (un criterio marcado con una salvedad `Remaining:` en su propio texto), `GT-566` (una afirmación de de-duplicación con el duplicado todavía en disco), `GT-221`. Aquí solo se mecaniza la forma `GT-321`/`GT-266`. El detector de la salvedad `Remaining:` se construyó y calibró (**1 acierto, exactamente `GT-518`**) y se registra aparte en vez de atornillarlo aquí.
+- **Estado:** `COMPLETADO`
+
+#### GT-698
+
+**Título:** Cincuenta y nueve cierres descansan sobre una clase que producción nunca construye, y el detector que los encontró no puede decir cuáles son código muerto y cuáles solo están sin cablear
+
+- **Propósito:** Convertir una línea base congelada en una triada, para que el número pueda empezar a bajar.
+- **Evidencia:** **Medido el 2026-08-15 por `57-validate-closure-reachability.mjs` en su primera corrida:** 273 clases exportadas nombradas como evidencia de producción en 643 registros de cierre; **59 no tienen ningún call site en producción**, repartidas en 43 cierres — 55 cerrados en junio, 11 en julio, 4 en agosto. Muestras verificadas a mano: `LighthouseEvidenceProvider` (0 usos en producción, 13 menciones en specs), `InMemoryEvaluationCache` (0 / 6) y `RulesetCorpusWarmupService` (**0 usos en producción y 0 menciones en specs** — nombrada como evidencia de un cierre y referenciada por absolutamente nada).
+- **Casos de uso:**
+  - Decidir, clase por clase, si cablearla, borrarla o reabrir el gap que la reclamó.
+  - Encoger una línea base que hoy solo demuestra que el problema existe.
+- **Impacto:** Cada entrada es un cierre cuyos criterios marcados descansan sobre código que ninguna ruta de ejecución alcanza — la forma de `GT-321`, que tardó 49 días en notarse a mano. Hasta triarlas, 43 filas del tablero afirman una entrega que el repositorio no puede demostrar.
+- **Resultado esperado:** cada entrada de la línea base lleva una disposición (`cableada`, `borrada`, `reabierta` o `framework — con el motivo`), y el fichero encoge hacia cero.
+- **Ficheros afectados:** `.harness/scripts/ci/closure-reachability-baseline.json`, y las 59 clases que nombra
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** L
+- **Principal:** `L` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-15 desde la primera corrida de `GT-697`. **No se metió dentro de aquella fila:** construir el detector y triar 59 hallazgos son trabajos distintos, y mezclarlos habría hecho irrevisable la calibración del propio detector. **P2 y no P1 porque el detector ya existe** — la hemorragia está detenida aunque la herida no esté curada: ningún cierre inalcanzable NUEVO puede entrar sin hacer fallar el CI.
+- **Criterios de aceptación:**
+  - [ ] **FALSABILIDAD:** la línea base es estrictamente menor que 59 y cada entrada retirada dice qué pasó con ella — cableada, borrada o su gap reabierto. Se registran ambos conteos.
+  - [ ] Cada entrada restante lleva una disposición escrita; ninguna queda sin explicar.
+  - [ ] `RulesetCorpusWarmupService`, a la que no referencia nada en absoluto, se resuelve primero y su gap se reexamina.
+  - [ ] Toda entrada que resulte ser un falso positivo de framework mueve la EXCLUSIÓN al guard, para que esa misma clase no pueda reaparecer.
+- **Estado:** `PENDIENTE`

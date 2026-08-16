@@ -10273,6 +10273,28 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. The work is one field added to each rule object in four shipped JSON files, a table inserted into eight Markdown documents, one guard generalised over a directory listing, and one spec that reads rulesets and handler sources with node:fs. No handler logic changed -- the same verdicts are produced on the same inputs, which is what makes the labelling a disclosure rather than a behaviour change."
+    },
+    {
+      "id": "GT-697",
+      "closedAt": "2026-08-15",
+      "closureCommit": "69057f2e",
+      "evidence": [
+        ".harness/scripts/ci/57-validate-closure-reachability.mjs",
+        ".harness/scripts/ci/closure-reachability-baseline.json",
+        ".harness/scripts/ci-runner.mjs"
+      ],
+      "validationCommands": [
+        "THE MEASUREMENT THAT MOTIVATED IT: a ten-agent audit, adversarially refuted three ways, established that gaps close in a median of 0-1 days while a WRONG closure is detected in a mean of 43.8 days (GT-158 53d, GT-221 52d, GT-266 51d, GT-321 49d, GT-518 32d, GT-566 26d), every detection by a human re-reading the board rather than by any guard, test or engine.",
+        "REFUTED AND NOT TO BE REPEATED: the 71.1% fix-of-fix rate is BELOW a permutation null of 88.3% and `feat` scores 87.0% vs `fix` 83.0%; 'nothing settles' was censoring from the 2026-07-04 move (60.7% of eligible files are 30+ days quiet); CI has 2 slack flags across 15 workflows; 55 of 55 harness guards were observed turning red on an empty fixture.",
+        "CALIBRATION: the detector re-finds GT-321 and GT-266 (the two known false closures with this shape) and does NOT fire on AuditLogger, which the audit showed is wired -- verified as 0, 0 and 1 production call sites respectively, against controls TopologyCatalogService 12 and RulesetValidatorService 16.",
+        "MUTATIONS, each observed: removing a baseline entry that is still unreachable -> exit 1 naming it NEW; adding a reachable class to the baseline -> exit 1 naming it STALE; adding a calibration id the detector cannot see -> exit 1. Restored -> exit 0.",
+        "FAILED ATTEMPTS, recorded because they are the finding: heuristic 1 (evidence file with no consumer) caught 0 OF 6 known cases -- a barrel re-export counted as consumption. Heuristic 2 (dedup claimed, duplicate on disk) fired 4 times, all false, on the gitignored copy-rulesets output, and still missed GT-566; killed rather than shipped. Two syntactic framework exclusions failed, the second worse than the first (4000-char lookback missed AppModule at 4596; 'nearest preceding @' matched JSDoc and grew the baseline 70 -> 76). Final exclusion is by file convention, verified: 90 files, 111 classes, 78 decorated, 33 DTOs.",
+        "FINAL RUN: 273 classes scanned across 643 closure records, 59 unreachable, 0 framework false positives, calibration intact, exit 0.",
+        "WIRED, NOT ORPHANED: registered in ci-runner governance (19 scripts, green), which `Validate documentation` runs -- a required check on main. Guard 42: 80 guards classified, none unprotected. Guard 43: 56 exercised guards all refuse an empty fixture.",
+        "NOT CLAIMED: four of the six known false closures have shapes this detector cannot see (GT-158, GT-221, GT-518, GT-566). Only the GT-321/GT-266 shape is mechanised. The `Remaining:` caveat detector was built and calibrated separately -- 1 hit, exactly GT-518."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. One guard script using node:fs and node:path plus the repository's existing `assertScanned` coverage primitive, one JSON baseline, and one line registering it in the governance runner. It reads files and calls no network, no process and no clock."
     }
   ]
 }

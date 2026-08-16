@@ -13,19 +13,22 @@ La IA agentica es la topologia para sistemas donde un agente de IA puede inspecc
 
 Usa este perfil cuando un agente tenga acceso a contexto de repositorio, servicio u operacion. El perfil gobierna el limite del agente, no el proveedor del modelo ni el framework de orquestacion.
 
-Todo satelite que lo adopte DEBE proporcionar `agent.config.json`. El evaluador nativo y la politica OPA aplican los mismos controles:
+Todo satelite que lo adopte DEBE proporcionar `agent.config.json`. El evaluador nativo y la politica OPA aplican los mismos controles.
 
-| Regla | Control requerido |
-|---|---|
-| AAI-R01 | Identidad estable del agente y una o mas capacidades declaradas |
-| AAI-R02 | Sandbox aislado con acceso de red y proceso en deny o allowlist |
-| AAI-R03 | Fuentes de prompts y raices de implementacion que no se superponen |
-| AAI-R04 | Politica `approval-required` para herramientas mutativas |
-| AAI-R05 | Ejecucion efimera con duracion, memoria y CPU acotadas |
-| AAI-R06 | Contexto no confiable tratado como dato con procedencia y validacion de schema |
-| AAI-R07 | Delegacion acotada por capacidad y evidencia de accion correlacionada append-only |
-| AAI-R08 | Limites positivos de tokens y contexto, concurrencia MCP acotada y ruta legible de runbook |
-| AAI-R09 | Delegacion acotada, cadencia de rotacion de credenciales y revocacion ante incidentes |
+**Lee la columna `Garantia` antes de fiarte de un veredicto verde.** `observed` significa que la evaluacion inspecciono el repositorio: abrio los directorios declarados, leyo el runbook o escaneo las raices de implementacion declaradas. `declared` significa que el veredicto se decidio comparando campos de `agent.config.json`: un satelite que declara un sandbox que no tiene va a pasar. Es un limite real de una evaluacion estatica y se dice aqui en vez de dejar que lo descubra quien compra.
+
+| Regla | Control requerido | Garantia |
+|---|---|---|
+| AAI-R01 | Identidad estable del agente y una o mas capacidades declaradas | `declared` |
+| AAI-R02 | Sandbox aislado con acceso de red y proceso en deny o allowlist | `declared` |
+| AAI-R03 | Fuentes de prompts y raices de implementacion que no se superponen | `observed` |
+| AAI-R04 | Politica `approval-required` para herramientas mutativas | `declared` |
+| AAI-R05 | Ejecucion efimera con duracion, memoria y CPU acotadas | `declared` |
+| AAI-R06 | Contexto no confiable tratado como dato con procedencia y validacion de schema | `declared` |
+| AAI-R07 | Delegacion acotada por capacidad y evidencia de accion correlacionada append-only | `declared` |
+| AAI-R08 | Limites positivos de tokens y contexto, concurrencia MCP acotada y ruta legible de runbook | `observed` |
+| AAI-R09 | Delegacion acotada, cadencia de rotacion de credenciales y revocacion ante incidentes | `declared` |
+| AAI-R10 | Raices de implementacion declaradas libres de sockets crudos y procesos hijo que heredan el entorno (consultiva) | `observed` |
 
 ## Contrato de Configuracion
 

@@ -13,19 +13,22 @@ Agentic AI is the topology for systems where an AI agent can inspect context, pl
 
 Use this profile when an agent has access to repository, service, or operational context. The profile governs the agent boundary, not the model vendor or orchestration framework.
 
-Every adopting satellite MUST provide `agent.config.json`. The native evaluator and the OPA policy enforce the same controls:
+Every adopting satellite MUST provide `agent.config.json`. The native evaluator and the OPA policy enforce the same controls.
 
-| Rule | Required control |
-|---|---|
-| AAI-R01 | Stable agent identity and one or more declared capabilities |
-| AAI-R02 | An isolated sandbox with deny or allowlist network and process access |
-| AAI-R03 | Non-overlapping prompt sources and implementation roots |
-| AAI-R04 | `approval-required` policy for mutative tools |
-| AAI-R05 | Ephemeral execution with bounded duration, memory, and CPU |
-| AAI-R06 | Untrusted context treated as data with provenance and schema validation |
-| AAI-R07 | Capability-scoped delegation and append-only correlated action evidence |
-| AAI-R08 | Positive token and context ceilings, bounded MCP concurrency, and a readable runbook path |
-| AAI-R09 | Bounded delegation, credential rotation cadence, and incident revocation |
+**Read the `Assurance` column before you rely on a green verdict.** `observed` means the evaluation inspected the repository — it opened the declared directories, read the runbook, or scanned the declared implementation roots. `declared` means the verdict was decided by comparing fields in `agent.config.json`: a satellite that declares a sandbox it does not have will pass. That is a real limit of a static evaluation and is stated here rather than left for a buyer to discover.
+
+| Rule | Required control | Assurance |
+|---|---|---|
+| AAI-R01 | Stable agent identity and one or more declared capabilities | `declared` |
+| AAI-R02 | An isolated sandbox with deny or allowlist network and process access | `declared` |
+| AAI-R03 | Non-overlapping prompt sources and implementation roots | `observed` |
+| AAI-R04 | `approval-required` policy for mutative tools | `declared` |
+| AAI-R05 | Ephemeral execution with bounded duration, memory, and CPU | `declared` |
+| AAI-R06 | Untrusted context treated as data with provenance and schema validation | `declared` |
+| AAI-R07 | Capability-scoped delegation and append-only correlated action evidence | `declared` |
+| AAI-R08 | Positive token and context ceilings, bounded MCP concurrency, and a readable runbook path | `observed` |
+| AAI-R09 | Bounded delegation, credential rotation cadence, and incident revocation | `declared` |
+| AAI-R10 | Declared implementation roots free of raw sockets and environment-inheriting child processes (advisory) | `observed` |
 
 ## Configuration Contract
 

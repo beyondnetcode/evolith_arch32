@@ -5,6 +5,8 @@ import * as fs from 'fs-extra';
 import * as crypto from 'node:crypto';
 import { McpServerService, ToolCallResult, mcpContextStorage } from './mcp-server.service';
 import { MetricsService } from './metrics.service';
+import { issueApprovalGrant } from './approval-grant';
+import { computeRequestDigest } from './mrtr-request-state';
 import { ToolRegistryService } from './tool-registry.service';
 import { AuditLogger } from './audit-logger';
 import { McpTool } from './tool.interface';
@@ -122,16 +124,54 @@ describe('McpServerService — dispatch', () => {
       expect(env.error.message).toContain('requires approval');
     });
 
-    it('allows a mutative tool with apply: true and approvalToken, and logs audit trail', async () => {
+    /**
+     * GT-679 — THE FALSIFIABILITY CASE, and the one this suite used to assert the
+     * other way round.
+     *
+     * The test that lived here called `handleCallTool('evolith-write-file', …)`
+     * with `apply: true` and a hard-coded placeholder string as the approval
+     * token, and asserted SUCCESS. That is a caller with a valid write
+     * credential, past ABAC, approving its own irreversible call with a string it
+     * made up — and the suite pinned it green. The literal is gone from this file
+     * on purpose: the row's second criterion is a grep for it.
+     */
+    it('REFUSES a mutative call whose approvalToken is a string the caller made up', async () => {
+      const execute = jest.fn(async () => ({ done: true }));
+      build([tool('evolith-write-file', execute, true)]);
+
+      const result = await service.handleCallTool('evolith-write-file', {
+        apply: true,
+        approvalToken: 'a-string-the-caller-invented',
+      });
+
+      const env = parseEnvelope(result);
+      expect(env.success).toBe(false);
+      expect(env.error.code).toBe(ErrorCodes.FORBIDDEN);
+      expect(env.error.message).toMatch(/approval (malformed|tampered|missing)/);
+      // The tool never ran: the gate is before `tool.execute`, so a refused call
+      // has written nothing.
+      expect(execute).not.toHaveBeenCalled();
+    });
+
+    it('allows a mutative tool with a SERVER-ISSUED grant, and logs who approved it', async () => {
       const execute = jest.fn(async () => ({ done: true }));
       build([tool('evolith-write-file', execute, true)]);
 
       const loggerSpy = jest.spyOn((service as any).logger, 'log');
 
-      const result = await service.handleCallTool('evolith-write-file', {
-        apply: true,
-        approvalToken: 'test-token-123',
+      const args = { path: 'README.md', content: 'x' };
+      const { token } = issueApprovalGrant({
+        approver: 'alice@example.com',
+        principal: 'anonymous',
+        tenant: 'default',
+        tool: 'evolith-write-file',
+        requestDigest: computeRequestDigest('tools/call', {
+          name: 'evolith-write-file',
+          arguments: { ...args, apply: true },
+        }),
       });
+
+      const result = await service.handleCallTool('evolith-write-file', { ...args, apply: true, approvalToken: token });
       const env = parseEnvelope(result);
       expect(env.success).toBe(true);
       expect(execute).toHaveBeenCalled();
@@ -142,10 +182,99 @@ describe('McpServerService — dispatch', () => {
       const parsedLog = JSON.parse(logArg[0]);
       expect(parsedLog.event).toBe('MUTATIVE_TOOL_EXECUTION');
       // GAP MCP-SECLOG: the raw approval token must never be logged; only a
-      // non-reversible fingerprint is emitted.
+      // non-reversible fingerprint is emitted. GT-332's assertions are unchanged.
       expect(parsedLog.approvalToken).toBeUndefined();
-      expect(logArg[0]).not.toContain('test-token-123');
+      expect(logArg[0]).not.toContain(token);
       expect(parsedLog.approvalTokenFingerprint).toMatch(/^sha256:/);
+      // GT-679 — and now the line answers "who approved this", which a
+      // fingerprint of a string nobody issued never could.
+      expect(parsedLog.approvedBy).toBe('alice@example.com');
+      expect(parsedLog.approvalGrantId).toEqual(expect.any(String));
+    });
+
+    it('refuses a grant issued for a DIFFERENT tool', async () => {
+      const execute = jest.fn(async () => ({ done: true }));
+      build([tool('evolith-write-file', execute, true)]);
+
+      const { token } = issueApprovalGrant({
+        approver: 'alice@example.com',
+        principal: 'anonymous',
+        tenant: 'default',
+        tool: 'evolith-satellite-create',
+        requestDigest: computeRequestDigest('tools/call', { name: 'evolith-write-file', arguments: { apply: true } }),
+      });
+
+      const env = parseEnvelope(await service.handleCallTool('evolith-write-file', { apply: true, approvalToken: token }));
+      expect(env.success).toBe(false);
+      expect(env.error.message).toMatch(/tool-mismatch/);
+      expect(execute).not.toHaveBeenCalled();
+    });
+
+    it('refuses a grant for DIFFERENT arguments than the ones approved', async () => {
+      const execute = jest.fn(async () => ({ done: true }));
+      build([tool('evolith-write-file', execute, true)]);
+
+      const { token } = issueApprovalGrant({
+        approver: 'alice@example.com',
+        principal: 'anonymous',
+        tenant: 'default',
+        tool: 'evolith-write-file',
+        requestDigest: computeRequestDigest('tools/call', {
+          name: 'evolith-write-file',
+          arguments: { path: 'README.md', apply: true },
+        }),
+      });
+
+      // Same tool, same approver, same principal — a different file.
+      const env = parseEnvelope(await service.handleCallTool('evolith-write-file', {
+        path: 'production.env', apply: true, approvalToken: token,
+      }));
+      expect(env.success).toBe(false);
+      expect(env.error.message).toMatch(/request-mismatch/);
+      expect(execute).not.toHaveBeenCalled();
+    });
+
+    it('refuses a SECOND redemption of the same grant', async () => {
+      const execute = jest.fn(async () => ({ done: true }));
+      build([tool('evolith-write-file', execute, true)]);
+
+      const args = { path: 'README.md', apply: true };
+      const { token } = issueApprovalGrant({
+        approver: 'alice@example.com',
+        principal: 'anonymous',
+        tenant: 'default',
+        tool: 'evolith-write-file',
+        requestDigest: computeRequestDigest('tools/call', { name: 'evolith-write-file', arguments: args }),
+      });
+
+      const first = parseEnvelope(await service.handleCallTool('evolith-write-file', { ...args, approvalToken: token }));
+      expect(first.success).toBe(true);
+
+      const second = parseEnvelope(await service.handleCallTool('evolith-write-file', { ...args, approvalToken: token }));
+      expect(second.success).toBe(false);
+      expect(second.error.message).toMatch(/already-redeemed/);
+      expect(execute).toHaveBeenCalledTimes(1);
+    });
+
+    it('refuses an EXPIRED grant', async () => {
+      const execute = jest.fn(async () => ({ done: true }));
+      build([tool('evolith-write-file', execute, true)]);
+
+      const args = { path: 'README.md', apply: true };
+      const { token } = issueApprovalGrant({
+        approver: 'alice@example.com',
+        principal: 'anonymous',
+        tenant: 'default',
+        tool: 'evolith-write-file',
+        requestDigest: computeRequestDigest('tools/call', { name: 'evolith-write-file', arguments: args }),
+        // Issued ten minutes ago with a five-minute life: the clock, not a flag.
+        issuedAt: Date.now() - 10 * 60 * 1000,
+      });
+
+      const env = parseEnvelope(await service.handleCallTool('evolith-write-file', { ...args, approvalToken: token }));
+      expect(env.success).toBe(false);
+      expect(env.error.message).toMatch(/expired/);
+      expect(execute).not.toHaveBeenCalled();
     });
   });
 
@@ -492,10 +621,20 @@ describe('ABAC dual-engine evaluation', () => {
       environment: 'development',
       scopes: ['read', 'write'],
     }, async () => {
-      const result = await realService.handleCallTool('evolith-write-file', {
-        apply: true,
-        approvalToken: 'dev-token',
+      // GT-679 — this case is about ABAC, not about approval, and it used to
+      // reach its assertion by handing the gate the string 'dev-token'. The ABAC
+      // assertion is unchanged; what changed is that the approval it presents is
+      // now one the server issued, because a made-up string is no longer an
+      // approval on any surface.
+      const args = { apply: true };
+      const { token } = issueApprovalGrant({
+        approver: 'release-manager@example.com',
+        principal: 'dev-1',
+        tenant: 'default',
+        tool: 'evolith-write-file',
+        requestDigest: computeRequestDigest('tools/call', { name: 'evolith-write-file', arguments: args }),
       });
+      const result = await realService.handleCallTool('evolith-write-file', { ...args, approvalToken: token });
       const env = parseEnvelope(result);
       expect(env.success).toBe(true);
     });

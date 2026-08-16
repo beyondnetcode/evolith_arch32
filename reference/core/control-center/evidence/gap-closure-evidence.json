@@ -10434,6 +10434,35 @@
         "SUITES AFTER: core-domain 1991/1991 (166 suites), mcp-server 575, core-api 163, cli 1482; 01-validate-docs passes over 1505 markdown files.",
         "NOT THIS ROW: closing the handler gap itself (the ~240 rules no native handler claims) is untouched. This row was about the floor being SETTABLE, not about raising coverage."
       ]
+    },
+    {
+      "id": "GT-679",
+      "closedAt": "2026-08-16",
+      "closureCommit": "cb8d9005",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/approval-grant.ts",
+        "src/packages/mcp-server/src/mcp/approval-grant.spec.ts",
+        "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+        "src/packages/mcp-server/src/mcp/stateless-rpc.ts",
+        "src/packages/mcp-server/src/mcp/mcp-server.service.spec.ts",
+        "src/packages/mcp-server/src/mcp/protocol-2026-conformance.spec.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, READ VERBATIM BEFORE ANY EDIT at mcp-tool-dispatch.ts:232 -- `args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string' || args.approvalToken.trim() === ''`. That was the entire predicate protecting 20 mutative tools: no issuer, no store, no signature, no expiry, no single use, no binding to principal, tool or arguments. Confirmed nothing issued a token: `grep -rnE \"issueApproval|redeemApproval|mintApproval|createApprovalToken\" src` returned nothing outside doc comments.",
+        "AC1 FALSIFIABILITY, OBSERVED RED FIRST: with the previous gate restored, 6 of the rewritten dispatch cases fail (43 -> 37 passing); with the fix, 43/43. A mutative call carrying an invented string is refused FORBIDDEN with the cause named, and `tool.execute` is never entered.",
+        "AC2: `grep -n \"test-token-123\" src/packages/mcp-server/src/mcp/mcp-server.service.spec.ts` returns nothing -- 0 occurrences, the explanatory comment deliberately paraphrases rather than restating the literal.",
+        "AC3 ISSUANCE: the server mints the grant on the MRTR retry leg after verifyRequestState proves the request is the one shown to the human and the human accepted. A grant issued for evolith-satellite-create and presented at evolith-write-file is refused `tool-mismatch`; different arguments for the same tool are refused `request-mismatch`.",
+        "AC4 EXPIRY AND SINGLE USE: a grant issued 10 minutes ago with a 5-minute TTL is refused `expired` (clock, not flag); a second redemption is refused `already-redeemed` with tool.execute called exactly once. Rejection ORDER is asserted separately: a grant refused for the wrong tool does NOT burn its redemption, or an observer could invalidate a legitimate approval by replaying it at the wrong target.",
+        "AC5 ONE VERIFIER: both protocol paths converge on ops.callTool, and the conformance suite fails the build if they diverge -- the same invented string is refused on the direct path and on the MRTR path within one test.",
+        "AC6 AUDIT: the MUTATIVE_TOOL_EXECUTION line now carries approvedBy and approvalGrantId alongside the existing fingerprint; the raw token is still redacted and GT-332's assertions are unchanged and green.",
+        "AC7: McpInteractionAdapter no longer maps any caller string to {granted:true, approver:'mcp'} -- an approver named after the transport. It carries no approval at all, because the grant is opaque at that layer.",
+        "DOMAIN SEPARATION, its own test: a sealed `requestState` -- which the server HANDS the client -- cannot be presented as an approval grant. Both are sealed from the same secret; only the HKDF `info` differs.",
+        "TWO DEFECTS IN THE FIX, BOTH FOUND BY MEASURING: (1) handleCallTool constructs a fresh ToolDispatchService per call, so a per-instance redemption store was born empty each time and single use silently did not hold -- the second-redemption test returned success:true until the store moved to module scope; (2) the grant was minted over the original request digest while the retry leg adds `correlationId`, which is NOT a non-binding key, so the gate recomputed a different digest and refused every legitimate approval. Only the HTTP conformance test caught it, because the unit test's callTool is a fake that never runs the gate.",
+        "SUITES AFTER: mcp-server 581/581 (was 575 -- +6 new cases), agent-runtime 483 passing / 11 skipped.",
+        "RESIDUAL, NOT CLOSED AND STATED IN THE ROW: single use is in-memory and per-process, so a multi-replica deployment can redeem one grant once per replica. Strictly smaller than infinite, and the durable ledger is GT-680, which is open. The store is a port so a host with a ledger injects it.",
+        "AC7's TARGET HAS NO IN-REPO CALLER, and the row predicted it: its own use-case bullet says the adapter \"would pre-satisfy the agent-runtime approval check IF IT WERE EVER WIRED\". Measured on closing -- `McpInteractionAdapter` is constructed only in its own spec; it is re-exported from the adapters barrel and asserted in public-surface.spec.ts, so it is published API of agent-runtime and an external consumer can build it, but nothing in this repository reaches it. Guard 57 flagged the closure for resting on it and was RIGHT: a re-export is not a use (that is GT-266's exact shape and the guard says so). The file is therefore NOT listed as evidence -- the closure rests on the grant module and the dispatch gate, which are exercised end to end. The AC7 change is still real and still correct: a published class that forges `{granted:true, approver:'mcp'}` from any caller string is a hole waiting for the wiring, and it is now closed before that wiring exists."
+      ]
     }
   ]
 }

@@ -14,9 +14,9 @@ receive backports; please upgrade to a supported version before reporting.
 
 | Version | Supported          | Notes                                  |
 | ------- | ------------------ | -------------------------------------- |
-| 1.1.x   | :white_check_mark: | Current stable line — actively patched |
-| 1.0.x   | :white_check_mark: | Critical fixes only                    |
-| < 1.0   | :x:                | Pre-release; not supported             |
+| 1.3.x   | :white_check_mark: | Current stable line — actively patched |
+| 1.2.x   | :white_check_mark: | Critical fixes only                    |
+| < 1.2   | :x:                | Superseded; not supported              |
 
 ## Reporting a Vulnerability
 

@@ -32,8 +32,10 @@ Evolith is an **npm workspaces monorepo** (`sdk/*`, `apps/*`, `src/packages/*`).
 ### B. Clone and Install
 
 ```bash
-# Clone the repository
-git clone https://github.com/beyondnetcode/evolith_arch32.git
+# Fork and clone. The upstream URL below is read-only for you unless you are a
+# maintainer -- pushing to it will be rejected, which is a confusing first
+# experience, so fork first.
+gh repo fork beyondnetcode/evolith_arch32 --clone
 cd evolith_arch32
 
 # Install all workspaces from the repo root
@@ -47,15 +49,12 @@ npm install
 Some workspaces depend on each other, so build the shared packages first, then the CLI:
 
 ```bash
-# Build shared workspaces (order matters)
-npm run build -w @beyondnet/evolith-core-domain
-npm run build -w @beyondnet/evolith-infra-providers
-npm run build -w @beyondnet/evolith-core
-npm run build -w @beyondnet/evolith-mcp
-
-# Build the Evolith CLI
-npm run build -w @beyondnet/evolith-cli
+npm run build
 ```
+
+That is `tsc -b` over all eleven projects, which resolves the dependency order itself. The
+per-workspace sequence this guide used to list omitted `@beyondnet/evolith-contracts` and
+`@beyondnet/evolith-sdk`, so following it on a clean clone failed.
 
 To compile the OPA policies to WASM (required for the OPA parity gate), run `npm run build:policy` from the root.
 

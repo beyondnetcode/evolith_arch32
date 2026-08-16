@@ -196,6 +196,22 @@ export interface ValidationIssue {
   expected?: string;
   actual?: string;
   blocking: boolean;
+  /**
+   * GT-699 — is this a VERDICT about the repository, or an ADMISSION that the rule
+   * could not be evaluated?
+   *
+   * Absent means verdict, which is what every finding before this field was assumed
+   * to be. `false` means the rule never ran. Measured on this repository the day the
+   * field was added: `evolith validate` reported 82 blocking issues, **74** of which
+   * were admissions, and nothing on the issue distinguished them from the 8 real
+   * violations — same fields, same `severity: MUST`, same `blocking: true`.
+   *
+   * GT-595 is untouched: an unevaluated blocking rule stays `blocking: true` and can
+   * never read as green. This only makes the partition the run already publishes in
+   * its counters (`blockingSkippedRuleIds`, `rulesNonExecutable`) survive into the
+   * array a human and the Tracker actually read.
+   */
+  evaluated?: boolean;
 }
 
 export interface EvolithYaml {

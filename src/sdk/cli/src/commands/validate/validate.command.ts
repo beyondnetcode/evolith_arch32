@@ -2,6 +2,7 @@ import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/application/use-cases/validate-satellite.use-case';
 import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.service';
+import { rebuildValidatorForEngine } from '@beyondnet/evolith-core-domain/application/validators/ruleset-validator.rebuild';
 import { RulesetsNotFoundError } from '@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
@@ -303,6 +304,14 @@ export class ValidateCommand extends BaseEvolithCommand {
           satellitePath,
           corePath,
           engine: engine as 'native' | 'opa',
+          // GT-701 — the composable modes used to receive `engine` and no way to
+          // act on it: they parsed ruleset JSON and reported every rule it
+          // contained as `pass`. This command already holds a real validator, so
+          // the only thing missing was handing it over, built for the engine the
+          // caller actually asked for.
+          evaluator: this.validator
+            ? rebuildValidatorForEngine(this.validator, engine as 'native' | 'opa')
+            : undefined,
           topology: options?.topology?.[0],
           phase: options?.phase,
           rulesetId: options?.ruleset,

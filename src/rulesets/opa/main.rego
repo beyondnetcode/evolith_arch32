@@ -53,8 +53,18 @@ import data.evolith.version_pinning.violations as vp_violations
 #
 # Written as literal object construction on purpose: only a handful of builtins are
 # dispatchable in the compiled wasm (see guard 55), so `object.union` and friends are
-# not available here. `id` and `message` are the complete shape — all 251 violation
-# literals in this corpus carry those two fields and nothing else.
+# not available here. That makes the projection below EXHAUSTIVE by hand: any field
+# an aggregated policy emits beyond `id` and `message` is dropped on the way out.
+#
+# Measured rather than asserted, by `opa-evaluator.spec.ts` ("the aggregated corpus
+# is the shape this projection assumes · GT-693"), which recomputes both figures from
+# these files on every run — the count below drifted silently once already:
+#   - 266 violation literals across the 34 aggregated policies;
+#   - 265 of them carry exactly `id` and `message`, and ONE does not — `TPC-01` in
+#     `topology-composition.rego` also sets `severity`, `title` and `blocking`, which
+#     this projection discards. Harmless today because `opa-evaluator.ts` reads only
+#     `id`, `message` and `policy`; the spec fails if a SECOND policy starts carrying
+#     fields, which is the point at which projecting by hand stops being defensible.
 
 violations contains {"id": v.id, "message": v.message, "policy": "opa-version-pinning"} if {
 	v := vp_violations[_]

@@ -9933,6 +9933,24 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [x] The guard is invoked by `Validate documentation` as two steps — the gate (`--since origin/<base>`) and its own self-test — so a half-updated pair blocks the merge. Scoped to the branch range so historical one-sided commits cannot fail an unrelated PR, and dependent on the job's existing `fetch-depth: 0`, which `assertScanned` turns into a failure rather than a silent pass if it ever regresses.
   - [x] All three `ALLOWED` entries carry written reasons. Verified in place: self-test 8/8, audit sweep green over 400 commits.
 
+#### GT-703
+
+**Title:** Closing a gap costs one CI round-trip per derived artifact, because the chain guard reports only the first stale link and nothing regenerates the rest.
+
+- **Purpose:** Turn an N-push discovery loop into a single local command.
+- **Evidence:** **Measured on GT-702's own closure, 2026-08-16.** Adding one board row and one closure record turned `Validate documentation` red twice: first `09-reconcile-maturity.mjs --check` ("Maturity reconciliation is stale"), then — once that was regenerated and pushed — `46-validate-derived-artifact-order` on the executive summary, which derives FROM the reconciliation. Runs `31957356934` (~1m43s) and `31957550307` (~3m45s) both failed before the third went green. The entire content delta across all of it was `total 699→700`, `done 665→666`, `closureRecords 647→648`, in three files.
+- **The stop-at-first-stale behaviour is correct and must NOT be changed.** `46` says so itself: *"an artifact built on stale input is not independently wrong, and fixing it first would hide the cause."* Reporting all stale links at once would invert that and send people to fix consequences. The defect is not the diagnosis, it is that the repair has no entry point.
+- **The data already exists.** `CHAIN` in `46-validate-derived-artifact-order.mjs` declares all **8** links as `{name, producer, checkArgs}`, and every producer already supports a write mode (it is the same script invoked without `--check`). Replaying the chain in dependency order is therefore a loop over a list the guard already holds — the missing piece is an entry point, not a model.
+- **Impact:** Every gap closure pays a CI cycle per stale link, and each cycle is a push, a wait and a re-read of logs. It also trains the wrong reflex: the natural response to "red on an artifact I did not touch" is to re-run CI, not to look for a chain.
+- **Expected outcome:** one command regenerates every stale link in dependency order and then re-verifies the fixed point, so a stale chain fails locally in seconds instead of over N pushes.
+- **Affected files:** `.harness/scripts/ci/46-validate-derived-artifact-order.mjs`
+- **Component:** `Governance` · **Criticality:** P3 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-16 from the GT-702 closure, where the cost was paid and measured rather than predicted. Not folded into GT-702: that gap is about the bilingual guard, this is about the derived-artifact chain, and they share only the commit that exposed it.
+- **Acceptance criteria:**
+  - [ ] **FALSIFIABILITY:** a tree with two stale links in sequence — the shape GT-702 hit — is brought fully current by ONE invocation, and `46` then reports the fixed point. Recorded before and after.
+  - [ ] The chain guard still stops at the first stale link when merely checking. The fix mode is additive.
+  - [ ] The command is discoverable from the failure message `46` already prints.
 #### GT-704
 
 **Title:** No CI job runs both engines over the corpus, so a verdict divergence between them is found by a human or not at all

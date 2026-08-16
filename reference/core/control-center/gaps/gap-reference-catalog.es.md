@@ -9838,6 +9838,24 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [x] Lo invoca `Validate documentation` como dos pasos — la compuerta (`--since origin/<base>`) y su propio self-test — así que un par a medias bloquea el merge. Acotado al rango de la rama para que los commits históricos de un solo lado no hagan fallar un PR ajeno, y dependiente del `fetch-depth: 0` que el job ya tiene, algo que `assertScanned` convierte en fallo y no en un pase silencioso si alguna vez regresiona.
   - [x] Las tres entradas de `ALLOWED` llevan razón escrita. Verificado en su sitio: self-test 8/8, barrido de auditoría verde sobre 400 commits.
 
+#### GT-703
+
+**Título:** Cerrar un gap cuesta una vuelta de CI por cada artefacto derivado, porque el guard de la cadena reporta solo el primer eslabón obsoleto y nada regenera el resto.
+
+- **Propósito:** Convertir un bucle de descubrimiento de N pushes en un único comando local.
+- **Evidencia:** **Medido en el propio cierre de GT-702, el 2026-08-16.** Añadir una fila de board y un registro de cierre puso `Validate documentation` en rojo dos veces: primero `09-reconcile-maturity.mjs --check` ("Maturity reconciliation is stale") y, tras regenerarlo y empujar, `46-validate-derived-artifact-order` sobre el resumen ejecutivo, que deriva DE la reconciliación. Las corridas `31957356934` (~1m43s) y `31957550307` (~3m45s) fallaron antes de que la tercera saliera verde. El delta de contenido de todo ello era `total 699→700`, `done 665→666`, `closureRecords 647→648`, en tres ficheros.
+- **Parar en el primer eslabón obsoleto es correcto y NO debe cambiarse.** Lo dice el propio `46`: *"un artefacto construido sobre entrada obsoleta no está mal por sí mismo, y arreglarlo primero escondería la causa."* Reportar todos los eslabones a la vez invertiría eso y mandaría a la gente a arreglar consecuencias. El defecto no es el diagnóstico, es que la reparación no tiene punto de entrada.
+- **El dato ya existe.** `CHAIN` en `46-validate-derived-artifact-order.mjs` declara los **8** eslabones como `{name, producer, checkArgs}`, y todo producer ya admite modo de escritura (es el mismo script invocado sin `--check`). Reproducir la cadena en orden de dependencia es, por tanto, un bucle sobre una lista que el guard ya tiene — lo que falta es un punto de entrada, no un modelo.
+- **Impacto:** Cada cierre de gap paga un ciclo de CI por eslabón obsoleto, y cada ciclo es un push, una espera y releer logs. Además entrena el reflejo equivocado: ante un rojo en un artefacto que no tocaste, lo natural es relanzar CI, no buscar una cadena.
+- **Resultado esperado:** un comando regenera cada eslabón obsoleto en orden de dependencia y revalida el punto fijo, de modo que una cadena obsoleta falle en local en segundos y no a lo largo de N pushes.
+- **Ficheros afectados:** `.harness/scripts/ci/46-validate-derived-artifact-order.mjs`
+- **Componente:** `Governance` · **Criticidad:** P3 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `LOW` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-16 desde el cierre de GT-702, donde el coste se pagó y se midió en vez de predecirse. No se funde con GT-702: aquel trata del guard bilingüe y este de la cadena de artefactos derivados; solo comparten el commit que lo destapó.
+- **Criterios de aceptación:**
+  - [ ] **FALSABILIDAD:** un árbol con dos eslabones obsoletos en cadena — la forma que golpeó a GT-702 — queda al día con UNA invocación, y `46` reporta después el punto fijo. Registrado antes y después.
+  - [ ] El guard sigue parando en el primer eslabón obsoleto cuando solo comprueba. El modo de arreglo es aditivo.
+  - [ ] El comando se descubre desde el mensaje de fallo que `46` ya imprime.
 #### GT-704
 
 **Título:** Ningún job de CI corre los dos motores sobre el corpus, así que una divergencia de veredicto la encuentra una persona o no la encuentra nadie

@@ -70,7 +70,14 @@ const CALIBRATION = ['GT-321', 'GT-266'];
 const FRAMEWORK_FILE =
   /\.(module|controller|command|wizard|middleware|guard|interceptor|filter|dto|resolver|strategy)\.ts$|[./]dtos?[./]/;
 const isProdEvidence = (p) =>
-  /^src\//.test(p) && !/\.spec\.|\.test\.|__tests__|[/\\]dist[/\\]|fixtures?/.test(p) && /\.ts$/.test(p);
+  /^src\//.test(p) &&
+  // GT-698 — test doubles live under `src/**/test/mocks/`, a PRODUCTION path by
+  // extension but consumed only by specs, which this detector deliberately does not
+  // scan. `MockLogger` and `MockConfigParser` were reported unreachable for exactly
+  // that reason; they are reachable, just not from where the detector is allowed to
+  // look.
+  !/\.spec\.|\.test\.|__tests__|[/\\](test|tests|mocks)[/\\]|[/\\]dist[/\\]|fixtures?/.test(p) &&
+  /\.ts$/.test(p);
 
 function productionSources() {
   const out = new Map();
@@ -109,18 +116,91 @@ function frameworkConstructed(text, cls, file) {
   // is a sounder signal than anything a regex can recover from the syntax.
   if (FRAMEWORK_FILE.test(file)) return true;
   if (/Error$/.test(cls) && new RegExp(`(throw new ${cls}|instanceof ${cls})`).test(text)) return true;
+
+  // GT-698 — REGISTRATION IS THE CALL SITE for a lifecycle class, and this exclusion
+  // exists because the detector got one wrong and said so.
+  //
+  // `RulesetCorpusWarmupService` was reported as unreachable and hand-described in
+  // GT-698's own row as "referenced by nothing at all". That was FALSE. It is a
+  // provider in `app.module.ts:123` implementing `OnApplicationBootstrap`, and the
+  // closure that named it has runner evidence of it executing: "Ruleset corpus
+  // loaded at startup: 393 rules". Nest invokes the hook; nothing in the codebase
+  // ever needs to call it.
+  //
+  // BOTH conditions are required. A lifecycle class nobody registers really is dead,
+  // and excluding on the interface alone would hide exactly that.
+  const declaration = text.slice(text.indexOf(`export class ${cls}`), text.indexOf(`export class ${cls}`) + 300);
+  const isLifecycle =
+    /implements\s+[^{]*\b(OnApplicationBootstrap|OnModuleInit|OnModuleDestroy|OnApplicationShutdown|NestMiddleware|CanActivate|NestInterceptor|ExceptionFilter|PipeTransform)\b/.test(
+      declaration,
+    );
+  if (isLifecycle) {
+    for (const [other, otherText] of sources) {
+      if (other === file) continue;
+      if (/\.module\.ts$/.test(other) && new RegExp(`\\b${cls}\\b`).test(otherText)) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * GT-698 — comments are not code, and this nearly disabled the detector's own
+ * calibration. `AuditService` appears as `AuditService.record` inside a prose
+ * docblock, and `StructuralReviewProvider` inside a `//` comment. Both would read as
+ * static call sites to a naive scan.
+ */
+function stripComments(text) {
+  return text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+}
+
+/**
+ * GT-698 — REACHED THROUGH ITS OWN FILE, the rule that replaced two narrower ones.
+ *
+ * `hasProductionCallSite` skips the declaring file, so anything constructed there is
+ * invisible to it. Triage found two separate shapes hiding behind that blind spot:
+ *   - `export const commandExecutor = new CommandExecutor()` — a singleton, imported
+ *     across production.
+ *   - `ToolDispatchService`, constructed at `mcp-tool-dispatch.ts:377` inside the
+ *     `@deprecated handleCallTool` wrapper that four production files still call.
+ *     The class is the CURRENT implementation; the functions are the old shim that
+ *     delegates to it. The detector had it exactly backwards.
+ *
+ * One rule covers both: if the declaring file constructs the class AND exports
+ * something production consumes, the class is reached. The second half is required —
+ * the six GT-346 providers construct singletons nobody imports and stay flagged.
+ */
+function reachedThroughOwnFile(cls, declaringFile, text) {
+  if (!new RegExp(`new\\s+${cls}\\s*\\(`).test(stripComments(text))) return false;
+
+  const exported = [
+    ...text.matchAll(/^export\s+(?:async\s+)?(?:function|const|class)\s+(\w+)/gm),
+  ]
+    .map((m) => m[1])
+    .filter((name) => name !== cls);
+  if (exported.length === 0) return false;
+
+  for (const [file, other] of sources) {
+    if (file === declaringFile) continue;
+    const body = stripComments(other);
+    if (exported.some((name) => new RegExp(`\\b${name}\\b`).test(body))) return true;
+  }
   return false;
 }
 
 function hasProductionCallSite(cls, declaringFile) {
   const uses = new RegExp(
-    `(new\\s+${cls}\\s*\\(|:\\s*${cls}\\b|<${cls}>|extends\\s+${cls}\\b|@Inject\\(${cls}\\)|useClass:\\s*${cls}\\b)`,
+    // GT-698 — `Cls.method(` added after triage: `PluginModule`, which app.module.ts
+    // imports, reaches `PluginLoader` only through `PluginLoader.loadPlugins()`, and
+    // two live CLI commands reach `AgentRuntimeFactory` only through its statics. A
+    // class used exclusively through static members is reached, and was being called
+    // dead.
+    `(new\\s+${cls}\\s*\\(|:\\s*${cls}\\b|<${cls}>|extends\\s+${cls}\\b|@Inject\\(${cls}\\)|useClass:\\s*${cls}\\b|\\b${cls}\\.[A-Za-z_])`,
   );
   for (const [file, text] of sources) {
     if (file === declaringFile) continue;
     // Import and re-export lines are NOT use. GT-266 was registered as a provider and
     // exported from its module, and still nothing called it.
-    const body = text
+    const body = stripComments(text)
       .split('\n')
       .filter((l) => !/^\s*import\s/.test(l) && !/^\s*export\s+\{/.test(l))
       .join('\n');
@@ -142,7 +222,7 @@ for (const record of records) {
       const cls = match[1];
       if (frameworkConstructed(text, cls, file)) continue;
       classesScanned++;
-      if (!hasProductionCallSite(cls, file)) {
+      if (!hasProductionCallSite(cls, file) && !reachedThroughOwnFile(cls, file, text)) {
         const key = `${record.id}::${cls}`;
         if (!found.has(key)) found.set(key, { gap: record.id, cls, file, closedAt: record.closedAt });
       }

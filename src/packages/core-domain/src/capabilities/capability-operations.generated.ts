@@ -9203,6 +9203,12 @@ export const CAPABILITY_OPERATIONS: readonly CapabilityOperation[] = [
         "manifest": {
           "type": "string",
           "description": "JSON string or path to SatelliteManifest for pipeline evaluation. Overrides path/topology/phase."
+        },
+        "maxSkippedFraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Coverage floor: fail when the fraction of applicable rules that did NOT run exceeds this value (0..1). Absent => no floor."
         }
       },
       "required": [

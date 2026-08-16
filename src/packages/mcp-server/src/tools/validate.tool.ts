@@ -1,5 +1,5 @@
 import { Injectable, Optional } from '@nestjs/common';
-import { RulesetValidatorService, ValidationResult } from '@beyondnet/evolith-core';
+import { RulesetValidatorService, ValidationResult, rebuildValidatorForEngine } from '@beyondnet/evolith-core';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
 import { safeParseSatelliteManifest } from '@beyondnet/evolith-core-domain/schemas';
 
@@ -43,6 +43,16 @@ export class ValidateTool implements McpTool {
         topology: { type: 'string', description: 'Topology to target (auto-detects from manifest if omitted). Triggers end-to-end pipeline.' },
         phase: { type: 'string', description: 'SDLC phase to evaluate: discovery|design|construction|qa|release. Triggers end-to-end pipeline.' },
         manifest: { type: 'string', description: 'JSON string or path to SatelliteManifest for pipeline evaluation. Overrides path/topology/phase.' },
+        // GT-676 — the coverage floor, reachable from this surface for the first
+        // time. Without it an MCP caller could not reproduce a CLI verdict,
+        // because a threshold that changes the outcome was unrepresentable here.
+        maxSkippedFraction: {
+          type: 'number',
+          minimum: 0,
+          maximum: 1,
+          description:
+            'Coverage floor: fail when the fraction of applicable rules that did NOT run exceeds this value (0..1). Absent => no floor.',
+        },
       },
       required: ['path'],
     },
@@ -102,7 +112,18 @@ export class ValidateTool implements McpTool {
     const select = Array.isArray(args.select)
       ? (args.select as unknown[]).filter((x): x is string => typeof x === 'string' && x.trim() !== '')
       : [];
-    const result = await this.validator.validate(
+    // GT-676 — a floor the caller asked for is applied by rebuilding the
+    // validator with it, which is the same seam `--max-skipped-fraction` uses on
+    // the CLI. Absent => the shared instance, unchanged.
+    const floor = typeof args.maxSkippedFraction === 'number' ? args.maxSkippedFraction : undefined;
+    if (floor !== undefined && (!Number.isFinite(floor) || floor < 0 || floor > 1)) {
+      throw new Error(`maxSkippedFraction must be a number between 0 and 1; got '${String(args.maxSkippedFraction)}'`);
+    }
+    const validator = floor === undefined
+      ? this.validator
+      : rebuildValidatorForEngine(this.validator, undefined, { maxSkippedFraction: floor });
+
+    const result = await validator.validate(
       path,
       corePath,
       select.length ? { policyRefs: select } : undefined,

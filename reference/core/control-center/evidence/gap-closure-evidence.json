@@ -10407,6 +10407,33 @@
         "SUITES AFTER: core-domain 1987/1987 (165 suites), mcp-server 575, core-api 163, cli 1482; `opa test` 265/265; guards 27, 42, 43, 08 green; iso-5055-mapping 9/9 after recapturing the native evaluability snapshot in the order its own error message prescribes.",
         "NOT THIS ROW: the dual-engine corpus sweep AC7 also described is GT-704, registered with the 16 verdict conflicts it would catch. Splitting rather than ticking is deliberate -- GT-675 was itself rewritten because its original AC5 was satisfiable while the worst case stayed live."
       ]
+    },
+    {
+      "id": "GT-676",
+      "closedAt": "2026-08-16",
+      "closureCommit": "5ab76170",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/ruleset-validator.rebuild.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.rebuild.spec.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts",
+        "src/sdk/cli/src/commands/validate/validate.command.ts",
+        "src/packages/mcp-server/src/tools/validate.tool.ts",
+        "src/apps/core-api/src/presentation/dtos/evaluation.dto.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, REPRODUCED BEFORE ANY EDIT: `maxSkippedFraction` occurs 0 times under src/sdk/cli, src/apps/core-api and src/packages/mcp-server, so no caller could set it and coverageThresholdIssue short-circuited to undefined on every real run.",
+        "THE SEAM, MEASURED AND WORSE THAN THE ROW SAID: RulesetValidatorOptions declares 10 fields; rebuildValidatorForEngine carried 7 and silently dropped topologyCatalog, applyRuleApplicability and maxSkippedFraction. The CLI sends an engine on EVERY validate, so that branch runs every time. This is GT-664's defect (processRunner lost the same way) and GT-664's fix -- adding the missing field -- is what left the next one to be forgotten.",
+        "FALSIFIABILITY ON AN INPUT THAT OTHERWISE PASSES, so the floor is the only thing that can move the verdict. This repository fails for 112 unrelated reasons and therefore cannot demonstrate the gate CAUSING a failure. Against `validate --core . . --select src/rulesets/mcp/protocol-compliance.rules.json`: flag omitted -> passed / checked 4 / skipped 1 / exit 0; --max-skipped-fraction 1.0 -> passed / exit 0; --max-skipped-fraction 0.1 -> failed / exit 2 with GOV-COVERAGE-THRESHOLD blocking:true, '1 of 5 executable rules were not evaluated (1 skipped, 0 errored) -- 20.0%, above the configured maximum of 10.0%'.",
+        "WHOLE REPOSITORY at --max-skipped-fraction 0.2: exit 2, GOV-COVERAGE-THRESHOLD blocking, '94 of 207 executable rules were not evaluated -- 45.4%, above the configured maximum of 20.0%. Only 113 rules actually ran'.",
+        "THE FIX IS STRUCTURAL, not another field: RulesetValidatorService now retains the options object it was constructed from and rebuildValidatorForEngine spreads it, so the rebuild CANNOT under-fill. Per-call overrides drop undefined keys rather than spreading them, because {...options, maxSkippedFraction: undefined} would erase a configured floor on every call that did not mention one. An absent engine keeps the instance's own, so asking for a floor alone cannot silently switch engines -- the mirror of GT-688.",
+        "RED FIRST: 3 of the 4 cases in ruleset-validator.rebuild.spec.ts fail against the previous rebuild. The exhaustiveness case asserts the KEY SETS match rather than naming today's three missing fields, so an option added tomorrow is covered without editing the test.",
+        "THE TWO EXISTING SEAM TESTS (GT-664, GT-688) were reshaped, not deleted: their stubs described the private fields the rebuild used to reach through, and now describe the options object it reads. The guarantees they assert -- a rebuilt validator keeps its process runner and metrics, and honours the engine it was given -- are unchanged and still green.",
+        "CROSS-SURFACE: `npm run test:exploration` reports findings = 0 with the new binding; guards 20-validate-surface-compatibility and 24-check-surface-parity pass; the generated how-to docs (construction, qa) were regenerated with the command the exploration spec prescribes.",
+        "SUITES AFTER: core-domain 1991/1991 (166 suites), mcp-server 575, core-api 163, cli 1482; 01-validate-docs passes over 1505 markdown files.",
+        "NOT THIS ROW: closing the handler gap itself (the ~240 rules no native handler claims) is untouched. This row was about the floor being SETTABLE, not about raising coverage."
+      ]
     }
   ]
 }

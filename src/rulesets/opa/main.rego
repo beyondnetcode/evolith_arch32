@@ -33,8 +33,8 @@ import data.evolith.repository_taxonomy.violations as repo_tax_violations
 import data.evolith.satellite_contracts.violations as svc_violations
 import data.evolith.taxonomy.violations as taxonomy_violations
 import data.evolith.telemetry_evidence.violations as telemetry_violations
-import data.evolith.topology_composition.violations as tpc_violations
 import data.evolith.testing_pyramid.violations as tpy_violations
+import data.evolith.topology_composition.violations as tpc_violations
 import data.evolith.version_pinning.violations as vp_violations
 
 # GT-693 — every aggregated violation carries the POLICY THAT EMITTED IT.

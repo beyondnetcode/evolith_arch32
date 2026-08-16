@@ -58,7 +58,11 @@ test('the real repository is current and at a fixed point', () => {
   // both appended so no other link's
   // reported position moved. Pinned rather than loosened to `\d+` — the count is the point:
   // a link silently dropped from the chain is an artifact nobody verifies any more.
-  assert.match(out, /links declared \.+ 8/);
+  // 8 -> 9 (GT-703 follow-on): the ADR conformance rulesets joined the chain, inserted
+  // BEFORE the native evaluability snapshot that classifies them. Still pinned, for the
+  // reason above — and the insertion does move later links' positions, which is why the
+  // assertions that care use `linkPosition` rather than a typed index.
+  assert.match(out, /links declared \.+ 9/);
 });
 
 test('the guard leaves the real tree byte-identical', () => {
@@ -104,6 +108,11 @@ const stubProducer = (artifacts) =>
   "for (const f of files) fs.writeFileSync(f, 'stable\\n');\n";
 
 const PRELUDE_STUBS = {
+  // The ADR conformance rulesets link. In a synthetic root its `writes` resolve to
+  // NOTHING — the generated directory does not exist there — so the stub writes no
+  // artifacts; what the fixture has to supply is the producer, or the chain fails on
+  // "declared producer does not exist" long before the assertion under test.
+  '.harness/scripts/generate-adr-rulesets.mjs': stubProducer([]),
   // link 7 — universal phase artifacts (GT-650 / ADR-0125), derived from the artifact registry
   '.harness/scripts/generate-universal-phase-artifacts.mjs': stubProducer([
     'src/packages/core-domain/src/application/services/universal-phase-artifacts.generated.ts',

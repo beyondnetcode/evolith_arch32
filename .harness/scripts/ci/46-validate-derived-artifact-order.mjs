@@ -90,6 +90,41 @@ const FIX = argv.includes('--fix');
  * Keep this list SHORT and true. A chain that lists artifacts nobody derives is
  * worse than no chain, because it turns a real ordering claim into noise.
  */
+/**
+ * Artifacts a generator emits ONE PER SOURCE, resolved from disk instead of listed.
+ *
+ * `generate-adr-rulesets.mjs` writes one conformance ruleset per ADR — 135 files at
+ * the time of writing, and one more every time an ADR is authored. Hand-listing them
+ * would rot on the next ADR and rot silently, since a `writes` entry that stops
+ * existing fails LOUDLY but one that was never added simply is not checked. Reading
+ * the directory keeps the declaration true by construction.
+ *
+ * Returns repo-relative POSIX paths, sorted, so the order is stable across machines.
+ */
+function emittedPerSource(dir, suffix) {
+  const abs = path.join(root, dir);
+  // ABSENT is legitimate: a synthetic `--root` has no such tree, and the missing
+  // producer is what fails there. EMPTY is not — a directory that exists and yields
+  // nothing means the generator's output moved, and returning [] would hand the
+  // chain a link that verifies zero artifacts while reporting success. That is the
+  // zero-element scan this repo has been bitten by before (GT-557).
+  if (!fs.existsSync(abs)) return [];
+  const found = fs.readdirSync(abs)
+    .filter((f) => f.endsWith(suffix))
+    .sort()
+    .map((f) => `${dir}/${f}`);
+  if (found.length === 0) {
+    fail([
+      `${dir} exists but holds no ${suffix} files.`,
+      'A link that declares zero artifacts checks nothing and still reports success.',
+      'Either the generator stopped writing there, or the path moved — fix the declaration.',
+    ]);
+  }
+  return found;
+}
+
+const ADR_RULESETS = emittedPerSource('src/rulesets/adr/generated', '.rules.json');
+
 export const CHAIN = [
   {
     name: 'ABAC rego tool sets',
@@ -122,6 +157,25 @@ export const CHAIN = [
     ],
   },
   {
+    name: 'ADR conformance rulesets',
+    producer: '.harness/scripts/generate-adr-rulesets.mjs',
+    checkArgs: ['--check'],
+    // Its input is the ADR corpus itself: the generator reads every decision record
+    // and emits one conformance ruleset per ADR, lifting the decision text into the
+    // rule's `statement`. So editing an ADR's PROSE drifts a generated artifact —
+    // which is how a one-word correction to ADR-0126 ("Sixteen" -> "Seventeen") turned
+    // `Validate documentation` red on a PR that touched no ruleset at all.
+    //
+    // It sits HERE, before the snapshot, because the snapshot classifies the whole
+    // ruleset corpus and these files are part of it. That edge was already known and
+    // written down one link below — "documentation-only moved 129 -> 136 purely
+    // because seven generated ADR rulesets appeared" — but only in prose: the
+    // generator was not a link, so nothing replayed it in order and `--fix` could not
+    // repair it. Declaring it makes the ordering claim machine-checked.
+    consumes: ['reference/core/architecture/adrs'],
+    writes: ADR_RULESETS,
+  },
+  {
     name: 'native evaluability snapshot',
     producer: 'src/rulesets/standards/capture-native-evaluability-snapshot.mjs',
     checkArgs: ['--check'],
@@ -134,6 +188,10 @@ export const CHAIN = [
       'src/packages/core-domain/test/rule-corpus-triage.ts',
       'src/packages/core-domain/src/application/validators/rule-evaluability.ts',
       'src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts',
+      // The corpus half, now DECLARED. Listing these turns the sentence above into an
+      // assertion: move the ADR link after this one and `validateChainShape` fails
+      // with "consumes X, which a LATER link writes" instead of quietly reordering.
+      ...ADR_RULESETS,
     ],
     writes: ['src/rulesets/standards/native-evaluability-snapshot.json'],
   },

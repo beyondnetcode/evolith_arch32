@@ -100,12 +100,20 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // registry serves, whether a signature verifies) is NOT in the pack at all; it
   // is named in the ruleset's `notEvaluableHere` block, so the corpus did not
   // grow by four rules and six promises.
+  //
+  // GT-675 (+0, 2026-08-16): `no-policy-in-bundle` joined the vocabulary. It is
+  // pinned at ZERO on purpose and must stay there — this triage classifies the
+  // corpus against the NATIVE handler table, and that class is a statement the
+  // compiled OPA bundle makes about itself at evaluation time. A non-zero here
+  // would mean the native triage had started asserting something about a bundle
+  // it never loaded.
   'native-handler': 171,
   'documentation-only': 137,
   'unimplemented-native': 52,
   'needs-external-system': 20,
   'needs-runtime': 17,
   underspecified: 14,
+  'no-policy-in-bundle': 0,
 };
 
 const SNAPSHOT_FILE = path.join(REPO_ROOT, 'src', 'rulesets', 'standards', 'native-evaluability-snapshot.json');

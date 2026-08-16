@@ -42,7 +42,24 @@ export type RuleEvaluability =
   /** No executable check is expressible — process/judgement, or a generator placeholder. */
   | 'documentation-only'
   /** The rule declares NO check at all. It must be authored before it can be implemented. */
-  | 'underspecified';
+  | 'underspecified'
+  /**
+   * GT-675 — the compiled OPA bundle declares no reachable policy that decides
+   * this rule id.
+   *
+   * Distinct from `unimplemented-native` on purpose: that is a statement about the
+   * NATIVE handler backlog, and asserting it from the OPA path would be a claim
+   * about code this engine never looked at. This class says one thing only — the
+   * bundle was asked and answered no. It is real debt (write the `.rego`), so it
+   * stays inside the denominator.
+   *
+   * Before this existed, `OpaEvaluator` had no `skipped` path at all: a rule no
+   * policy emits produced no violation and was reported `passed`. Measured on this
+   * corpus the day it was added: OPA returned `rulesSkipped: 0` against native's
+   * 241, and answered `passed` on two security packs where native failed with two
+   * blocking issues each.
+   */
+  | 'no-policy-in-bundle';
 
 /**
  * Classes that must LEAVE the coverage denominator: no engine, adapter or budget
@@ -246,6 +263,10 @@ function emptyByClass(): Record<RuleEvaluability, number> {
     'needs-runtime': 0,
     'documentation-only': 0,
     underspecified: 0,
+    // GT-675: reported by the OPA path only. The native triage table never
+    // produces it, so it stays 0 on every native run and the six existing
+    // figures are unchanged.
+    'no-policy-in-bundle': 0,
   };
 }
 

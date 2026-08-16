@@ -22,19 +22,22 @@ import { execSync } from 'node:child_process';
 import { evaluateWasm, normalizeOpaDecisions } from './opa-eval.mjs';
 // `scopeTopologies` is deliberately no longer used here: its `changedPaths == null -> return
 // everything` branch is the widening this gate now refuses to be able to express.
-import { parityReport, contentVersion } from './parity-gate.mjs';
+import { parityReport, contentVersion, diffCoverage } from './parity-gate.mjs';
 
 // GT-556/557: ROOT came from process.cwd() and the TOPO_ROOTS loop skipped any root
 // that did not exist, so a moved root silently shrank the scanned corpus while the gate
 // still reported "deferred, exit 0". Roots are now fail-closed and the manifest corpus
 // size is asserted before any scoping is applied.
 import { REPO_ROOT, collectFiles, relativeToRoot } from '../lib/paths.mjs';
-import { assertScanned } from '../lib/coverage.mjs';
+import { assertScanned, assertScannedPerSource } from '../lib/coverage.mjs';
 // GT-556/558: the scope of this run is a declared contract, not an inference. An error
 // while determining it narrows to nothing — it can no longer widen the run.
 import { declareScope, activateScope, resolveScope, isInScope, formatScopeContract } from '../lib/scope.mjs';
 
 const ROOT = REPO_ROOT;
+
+/** Must equal `DECLARED_RULE_IDS_ENTRYPOINT` in `opa-evaluator.ts`; the assertion below is what keeps them equal. */
+const DECLARED_RULE_IDS_ENTRYPOINT = 'evolith/manifest/declared_rule_ids';
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
 const TOPO_ROOT_KEYS = ['topologiesReference', 'topologiesRulesets'];
 // Full/scheduled run evaluates all accepted topologies; otherwise scope to changed.
@@ -109,6 +112,70 @@ function acceptedTopologies() {
   return out;
 }
 
+/**
+ * GT-675 — the SHIPPED bundle must state which rules it can decide.
+ *
+ * This is the invariant whose quiet loss restores the defect the row is about.
+ * `OpaEvaluator.readDeclaredRuleIds` falls back to the previous behaviour when the
+ * bundle cannot answer — deliberately, so an old `policy.wasm` keeps working — and
+ * that fallback reports a rule nothing decides as `passed`. So a build that stops
+ * emitting the entrypoint does not break: it silently un-fixes 234 rules.
+ *
+ * Checked by EXECUTING the bundle, not by reading the compiler. Note what that
+ * means for the row's last criterion: this gate actually runs the OPA engine,
+ * where no CI job passed `--engine` at all before.
+ */
+async function checkDeclaredScope() {
+  const wasmCandidates = [
+    'src/rulesets/opa/policy.wasm',
+    'src/sdk/cli/rulesets/opa/policy.wasm',
+  ];
+  const present = wasmCandidates.filter((rel) => existsSync(resolve(ROOT, rel)));
+
+  // The DENOMINATOR: every reachable policy the bundle is built from. A gate that
+  // scanned zero policies and reported success is the failure mode `42-validate-
+  // guard-denominators` exists to stop, so it is stated before anything is checked.
+  const policies = [];
+  (function walk(dir) {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = resolve(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name.endsWith('.rego') && !entry.name.endsWith('.test.rego') && !entry.name.endsWith('_test.rego')) {
+        policies.push(full);
+      }
+    }
+  })(resolve(ROOT, 'src/rulesets/opa'));
+  assertScannedPerSource(
+    { 'opa policies': policies.length, 'compiled bundles': present.length },
+    { what: 'GT-675 declared-scope inputs' },
+  );
+
+  const findings = [];
+  for (const rel of present) {
+    const wasm = readFileSync(resolve(ROOT, rel));
+    let declared = [];
+    try {
+      const { loadPolicy } = await import('@open-policy-agent/opa-wasm');
+      const policy = await loadPolicy(wasm);
+      if (!Object.prototype.hasOwnProperty.call(policy.entrypoints ?? {}, DECLARED_RULE_IDS_ENTRYPOINT)) {
+        findings.push(`${rel}: does not expose '${DECLARED_RULE_IDS_ENTRYPOINT}'. Rules no policy decides will be reported as PASSED. Rebuild with \`npm run build:policy\`.`);
+        continue;
+      }
+      declared = policy.evaluate({}, DECLARED_RULE_IDS_ENTRYPOINT)?.[0]?.result ?? [];
+    } catch (err) {
+      findings.push(`${rel}: could not be executed to read its declared scope — ${err.message}`);
+      continue;
+    }
+    // Reuses the shared axis rather than re-implementing the predicate here.
+    const drift = diffCoverage({ engine: rel, declared, outcomes: [] });
+    for (const d of drift) findings.push(`${rel}: ${d.title}`);
+    if (declared.length > 0) {
+      console.log(`   ✓ ${rel} declares ${declared.length} rule id(s) across ${policies.length} policy file(s).`);
+    }
+  }
+  return findings;
+}
+
 async function main() {
   console.log('⚖️  Executable OPA Tests & Native/OPA Parity Gate (GT-149)');
 
@@ -125,6 +192,13 @@ async function main() {
   const { topologies, scope } = resolved;
   console.log(`   Scope: ${FULL_RUN ? 'FULL (declared via EVOLITH_PARITY_FULL)' : 'changed topologies'} — ${topologies.length} accepted topology(ies).`);
   console.log(formatScopeContract(scope).split('\n').map((l) => `   ${l}`).join('\n'));
+  const scopeFindings = await checkDeclaredScope();
+  if (scopeFindings.length > 0) {
+    console.error('❌ GT-675: the compiled OPA bundle cannot state which rules it decides.');
+    for (const f of scopeFindings) console.error(`   - ${f}`);
+    process.exit(1);
+  }
+
   const reports = [];
   let missingInputs = 0;
   let drifting = 0;

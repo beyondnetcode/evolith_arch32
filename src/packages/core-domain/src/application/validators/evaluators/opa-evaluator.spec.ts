@@ -1,4 +1,4 @@
-import { OpaEvaluator, violationBelongsToRule } from './opa-evaluator';
+import { DECLARED_RULE_IDS_ENTRYPOINT, OpaEvaluator, violationBelongsToRule } from './opa-evaluator';
 import { createMockFileSystem, createMockLogger } from '../../../test/mocks';
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext } from './evaluator.interface';
@@ -314,8 +314,14 @@ describe('every policy in the bundle is attributable · GT-693', () => {
      *  policies added since GT-693 were aggregated. Recomputed here, so it cannot
      *  silently drift again — a policy added WITH its aggregation moves this number
      *  and the diff shows the new rules; a policy added without one fails the
-     *  `aggregations().length === imports().length` assertion above instead. */
-    const PINNED_LITERAL_COUNT = 266;
+     *  `aggregations().length === imports().length` assertion above instead.
+     *
+     *  266 -> 274 on 2026-08-16 (GT-675): `sdlc/coverage.rego` was compiled into the
+     *  bundle and never imported by `main.rego`, so its eight literals sat outside
+     *  the aggregation. Wiring it closed the gap between "aggregated" (266) and "all
+     *  non-test" (274) exactly — which is the evidence that it was the ONLY policy
+     *  in that state. */
+    const PINNED_LITERAL_COUNT = 274;
 
     /** Every `{...}` object literal a policy uses as a violation, head or body. */
     function violationLiterals(text: string): string[] {
@@ -422,6 +428,11 @@ describe('every policy in the bundle is attributable · GT-693', () => {
      * them re-derived since the day it was written. The collision COUNT was the only
      * part both got right, and it is the part the gap actually turns on, so it is
      * asserted by construction here rather than restated anywhere.
+     *
+     * 196 -> 203 the same day (GT-675): `sdlc/coverage.rego`'s seven `QT-*` ids
+     * joined the aggregated corpus when `main.rego` finally imported it. The board's
+     * long-standing "203" turns out to have been right about the SIZE of the corpus
+     * and wrong about it being reachable — seven of those ids could not fire.
      */
     it('recomputes the distinct-id count and which ids two policies both emit', () => {
       const byId = new Map<string, Set<string>>();
@@ -432,7 +443,7 @@ describe('every policy in the bundle is attributable · GT-693', () => {
         }
       }
       const collide = [...byId.entries()].filter(([, files]) => files.size > 1).map(([id]) => id);
-      expect(byId.size).toBe(196);
+      expect(byId.size).toBe(203);
       expect(collide.sort()).toEqual([
         'CLI-RR-01', 'CLI-RR-02', 'CLI-RR-03', 'CLI-RR-04', 'CLI-RR-05',
         'TAX-05', 'TAX-06', 'TAX-07', 'TAX-08', 'TAX-11',
@@ -446,8 +457,9 @@ describe('every policy in the bundle is attributable · GT-693', () => {
  *
  * `CLI-RR-01..05` are emitted by BOTH `cli-readiness` and `cli-release-readiness`;
  * `TAX-05`, `06`, `07`, `08` and `11` by both `taxonomy` and `repository-taxonomy`.
- * 10 of the corpus's **196** distinct ids collide — recounted 2026-08-16, when the
- * board said 203 and this comment said 197 and neither had been re-measured. (The
+ * 10 of the corpus's **196** distinct ids collide — recounted 2026-08-16 (196 distinct
+ * ids then, 203 once GT-675 made `sdlc/coverage.rego` reachable), when the board said
+ * 203 and this comment said 197 and neither had been re-measured. (The
  * TAX side was also written `TAX-05..11`, a range that reads as seven; `TAX-09` and
  * `TAX-10` do not collide.) Under the old prefix scheme a gate referencing one of them would have
  * claimed the other's findings and reported them under the wrong rule — a verdict
@@ -586,5 +598,113 @@ describe('provenance ADDS a claimant, it does not replace one · GT-700', () => 
   it('an untagged violation is unaffected — legacy bundles keep working', () => {
     expect(violationBelongsToRule({ id: 'ACL-02', message: 'x' }, 'ACL-02')).toBe(true);
     expect(violationBelongsToRule({ id: 'DOD-01', message: 'x' }, 'opa-dod')).toBe(true);
+  });
+});
+
+/**
+ * GT-675 — the engine gets the third outcome its own type already declared.
+ *
+ * Before this, `OpaEvaluator` had no `skipped` path at all: `grep -c skipped`
+ * returned 0 here against 3 in `native-evaluator.ts`, while
+ * `RuleEvaluationOutcome` declared `'passed' | 'failed' | 'skipped' | 'errored'`.
+ * "No violation matched" was read as conformance, so a rule no policy decides came
+ * back `passed`.
+ *
+ * Measured on this corpus the day it was fixed: whole-corpus OPA moved from
+ * `checked 354 / skipped 0 / 51 issues` to `checked 187 / skipped 167 / 177
+ * issues`, and `validate --select src/rulesets/security/injection-prevention.rules.json
+ * --engine opa` moved from `exit 0 / passed / checked 2 / skipped 0` to
+ * `exit 2 / failed / skipped 2` — matching native exactly.
+ */
+describe('a rule the bundle cannot decide is skipped, never passed · GT-675', () => {
+  const wasmMock = require('@open-policy-agent/opa-wasm');
+  const wasmPath = path.join('/core', 'rulesets', 'opa', 'policy.wasm');
+  const ctx: WorkspaceEvaluationContext = { satellitePath: '/satellite', corePath: '/core' };
+  let seq = 0;
+
+  const rule = (id: string): NormalizedRule => ({
+    id,
+    severity: 'MUST',
+    category: 'governance',
+    title: `rule ${id}`,
+    description: '',
+    blocking: true,
+    sourceFile: 'rules.json',
+  });
+
+  /** A bundle that declares its scope, the way `compile-opa-wasm.mjs` now builds it. */
+  function bundleDeclaring(declaredIds: string[] | null, violations: Array<Record<string, unknown>> = []) {
+    const fs = createMockFileSystem();
+    const logger = createMockLogger();
+    fs.setFile(wasmPath, `fake-wasm-gt675-${++seq}`);
+    (wasmMock.loadPolicy as jest.Mock).mockResolvedValueOnce({
+      entrypoints: declaredIds === null
+        ? { 'evolith/main/violations': 0 }
+        : { 'evolith/main/violations': 0, 'evolith/manifest/declared_rule_ids': 2 },
+      evaluate: (_input: unknown, entrypoint?: string | number) =>
+        entrypoint === DECLARED_RULE_IDS_ENTRYPOINT
+          ? [{ result: declaredIds }]
+          : [{ result: violations }],
+    });
+    return { evaluator: new OpaEvaluator(fs, logger), logger };
+  }
+
+  it('(a) a rule NO policy emits comes back skipped, with the reason', async () => {
+    const { evaluator } = bundleDeclaring(['ACL-01', 'ACL-02']);
+
+    const [result] = await evaluator.evaluateAll([rule('SEC-INJ-01')], ctx);
+
+    expect(result.result).toBe('skipped');
+    expect(result.evaluability).toBe('no-policy-in-bundle');
+    expect(result.message).toMatch(/No reachable policy in the compiled OPA bundle decides 'SEC-INJ-01'/);
+    // The number is published so the reader can tell "small bundle" from "broken bundle".
+    expect(result.message).toMatch(/declares 2 rule id\(s\)/);
+  });
+
+  it('(b) a rule whose policy EXISTS but did not fire comes back passed, not skipped', async () => {
+    // The case the original acceptance criterion would have missed: the bundle can
+    // decide this rule and found nothing wrong. That is a real verdict.
+    const { evaluator } = bundleDeclaring(['ACL-01', 'ACL-02']);
+
+    const [result] = await evaluator.evaluateAll([rule('ACL-01')], ctx);
+
+    expect(result.result).toBe('passed');
+    expect(result.evaluability).toBeUndefined();
+  });
+
+  it('a declared rule that DID fire is still failed — the skip path does not swallow violations', async () => {
+    const { evaluator } = bundleDeclaring(
+      ['ACL-01'],
+      [{ id: 'ACL-01', message: 'adapter skipped schema validation', policy: 'opa-anti-corruption-layer' }],
+    );
+
+    const [result] = await evaluator.evaluateAll([rule('ACL-01')], ctx);
+
+    expect(result.result).toBe('failed');
+    expect(result.message).toMatch(/adapter skipped schema validation/);
+  });
+
+  it('a bundle that cannot declare its scope keeps the old behaviour and SAYS SO', async () => {
+    // A `policy.wasm` compiled before this entrypoint existed. Silently
+    // reclassifying 234 rules against an unknown bundle would be its own false
+    // claim, so the fallback is the previous behaviour plus a warning — never a
+    // silent one.
+    const { evaluator, logger } = bundleDeclaring(null);
+
+    const [result] = await evaluator.evaluateAll([rule('SEC-INJ-01')], ctx);
+
+    expect(result.result).toBe('passed');
+    expect(logger.getLogsByLevel('WARN').map((l: any) => l.message ?? String(l)).join(' ')).toMatch(/predates GT-675/);
+  });
+
+  it('an empty declaration is treated as unknown, not as "decides nothing"', async () => {
+    // Otherwise a build that produced a broken manifest would turn every rule
+    // skipped and read as a coverage collapse rather than as a broken build.
+    const { evaluator, logger } = bundleDeclaring([]);
+
+    const [result] = await evaluator.evaluateAll([rule('ACL-01')], ctx);
+
+    expect(result.result).toBe('passed');
+    expect(logger.getLogsByLevel('WARN').map((l: any) => l.message ?? String(l)).join(' ')).toMatch(/declared an empty rule-id set/);
   });
 });

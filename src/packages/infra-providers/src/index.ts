@@ -6,6 +6,11 @@ export type { NodeWorkspaceMaterializerOptions } from './workspace-materializer.
 export { NestLoggerProvider, ConsoleLoggerProvider, NoOpLoggerProvider } from './logger.provider';
 export { YamlConfigParserProvider, JsonConfigParserProvider } from './config-parser.provider';
 export { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.repository';
+// GT-705 — one corpus resolver for every surface. The MCP server guessed a
+// sibling directory named `evolith` in nine places because the CLI's answer was
+// not shared; a duplicated seam is what GT-664 and GT-676 are the record of.
+export { findBundledCorpus, resolveCorpus, tryResolveCorpus } from './bundled-corpus';
+export type { ResolvedCorpus } from './bundled-corpus';
 // GT-648 — the corpus is deployment state; a long-running surface must load it once.
 export { CachingRulesetRepository } from './caching-ruleset.repository';
 export { WebhookAdapter } from './webhook.adapter';

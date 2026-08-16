@@ -1,4 +1,5 @@
 import * as path from 'node:path';
+import { resolveCorePath } from '../mcp/core-path';
 import type {
   IFileSystem,
   ILogger,
@@ -36,7 +37,7 @@ export function createTopologyTools(
         },
       },
       execute: async (args) => {
-        const corePath = (args.corePath as string) || path.join(process.cwd(), '..', 'evolith');
+        const corePath = resolveCorePath(args.corePath as string | undefined);
         try {
           const topologies = await catalog.list(corePath);
           return {
@@ -68,7 +69,7 @@ export function createTopologyTools(
       },
       execute: async (args) => {
         const id = args.id as string;
-        const corePath = (args.corePath as string) || path.join(process.cwd(), '..', 'evolith');
+        const corePath = resolveCorePath(args.corePath as string | undefined);
         if (!id) return { error: true, message: 'id is required' };
 
         try {
@@ -116,7 +117,7 @@ export function createTopologyTools(
         },
       },
       execute: async (args) => {
-        const corePath = (args.corePath as string) || path.join(process.cwd(), '..', 'evolith');
+        const corePath = resolveCorePath(args.corePath as string | undefined);
         const signals = (args.signals as TopologyRecommendationSignals) || {};
         // Shared dual-probe resolver (src/rulesets | rulesets) — same resolution
         // the CLI uses, so both surfaces locate the same rules file.
@@ -162,7 +163,7 @@ export function createTopologyTools(
         },
       },
       execute: async (args) => {
-        const corePath = (args.corePath as string) || path.join(process.cwd(), '..', 'evolith');
+        const corePath = resolveCorePath(args.corePath as string | undefined);
         const phase = args.phase as DownstreamPhase;
         if (!DOWNSTREAM_PHASES.includes(phase)) {
           return { error: true, message: `phase must be one of: ${DOWNSTREAM_PHASES.join(', ')}` };

@@ -1,4 +1,5 @@
 import { IFileSystem, ILogger } from '../../domain/interfaces';
+import { findCoreFromSatellite } from '../paths/rulesets-location';
 import { SatelliteManifest, PipelineGateResult, RuleEvaluation, EvaluationSeverity, EvaluationFacts } from '../../domain/satellite-manifest';
 import { TopologyCatalogService, TopologyManifest } from './topology-catalog.service';
 import { SdlcDataLoaderService, StructuredGate } from './sdlc-data-loader.service';
@@ -388,20 +389,17 @@ export class SatelliteEvaluationPipeline {
     return null;
   }
 
+  /**
+   * GT-705 — no name-shaped fallback, and content-qualified.
+   *
+   * This ended `return path.join(satellitePath, '..', 'evolith')`, a sibling
+   * directory named after the vendor's own monorepo, and qualified candidates by
+   * EXISTENCE (GT-566's defect: `rulesets/agents` shares the name and holds no
+   * rules). Returning the satellite when nothing is found is deliberate — the
+   * repository then names a real path in its refusal.
+   */
   private discoverCorePath(satellitePath: string): string {
-    const parts = satellitePath.split(path.sep);
-    while (parts.length > 0) {
-      parts.pop();
-      try {
-        const candidate = path.join(parts.join(path.sep), 'rulesets');
-        if (this.fs.existsSync(candidate)) {
-          return parts.join(path.sep);
-        }
-      } catch {
-        continue;
-      }
-    }
-    return path.join(satellitePath, '..', 'evolith');
+    return findCoreFromSatellite(satellitePath, { existsSync: (p) => this.fs.existsSync(p) }, path.sep) ?? satellitePath;
   }
 
   /**

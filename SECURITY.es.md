@@ -15,9 +15,9 @@ soportada antes de reportar.
 
 | Versión | Soportada          | Notas                                     |
 | ------- | ------------------ | ----------------------------------------- |
-| 1.1.x   | :white_check_mark: | Línea estable actual — parcheada activamente |
-| 1.0.x   | :white_check_mark: | Solo correcciones críticas                |
-| < 1.0   | :x:                | Pre-release; sin soporte                  |
+| 1.3.x   | :white_check_mark: | Línea estable actual — parcheada activamente |
+| 1.2.x   | :white_check_mark: | Solo correcciones críticas                |
+| < 1.2   | :x:                | Reemplazada; sin soporte                  |
 
 ## Reportar una Vulnerabilidad
 

@@ -14,6 +14,7 @@ compliant_input := {"satellite": {"agenticAi": {
 	"hasAccountableActions": true,
 	"hasOperationalBudgets": true,
 	"hasCredentialLifecycle": true,
+	"hasNoSandboxBoundaryBreach": true,
 }}}
 
 test_compliant_agent_has_no_violations if {
@@ -67,4 +68,29 @@ test_missing_trusted_context_policy_is_rejected if {
 	i := json.patch(compliant_input, [{"op": "replace", "path": "/satellite/agenticAi/hasTrustedContextPolicy", "value": false}])
 	violations := agentic_ai.violations with input as i
 	violations[_].id == "AAI-R06"
+}
+
+# GT-683 AC6 — AAI-R10 on the OPA path.
+#
+# The native handler scans the declared `implementationRoots` for raw sockets and
+# `env: process.env` when the descriptor CLAIMS a restricted boundary. OPA cannot
+# read a directory, so the input builder does the scanning and hands the result
+# across as one boolean, exactly as it already does for the other nine.
+#
+# ADVISORY here too: this repository's own `agent.config.json` marks AAI-R02
+# `partial`, so a blocking rule would fail our own satellite on day one and teach
+# everyone to waive it.
+test_observed_sandbox_breach_is_reported if {
+	i := json.patch(compliant_input, [{"op": "replace", "path": "/satellite/agenticAi/hasNoSandboxBoundaryBreach", "value": false}])
+	violations := agentic_ai.violations with input as i
+	some v in violations
+	v.id == "AAI-R10"
+	v.blocking == false
+}
+
+test_observed_sandbox_breach_absent_stays_silent if {
+	violations := agentic_ai.violations with input as compliant_input
+	every v in violations {
+		v.id != "AAI-R10"
+	}
 }

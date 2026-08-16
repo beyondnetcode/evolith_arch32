@@ -10295,6 +10295,29 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. One guard script using node:fs and node:path plus the repository's existing `assertScanned` coverage primitive, one JSON baseline, and one line registering it in the governance runner. It reads files and calls no network, no process and no clock."
+    },
+    {
+      "id": "GT-699",
+      "closedAt": "2026-08-16",
+      "closureCommit": "d9e63535",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/rule-evaluation-engine.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.types.ts",
+        "src/packages/core-domain/src/evaluation/contracts/finding.ts",
+        "src/packages/core-domain/src/application/validators/issue-provenance.spec.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, MEASURED THROUGH THE SHIPPED CLI BEFORE ANY CHANGE: `evolith validate --satellite <this repo>` reported 112 issues, 82 blocking. 74 of the 82 were in `blockingSkippedRuleIds` -- text: 'This rule is declared blocking: true and was NOT evaluated'. Only 8 were verdicts about the code. An admission and a violation carried identical fields, the same severity: MUST and the same blocking: true.",
+        "AFTER, SAME REPOSITORY, ON A CLEAN BUILD (build exit=0): 19 verdicts (8 blocking) and 93 admissions (74 blocking), partitionable by one field with no prose parsing.",
+        "TWO AUDIT CLAIMS REFUTED BEFORE ACTING ON THEM. (1) 'An empty directory earns 53 passes, 35 blocking' -- it does NOT: an empty directory FAILS with 120 issues, 82 blocking. (2) 'Only 62 of 411 rules change verdict between an empty directory and the full repo' -- separating admissions from verdicts inverts it: of 19 verdicts here and 20 on an empty directory only 4 overlap, two of which are the meta-rules GOV-RULE-NON-EXECUTABLE and GOV-RULE-NOT-APPLICABLE. 15 fire only on this repo, 16 only on an empty one. The verdicts discriminate; the admissions never did.",
+        "GT-595 UNTOUCHED, asserted directly: an unevaluated blocking rule stays blocking: true and severity MUST, so it can never read as green. Making the two kinds legible must not become suppressing one of them.",
+        "ALL THREE construction sites carry the marker: blockingSkippedIssue, the handler-threw issue and the MUST-not-evaluated issue. The field is OPTIONAL, so absence means 'verdict' and every existing consumer keeps its current reading.",
+        "MUTATION: flipping `evaluated: false` to `true` turns the partition case RED; restored 3/3.",
+        "A MEASUREMENT TAKEN AGAINST A FAILED BUILD WAS DISCARDED MID-WORK: the field did not exist on ValidationIssue yet and `tsc -b` had emitted partially, so the numbers were re-taken after build exit=0.",
+        "SUITES: core-domain 1968, cli 1482, mcp 575, infra-providers 179, contracts 115."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. One optional boolean added to two existing interfaces and set at three construction sites in the evaluation engine, plus one spec. No control flow changed and no verdict changed -- the same rules fire on the same inputs with the same severities, which is what makes this a disclosure rather than a behaviour change."
     }
   ]
 }

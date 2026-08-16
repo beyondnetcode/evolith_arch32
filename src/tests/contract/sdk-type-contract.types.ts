@@ -410,4 +410,9 @@ export const WIRE_VALIDATION_ISSUE: WireCheck<SdkValidationIssue> = {
   file: { required: false, declaredAs: 'string?', accepts: isString },
   expected: { required: false, declaredAs: 'string?', accepts: isString },
   actual: { required: false, declaredAs: 'string?', accepts: isString },
+  // GT-699 — does this finding judge the repository, or admit the rule never ran?
+  // Optional so absence keeps meaning "verdict" for every consumer written before
+  // the field existed. Added here in the same change that made the API emit it:
+  // this contract is the reason the omission could not ship, and it caught it.
+  evaluated: { required: false, declaredAs: 'boolean?', accepts: isBoolean },
 };

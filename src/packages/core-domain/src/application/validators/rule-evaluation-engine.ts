@@ -146,7 +146,7 @@ function classifyResult(r: RuleEvaluationResult): ClassifiedRule {
  * removed. The rule did not run; it is the RUN that fails, not the rule that
  * passed a check.
  */
-function blockingSkippedIssue(r: RuleEvaluationResult): ValidationIssue {
+export function blockingSkippedIssue(r: RuleEvaluationResult): ValidationIssue {
   const evaluability = classifyResult(r).evaluability;
   const remedy = isNonExecutable(evaluability)
     ? 'Nothing can ever evaluate this rule as written, so `blocking: true` is a claim the engine cannot back: ' +
@@ -164,6 +164,17 @@ function blockingSkippedIssue(r: RuleEvaluationResult): ValidationIssue {
       'A blocking rule that skips is reported exactly like a blocking rule that passed, so the run ' +
       `would claim coverage it did not earn. ${remedy}`,
     blocking: true,
+    // GT-699 — this finding is an ADMISSION, not a verdict about the repository.
+    //
+    // Measured on this repository the day this field was added: `evolith validate`
+    // reported 82 blocking issues, 74 of them of exactly this kind, and NOTHING on
+    // the issue distinguished them from the 8 real violations — same fields, same
+    // `severity: MUST`, same `blocking: true`. A reader saw 82 problems and had 8.
+    //
+    // GT-595 is untouched: the issue stays `blocking: true` so an unevaluated
+    // blocking rule can never read as green. What changes is that a consumer can now
+    // COUNT violations without counting "we could not check this" as one of them.
+    evaluated: false,
   };
 }
 
@@ -419,6 +430,9 @@ export class RuleEvaluationEngine {
             `${r.message ?? 'No detail was reported by the evaluator.'} ` +
             'It is excluded from rulesChecked and counted in rulesErrored.',
           blocking: false,
+          // GT-699 — an admission, not a verdict. The handler threw; the repository
+          // was never judged.
+          evaluated: false,
         });
         continue;
       }
@@ -449,6 +463,9 @@ export class RuleEvaluationEngine {
             `${r.message ?? 'No handler supports it.'} ` +
             'It is excluded from rulesChecked and counted in rulesSkipped — its outcome is UNKNOWN, not passing.',
           blocking: false,
+          // GT-699 — the description already says the outcome is UNKNOWN; this makes
+          // that machine-readable instead of a sentence a consumer has to parse.
+          evaluated: false,
         });
       }
     }

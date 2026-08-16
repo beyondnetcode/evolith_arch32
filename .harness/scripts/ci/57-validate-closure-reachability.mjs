@@ -143,6 +143,33 @@ function frameworkConstructed(text, cls, file) {
   return false;
 }
 
+/**
+ * GT-698 — the `export const x = new X()` singleton, found by triage.
+ *
+ * `hasProductionCallSite` skips the declaring file, so a class constructed into a
+ * module-level singleton in its own file looks unreached. It is not: what travels is
+ * the CONST. `CommandExecutor`, `ErrorReporter` and `GateRoleEnforcer` were all
+ * reported unreachable while their singletons are imported across production.
+ *
+ * The const must actually be CONSUMED elsewhere. The six `GT-346` providers
+ * (`DockerProvider`, `NpmProvider`, `NxProvider`, `PythonProvider`, `DotnetProvider`,
+ * `GitHubActionsProvider`) construct singletons that nobody imports, and they stay
+ * flagged — which is the whole point of requiring the second half.
+ */
+function singletonIsConsumed(cls, declaringFile, text) {
+  let konst = null;
+  for (const line of text.split('\n')) {
+    const m = line.match(new RegExp(`^export\\s+const\\s+(\\w+)\\b.*=\\s*new\\s+${cls}\\s*\\(`));
+    if (m) { konst = m[1]; break; }
+  }
+  if (!konst) return false;
+  for (const [file, other] of sources) {
+    if (file === declaringFile) continue;
+    if (new RegExp(`\\b${konst}\\b`).test(other)) return true;
+  }
+  return false;
+}
+
 function hasProductionCallSite(cls, declaringFile) {
   const uses = new RegExp(
     `(new\\s+${cls}\\s*\\(|:\\s*${cls}\\b|<${cls}>|extends\\s+${cls}\\b|@Inject\\(${cls}\\)|useClass:\\s*${cls}\\b)`,
@@ -173,7 +200,7 @@ for (const record of records) {
       const cls = match[1];
       if (frameworkConstructed(text, cls, file)) continue;
       classesScanned++;
-      if (!hasProductionCallSite(cls, file)) {
+      if (!hasProductionCallSite(cls, file) && !singletonIsConsumed(cls, file, text)) {
         const key = `${record.id}::${cls}`;
         if (!found.has(key)) found.set(key, { gap: record.id, cls, file, closedAt: record.closedAt });
       }

@@ -383,7 +383,148 @@ Response shape (captured live):
     "count": "<number>",
     "timestamp": "<string>",
     "tool": "evolith-topology-list",
-    "topologies": []
+    "topologies": [
+      {
+        "apiVersion": "<string>",
+        "businessBoundary": {
+          "technicalOnly": "<boolean>",
+          "trackerOwns": [
+            "<string>"
+          ]
+        },
+        "kind": "<string>",
+        "metadata": {
+          "dimension": "<string>",
+          "governance": {
+            "criticality": "<string>",
+            "owner": "<string>"
+          },
+          "id": "<string>",
+          "name": "<string>",
+          "status": "<string>",
+          "version": "<string>"
+        },
+        "spec": {
+          "artifacts": {
+            "adrs": [
+              "<string>"
+            ],
+            "aiRulesets": [
+              "<string>"
+            ],
+            "opaPolicies": [
+              "<string>"
+            ],
+            "rulesets": [
+              "<string>"
+            ],
+            "umsContracts": [
+              "<string>"
+            ]
+          },
+          "compatibility": {
+            "composableWith": [
+              "<string>"
+            ],
+            "progressiveAxis": {
+              "maturityLevel": "<string>",
+              "profile": "<string>"
+            }
+          },
+          "corpus": {
+            "configurationContract": "<string>",
+            "evidence": "<string>",
+            "fixtures": {
+              "invalid": "<string>",
+              "valid": "<string>"
+            },
+            "guidance": {
+              "maturityGuide": "<string>",
+              "profile": "<string>"
+            },
+            "nativeEvaluator": "<string>",
+            "tests": {
+              "negative": "<string>",
+              "positive": "<string>"
+            }
+          },
+          "designProfile": {
+            "conditional": [
+              {
+                "artifactKind": "<string>",
+                "condition": "<string>",
+                "criteria": "<string>"
+              }
+            ],
+            "required": [
+              {
+                "artifactKind": "<string>",
+                "criteria": "<string>"
+              }
+            ]
+          },
+          "operationalBudgets": {
+            "coldStartCeilingMs": "<number>",
+            "costCeilingPerExecutionCents": "<number>",
+            "credentialRotationIntervalHours": "<number>",
+            "latencyBudgetMs": "<number>",
+            "sandboxTimeoutMs": "<number>",
+            "tokenBudgetPerExecution": "<number>"
+          },
+          "operationalInterfaces": {
+            "cli": {
+              "validators": [
+                "<string>"
+              ]
+            },
+            "coreApi": {
+              "endpoints": [
+                "<string>"
+              ]
+            },
+            "mcp": {
+              "prompts": [
+                "<string>"
+              ],
+              "resources": [
+                "<string>"
+              ],
+              "tools": [
+                "<string>"
+              ]
+            }
+          },
+          "phaseProfiles": {
+            "construction": {
+              "conditional": [
+                {
+                  "artifactKind": "<string>",
+                  "criteria": "<string>"
+                }
+              ]
+            },
+            "deployment": {
+              "conditional": [
+                {
+                  "artifactKind": "<string>",
+                  "criteria": "<string>"
+                }
+              ]
+            },
+            "quality": {
+              "conditional": [
+                {
+                  "artifactKind": "<string>",
+                  "criteria": "<string>"
+                }
+              ]
+            }
+          },
+          "summary": "<string>",
+          "topologyType": "<string>"
+        }
+      }
+    ]
   },
   "meta": {
     "command": "evolith-topology-list",

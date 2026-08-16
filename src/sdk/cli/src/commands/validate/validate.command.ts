@@ -29,6 +29,8 @@ interface ValidateCommandOptions {
   architecture?: boolean;
   topology?: string[];
   engine?: string;
+  /** GT-676 — coverage floor: fail when more than this fraction of applicable rules did not run. */
+  maxSkippedFraction?: number;
   manifest?: string;
   phase?: string;
   adr?: string;
@@ -375,6 +377,7 @@ export class ValidateCommand extends BaseEvolithCommand {
             corePath,
             rulesetId: options.ruleset,
             engine,
+            maxSkippedFraction: options?.maxSkippedFraction,
           })).result;
         } else {
           result = (await this.useCase.execute({
@@ -393,6 +396,7 @@ export class ValidateCommand extends BaseEvolithCommand {
             // explicit argument is a deliberate act. `resolveSelection` keeps
             // the empty-vs-absent distinction on both paths.
             rulesetRefs: this.resolveSelection(options?.select),
+            maxSkippedFraction: options?.maxSkippedFraction,
           })).result;
         }
 
@@ -850,6 +854,30 @@ export class ValidateCommand extends BaseEvolithCommand {
   })
   parseEngine(val: string): string {
     return val;
+  }
+
+  /**
+   * GT-676 — the coverage floor `GT-569` built and no surface could switch on.
+   *
+   * Fractions, not percentages, because that is the unit the engine already
+   * computes and publishes; accepting `20` for 20% would silently mean "never
+   * fail" (a fraction can never exceed 1) which is the wrong direction to be
+   * wrong in for a gate.
+   */
+  @Option({
+    flags: '--max-skipped-fraction <fraction>',
+    description:
+      'Suelo de cobertura: falla si la fracción de reglas aplicables NO evaluadas supera este valor (0..1). '
+      + 'Sin el flag no se aplica ningún suelo.',
+  })
+  parseMaxSkippedFraction(val: string): number {
+    const parsed = Number(val);
+    if (!Number.isFinite(parsed) || parsed < 0 || parsed > 1) {
+      // Refusing beats silently disabling the gate: a caller who typed `20`
+      // meaning 20% would otherwise get a threshold nothing can exceed.
+      throw new Error(`--max-skipped-fraction must be a number between 0 and 1; got '${val}'`);
+    }
+    return parsed;
   }
 
   @Option({

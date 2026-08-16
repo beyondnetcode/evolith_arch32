@@ -4,6 +4,9 @@ import {
   IsOptional,
   IsArray,
   IsObject,
+  IsNumber,
+  Max,
+  Min,
   MinLength,
   ValidateNested,
 } from 'class-validator';
@@ -287,6 +290,24 @@ export class EvaluationContextDto {
   @IsArray()
   @IsString({ each: true })
   policyRefs?: readonly string[];
+
+  /**
+   * GT-676 — the coverage floor, reachable over REST for the first time.
+   *
+   * Without it a REST caller could not reproduce a CLI verdict, because a
+   * threshold that changes the outcome was unrepresentable on this surface.
+   * Absent ⇒ no floor, which is what every recorded verdict was produced under.
+   */
+  @ApiPropertyOptional({
+    description: 'Coverage floor: fail when the fraction of applicable rules that did NOT run exceeds this value.',
+    minimum: 0,
+    maximum: 1,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  maxSkippedFraction?: number;
 
   @ApiPropertyOptional({ description: 'Blueprint reference' })
   @IsOptional()

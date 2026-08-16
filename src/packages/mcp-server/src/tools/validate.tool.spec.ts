@@ -51,7 +51,18 @@ describe('ValidateTool', () => {
     await expect(tool.execute({ path: '/repo' })).resolves.toBe(result);
     // GT-659 — the third argument is the ruleset SELECTION, and `undefined` pins
     // the additive guarantee: a caller naming no ruleset gets the whole corpus.
-    expect(validator.validate).toHaveBeenCalledWith('/repo', undefined, undefined);
+    //
+    // GT-705 — the SECOND argument is no longer `undefined`. Forwarding it was the
+    // defect: core-domain then fell back to `<satellite>/../evolith`, a sibling
+    // directory named after the vendor's monorepo, and the published server
+    // answered RULESET_NOT_FOUND for every corpus-dependent tool. A caller who
+    // names no core path now gets a RESOLVED one — here the corpus this package
+    // bundles.
+    const [satellite, resolvedCore, selection] = validator.validate.mock.calls[0];
+    expect(satellite).toBe('/repo');
+    expect(selection).toBeUndefined();
+    expect(typeof resolvedCore).toBe('string');
+    expect(resolvedCore).not.toBe('');
   });
 
   it('passes corePath through to the validator', async () => {
@@ -91,7 +102,12 @@ describe('ValidateTool', () => {
   it('auto-discovers corePath by walking up to a rulesets/ folder', async () => {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), 'evolith-core-'));
     const satellite = path.join(root, 'product');
-    await fs.ensureDir(path.join(root, 'rulesets'));
+    // GT-705 — the fixture states a CORPUS, not a directory that happens to be
+    // called `rulesets`. That distinction is GT-566's defect: the Core repo has a
+    // satellite-side `rulesets/agents` holding no rules, and an existence check
+    // latches onto it and reports emptiness as an answer. The walk-up itself is
+    // unchanged and still what this case is about.
+    await fs.ensureDir(path.join(root, 'rulesets', 'governance'));
     await fs.ensureDir(satellite);
     validator.loadRulesetById.mockResolvedValue([]);
 

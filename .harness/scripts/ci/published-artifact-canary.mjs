@@ -239,6 +239,25 @@ const mcpResult = await (async function exerciseMcp() {
  */
 const CORPUS_MISSING = /RULESET_NOT_FOUND|Could not locate the Evolith ruleset corpus/i;
 
+/**
+ * GT-705 — the exemption now EXPIRES BY ITSELF, and that is the point.
+ *
+ * It was written when the published package shipped no corpus at all. GT-705
+ * fixed that in the tree, but this canary measures the REGISTRY, so the exemption
+ * has to survive exactly as long as the published version predates the fix — and
+ * not one day longer, or it becomes the permanently-green twin of GT-635's
+ * permanently-red workflow.
+ *
+ * So it is keyed on the CAUSE rather than on a version number or a date: does the
+ * package that was actually installed carry a corpus? The moment a published build
+ * does, this returns false, the exemption stops matching, and the gate-verdict
+ * assertion starts biting on its own with nobody having to remember.
+ */
+function installedPackageShipsNoCorpus() {
+  const corpus = join(prefix, 'node_modules', '@beyondnet', 'evolith-mcp', 'rulesets');
+  return !existsSync(corpus);
+}
+
 check('the published MCP server answers a tools/call with a real gate verdict', () => {
   if (!mcpResult.ok) throw new Error(mcpResult.error.message);
   try {
@@ -248,8 +267,15 @@ check('the published MCP server answers a tools/call with a real gate verdict', 
     return 'verdict asserted by gate-verdict.assert.js';
   } catch (err) {
     if (!CORPUS_MISSING.test(err.message)) throw err;
-    notes.push(`mcp gate verdict UNAVAILABLE — the published package ships no ruleset corpus (GT-705): ${err.message.slice(0, 120)}`);
-    return 'KNOWN LIMITATION (GT-705) — the published MCP package ships no ruleset corpus';
+    if (!installedPackageShipsNoCorpus()) {
+      // The published package DOES carry a corpus and still could not produce a
+      // verdict. That is a new defect, not the known one, and it fails the run.
+      throw new Error(
+        `${err.message}\n  The installed package ships a corpus, so this is NOT the GT-705 limitation.`,
+      );
+    }
+    notes.push(`mcp gate verdict UNAVAILABLE — the installed package ships no ruleset corpus (GT-705, fixed in the tree, not yet published): ${err.message.slice(0, 120)}`);
+    return 'KNOWN LIMITATION (GT-705) — the INSTALLED package ships no corpus; expires when a build that does is published';
   }
 });
 

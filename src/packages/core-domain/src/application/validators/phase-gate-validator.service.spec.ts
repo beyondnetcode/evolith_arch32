@@ -574,8 +574,11 @@ describe('PhaseGateValidatorService.findCorePath (GT-572)', () => {
     // The layout this repository actually has: `rulesets/` lives under `src/`,
     // the gate definitions live at the root. Probing for `rulesets` alone stopped
     // at `/repo/src` and every gate evaluation failed with RULESET_NOT_FOUND.
+    //
+    // GT-705 — the fixture now states a CORPUS rather than a directory, because
+    // that is what qualification asks: a ruleset family inside the candidate.
     const fs = fsWith([
-      '/repo/src/rulesets',
+      '/repo/src/rulesets/governance',
       '/repo/reference/governance/sdlc/gates',
     ]);
 
@@ -583,14 +586,35 @@ describe('PhaseGateValidatorService.findCorePath (GT-572)', () => {
   });
 
   it('still resolves a legacy layout that has rulesets/ but no reference/ tree', () => {
-    const fs = fsWith(['/legacy/rulesets']);
+    const fs = fsWith(['/legacy/rulesets/sdlc']);
 
     expect(resolve(fs, '/legacy/packages/thing')).toBe('/legacy');
   });
 
-  it('falls back to the sibling ../evolith convention when no marker is found', () => {
+  /**
+   * GT-566's defect, asserted rather than described: the Core repo carries a
+   * satellite-side `rulesets/agents` directory that shares the name and holds no
+   * rules. An existence check latches onto it and reports emptiness as an answer.
+   */
+  it('does NOT accept a rulesets/ directory that holds no ruleset family', () => {
+    const fs = fsWith(['/repo/rulesets', '/repo/rulesets/agents']);
+
+    expect(resolve(fs, '/repo/satellite')).not.toBe('/repo');
+  });
+
+  /**
+   * GT-705 — this case asserted the DEFECT, and its own name said so: "falls back
+   * to the sibling ../evolith convention". That convention is the vendor's
+   * monorepo layout treated as a property of the filesystem, and it is why the
+   * published MCP server answered RULESET_NOT_FOUND for every corpus-dependent
+   * tool from a clean npm install.
+   *
+   * There is no name-shaped fallback now. The satellite comes back, so the
+   * refusal downstream names a path that really exists.
+   */
+  it('returns the satellite itself when no corpus is anywhere above it', () => {
     const fs = fsWith([]);
 
-    expect(resolve(fs, '/somewhere/satellite')).toBe('/somewhere/evolith');
+    expect(resolve(fs, '/somewhere/satellite')).toBe('/somewhere/satellite');
   });
 });

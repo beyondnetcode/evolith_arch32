@@ -10481,6 +10481,35 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. One flag, one function and one derivation inside an existing guard, plus cases in its existing test file."
+    },
+    {
+      "id": "GT-705",
+      "closedAt": "2026-08-16",
+      "closureCommit": "e9bbf1e6",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/infra-providers/src/bundled-corpus.ts",
+        "src/packages/mcp-server/src/mcp/core-path.ts",
+        "src/packages/mcp-server/scripts/copy-corpus.js",
+        "src/packages/mcp-server/package.json",
+        "src/packages/core-domain/src/application/paths/rulesets-location.ts",
+        "src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        ".harness/scripts/ci/published-artifact-canary.mjs"
+      ],
+      "validationCommands": [
+        "THE DEFECT, MEASURED ON THE PUBLISHED 1.2.2 FROM A CLEAN NPM PREFIX: tools/list returns 50 tools; evolith-gate-evaluate answers RULESET_NOT_FOUND (ENOENT .../evolith/reference/governance/sdlc/gates); evolith-validate answers INTERNAL_ERROR 'Could not locate the Evolith ruleset corpus'; evolith-metrics, which needs no corpus, works.",
+        "TWO INDEPENDENT CAUSES, and fixing either alone changed nothing. (1) `files: [\"dist/\",\"README.md\",\"LICENSE\"]` shipped no corpus and none of the five @beyondnet/* dependencies supplied one. (2) `path.join(process.cwd(), '..', 'evolith')` -- a sibling directory named after this monorepo -- in 9 places across 5 files of mcp-server AND in 4 services of core-domain, the layer all three surfaces share.",
+        "BOTH TREES ARE REQUIRED, OBSERVED NOT PREDICTED: after bundling only the ruleset corpus, evolith-validate worked and evolith-gate-evaluate still failed, because the gate definitions live at reference/governance/sdlc/gates and are a separate tree. copy-corpus.js ships both.",
+        "END TO END, from a clean npm install with NO repository anywhere on disk (all workspace packages packed and installed together, so the shape is the published one): evolith-validate INTERNAL_ERROR -> isError:false, verdict `failed`; evolith-gate-evaluate RULESET_NOT_FOUND -> isError:false, verdict `failed`, gate `business-sign-off`; evolith-metrics unchanged.",
+        "ONE RESOLVER, NOT A SIXTH COPY: `resolveCorpus` in infra-providers. Order is caller -> EVOLITH_CORE_PATH -> walk up from the satellite -> the corpus bundled in the calling package. `process.cwd()` is deliberately absent. The CLI already had this answer and it was not shared, which is exactly what GT-664 and GT-676 record.",
+        "GT-566 CLOSED IN FOUR MORE COPIES: those core-domain walks qualified a candidate by being NAMED `rulesets`, and this repo has a satellite-side `rulesets/agents` that shares the name and holds no rules. Qualification is now by content, through RULESETS_CORPUS_MARKERS.",
+        "A COURSE CORRECTION MADE BY MEASURING: the first version also re-qualified an EXPLICIT override and refused one that held no corpus. That moved the failure in front of each tool's own argument checks -- a bad `kind` started failing as a missing corpus -- and the repository downstream already refuses with every path it tried. An override is now taken as given.",
+        "A SECOND ONE: the first version dropped the walk-up from the satellite entirely. That walk is the right answer inside a monorepo and a spec asserts it; it is kept, and the bundled corpus is the floor beneath it.",
+        "THREE SPECS ASSERTED THE OLD CONTRACT and were rewritten rather than deleted: one was named 'falls back to the sibling ../evolith convention when no marker is found' and asserted the defect outright; two stated a layout with a bare `rulesets/` directory, which is precisely what must no longer qualify.",
+        "GT-671's CANARY EXEMPTION NOW EXPIRES BY ITSELF: keyed on whether the INSTALLED package carries a corpus, not on a version or a date, because the canary measures the registry and `latest` still predates this fix. Verified both ways -- the fixed package ships a corpus, the published one does not -- so the gate assertion starts biting the day a corpus-bearing build is published.",
+        "SUITES AFTER: core-domain 1992/1992, mcp-server 590/590.",
+        "NOT CLOSED BY THIS ROW: the fix is in the tree, not in the registry. GT-671 stays IN-PROGRESS until a build carrying the corpus is published and its canary observes a real gate verdict from npm."
+      ]
     }
   ]
 }

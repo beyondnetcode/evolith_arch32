@@ -19,7 +19,12 @@ describe('ValidateTool · GT-659 selection', () => {
   it('forwards the refs the caller named', async () => {
     const { validator, tool } = makeTool();
     await tool.execute({ path: '/repo', select: ['standards/ssdf-v1.1.rules.json'] });
-    expect(validator.validate).toHaveBeenCalledWith('/repo', undefined, {
+    // GT-705 — the second argument stopped being `undefined`. Forwarding it was
+    // the defect this suite is not about: core-domain then guessed
+    // `<satellite>/../evolith`. What GT-659 pins is the THIRD argument, the
+    // selection, so the core path is asserted as "resolved to something" and left
+    // at that.
+    expect(validator.validate).toHaveBeenCalledWith('/repo', expect.any(String), {
       policyRefs: ['standards/ssdf-v1.1.rules.json'],
     });
   });
@@ -27,7 +32,7 @@ describe('ValidateTool · GT-659 selection', () => {
   it('forwards several refs, because a tenant selects a SET of packs', async () => {
     const { validator, tool } = makeTool();
     await tool.execute({ path: '/repo', select: ['a/one.rules.json', 'b/two.rules.json'] });
-    expect(validator.validate).toHaveBeenCalledWith('/repo', undefined, {
+    expect(validator.validate).toHaveBeenCalledWith('/repo', expect.any(String), {
       policyRefs: ['a/one.rules.json', 'b/two.rules.json'],
     });
   });
@@ -36,7 +41,7 @@ describe('ValidateTool · GT-659 selection', () => {
     for (const select of [undefined, [], ['   ']]) {
       const { validator, tool } = makeTool();
       await tool.execute({ path: '/repo', ...(select === undefined ? {} : { select }) });
-      expect(validator.validate).toHaveBeenCalledWith('/repo', undefined, undefined);
+      expect(validator.validate).toHaveBeenCalledWith('/repo', expect.any(String), undefined);
     }
   });
 
@@ -44,7 +49,7 @@ describe('ValidateTool · GT-659 selection', () => {
     const { validator, tool } = makeTool();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await tool.execute({ path: '/repo', select: [42, 'standards/ssdf-v1.1.rules.json', null] } as any);
-    expect(validator.validate).toHaveBeenCalledWith('/repo', undefined, {
+    expect(validator.validate).toHaveBeenCalledWith('/repo', expect.any(String), {
       policyRefs: ['standards/ssdf-v1.1.rules.json'],
     });
   });

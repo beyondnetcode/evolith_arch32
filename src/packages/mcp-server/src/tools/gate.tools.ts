@@ -11,6 +11,7 @@ import {
 import type { IWebhookNotifier } from '@beyondnet/evolith-core-domain/application/ports/webhook-notifier.port';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { McpTool } from '../mcp/tool.interface';
+import { resolveCorePath } from '../mcp/core-path';
 
 /**
  * `evolith-gate-evaluate` — evaluate a single SDLC phase gate.
@@ -55,7 +56,13 @@ export function createGateTools(webhook: IWebhookNotifier, fs: IFileSystem, logg
       execute: async (args) => {
         const phaseRaw = args.phase as string;
         const projectPath = args.projectPath as string;
-        const corePath = args.corePath as string | undefined;
+        // GT-705 — resolve instead of forwarding `undefined`. This tool's own
+        // comment already recorded the symptom: without a core path the service
+        // fell back to `<cwd>/../evolith` and the call failed RULESET_NOT_FOUND.
+        // Measured from a clean npm install after the corpus was bundled:
+        // `evolith-validate` worked and this still did not, because nobody handed
+        // it the corpus the package now carries.
+        const corePath = resolveCorePath(args.corePath as string | undefined, args.projectPath as string | undefined);
         const evidenceMode = (args.evidenceMode as string) || 'full';
         const evaluatedBy = (args.evaluatedBy as EvaluatorKind) || 'agent';
         const webhookUrl = args.webhookUrl as string | undefined;

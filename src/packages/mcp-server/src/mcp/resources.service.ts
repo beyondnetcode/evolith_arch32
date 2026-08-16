@@ -1,4 +1,5 @@
 import * as path from 'node:path';
+import { resolveCorePath } from './core-path';
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
 import { FILE_SYSTEM, CONFIG_PARSER } from '../domain/domain.tokens';
@@ -161,7 +162,7 @@ export class ResourcesService {
     for (const dir of ancestors(false)) {
       if (this.fs.existsSync(path.join(dir, ...bundledLayout))) return dir;
     }
-    return path.join(process.cwd(), '..', 'evolith');
+    return resolveCorePath();
   }
 
   /**

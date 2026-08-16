@@ -9,6 +9,8 @@
     "evolith-mcp": "dist/main.js"
   },
   "scripts": {
+    "copy-corpus": "node scripts/copy-corpus.js",
+    "prebuild": "npm run copy-corpus",
     "build": "nest build",
     "build:dev": "nest build --watch",
     "start": "node dist/main",
@@ -18,7 +20,8 @@
     "lint:boundaries": "eslint \"src/**/*.ts\"",
     "test": "jest --passWithNoTests",
     "test:cov": "jest --coverage --passWithNoTests",
-    "test:e2e": "jest --config ./test/jest-e2e.json --passWithNoTests"
+    "test:e2e": "jest --config ./test/jest-e2e.json --passWithNoTests",
+    "prepublishOnly": "npm run copy-corpus && npm run build"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -34,6 +37,8 @@
   ],
   "files": [
     "dist/",
+    "rulesets/",
+    "reference/",
     "README.md",
     "LICENSE"
   ],

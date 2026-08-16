@@ -1,4 +1,5 @@
 import { Injectable, Optional, Inject } from '@nestjs/common';
+import { findCoreFromSatellite } from '../paths/rulesets-location';
 import * as path from 'path';
 import { ILogger, IFileSystem, IConfigParser } from '../../domain/interfaces';
 import { RuleEvaluationEngine, emptyRuleCoverage, summarizeRuleCoverage } from './rule-evaluation-engine';
@@ -497,15 +498,20 @@ export class RulesetValidatorService {
     return this.configParser.parse(content) as EvolithYaml;
   }
 
+  /**
+   * GT-705 — no name-shaped fallback, and content-qualified.
+   *
+   * This ended `return path.join(satellitePath, '..', 'evolith')` — a sibling directory
+   * named after the vendor's own monorepo. Measured on the published MCP server:
+   * 50 tools announced, RULESET_NOT_FOUND on every corpus-dependent one, because
+   * nobody looked where the corpus lives. The walk also qualified by EXISTENCE,
+   * which is GT-566's defect: `rulesets/agents` shares the name and holds no rules.
+   *
+   * Returning the satellite itself when nothing is found is deliberate: the
+   * repository then reports "no corpus under <a real path>" instead of naming a
+   * directory that never existed.
+   */
   private findCorePath(satellitePath: string): string {
-    const parts = satellitePath.split(path.sep);
-    while (parts.length > 0) {
-      parts.pop();
-      const candidate = path.join(parts.join(path.sep), 'rulesets');
-      if (this.fs.existsSync(candidate)) {
-        return parts.join(path.sep);
-      }
-    }
-    return path.join(satellitePath, '..', 'evolith');
+    return findCoreFromSatellite(satellitePath, { existsSync: (p) => this.fs.existsSync(p) }, path.sep) ?? satellitePath;
   }
 }

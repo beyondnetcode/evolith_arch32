@@ -10342,7 +10342,7 @@
     {
       "id": "GT-702",
       "closedAt": "2026-08-16",
-      "closureCommit": "999cacaf",
+      "closureCommit": "2e3a49de",
       "evidence": [
         ".harness/scripts/ci/66-validate-bilingual-sync.mjs",
         ".github/workflows/docs.yml"

@@ -52,6 +52,7 @@ import { existsSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertScanned } from '../lib/coverage.mjs';
+import { ENTRY_SURFACE, isEntrySurface } from '../lib/bilingual-scope.mjs';
 
 const GUARD = '66-validate-bilingual-sync';
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
@@ -196,8 +197,29 @@ function selfTest() {
   if (!ok) failed++;
   console.log(`  ${ok ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m'} a range that never mirrors is caught (expected 1, got ${never.length})`);
 
+  // ADR-0126: the narrowing itself, pinned against the REAL predicate rather than the
+  // injected one. Every case above uses a fixture `pairExists` and would keep passing if
+  // `isEntrySurface` were deleted from `main` — which is precisely the shape of change
+  // that would silently re-widen the guard, so it gets its own assertions.
+  const realScope = (en, es) => isEntrySurface(en) && Boolean(es);
+  const inSurface = oneSidedInRange(
+    [{ sha: 'eeeeeeee', subject: 'edit EN only', files: ['README.md'] }],
+    realScope,
+  );
+  ok = inSurface.length === 1;
+  if (!ok) failed++;
+  console.log(`  ${ok ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m'} an ENTRY-SURFACE pair edited on one side is caught (expected 1, got ${inSurface.length})`);
+
+  const released = oneSidedInRange(
+    [{ sha: 'ffffffff', subject: 'edit EN only', files: ['reference/core/sdlc/q-and-a.md'] }],
+    realScope,
+  );
+  ok = released.length === 0;
+  if (!ok) failed++;
+  console.log(`  ${ok ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m'} a pair OUTSIDE the entry surface is released (expected 0, got ${released.length})`);
+
   if (failed > 0) fail([`${failed} self-test case(s) failed — the guard does not detect what it claims.`]);
-  console.log(`\n\x1b[32m✓\x1b[0m ${GUARD}: self-test passed (8 cases).`);
+  console.log(`\n\x1b[32m✓\x1b[0m ${GUARD}: self-test passed (10 cases).`);
 }
 
 function main() {
@@ -244,7 +266,18 @@ function main() {
     where: [`git log ${range ?? '-400'} (repo root ${REPO_ROOT})`],
   });
 
+  // ADR-0126 narrows this guard to the entry surface. The scope test comes FIRST and is
+  // the cheap one, so a range touching a thousand released pairs costs a set lookup each
+  // rather than two stat() calls each.
+  //
+  // The narrowing is not only about cost. This guard's escape hatch is a commit-sha-keyed
+  // ALLOWED map, and an outside contributor cannot populate it: the sha does not exist
+  // until after they have committed, and editing this file to add it is not something a
+  // first PR should have to do. Applied to 783 released pairs that hatch made the guard a
+  // wall for exactly the people the project is trying to attract. Applied to sixteen
+  // documents the maintainer edits deliberately, it is a reasonable ask.
   const pairExists = (en, es) =>
+    isEntrySurface(en) &&
     existsSync(path.join(REPO_ROOT, en)) && existsSync(path.join(REPO_ROOT, es));
 
   const tail = [
@@ -252,6 +285,9 @@ function main() {
     'Both halves are the record of truth; correcting one leaves the other asserting',
     'the thing you just refuted. Mirror the change, or — if the edit is genuinely',
     'one-sided — add the sha to ALLOWED in this file WITH its reason.',
+    '',
+    `Scope: the ${ENTRY_SURFACE.length}-document entry surface declared in`,
+    '.harness/scripts/lib/bilingual-scope.mjs (ADR-0126). Pairs outside it are not checked.',
   ];
 
   if (range) {
@@ -265,7 +301,9 @@ function main() {
       ]);
     }
     console.log(
-      `\x1b[32m✓\x1b[0m ${GUARD}: ${commits.length} commit(s) in ${range}, no pair left half-updated.`,
+      `\x1b[32m✓\x1b[0m ${GUARD}: ${commits.length} commit(s) in ${range}, no ENTRY-SURFACE pair ` +
+      `left half-updated (${ENTRY_SURFACE.length} document(s) in scope, ADR-0126). ` +
+      `Pairs outside the surface were not examined.`,
     );
     return;
   }
@@ -280,7 +318,10 @@ function main() {
     ]);
   }
 
-  console.log(`\x1b[32m✓\x1b[0m ${GUARD}: ${commits.length} commit(s) scanned, no one-sided bilingual edits.`);
+  console.log(
+    `\x1b[32m✓\x1b[0m ${GUARD}: ${commits.length} commit(s) scanned, no one-sided edits to the ` +
+    `${ENTRY_SURFACE.length}-document entry surface (ADR-0126). Pairs outside it were not examined.`,
+  );
 }
 
 // realpathSync, not resolve: on macOS `/tmp` is a symlink to `/private/tmp`, so a

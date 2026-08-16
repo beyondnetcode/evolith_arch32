@@ -44,14 +44,14 @@ interface InitTarget {
   arguments: '[directory]',
   argsDescription: {
     directory:
-      'Directorio destino (por defecto el actual). `evolith init` inicializa aqui; ' +
-      '`evolith init my-sat` crea e inicializa ./my-sat',
+      'Target directory (defaults to the current one). `evolith init` initialises here; ' +
+      '`evolith init my-sat` creates and initialises ./my-sat',
   },
   description:
-    'Inicializa un repositorio satélite de Evolith EN EL DIRECTORIO ACTUAL ' +
-    '(o en `[directory]` si se indica). Interactivo solo en TTY; modo batch/CI con ' +
-    '`--config <evolith.setup.json>`, `--yes`, `--format json` o stdin no interactivo. ' +
-    'Ejemplo: `evolith init --name my-sat --runtime nodejs --arch clean --yes && evolith validate`.',
+    'Initialise an Evolith satellite repository IN THE CURRENT DIRECTORY ' +
+    '(or in `[directory]` if given). Interactive only on a TTY; batch/CI mode with ' +
+    '`--config <evolith.setup.json>`, `--yes`, `--format json` or a non-interactive stdin. ' +
+    'Example: `evolith init --name my-sat --runtime nodejs --arch clean --yes && evolith validate`.',
 })
 export class InitCommand extends BaseEvolithCommand {
   private readonly operationTimer = new OperationTimer();
@@ -112,12 +112,12 @@ export class InitCommand extends BaseEvolithCommand {
         );
         return;
       }
-      this.promptService.showOutro(chalk.yellow('Inicialización cancelada.'));
+      this.promptService.showOutro(chalk.yellow('Initialisation cancelled.'));
       return;
     }
 
     if (!json) {
-      this.promptService.startSpinner('Aplicando estándares de Evolith...');
+      this.promptService.startSpinner('Applying Evolith standards...');
     }
 
     const input: InitProjectInput = {
@@ -191,9 +191,9 @@ export class InitCommand extends BaseEvolithCommand {
       });
 
       this.promptService.showSuccess(
-        dryRun ? `✓ Simulacro: ${input.name} NO se ha escrito` : `✓ Satélite ${input.name} inicializado`,
+        dryRun ? `✓ Dry run: ${input.name} was NOT written` : `✓ Satellite ${input.name} initialised`,
       );
-      this.promptService.showInfo(`  Directorio: ${target.targetDir}`);
+      this.promptService.showInfo(`  Directory: ${target.targetDir}`);
       this.promptService.showInfo(`  Artifacts creados: ${artifacts.length}`);
       artifacts.forEach(a => this.promptService.showInfo(`    - ${a}`));
 
@@ -203,11 +203,11 @@ export class InitCommand extends BaseEvolithCommand {
         result.warnings.forEach(w => this.promptService.showWarning(`  - ${w}`));
       }
 
-      console.log(chalk.cyan(`\nProximos pasos:\n${nextSteps.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}\n`));
+      console.log(chalk.cyan(`\nNext steps:\n${nextSteps.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}\n`));
     } else {
       errorReporter.report(result.errors, { operation: 'InitializeProjectUseCase.execute' });
       logger.error('Project initialization failed', { errors: result.errors, durationMs });
-      this.promptService.showError('✗ Inicialización fallida');
+      this.promptService.showError('✗ Initialisation failed');
       result.errors.forEach(e => this.promptService.showError(`  - ${e}`));
       errorReporter.printSummary();
       // nest-commander exits 0 unless the exit code is set explicitly: a failed
@@ -215,7 +215,7 @@ export class InitCommand extends BaseEvolithCommand {
       process.exitCode = 1;
     }
 
-    this.promptService.showOutro(result.success ? chalk.green('¡Completado!') : chalk.red('Error'));
+    this.promptService.showOutro(result.success ? chalk.green('Done!') : chalk.red('Error'));
   }
 
   /**
@@ -331,7 +331,7 @@ export class InitCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-d, --dry-run',
-    description: 'Ejecuta en modo simulacro sin alterar archivos',
+    description: 'Dry run: change nothing on disk',
   })
   parseDryRun(): boolean {
     return true;
@@ -340,7 +340,7 @@ export class InitCommand extends BaseEvolithCommand {
   @Option({
     flags: '-n, --name [string]',
     description:
-      'Nombre del PROYECTO (no del directorio). Por defecto, el nombre del directorio destino',
+      'PROJECT name (not the directory name). Defaults to the target directory name',
   })
   parseName(val: string): string {
     return val;
@@ -349,7 +349,7 @@ export class InitCommand extends BaseEvolithCommand {
   @Option({
     flags: '-D, --dir [string]',
     description:
-      'Directorio destino; equivale al argumento posicional [directory]. Por defecto el actual (.)',
+      'Target directory; equivalent to the positional [directory] argument. Defaults to the current one (.)',
   })
   parseDir(val: string): string {
     return val;
@@ -357,7 +357,7 @@ export class InitCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-y, --yes',
-    description: 'Modo batch no interactivo: usa flags/--config y valores por defecto, sin prompts',
+    description: 'Non-interactive batch mode: use flags/--config and defaults, no prompts',
   })
   parseYes(): boolean {
     return true;
@@ -365,7 +365,7 @@ export class InitCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-c, --config [string]',
-    description: 'Ruta al archivo evolith.setup.json para modo batch (bypass total de prompts)',
+    description: 'Path to an evolith.setup.json for batch mode (skips every prompt)',
   })
   parseConfig(val: string): string {
     return val;
@@ -397,7 +397,7 @@ export class InitCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '--db [string]',
-    description: 'Base de datos: postgresql, mongodb, sqlserver',
+    description: 'Database: postgresql, mongodb, sqlserver',
   })
   parseDb(val: string): string {
     return val;

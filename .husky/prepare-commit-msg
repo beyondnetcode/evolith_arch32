@@ -1,0 +1,38 @@
+# DCO sign-off, added here so nobody has to remember `-s`.
+#
+# WHY THIS HOOK EXISTS AT ALL
+# The repository adopted the Developer Certificate of Origin rather than a CLA:
+# a signing form in front of a first-time contributor is a poor trade at zero
+# contributors, and having NO provenance record at all was the wrong place for a
+# project that sells itself on traceability.
+#
+# But a policy enforced only by `commit-msg` is a policy that rejects correct work
+# for a missing flag. The author wrote the code, has the right to submit it, and
+# gets an error because they typed `git commit` instead of `git commit -s`. That
+# teaches people to reach for `--no-verify`, which switches off the Conventional
+# Commits check too.
+#
+# So the trailer is ADDED here and VERIFIED in `commit-msg`. Adding without
+# verifying would be an assumption; verifying without adding is friction with no
+# safety gained. Both, and the guarantee is real.
+#
+# `git interpret-trailers` rather than `echo >>`: it places the trailer in the
+# trailer block (after the body, before nothing), and `--if-exists doNothing`
+# makes a `git commit -s`, an amend, and a rebase idempotent instead of stacking
+# three identical lines.
+
+NAME="$(git config user.name)"
+EMAIL="$(git config user.email)"
+
+if [ -z "${NAME}" ] || [ -z "${EMAIL}" ]; then
+  echo "prepare-commit-msg: git user.name or user.email is unset — cannot sign off." >&2
+  echo "" >&2
+  echo "  git config user.name  \"Your Name\"" >&2
+  echo "  git config user.email \"you@example.com\"" >&2
+  exit 1
+fi
+
+git interpret-trailers \
+  --if-exists doNothing \
+  --trailer "Signed-off-by: ${NAME} <${EMAIL}>" \
+  --in-place "$1"

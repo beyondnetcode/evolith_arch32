@@ -87,9 +87,18 @@ npm run test:contract
 
 Antes de enviar un Pull Request, debes adherirte a estas reglas absolutas. Los gates de CI listados en cada sección bloquearán tu PR si se incumplen.
 
-### A. Paridad Bilingüe Obligatoria
+### A. Paridad Bilingüe en la Superficie de Entrada
 
-Evolith opera globalmente. **Cada archivo de documentación debe tener una versión en inglés (`.md`) y otra en español (`.es.md`).** Ambas deben ser estructuralmente idénticas: la misma cantidad de encabezados `##` y `###` (el gate `04-check-bilingual-parity.mjs` cuenta únicamente los encabezados de nivel 2 y nivel 3; el título de nivel `#` no se cuenta). El Agente Docs puede asistirte con esta traducción.
+**Esta regla cambió el 2026-08-16 ([ADR-0126](./reference/core/architecture/adrs/core/0126-bilingual-entry-surface.es.md)) y es mucho más pequeña de lo que era.** Antes exigía un gemelo en español para cada documento en inglés bajo `reference/` — 783 pares. Ahora aplica a **dieciséis** documentos: los ficheros de aterrizaje y salud comunitaria, los hubs de `reference/` enlazados desde el README, y el board de gaps. Están listados por nombre en [`.harness/scripts/lib/bilingual-scope.mjs`](./.harness/scripts/lib/bilingual-scope.mjs).
+
+Si estás editando uno de esos dieciséis, edita ambas mitades en el mismo pull request: deben llevar la misma cantidad de encabezados `##` y `###` (el título de nivel `#` no se cuenta), el fichero en español debe leerse realmente como español, y las etiquetas de bloque (`<div>`, `<details>`, `<table>`) deben abrir y cerrar. **Si estás editando cualquier otra cosa, no hay nada que espejar** — escribe en el idioma en que esté el fichero.
+
+Los guards dicen en voz alta lo que ya no comprueban, para que puedas distinguir un fichero sin aplicar de uno verificado:
+
+```
+bilingual scope (ADR-0126): 16/16 entry-surface document(s) enforced; 784 EN/ES pair(s)
+outside the entry surface were NOT evaluated — their state is unknown, not verified.
+```
 
 ### B. Sin Emojis ni Caracteres Decorativos
 
@@ -255,7 +264,28 @@ Si solo quieres reportar un hallazgo y no rastrearlo tú mismo, abre un issue �
 1. **Ramificación (Branching):** Sigue el [ADR-0050](./reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.es.md). El trabajo de features fluye hacia `develop`, y `develop` se promueve a `main`. Prefija tus ramas correctamente (ej. `feature/`, `docs/`, `fix/`).
 2. **Actualización de ADRs:** Si tu PR introduce un cambio arquitectónico o una nueva herramienta, *debe* ir acompañado de una actualización a un ADR existente o un nuevo ADR según el [ADR-0068](./reference/core/architecture/adrs/core/0068-documentation-release-gitflow.es.md).
 3. **Mensajes de Commit:** Usamos versionamiento semántico y release-please. Tus commits deben seguir la especificación [Conventional Commits](https://www.conventionalcommits.org/), usando tipos como `feat`, `fix`, `docs`, `ci` y `chore` (ej. `feat:`, `docs:`, `fix:`).
-4. **Issues:** Abre un issue antes de cambios grandes para que el diseño pueda discutirse. Referencia el identificador de gap `GT-###` correspondiente cuando tu trabajo cierre un gap rastreado.
-5. **Revisión de Código:** Todos los PR requieren revisión. Nuestros flujos automatizados publican en tu PR el impacto de cobertura, la validación estructural y los resultados de la revisión agéntica de Winston.
+4. **Firma tus commits (DCO):** ver la sección de abajo. `git commit -s` lo hace.
+5. **Issues:** Abre un issue antes de cambios grandes para que el diseño pueda discutirse. Referencia el identificador de gap `GT-###` correspondiente cuando tu trabajo cierre un gap rastreado.
+6. **Revisión de Código:** Todos los PR requieren revisión. Nuestros flujos automatizados publican en tu PR el impacto de cobertura, la validación estructural y los resultados de la revisión agéntica de Winston.
+
+### Developer Certificate of Origin
+
+Cada commit debe llevar una línea `Signed-off-by`. Añádela automáticamente:
+
+```bash
+git commit -s -m "docs: arregla el enlace roto del quickstart"
+```
+
+Eso agrega una línea usando tu `user.name` y tu `user.email`:
+
+```
+Signed-off-by: Ada Lovelace <ada@example.com>
+```
+
+**Qué estás certificando.** Que escribiste el cambio, o que tienes derecho a enviarlo bajo la licencia MIT de este repositorio — el texto completo es el [Developer Certificate of Origin 1.1](https://developercertificate.org/). Es una declaración sobre procedencia, no una cesión: **conservas el copyright de tu contribución.**
+
+**Por qué un DCO y no un CLA.** Un Contributor Licence Agreement significaría un formulario que firmar antes de que se lea tu primera línea de código, lo cual es un mal trato para un proyecto de este tamaño — y este proyecto se vende sobre la trazabilidad, así que no tener ningún registro de procedencia era el sitio equivocado donde estar. Una línea de sign-off cuesta un flag y responde la pregunta que de verdad hace el equipo legal de quien te adopta.
+
+¿Se te olvidó? `git commit --amend -s` arregla el último commit; `git rebase --signoff <base>` arregla una rama.
 
 Gracias por ayudarnos a evolucionar el core!

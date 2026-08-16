@@ -10463,6 +10463,24 @@
         "RESIDUAL, NOT CLOSED AND STATED IN THE ROW: single use is in-memory and per-process, so a multi-replica deployment can redeem one grant once per replica. Strictly smaller than infinite, and the durable ledger is GT-680, which is open. The store is a port so a host with a ledger injects it.",
         "AC7's TARGET HAS NO IN-REPO CALLER, and the row predicted it: its own use-case bullet says the adapter \"would pre-satisfy the agent-runtime approval check IF IT WERE EVER WIRED\". Measured on closing -- `McpInteractionAdapter` is constructed only in its own spec; it is re-exported from the adapters barrel and asserted in public-surface.spec.ts, so it is published API of agent-runtime and an external consumer can build it, but nothing in this repository reaches it. Guard 57 flagged the closure for resting on it and was RIGHT: a re-export is not a use (that is GT-266's exact shape and the guard says so). The file is therefore NOT listed as evidence -- the closure rests on the grant module and the dispatch gate, which are exercised end to end. The AC7 change is still real and still correct: a published class that forges `{granted:true, approver:'mcp'}` from any caller string is a hole waiting for the wiring, and it is now closed before that wiring exists."
       ]
+    },
+    {
+      "id": "GT-703",
+      "closedAt": "2026-08-16",
+      "closureCommit": "fc121182",
+      "evidence": [
+        ".harness/scripts/ci/46-validate-derived-artifact-order.mjs",
+        ".harness/scripts/ci/46-validate-derived-artifact-order.test.mjs"
+      ],
+      "validationCommands": [
+        "FALSIFIABILITY, reproduced rather than argued: restored maturity-reconciliation.json and both executive summaries from 5eed0766 to recreate the two-stale-links-in-sequence shape. Check mode named ONLY 'maturity reconciliation is STALE (link 5 of 8)'. ONE '--fix' regenerated 'maturity reconciliation' then 'executive governance summary', in declared order, and reported the fixed point.",
+        "THE REPAIR PRODUCES THE RIGHT CONTENT, not merely self-consistent content: after --fix, 'git diff HEAD' over the regenerated artifacts was EMPTY.",
+        "FAILURE PATH: stubbing link 1's producer to exit non-zero makes --fix stop at link 1 of 8 with exit code 1 and 'Stopped here rather than continuing'. Run twice; the producer restored byte-identically both times.",
+        "node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs -> 12/12 (was 8/8).",
+        "DOGFOODED: the derived-chain regeneration this change itself needed was performed by the new --fix, including after merging develop."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. One flag, one function and one derivation inside an existing guard, plus cases in its existing test file."
     }
   ]
 }

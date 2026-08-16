@@ -179,14 +179,14 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
     if (nxWorkspace?.action === 'created') {
       this.promptService.showInfo(
-        `Nx workspace creado en ${nxWorkspace.workspaceDir} (${nxWorkspace.files.join(', ')}).`,
+        `Nx workspace created at ${nxWorkspace.workspaceDir} (${nxWorkspace.files.join(', ')}).`,
       );
     }
 
     let frontendFramework = options?.frontend as string | undefined;
     if (!frontendFramework) {
       frontendFramework = await this.promptService.select({
-        message: '¿Qué framework de Frontend utilizarás para los Microfrontends?',
+        message: 'Which frontend framework will you use for the microfrontends?',
         options: [
           { value: 'react', label: 'React' },
           { value: 'angular', label: 'Angular' },
@@ -198,7 +198,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     let orm = options?.orm as string | undefined;
     if (!orm) {
       orm = await this.promptService.select({
-        message: '¿Qué ORM usarás para la capa de persistencia compartida?',
+        message: 'Which ORM will you use for the shared persistence layer?',
         options: [
           { value: 'prisma', label: 'Prisma' },
           { value: 'typeorm', label: 'TypeORM' },
@@ -220,7 +220,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     let phase = options?.phase ? String(toProgressivePhase(options.phase as string)) : undefined;
     if (!phase) {
       phase = await this.promptService.select({
-        message: '¿En qué fase del eje progresivo (progressive axis) se encuentra este proyecto?',
+        message: 'Which phase of the progressive axis is this project in?',
         options: [
           { value: '1', label: 'Fase 1 · modular-monolith (The Lean Foundation, MVP)' },
           { value: '2', label: 'Fase 2 · distributed-modules (Scale & Decoupling, Service Extraction)' },
@@ -230,7 +230,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     }
 
     const apiName = await this.resolveWithDefault(options?.apiName, {
-      message: '¿Cuál será el nombre de la API principal (Backend)?',
+      message: 'What is the name of the main API (backend)?',
       placeholder: 'tracker-api',
       defaultValue: 'tracker-api',
     });
@@ -242,19 +242,19 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
     if (phase === '1') {
       webAppName = await this.resolveWithDefault(options?.webAppName, {
-        message: '¿Cuál será el nombre de la aplicación Web estándar (SPA)?',
+        message: 'What is the name of the standard web app (SPA)?',
         placeholder: 'tracker-web',
         defaultValue: 'tracker-web',
       });
     } else {
       hostName = await this.resolveWithDefault(options?.hostName, {
-        message: '¿Cuál será el nombre de la aplicación Host (Microfrontend Web principal)?',
+        message: 'What is the name of the host app (main web microfrontend)?',
         placeholder: 'tracker-host',
         defaultValue: 'tracker-host',
       });
 
       remotesInput = await this.resolveWithDefault(options?.remotes, {
-        message: 'Ingresa los nombres de los Microfrontends Remotos separados por comas:',
+        message: 'Enter the names of the remote microfrontends, comma-separated:',
         placeholder: 'trackerRemoteAgile, trackerRemoteQa',
         defaultValue: 'trackerRemoteAgile, trackerRemoteQa',
       });
@@ -272,7 +272,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     const domains = declaredDomains.length > 0
       ? declaredDomains
       : await this.promptService.multiselect({
-          message: 'Selecciona las fases SDLC de Evolith que este proyecto va a implementar:',
+          message: 'Select the Evolith SDLC phases this project will implement:',
           options: [
             { value: 'discovery', label: 'Discovery' },
             { value: 'design', label: 'Design' },
@@ -283,47 +283,47 @@ export class ScaffoldCommand extends BaseEvolithCommand {
           required: true
         });
 
-    this.promptService.startSpinner('Iniciando el proceso de andamiaje...');
+    this.promptService.startSpinner('Starting the scaffolding process...');
 
     // 1. Instalar dependencias
-    this.promptService.startSpinner('Instalando plugins y dependencias base...');
+    this.promptService.startSpinner('Installing plugins and base dependencies...');
     await this.strategy.installDependencies(frontendFramework, orm);
 
     // 2. Generar Backend API
-    this.promptService.startSpinner(`Generando la Service API (NestJS) [${apiName}]...`);
+    this.promptService.startSpinner(`Generating the Service API (NestJS) [${apiName}]...`);
     await this.strategy.generateApiApp(apiName);
 
     // 3. Generar Frontend
     if (phase === '1') {
-      this.promptService.startSpinner(`Generando Single Page App estándar (${frontendFramework.toUpperCase()}) [${webAppName}]...`);
+      this.promptService.startSpinner(`Generating the standard single-page app (${frontendFramework.toUpperCase()}) [${webAppName}]...`);
       await this.strategy.generateStandardWebApp(webAppName, frontendFramework);
     } else {
-      this.promptService.startSpinner(`Generando Microfrontends Host y Remotes (${frontendFramework.toUpperCase()})...`);
+      this.promptService.startSpinner(`Generating host and remote microfrontends (${frontendFramework.toUpperCase()})...`);
       await this.strategy.generateHostApp(hostName, remotes, frontendFramework);
     }
 
     // 4. Generar Shells (Kernels Compartidos)
-    this.promptService.startSpinner('Generando Shells transversales...');
+    this.promptService.startSpinner('Generating cross-cutting shells...');
     await this.strategy.generateLibrary('workflow-engine', 'shell');
     await this.strategy.generateLibrary('integration-fabric', 'shell');
     await this.strategy.generateLibrary('tenant-config', 'shell');
 
     // 5. Generar Dominios (Capas Puras)
-    this.promptService.startSpinner('Generando Bounded Contexts (DDD)...');
+    this.promptService.startSpinner('Generating bounded contexts (DDD)...');
     for (const domain of domains) {
       await this.strategy.generateLibrary(domain, 'domain');
     }
 
     // 6. Generar Shared
-    this.promptService.startSpinner('Generando repositorios compartidos...');
+    this.promptService.startSpinner('Generating shared repositories...');
     await this.strategy.generateLibrary('db-schema', 'shared');
     await this.strategy.generateLibrary('mocks', 'shared');
 
-    this.promptService.stopSpinner('Andamiaje arquitectónico completado exitosamente.');
+    this.promptService.stopSpinner('Architectural scaffolding completed.');
     if (dryRun) {
-      this.promptService.showWarning('Modo DRY-RUN activado: No se realizaron cambios en el disco.');
+      this.promptService.showWarning('DRY-RUN mode: nothing was written to disk.');
     } else {
-      this.promptService.showSuccess('Toda la topología Evolith ha sido generada en el directorio ./src.');
+      this.promptService.showSuccess('The whole Evolith topology was generated under ./src.');
     }
     this.promptService.showOutro('Completed');
   }
@@ -535,7 +535,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '--frontend [framework]',
-    description: 'Framework para el frontend (react, angular)',
+    description: 'Frontend framework (react, angular)',
   })
   parseFrontend(val: string): string {
     return val;
@@ -543,7 +543,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '--orm [orm]',
-    description: 'ORM para base de datos (prisma, typeorm)',
+    description: 'Database ORM (prisma, typeorm)',
   })
   parseOrm(val: string): string {
     return val;
@@ -551,7 +551,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-d, --dry-run',
-    description: 'Ejecuta en modo simulacro sin alterar archivos',
+    description: 'Dry run: change nothing on disk',
   })
   parseDryRun(): boolean {
     return true;

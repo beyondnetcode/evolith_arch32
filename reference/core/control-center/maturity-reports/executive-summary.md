@@ -11,7 +11,7 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Governance` carries the highest weighted open risk (9 open, 0 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Governance` carries the highest weighted open risk (8 open, 0 P0). Attack that concentration before expanding scope.
 
 **Where to attack first:** [GT-435](../gaps/gap-reference-catalog.md#gt-435).
 
@@ -26,7 +26,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
-| 2 | Highest-risk area | `Governance` has the largest weighted open load. | [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-669](../gaps/gap-reference-catalog.md#gt-669), [GT-672](../gaps/gap-reference-catalog.md#gt-672), [GT-689](../gaps/gap-reference-catalog.md#gt-689), [GT-588](../gaps/gap-reference-catalog.md#gt-588), +3 |
+| 2 | Highest-risk area | `Governance` has the largest weighted open load. | [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-669](../gaps/gap-reference-catalog.md#gt-669), [GT-672](../gaps/gap-reference-catalog.md#gt-672), [GT-689](../gaps/gap-reference-catalog.md#gt-689), [GT-588](../gaps/gap-reference-catalog.md#gt-588), +2 |
 | 3 | Quick wins | High criticality with XS/S complexity. | [GT-671](../gaps/gap-reference-catalog.md#gt-671), [GT-684](../gaps/gap-reference-catalog.md#gt-684) |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-671](../gaps/gap-reference-catalog.md#gt-671), [GT-684](../gaps/gap-reference-catalog.md#gt-684), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-680](../gaps/gap-reference-catalog.md#gt-680), [GT-681](../gaps/gap-reference-catalog.md#gt-681), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-669](../gaps/gap-reference-catalog.md#gt-669), +1 |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-674](../gaps/gap-reference-catalog.md#gt-674), [GT-685](../gaps/gap-reference-catalog.md#gt-685), [GT-686](../gaps/gap-reference-catalog.md#gt-686), [GT-687](../gaps/gap-reference-catalog.md#gt-687), +12 |
@@ -43,18 +43,18 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-08-08 |
 | Total gaps | 702 |
-| Closed gaps | 669 |
-| Open gaps | 33 |
+| Closed gaps | 670 |
+| Open gaps | 32 |
 | Open P0 | 1 |
 | Open P1 | 9 |
 | Open P2 | 18 |
-| Total closure | 95.3% |
-| Closure evidence records | 651 |
+| Total closure | 95.4% |
+| Closure evidence records | 652 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Governance` | 9 | 0 | 3 | [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-669](../gaps/gap-reference-catalog.md#gt-669), [GT-672](../gaps/gap-reference-catalog.md#gt-672), +5 |
+| `Governance` | 8 | 0 | 3 | [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-669](../gaps/gap-reference-catalog.md#gt-669), [GT-672](../gaps/gap-reference-catalog.md#gt-672), +4 |
 | `Cross` | 3 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448), [GT-651](../gaps/gap-reference-catalog.md#gt-651) |
 | `Infra` | 6 | 0 | 2 | [GT-671](../gaps/gap-reference-catalog.md#gt-671), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-685](../gaps/gap-reference-catalog.md#gt-685), +2 |
 | `MCP Server` | 3 | 0 | 3 | [GT-684](../gaps/gap-reference-catalog.md#gt-684), [GT-680](../gaps/gap-reference-catalog.md#gt-680), [GT-681](../gaps/gap-reference-catalog.md#gt-681) |

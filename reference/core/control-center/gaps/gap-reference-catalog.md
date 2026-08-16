@@ -8986,7 +8986,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] An authored rule survives `evolith upgrade` (depends on [`GT-673`](./gap-reference-catalog.md#gt-673)) and is proven to survive by a test that upgrades and re-evaluates.
   - [ ] The rule carries its provenance — what recurring finding motivated it, and who approved it — so a ratchet entry is auditable rather than folklore.
   - [ ] A negative test proves an authored rule can actually FAIL a subject; a rule that only ever passes is the vacuous case this board keeps finding.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 **SCOPE CORRECTION 2026-08-14, from the ultracode benchmark wave — one claim in this row was REFUTED and the residue is narrower than registered.** A rule authored entirely outside the Core repository CAN execute today, on two production-wired paths, with no Core code change, and both were run: (1) a novel-id rule `ACME-04` with `category: "boundary"` and an authored clause returned a real `failed` verdict through `NativeEvaluator`, because `ModuleBoundaryRuleHandler.canHandle` claims by CLAUSE and not by id (`:35-42`), as do the ADR-conformance and architecture handlers; (2) a novel-id rule with `enforce: {engine: 'enforcer', tool: 'Trivy'}` returned `failed | 1 violation(s) from Trivy`, because `enforce` blocks are normalized since `GT-632` and all three surfaces inject a process runner. **What actually survives, and what this row now scopes:** a tenant cannot register a new EXECUTOR — `createEnforcerAdapters` is a fixed six-entry factory (`enforcer-subsystem.ts:40-53`) with no injection point, and three grep spellings for a registration hook found nothing outside specs — and there is no tenant-facing documentation of the two paths that already work. Criterion 1 stands as written; the honest headline is the absence of a SUPPORTED, DOCUMENTED authoring surface and of executor extensibility, not an inability to execute.
 
@@ -9013,7 +9013,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] Waivers that expired without adjudication are EXCLUDED and counted separately, so silence is never read as agreement.
   - [ ] `evolith calibrate report` runs end to end on the exported corpus in a test, and still refuses to quote a rate below its declared n floor.
   - [ ] The exporter is proven falsifiable: a corpus with a known planted disagreement produces the expected matrix, and removing the planted row changes it.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-671
 
@@ -9063,7 +9063,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] A missing or unreadable source artifact FAILS the generator; it never renders as zero.
   - [ ] The generator is a declared link in the `46-validate-derived-artifact-order` chain, so a stale page is a red check rather than an embarrassment.
   - [ ] Published through the existing docs pipeline; no new hosting and no new domain.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-673
 
@@ -9088,7 +9088,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] A `conflict` is not applied by default; applying one requires an explicit flag and names every file it will overwrite.
   - [ ] A test scaffolds a satellite, edits a scaffolded file, upgrades, and asserts the edit SURVIVES — observed failing against today's code before the fix.
   - [ ] The satellite can report its divergence from upstream without performing an upgrade.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-674
 
@@ -9112,7 +9112,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] A surface can supply the evidence inline, per `ADR-0101` — the Core stays stateless and reads no filesystem for it.
   - [ ] The adapter is exercised against a recorded provider payload fixture rather than a hand-built object, so the mapping is proven against a real shape.
   - [ ] If the wire is judged not worth building, the port and the adapter are DELETED and the decision recorded — an unconsumed port is not left standing as apparent capability.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 
 #### GT-675
@@ -9236,7 +9236,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] Every override that changed a run is named in the result with from→to, approver and expiry, asserted non-empty for an overridden run and **empty rather than absent** for a clean one.
   - [ ] An override that removes a blocking criterion is rejected with a named issue id, observed failing in a test.
   - [ ] `src/rulesets/tenants/README.md` is corrected or deleted; a document describing enforcement that does not exist is worse than no document.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-679
 
@@ -9290,7 +9290,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **FALSIFIABILITY:** a test makes the durable append fail (read-only path or throwing adapter) and asserts both that the tool's own verdict is unchanged and that the failure is surfaced, shown going red when the failure branch is removed.
   - [ ] **FALSIFIABILITY:** a test rewrites an existing ledger line and asserts the read path reports tampering; if key custody is required, that half is deferred to [`GT-588`](./gap-reference-catalog.md#gt-588) in writing rather than ticked.
   - [ ] `GT-321` and `GT-221` carry an annotation recording that `JsonlAuditRepository` had zero instantiations and the resource/prompt loggers zero production callers when they were closed.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-681
 
@@ -9316,7 +9316,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] Key metadata survives a restart, or the service carries the same explicit production warning `audit-logger.ts:37-42` already prints, with the restart test recording which outcome occurred.
   - [ ] `evolith-evaluate` and the CLI accept and forward `requester`, and a deposited payload from that run carries a non-empty `requestedBy` verified against the ingest field provenance.
   - [ ] **NEGATIVE:** with no caller-supplied requester and no authenticated principal, `requestedBy` is **absent, not a placeholder** — the "absent in, absent out" rule `GT-586` already enforces for `repositoryRevision`.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-682
 
@@ -9342,7 +9342,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **FALSIFIABILITY:** deleting any one MCP registration turns the catalog-parity spec red, demonstrated in the closure record; and ABAC is observed DENYING one of the new tools for a role lacking waiver authority against the **compiled** `policy.wasm` rather than the source `.rego`, with both the deny and the allow shown.
   - [ ] A written decision records whether waiver persistence belongs on the stateless REST surface; if not, the exclusion is recorded in the interfaces README and enforced by the binding table, never silently.
   - [ ] The closure record either shows an approved waiver suppressing a finding on both surfaces, or states in writing that this row ports a write-only operation because [`GT-677`](./gap-reference-catalog.md#gt-677) has not landed.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-683
 
@@ -9403,7 +9403,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **FALSIFIABILITY (observed failing first):** an injection-shaped fixture is added and a spec asserts it is marked untrusted and fenced — credited only when that spec is recorded FAILING against the current emitter, showing the raw unfenced text.
   - [ ] Removing the trust field turns at least one test red, recorded by deleting it, naming the failing test, and restoring it.
   - [ ] ADR-0082's implementation banner moves off `none`, and its stale claim that no evaluator handles that category is corrected; `44-validate-adr-implementation-status` passes.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-685
 
@@ -9428,7 +9428,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] Seeding lives inside the deployment: after bring-up, a knowledge-search call returns at least one chunk with a `sourceFile` under `reference/`, with the literal response recorded.
   - [ ] **FALSIFIABILITY:** with the store stopped, the same call is observed FAILING — a refusal or a surfaced connection error. A success envelope with zero results falsifies the fix; a silent empty corpus is exactly what the knowledge factory was written to prevent.
   - [ ] The quickstart stops naming a command that does not exist, or this row states in writing that the quickstart is out of scope.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-686
 
@@ -9454,7 +9454,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **FALSIFIABILITY:** reverting one site to `durationMs: 0` and running the guard produces a FAILING output, pasted into the closure record.
   - [ ] The check rejects `durationMs: 0` as a VALUE from a run whose wall clock was non-zero, not merely a missing key.
   - [ ] **NO INVENTED COST:** a payload emitting `costUsd: 0` or `totalTokens: 0` with no AI signal is rejected; absent must stay distinguishable from zero.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-687
 
@@ -9480,7 +9480,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **ANTI-VACUITY:** renaming `Waiver.waiverRef` in the domain turns the ingest spec red rather than leaving the wire silently unsourced.
   - [ ] The return leg is named: a Tracker-side read route is specified and `calibrate` can source from it, with a test driving the command against a stubbed fetch — or the deferral to the Tracker repository is stated in writing.
   - [ ] A rejected waiver is representable and maps to `humanBlocked: true`, asserted in both polarities — [`GT-670`](./gap-reference-catalog.md#gt-670)'s confirming-label trap.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 
 #### GT-688
@@ -9547,7 +9547,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] A single-topology composition document is expressible.
   - [ ] The documented product states in `topology-dimensions.md` have fixtures, and the guard fails when a documented composition has none.
   - [ ] **FALSIFIABILITY:** make one pair illegal on a manifest and an evaluation using that pair must FAIL; if it still passes, the validator is not on the evaluation path and this row does not close.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-690
 
@@ -9571,7 +9571,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] `$schema` resolves for every surviving copy.
   - [ ] **FALSIFIABILITY:** a rule edited in the surviving copy changes the verdict of an evaluation that uses it; the same edit applied to a deleted path changes nothing, because the path is gone.
   - [ ] `GT-566` carries an annotation recording that its "exactly ONE place" claim was false when it closed.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-691
 
@@ -9620,7 +9620,7 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] **FALSIFIABILITY, and it must be a BOOT not a build:** each affected image is started and serves a real request afterwards, per [`GT-647`](./gap-reference-catalog.md#gt-647), whose whole finding was that a hand-maintained copy list produces an image that builds green and dies at `require` time.
   - [ ] The consumer's failing job is re-run against the new image and the import completes; the literal `no space left on device` failure and the passing run are both recorded.
   - [ ] A check fails when a deployable image grows past a declared budget, so the next regression is caught here rather than in someone else's pipeline.
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-693
 
@@ -9833,7 +9833,7 @@ The declaration has one hole — a pack that does not declare — and the direct
 - **EIGHTH DETECTOR DEFECT: the `published-api` test did not follow re-export chains.** It looked for the class name literally in `src/index.ts` and missed `export * from './adapters/index'`. Following the chains moves **14 entries** to `published-api` — including `PlatformDetectionService`, which this row previously called **"referenced by nothing at all"** and which is exported from its package root. **That is the second time this row published a false hand-verification**, and both are corrected in place.
 - **REVISED, AND THIS IS THE NUMBER THAT MATTERS:** `published-api` **14**, `built-tested-unwired` **17** (15 distinct classes across 16 closures), `singleton-nobody-imports` **6**, `dead` **0**. The `dead` bucket is now empty — both of its former members were published exports.
 - **From 59 alleged findings to 15 distinct classes of real debt, across eight detector corrections, every one found by triaging rather than by writing the detector.** The instrument built to catch over-claiming over-claimed by a factor of four, and only entry-by-entry verification exposed it. That is the single most useful thing this row produced, and it argues for the general rule the audit already implied: **a measurement is not evidence until something has tried to refute it.**
-- **Status:** `PENDING`
+- **Status:** `DEFERRED`
 
 #### GT-699
 
@@ -9946,10 +9946,12 @@ The declaration has one hole — a pack that does not declare — and the direct
 - **Component:** `Governance` · **Criticality:** P3 · **Complexity:** S
 - **Principal:** `S` · **Interest:** `LOW` · **Basis:** `estimate`
 - **Provenance:** Registered 2026-08-16 from the GT-702 closure, where the cost was paid and measured rather than predicted. Not folded into GT-702: that gap is about the bilingual guard, this is about the derived-artifact chain, and they share only the commit that exposed it.
+- **CLOSED 2026-08-16.** `--fix` walks `CHAIN` in declared order, regenerates every stale link in one pass, and then re-runs the ordinary currency and fixed-point checks rather than trusting its own report — a repair mode believed on its own say-so is how a chain ends up "fixed" and still stale. The write invocation is DERIVED (`writeArgsFor`), the check invocation minus the flag that makes it a check, so a link that ever gains a `--root` keeps it instead of silently losing it. One pass suffices as a property of the chain, not luck: `validateChainShape` has already proven no link consumes what a later link writes, so regenerating link *i* can only invalidate links after *i*, which are still ahead.
 - **Acceptance criteria:**
-  - [ ] **FALSIFIABILITY:** a tree with two stale links in sequence — the shape GT-702 hit — is brought fully current by ONE invocation, and `46` then reports the fixed point. Recorded before and after.
-  - [ ] The chain guard still stops at the first stale link when merely checking. The fix mode is additive.
-  - [ ] The command is discoverable from the failure message `46` already prints.
+  - [x] **FALSIFIABILITY:** reproduced the GT-702 shape by restoring the reconciliation and both summaries from `5eed0766`. Check mode named ONLY `maturity reconciliation is STALE (link 5 of 8)`. One `--fix` regenerated `maturity reconciliation` then `executive governance summary`, in that order, and reported the fixed point. The regenerated bytes were **identical to what was committed** (`git diff HEAD` empty), so the repair produced the right content and not merely a self-consistent one.
+  - [x] Check mode is unchanged: it still stops at the first stale link, with the same wording about not hiding the cause. The repair is additive and off by default.
+  - [x] The failure message now ends with `To repair the whole chain in declared order: node 46-validate-derived-artifact-order.mjs --fix`.
+  - [x] A producer that FAILS stops the pass with exit 1 rather than continuing — verified by stubbing link 1's generator to exit non-zero, twice, restoring it byte-identically each time. Tests: 12/12 (was 8), plus meta-guards `42` and `43`.
 #### GT-704
 
 **Title:** No CI job runs both engines over the corpus, so a verdict divergence between them is found by a human or not at all

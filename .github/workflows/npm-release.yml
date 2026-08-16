@@ -89,6 +89,23 @@ jobs:
         # happens to be in dist/ — here dist/ is always produced by this run.
         run: npm run build
 
+      - name: Compile the OPA policy bundle
+        # `src/rulesets/opa/policy.wasm` is gitignored (root .gitignore:154), so a fresh
+        # runner checkout does not have it. Nothing in the publish path compiled it:
+        # `prepublishOnly` runs copy-rulesets/build/copy-assets/drift/smoke and none of
+        # those produce a bundle. `copy-rulesets` then faithfully copied the 87 `.rego`
+        # SOURCES it could see and no wasm, because there was no wasm to see.
+        #
+        # That is why @beyondnet/evolith-cli@1.2.2 ships 87 .rego files and zero
+        # policy.wasm, and why `validate --engine opa` fails closed on every rule from a
+        # clean install. It is invisible locally: a maintainer who has ever run
+        # `build:policy` has the artifact sitting in the ignored path, so `npm pack`
+        # includes it and the tarball looks correct on their machine.
+        run: |
+          npm run build:policy
+          test -f src/rulesets/opa/policy.wasm
+          echo "policy.wasm: $(wc -c < src/rulesets/opa/policy.wasm) bytes"
+
       - name: Rebuild mcp-server from a clean state
         # `nest build` exits 0 while emitting nothing when tsconfig.tsbuildinfo is
         # stale, which has produced an empty dist more than once. Cheap insurance

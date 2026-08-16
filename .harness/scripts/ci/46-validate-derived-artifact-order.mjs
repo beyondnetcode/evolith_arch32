@@ -70,6 +70,20 @@ const VERBOSE = argv.includes('--verbose');
 const SKIP_FIXED_POINT = argv.includes('--no-fixed-point');
 
 /**
+ * GT-703. Walk the chain in order and regenerate every stale link, instead of
+ * reporting the first one and stopping there.
+ *
+ * The reporting behaviour below is NOT the defect and is unchanged. Stopping at the
+ * first stale link is what keeps the diagnosis honest — an artifact built on stale
+ * input is not independently wrong, and naming it would send you to fix a
+ * consequence. What was missing was the other half: with no way to repair the chain
+ * locally, each stale link cost a push and a CI cycle to discover. Measured on
+ * GT-702's closure — one board row and one closure record produced two red runs
+ * (31957356934, 31957550307) before green, for a content delta of three numbers.
+ */
+const FIX = argv.includes('--fix');
+
+/**
  * The chain, in dependency order. `consumes` is what makes the order real: an
  * entry may only appear after every producer that writes something it reads.
  *
@@ -202,6 +216,16 @@ const run = (script, args, cwd) =>
     encoding: 'utf8', cwd, timeout: 180000,
   });
 
+/**
+ * How to invoke a producer for WRITING, derived rather than hardcoded: it is the
+ * check invocation without the flag that makes it a check. Every link today is
+ * `['--check']`, so this is `[]` — but a link that ever needs `['--root', x,
+ * '--check']` keeps its `--root` instead of silently losing it. A link may still
+ * declare `writeArgs` explicitly if its generator ever stops being symmetric.
+ */
+export const writeArgsFor = (link) =>
+  link.writeArgs ?? link.checkArgs.filter((a) => a !== '--check');
+
 /** Every artifact written by an EARLIER link — the reason the order exists. */
 function upstreamArtifacts(index) {
   return new Set(CHAIN.slice(0, index).flatMap((l) => l.writes));
@@ -234,6 +258,52 @@ function validateChainShape() {
   }
 }
 
+/**
+ * GT-703 — regenerate every stale link, in dependency order, in ONE pass.
+ *
+ * One pass is sufficient and that is a property of the chain, not luck:
+ * `validateChainShape` has already proven no link consumes what a later link
+ * writes, so regenerating link i can only invalidate links after i, and those are
+ * still ahead of us. Each link is re-checked at the moment we reach it, after every
+ * upstream producer has already run.
+ *
+ * A producer that FAILS stops the pass instead of continuing to the next link. The
+ * alternative — carry on and report at the end — would regenerate artifacts on top
+ * of an input that never got rebuilt, which is the exact confusion the check-side
+ * stop-at-first-stale rule exists to prevent.
+ */
+function fixChain() {
+  const regenerated = [];
+  for (const [i, link] of CHAIN.entries()) {
+    if (run(link.producer, link.checkArgs, root).status === 0) {
+      if (VERBOSE) console.log(`  · ${link.name} already current`);
+      continue;
+    }
+    const args = writeArgsFor(link);
+    const res = run(link.producer, args, root);
+    if (res.status !== 0) {
+      fail([
+        `${link.name}: its producer FAILED while regenerating (link ${i + 1} of ${CHAIN.length}).`,
+        `  node ${link.producer}${args.length ? ' ' + args.join(' ') : ''}`,
+        '',
+        ...String(res.stdout || '').trim().split('\n').slice(-6).map((l) => `  ${l}`),
+        ...String(res.stderr || '').trim().split('\n').slice(-6).map((l) => `  ${l}`),
+        '',
+        '  Stopped here rather than continuing: the links after this one consume what',
+        '  this was supposed to write, so regenerating them would build on stale input.',
+      ]);
+    }
+    regenerated.push(link.name);
+    console.log(`  ↻ regenerated ${link.name}`);
+  }
+  if (regenerated.length === 0) {
+    console.log('  · nothing to regenerate — the chain was already current');
+  } else {
+    console.log(`  ${regenerated.length} link(s) regenerated, in declared order`);
+  }
+  return regenerated;
+}
+
 function checkCurrency() {
   for (const [i, link] of CHAIN.entries()) {
     const res = run(link.producer, link.checkArgs, root);
@@ -252,6 +322,8 @@ function checkCurrency() {
         '',
         '  Stopping at the FIRST stale link on purpose: an artifact built on stale',
         '  input is not independently wrong, and fixing it first would hide the cause.',
+        '',
+        `  To repair the whole chain in declared order: node ${GUARD}.mjs --fix`,
       ]);
     }
     if (VERBOSE) console.log(`  ✓ ${link.name} is current`);
@@ -333,6 +405,11 @@ function main() {
   console.log(`  links declared ..... ${CHAIN.length}`);
   console.log(`  artifacts covered .. ${CHAIN.flatMap((l) => l.writes).length}`);
 
+  if (FIX) fixChain();
+
+  // Re-checked after --fix on purpose: the pass reports what it regenerated, and
+  // this is what proves it. A repair mode trusted on its own say-so is how a chain
+  // ends up "fixed" and still stale.
   checkCurrency();
   if (!SKIP_FIXED_POINT) checkFixedPoint();
 

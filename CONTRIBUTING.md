@@ -126,6 +126,38 @@ node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
 If these scripts fail, the CI pipeline will block your PR.
 
+### F. What the git hooks do, and what they will not do to you
+
+Three hooks run locally. **None of them will touch your push.**
+
+| Hook | What it does for you |
+|---|---|
+| `pre-commit` | Offers a local validation mode. Choosing *Skip* is fine — CI is the real gate. |
+| `prepare-commit-msg` | Adds your DCO `Signed-off-by` line so you do not have to remember `-s`. |
+| `commit-msg` | Checks Conventional Commits and that the sign-off is present. |
+
+`pre-push` contains a release macro — merge `develop` into `main`, push both — that belongs
+to whoever runs this project's releases. **It is owner-only and it never fires on a feature
+branch.** Before 2026-08-16 it did: it read an intent recorded at commit time and ignored the
+refs git actually hands it, so `git push -u origin my-branch` ran `git push origin develop`.
+If you ever saw that, it was this, and it is fixed.
+
+Non-interactive contexts (an editor, a script, CI, an agent) commit without prompting. If you
+want the local checks there anyway:
+
+```bash
+EVOLITH_CI_MODE=fast git commit -m "docs: fix a broken link"
+```
+
+Modes are `skip` (default), `fast`, `governance`, `auto`, `full`.
+
+Verify the hooks yourself — the suite runs in a throwaway clone with a local remote, so it
+cannot reach GitHub:
+
+```bash
+sh .husky/hooks.test.sh
+```
+
 ## 5. Standards by Contribution Area
 
 Each surface has its own validators. Confirm your change against the actual files before editing — if a finding is a false positive, report it rather than changing correct code.

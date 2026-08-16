@@ -22,8 +22,8 @@
  *      a stranger cannot populate — the sha does not exist until after they commit.
  *
  * So the mandate narrows to the ENTRY SURFACE: the documents a stranger actually
- * traverses, plus the one board the project treats as its record of truth. Fifteen
- * files. Everything else keeps its existing `.es.md` exactly where it is — nothing is
+ * traverses, plus the two gap documents the project treats as its record of truth.
+ * Seventeen files. Everything else keeps its existing `.es.md` exactly where it is — nothing is
  * deleted, nothing is stamped, nothing is moved. It simply stops being enforced.
  *
  * ## The honesty requirement this module exists to serve
@@ -50,9 +50,19 @@
  * The first six are the landing surface and the community-health files GitHub itself
  * renders. The eight `reference/` entries are the navigational spine — every one is
  * linked directly from `README.md`, which is what makes them reachable at all. The
- * last is the gap board, included not because a stranger reads it but because the
- * project treats both halves as the record of truth, which is the defect GT-702
+ * last TWO are the gap documents, included not because a stranger reads them but
+ * because the project treats both halves as the record of truth — the defect GT-702
  * registered `66-validate-bilingual-sync` to close.
+ *
+ * The catalog is here because the board alone did not cover the case. GT-702's actual
+ * defect was in `gap-reference-catalog.es.md`, which went on asserting a refuted count
+ * through a full day of green checks; `gap-tracking.md` was never the file that
+ * diverged. Measured 2026-08-16, after this module first landed: replaying that exact
+ * commit through `oneSidedInRange` under this scope returned `caught: 0` — the guard
+ * could no longer catch its own reproduction case. Adding the sibling restores it, on
+ * this module's stated bar rather than by widening it: the catalog is authoritative,
+ * it is what every board row links into for its evidence, and the two halves
+ * disagreeing is the exact failure the gap exists for.
  */
 export const ENTRY_SURFACE = Object.freeze([
   'README.md',
@@ -71,6 +81,7 @@ export const ENTRY_SURFACE = Object.freeze([
   'reference/core/interfaces/README.md',
   'reference/core/sdlc/README.md',
   'reference/core/control-center/gaps/gap-tracking.md',
+  'reference/core/control-center/gaps/gap-reference-catalog.md',
 ]);
 
 const ENTRY_SET = new Set(ENTRY_SURFACE);

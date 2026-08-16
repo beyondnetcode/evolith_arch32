@@ -55,13 +55,22 @@ in front of exactly the people the project is trying to attract.
 
 ### 1. The mandate applies to an entry surface, not to a path prefix
 
-Sixteen documents, declared by name in `.harness/scripts/lib/bilingual-scope.mjs`. The bar for
+Seventeen documents, declared by name in `.harness/scripts/lib/bilingual-scope.mjs`. The bar for
 membership: **a stranger reaches the document within two clicks of the repository landing page,
 or the project treats it as authoritative.** The list is the six community-health and landing
-files, the eight `reference/` hubs linked directly from `README.md` — the navigational spine,
-which is what makes them reachable at all — and `gap-tracking.md`, included not because a
-stranger reads it but because the project treats both halves as its record of truth, which is
-the defect GT-702 registered guard 66 to close.
+files, the quickstart, the eight `reference/` hubs linked directly from `README.md` — the
+navigational spine, which is what makes them reachable at all — and the two gap documents,
+included not because a stranger reads them but because the project treats both halves as its
+record of truth, which is the defect GT-702 registered guard 66 to close.
+
+**Amended 2026-08-16: the catalog joins the board.** The first cut named `gap-tracking.md`
+alone, and that did not cover the case it cited. GT-702's actual divergence was in
+`gap-reference-catalog.es.md`, which asserted a refuted count through a full day of green
+checks; the board was never the file that diverged. Measured after this ADR landed, a one-sided
+catalog edit was caught **0** times — the guard could no longer catch its own reproduction case.
+`gap-reference-catalog.md` therefore joins the surface on the bar above, not by relaxing it: the
+catalog is authoritative, it is what every board row links into for its evidence, and its two
+halves disagreeing is precisely the failure the guard exists for.
 
 ### 2. Nothing outside the surface is deleted, moved, or stamped
 

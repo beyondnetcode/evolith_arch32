@@ -71,7 +71,7 @@ const AVAILABLE_RULESETS = [
 
 @Command({
   name: 'agents',
-  description: 'Instala, lista, valida o remueve agentes de Evolith en el repositorio satélite',
+  description: 'Install, list, validate or remove Evolith agents in the satellite repository',
 })
 export class AgentsCommand extends BaseEvolithCommand {
   private readonly registry: AgentRegistryService;

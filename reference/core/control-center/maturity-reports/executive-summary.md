@@ -26,7 +26,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-435](../gaps/gap-reference-catalog.md#gt-435) |
-| 2 | Highest-risk area | `Core Domain` has the largest weighted open load. | [GT-676](../gaps/gap-reference-catalog.md#gt-676), [GT-675](../gaps/gap-reference-catalog.md#gt-675), [GT-683](../gaps/gap-reference-catalog.md#gt-683), [GT-674](../gaps/gap-reference-catalog.md#gt-674), [GT-687](../gaps/gap-reference-catalog.md#gt-687), [GT-678](../gaps/gap-reference-catalog.md#gt-678), +1 |
+| 2 | Highest-risk area | `Core Domain` has the largest weighted open load. | [GT-676](../gaps/gap-reference-catalog.md#gt-676), [GT-675](../gaps/gap-reference-catalog.md#gt-675), [GT-683](../gaps/gap-reference-catalog.md#gt-683), [GT-674](../gaps/gap-reference-catalog.md#gt-674), [GT-687](../gaps/gap-reference-catalog.md#gt-687), [GT-695](../gaps/gap-reference-catalog.md#gt-695), +1 |
 | 3 | Quick wins | High criticality with XS/S complexity. | [GT-671](../gaps/gap-reference-catalog.md#gt-671), [GT-676](../gaps/gap-reference-catalog.md#gt-676), [GT-684](../gaps/gap-reference-catalog.md#gt-684) |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-671](../gaps/gap-reference-catalog.md#gt-671), [GT-676](../gaps/gap-reference-catalog.md#gt-676), [GT-684](../gaps/gap-reference-catalog.md#gt-684), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-675](../gaps/gap-reference-catalog.md#gt-675), [GT-680](../gaps/gap-reference-catalog.md#gt-680), [GT-681](../gaps/gap-reference-catalog.md#gt-681), +5 |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-674](../gaps/gap-reference-catalog.md#gt-674), [GT-685](../gaps/gap-reference-catalog.md#gt-685), [GT-686](../gaps/gap-reference-catalog.md#gt-686), [GT-687](../gaps/gap-reference-catalog.md#gt-687), +11 |
@@ -42,14 +42,14 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-08-08 |
-| Total gaps | 692 |
-| Closed gaps | 657 |
+| Total gaps | 693 |
+| Closed gaps | 658 |
 | Open gaps | 35 |
 | Open P0 | 1 |
 | Open P1 | 13 |
 | Open P2 | 17 |
 | Total closure | 94.9% |
-| Closure evidence records | 639 |
+| Closure evidence records | 640 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |

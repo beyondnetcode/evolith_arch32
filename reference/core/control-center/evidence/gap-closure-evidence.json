@@ -10163,6 +10163,33 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. The Rego change is literal object construction inside main.rego -- no builtin is called, which is a hard constraint here because only a handful are dispatchable in the compiled wasm. The TypeScript change is one exported pure predicate plus a Set used to compute what nothing claimed; both use language built-ins only. The new parity spec reads the shipped corpus and the compiled bundle with node:fs, which the spec tree already does elsewhere."
+    },
+    {
+      "id": "GT-694",
+      "closedAt": "2026-08-15",
+      "closureCommit": "0f92a42f",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.spec.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-supplied-facts.spec.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-input-coverage.spec.ts",
+        "src/packages/core-domain/src/domain/satellite-manifest.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, REPRODUCED AGAINST THE REAL BUNDLE BEFORE ANY CHANGE: a gate rule of category `multi-tenancy` on a real satellite returned `OPA Input Schema Validation Failed: data/satellite must have required property 'multiTenancy'` -- never reaching the policy regardless of what the repository contained.",
+        "AC1, AFTER, BOTH DIRECTIONS: with facts supplied the policy is reached and returns MTN-01/MTN-02 for exactly the two postures declared false, and NOT the four declared true; with a compliant posture the same run returns `passed`. The second half is what proves it is an evaluation and not a fixed answer. The unsupplied run still fails with the same schema message, so the fix did not paper over a missing fact with a green tick.",
+        "MUTATION on the channel: removing the `facts.satellite` merge turns both AC1 cases RED and leaves the unsupplied case green; restored 4/4.",
+        "MUTATION on precedence: inverting the spread so a declared fact beats an observed one turns the lockfile case RED; restored 13/13. Observed-beats-declared is GT-683's lesson applied on the input side.",
+        "MUTATION on the collector: inverting `!stat.isDirectory()` so `files` lists directories turns that case RED; restored.",
+        "AC3 DEMONSTRATED AS THE CRITERION ASKS: adding a required facet nobody produces to `governance.input.schema.json` turns the coverage check RED (`NO required facet is unaccounted for`); claiming `layers` is `observed` when the builder does not emit it turns two more RED. Both restored, 5/5.",
+        "AC2 REWRITTEN, NOT FORCED: the original binary `collected|withdrawn` assumed the Core must derive every fact, contradicting ADR-0101 where the Core RECEIVES its context. Withdrawing thirteen policies because the Core cannot see CI configuration or tenant enforcement would delete governance the product is right to express. The recorded binary is `observed|supplied` -- 1 and 13 -- each with a written reason, pinned so a category changing hands is a deliberate edit.",
+        "A CORRECTION TO THIS ROW'S OWN FIGURES: registered as `15 facets across 12 categories`, re-measured on closure as `14 across 13`. The names were right; the counts were not.",
+        "A TYPE ERROR THAT ONLY THE CROSS-PACKAGE BUILD CAUGHT: `merged.satellite = { ...facts.satellite, ...(input.satellite as ...) }` compiled under core-domain and failed under the CLI's build with TS18046, taking EIGHT cli suites down (1482 -> 1359). Fixed by spreading `merged.satellite`. Recorded because a single-package green was not evidence.",
+        "GT-695 REGISTERED RATHER THAN ABSORBED: 21 fields across 11 categories are read by a policy and declared by no schema, found by supplying every declared tenancy field and watching MTN-06/MTN-07 fire anyway.",
+        "SUITES, MEASURED AFTER a full `npm run build`: core-domain 1943, cli 1482, mcp 575, infra-providers 179, contracts 115."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. The change is one optional field on an existing domain interface, one object spread in the input builder, and one directory-listing helper that mirrors the `getTopLevelDirs` already beside it -- all through the `IFileSystem` port the builder already holds. The new specs read the shipped schemas and the compiled bundle with node:fs, which the spec tree already does elsewhere."
     }
   ]
 }

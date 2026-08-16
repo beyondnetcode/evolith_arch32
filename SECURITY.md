@@ -1,5 +1,7 @@
 # Security Policy
 
+> **Bilingual Navigation:** [Versión en Español](./SECURITY.es.md)
+
 The Evolith maintainers take the security of the framework and its execution
 surfaces (CLI, MCP server, and Service CORE API) seriously. This document
 explains which versions receive security updates and how to report a

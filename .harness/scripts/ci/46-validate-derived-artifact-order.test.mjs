@@ -24,7 +24,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const GUARD = resolve(__dirname, '46-validate-derived-artifact-order.mjs');
 
 // The guard only runs main() when invoked directly, so importing CHAIN is safe.
-const { CHAIN } = await import('./46-validate-derived-artifact-order.mjs');
+const { CHAIN, writeArgsFor } = await import('./46-validate-derived-artifact-order.mjs');
 
 /**
  * Where a link sits, DERIVED rather than typed.
@@ -320,4 +320,59 @@ fs.writeFileSync(dir + 'executive-summary.es.md', es);
     const { position } = linkPosition('09-reconcile-maturity.mjs');
     assert.match(out, new RegExp(`${position}\\. node \\.harness/scripts/ci/09-reconcile-maturity\\.mjs`));
   });
+});
+
+
+/**
+ * GT-703 — the repair mode.
+ *
+ * The end-to-end behaviour is exercised against the real tree by the test above and
+ * was measured on the two-stale-link shape that motivated the gap. What is worth
+ * pinning HERE is the derivation, because it is the part that can rot silently: the
+ * write invocation is the check invocation minus the flag that makes it a check, so
+ * a link that gains a `--root` keeps it instead of quietly losing it.
+ */
+describe('write-mode arguments (GT-703)', () => {
+  it('drops --check and nothing else', () => {
+    assert.deepEqual(writeArgsFor({ checkArgs: ['--check'] }), []);
+    assert.deepEqual(writeArgsFor({ checkArgs: ['--root', '/tmp/x', '--check'] }), ['--root', '/tmp/x']);
+  });
+
+  it('honours an explicit writeArgs when a generator stops being symmetric', () => {
+    assert.deepEqual(writeArgsFor({ checkArgs: ['--check'], writeArgs: ['--write'] }), ['--write']);
+  });
+
+  it('every declared link yields a write invocation that is not itself a check', () => {
+    for (const link of CHAIN) {
+      const args = writeArgsFor(link);
+      assert.ok(!args.includes('--check'), `${link.name} would still run in check mode`);
+    }
+  });
+});
+
+test('--fix repairs a chain with TWO stale links in one invocation', () => {
+  // The GT-702 shape: reconciliation stale, and the summary that derives from it
+  // stale behind it. One pass must clear both and reach the fixed point.
+  const artifacts = CHAIN.flatMap((l) => l.writes);
+  const before = new Map(artifacts.map((a) => [a, readFileSync(resolve(__dirname, '../../..', a))]));
+
+  const idx = CHAIN.findIndex((l) => l.writes.some((w) => w.includes('maturity-reconciliation')));
+  assert.ok(idx > 0, 'expected the maturity reconciliation to be a declared link');
+
+  // Make that link and everything after it stale by truncating its artifact.
+  const target = resolve(__dirname, '../../..', CHAIN[idx].writes[0]);
+  const saved = readFileSync(target);
+  writeFileSync(target, '{}\n');
+  try {
+    const fixed = spawnSync(process.execPath, [GUARD, '--fix'], { encoding: 'utf8' });
+    assert.equal(fixed.status, 0, `--fix failed:\n${fixed.stdout}\n${fixed.stderr}`);
+    assert.match(fixed.stdout, /regenerated/, 'expected --fix to report what it regenerated');
+    const after = spawnSync(process.execPath, [GUARD], { encoding: 'utf8' });
+    assert.equal(after.status, 0, 'chain still not current after --fix');
+  } finally {
+    // Restore byte-for-byte whatever the repair rewrote — a test that leaves the
+    // tree changed is indistinguishable from the drift this guard reports on.
+    for (const [rel, buf] of before) writeFileSync(resolve(__dirname, '../../..', rel), buf);
+    writeFileSync(target, saved);
+  }
 });

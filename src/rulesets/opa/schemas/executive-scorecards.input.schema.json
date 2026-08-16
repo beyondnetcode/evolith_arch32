@@ -3,11 +3,15 @@
   "$id": "https://evolith.dev/schema/opa/executive-scorecards.input.schema.json",
   "title": "Executive Scorecards OPA Policy Input Schema",
   "type": "object",
-  "required": ["satellite"],
+  "required": [
+    "satellite"
+  ],
   "properties": {
     "satellite": {
       "type": "object",
-      "required": ["scorecards"],
+      "required": [
+        "scorecards"
+      ],
       "properties": {
         "scorecards": {
           "type": "object",
@@ -21,13 +25,39 @@
             "architectureDriftIndex"
           ],
           "properties": {
-            "deploymentFrequencyDeclared": { "type": "boolean" },
-            "leadTimeDeclared": { "type": "boolean" },
-            "changeFailureRateDeclared": { "type": "boolean" },
-            "timeToRestoreDeclared": { "type": "boolean" },
-            "observabilityOperational": { "type": "boolean" },
-            "executiveSponsorAssigned": { "type": "boolean" },
-            "architectureDriftIndex": { "type": "number" }
+            "deploymentFrequencyDeclared": {
+              "type": "boolean"
+            },
+            "leadTimeDeclared": {
+              "type": "boolean"
+            },
+            "changeFailureRateDeclared": {
+              "type": "boolean"
+            },
+            "timeToRestoreDeclared": {
+              "type": "boolean"
+            },
+            "observabilityOperational": {
+              "type": "boolean"
+            },
+            "executiveSponsorAssigned": {
+              "type": "boolean"
+            },
+            "architectureDriftIndex": {
+              "type": "number"
+            },
+            "performanceDashboardLinked": {
+              "type": "boolean",
+              "description": "Read by executive-scorecards.rego. Declared by GT-695."
+            },
+            "cognitiveLoadSurveyCompleted": {
+              "type": "boolean",
+              "description": "Read by executive-scorecards.rego. Declared by GT-695."
+            },
+            "collaborationIndexComputed": {
+              "type": "boolean",
+              "description": "Read by executive-scorecards.rego. Declared by GT-695."
+            }
           }
         }
       }

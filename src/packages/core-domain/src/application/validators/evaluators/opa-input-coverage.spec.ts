@@ -127,3 +127,88 @@ describe('every shipped OPA category is observed or supplied · GT-694', () => {
     expect({ observed, supplied }).toEqual({ observed: 1, supplied: 13 });
   });
 });
+
+/**
+ * GT-695 — a policy may not read a field its own schema does not declare.
+ *
+ * The input schema is the only document a caller reads to learn what an evaluation
+ * wants. When a policy reads a field the schema never mentions, a caller who
+ * satisfies the published contract IN FULL still fails, and the remedy is named
+ * nowhere they can look. That is worse than a rule that fails loudly: the verdict
+ * is indistinguishable from a real violation.
+ *
+ * Measured 2026-08-15: 21 such fields across 10 categories. Found the way a customer
+ * would find it — supplying every field `multi-tenancy.input.schema.json` declares
+ * and watching `MTN-06`/`MTN-07` fire anyway, because the policy reads
+ * `tenantAuditTrailEnabled` and `tenantMigrationPathDefined` and the schema
+ * mentioned neither.
+ *
+ * `additionalProperties` is undefined on these schemas, so the undeclared fields
+ * were always ACCEPTED — the defect was discoverability, never rejection. Declaring
+ * them therefore changes no verdict; it makes the contract truthful. They are added
+ * to `properties` and NOT to `required`, deliberately: in Rego an absent field makes
+ * `not input.x.y` true, so absence already means "not done", and making them
+ * required would turn a legible violation into a schema error.
+ */
+describe('a policy reads nothing its schema fails to declare · GT-695', () => {
+  const OPA = path.resolve(SCHEMAS, '..');
+
+  /** `<category>.<facet>.<field>` for every field a policy reads and no schema declares. */
+  function undeclaredReads(): string[] {
+    const out: string[] = [];
+    for (const file of readdirSync(SCHEMAS).filter((f) => f.endsWith('.input.schema.json'))) {
+      const category = file.replace('.input.schema.json', '');
+      const rego = path.join(OPA, `${category}.rego`);
+      let source: string;
+      try {
+        source = readFileSync(rego, 'utf8');
+      } catch {
+        continue; // a schema with no policy beside it is a different gap
+      }
+      const declared = (JSON.parse(readFileSync(path.join(SCHEMAS, file), 'utf8')) as any)
+        .properties?.satellite?.properties ?? {};
+
+      for (const [, facet, field] of source.matchAll(/input\.satellite\.(\w+)\.(\w+)/g)) {
+        if (!declared[facet]?.properties) continue; // the facet itself is GT-694's concern
+        if (!(field in declared[facet].properties)) out.push(`${category}.${facet}.${field}`);
+      }
+      for (const [, field] of source.matchAll(/input\.satellite\.(\w+)(?![\w.])/g)) {
+        if (!(field in declared)) out.push(`${category}.${field}`);
+      }
+    }
+    return [...new Set(out)].sort();
+  }
+
+  it('reads the real policies, so an empty scan cannot pass this vacuously', () => {
+    const anyRead = readFileSync(path.join(OPA, 'multi-tenancy.rego'), 'utf8');
+    expect([...anyRead.matchAll(/input\.satellite\./g)].length).toBeGreaterThan(5);
+  });
+
+  it('EVERY field a policy reads is declared in its schema', () => {
+    expect(undeclaredReads()).toEqual([]);
+  });
+
+  it("the tenancy schema declares the two fields that made MTN-06/07 unsatisfiable", () => {
+    const declared = (JSON.parse(
+      readFileSync(path.join(SCHEMAS, 'multi-tenancy.input.schema.json'), 'utf8'),
+    ) as any).properties.satellite.properties.multiTenancy.properties;
+
+    expect(Object.keys(declared)).toEqual(expect.arrayContaining([
+      'tenantAuditTrailEnabled',
+      'tenantMigrationPathDefined',
+    ]));
+    // Declared, NOT required: absence already means "not done" to the policy, and
+    // requiring them would turn a legible violation into a schema error.
+    const required = (JSON.parse(
+      readFileSync(path.join(SCHEMAS, 'multi-tenancy.input.schema.json'), 'utf8'),
+    ) as any).properties.satellite.properties.multiTenancy.required;
+    expect(required).not.toContain('tenantAuditTrailEnabled');
+  });
+
+  it('the SPACE-03 field is spelled the way its own message spells it', () => {
+    const rego = readFileSync(path.join(OPA, 'executive-scorecards.rego'), 'utf8');
+    // The message says "Team cognitive load survey"; the field used to say `cognitiv`.
+    expect(rego).toContain('cognitiveLoadSurveyCompleted');
+    expect(rego).not.toContain('cognitivLoad');
+  });
+});

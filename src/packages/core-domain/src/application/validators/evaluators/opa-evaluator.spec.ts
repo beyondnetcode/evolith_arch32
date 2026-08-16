@@ -292,6 +292,128 @@ describe('every policy in the bundle is attributable · GT-693', () => {
     }
     expect(wrong).toEqual([]);
   });
+
+  /**
+   * The projection in `main.rego` is `{"id": v.id, "message": v.message, "policy": …}`,
+   * written by hand because the compiled wasm dispatches too few builtins for
+   * `object.union` (guard 55). That makes it lossy by construction: whatever an
+   * aggregated policy emits beyond those two fields is dropped, and nothing in the
+   * bundle says so.
+   *
+   * `main.rego` used to state the licence for it in prose — "all 251 violation
+   * literals carry those two fields and nothing else" — and BOTH halves had rotted:
+   * the corpus is 266 literals, and one of them (`TPC-01`) carries five fields. This
+   * recomputes both from the real files so the next divergence is a red test rather
+   * than a comment nobody re-measures.
+   */
+  describe('the aggregated corpus is the shape this projection assumes · GT-693', () => {
+    /** Violation literals whose top-level keys are known to exceed `{id, message}`. */
+    const KNOWN_WIDE = ['TPC-01'];
+
+    /** 251 -> 266 on 2026-08-16: the prose figure was never re-measured after the
+     *  policies added since GT-693 were aggregated. Recomputed here, so it cannot
+     *  silently drift again — a policy added WITH its aggregation moves this number
+     *  and the diff shows the new rules; a policy added without one fails the
+     *  `aggregations().length === imports().length` assertion above instead. */
+    const PINNED_LITERAL_COUNT = 266;
+
+    /** Every `{...}` object literal a policy uses as a violation, head or body. */
+    function violationLiterals(text: string): string[] {
+      const out: string[] = [];
+      // Heads (`violations contains {…} if {`) and bodies (`v := {…}` inside a
+      // `violations contains v if {` rule) both matter: phase-gates.rego builds its
+      // three through a variable, and a head-only scan would undercount by three.
+      const starts = [
+        ...text.matchAll(/^violations contains\s+(?=\{)/gm),
+        ...text.matchAll(/^\t+v := (?=\{"id")/gm),
+      ].map((m) => text.indexOf('{', m.index! + m[0].length - 1));
+      for (const start of starts) {
+        let depth = 0;
+        let inString = false;
+        for (let i = start; i < text.length; i++) {
+          const c = text[i];
+          if (inString) {
+            if (c === '\\') i++;
+            else if (c === '"') inString = false;
+            continue;
+          }
+          if (c === '"') inString = true;
+          else if (c === '{' || c === '[' || c === '(') depth++;
+          else if (c === '}' || c === ']' || c === ')') {
+            depth--;
+            if (depth === 0) {
+              out.push(text.slice(start, i + 1));
+              break;
+            }
+          }
+        }
+      }
+      return out;
+    }
+
+    /** Keys at nesting level 1 — `sprintf` arguments and nested objects excluded. */
+    function topLevelKeys(literal: string): string[] {
+      const keys: string[] = [];
+      let depth = 0;
+      // No `inString` state: the `"` branch below consumes the whole string by
+      // jumping to its closing quote, so a separate flag was never assigned `true`
+      // and its block was unreachable. CodeQL flagged it as a useless conditional and
+      // was right -- removed rather than silenced.
+      for (let i = 0; i < literal.length; i++) {
+        const c = literal[i];
+        if (c === '"') {
+          const close = literal.slice(i + 1).search(/(?<!\\)"/) + i + 1;
+          const after = literal.slice(close + 1).match(/^\s*:/);
+          if (after && depth === 1) keys.push(literal.slice(i + 1, close));
+          i = close;
+          continue;
+        }
+        if (c === '{' || c === '[' || c === '(') depth++;
+        else if (c === '}' || c === ']' || c === ')') depth--;
+      }
+      return keys;
+    }
+
+    const corpus = () => {
+      const files = packageToFile();
+      return imports().map(({ pkg }) => {
+        const file = files.get(`evolith.${pkg}`)!;
+        return { file, literals: violationLiterals(fs.readFileSync(file, 'utf8')) };
+      });
+    };
+
+    it('recomputes the literal count the projection is written against', () => {
+      const total = corpus().reduce((n, { literals }) => n + literals.length, 0);
+      expect(total).toBe(PINNED_LITERAL_COUNT);
+    });
+
+    it('finds a literal in every aggregated policy — a mis-parse would read as zero', () => {
+      const empty = corpus().filter(({ literals }) => literals.length === 0).map(({ file }) => file);
+      expect(empty).toEqual([]);
+    });
+
+    it('only the KNOWN_WIDE ids carry fields this projection would drop', () => {
+      const wide: string[] = [];
+      for (const { file, literals } of corpus()) {
+        for (const literal of literals) {
+          const keys = topLevelKeys(literal);
+          const id = literal.match(/"id":\s*"([^"]+)"/)?.[1] ?? '<computed>';
+          const extra = keys.filter((k) => k !== 'id' && k !== 'message');
+          if (extra.length > 0 && !KNOWN_WIDE.includes(id)) {
+            wide.push(`${path.basename(file)}:${id} also emits ${extra.join(', ')}`);
+          }
+        }
+      }
+      expect(wide).toEqual([]);
+    });
+
+    it('TPC-01 IS one of them — the exception is real, not a stale allowance', () => {
+      const tpc = corpus()
+        .flatMap(({ literals }) => literals)
+        .find((l) => l.includes('"TPC-01"'));
+      expect(topLevelKeys(tpc!).sort()).toEqual(['blocking', 'id', 'message', 'severity', 'title']);
+    });
+  });
 });
 
 /**
@@ -390,5 +512,51 @@ describe('an unclaimed violation is named, not dropped · GT-693 AC2', () => {
     );
 
     expect(logger.getLogsByLevel('DEBUG').map((l) => l.message).join(' ')).not.toMatch(/matched no evaluated rule/);
+  });
+});
+
+/**
+ * GT-700 — a regression GT-693 shipped, found by an adversarial probe on GT-675.
+ *
+ * GT-693 gave every aggregated violation a `policy` tag so a GATE rule referencing
+ * `rulesets/opa/<file>.rego` could claim it. The predicate was written as a
+ * short-circuit:
+ *
+ *     if (typeof provenance === 'string') return provenance === ruleId;
+ *     ...
+ *     return violation.id === ruleId;      // ← became unreachable
+ *
+ * Because `main.rego` now tags EVERY violation, the exact-id branch is dead code.
+ * A corpus rule stopped being able to claim the violation that carries its own id:
+ * `ACL-02` no longer matches `{ id: 'ACL-02', policy: 'opa-anti-corruption-layer' }`.
+ *
+ * MEASURED: 184 corpus rules are decidable by exact id from the shipped policies, and
+ * all 184 lost their attribution the day the tag landed. The whole-corpus OPA run
+ * reports 4 issues where the native engine reports 112.
+ *
+ * The two claims are ADDITIVE, not alternative. One violation legitimately answers to
+ * two different rules: the corpus rule that shares its id, and the gate rule that
+ * pulled the policy in. Making provenance exclusive silently deleted the first.
+ */
+describe('provenance ADDS a claimant, it does not replace one · GT-700', () => {
+  const tagged = { id: 'ACL-02', message: 'x', policy: 'opa-anti-corruption-layer' };
+
+  it('a CORPUS rule still claims the violation carrying its own id', () => {
+    // This is what GT-693 broke: before the tag existed, exact-id matching worked.
+    expect(violationBelongsToRule(tagged, 'ACL-02')).toBe(true);
+  });
+
+  it('and the GATE rule that pulled in the policy still claims it too', () => {
+    expect(violationBelongsToRule(tagged, 'opa-anti-corruption-layer')).toBe(true);
+  });
+
+  it('a rule that is neither claims nothing', () => {
+    expect(violationBelongsToRule(tagged, 'MTN-01')).toBe(false);
+    expect(violationBelongsToRule(tagged, 'opa-multi-tenancy')).toBe(false);
+  });
+
+  it('an untagged violation is unaffected — legacy bundles keep working', () => {
+    expect(violationBelongsToRule({ id: 'ACL-02', message: 'x' }, 'ACL-02')).toBe(true);
+    expect(violationBelongsToRule({ id: 'DOD-01', message: 'x' }, 'opa-dod')).toBe(true);
   });
 });

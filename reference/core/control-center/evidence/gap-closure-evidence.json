@@ -10318,6 +10318,26 @@
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "No dependency added or changed. One optional boolean added to two existing interfaces and set at three construction sites in the evaluation engine, plus one spec. No control flow changed and no verdict changed -- the same rules fire on the same inputs with the same severities, which is what makes this a disclosure rather than a behaviour change."
+    },
+    {
+      "id": "GT-700",
+      "closedAt": "2026-08-16",
+      "closureCommit": "6b307f36",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts"
+      ],
+      "validationCommands": [
+        "THE REGRESSION, VERIFIED AGAINST THE SHIPPED BUILD: violationBelongsToRule({id:'ACL-02', policy:'opa-anti-corruption-layer'}, 'ACL-02') -> false; the same violation untagged -> true; tagged -> 'opa-anti-corruption-layer' -> true. GT-693 wrote the provenance check as an early return and main.rego tags EVERY violation, so  was dead code.",
+        "SCOPE: 184 corpus rules are decidable by exact id from the shipped policies (203 ids emitted, 411 corpus rules, 184 intersect). All 184 lost their claim.",
+        "END TO END, BEFORE: whole-corpus `validate --core . --engine opa` -> 4 issues, 1 blocking. AFTER: 51 issues, 31 blocking -- against the 52 / 31 the board recorded on 2026-08-14 before the tag existed, and native's 112 / 82. The near-exact match with the pre-regression figure is the proof the claim path is restored.",
+        "TEST OBSERVED RED FIRST against the shipped predicate; four cases pin that provenance ADDS a claimant rather than replacing one, including that an untagged violation still works so a pre-GT-693 policy.wasm keeps functioning.",
+        "FOUND BY AN ADVERSARIAL PROBE ON GT-675, not by the spec that shipped GT-693 -- that spec pinned provenance-first and had no case for a corpus rule whose id equals a violation id.",
+        "SUITES: core-domain 1972, cli 1482, mcp 575, infra-providers 179, contracts 115. Guard 28 green.",
+        "NOT THIS ROW: the residual 51 vs native 112 is GT-675 -- OpaEvaluator still has no `skipped` outcome at all (`grep -c skipped` returns 0 there, against 3 in the native evaluator)."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. One conditional moved to the top of an existing pure predicate, plus four spec cases. No control flow outside that function changed."
     }
   ]
 }

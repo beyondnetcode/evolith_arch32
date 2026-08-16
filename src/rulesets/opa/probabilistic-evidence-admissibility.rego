@@ -78,7 +78,7 @@ epoch_day(text) := days if {
 	era := floor(shifted / 400)
 	yoe := shifted - (era * 400)
 	doy := (floor(((153 * month_index(month)) + 2) / 5) + day) - 1
-	doe := ((yoe * 365) + floor(yoe / 4)) - floor(yoe / 100) + doy
+	doe := (((yoe * 365) + floor(yoe / 4)) - floor(yoe / 100)) + doy
 	days := ((era * 146097) + doe) - 719468
 }
 

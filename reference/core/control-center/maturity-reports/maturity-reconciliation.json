@@ -3,10 +3,10 @@
   "scope": "evolith-core",
   "asOf": "2026-08-08",
   "gaps": {
-    "total": 702,
+    "total": 703,
     "done": 669,
     "pending": 21,
-    "inProgress": 2,
+    "inProgress": 3,
     "deferred": 10
   },
   "evidence": {

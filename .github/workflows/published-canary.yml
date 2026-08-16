@@ -1,0 +1,125 @@
+name: Published Artifact Canary (GT-671)
+
+# Every other workflow in this repository measures the TREE. This one measures the
+# REGISTRY — what a user actually installs — on a schedule, because the tree can be
+# perfectly green while the tarball is broken, and that has already cost twice:
+# GT-634 was a defect of the published CLI found by hand while doing something else,
+# and GT-625's own closure record says its criterion was ticked against "a locally
+# packed tarball, not against the registry".
+#
+# Before this, the only post-publish check was `npm install -g …` followed by
+# `--help`, once, inside the release. Measured: every published version answers
+# `--version` with exit 0, including the one GT-625 recorded as broken. A check that
+# cannot tell them apart is not a check.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  schedule:
+    # 06:30 UTC daily — after opa-parity (06:00) so a red morning has one cause.
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Published CLI version to test (a dist-tag or an exact version)'
+        required: false
+        default: 'latest'
+      mcpVersion:
+        description: 'Published MCP version (defaults to the CLI version)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  canary:
+    name: Install from the registry and do real work
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      # The checkout carries the ASSERTION (gate-verdict.assert.js) and the canary
+      # script. It is deliberately not on the module resolution path of the thing
+      # under test: the packages are installed into a throwaway prefix and driven
+      # from a temp directory, which is the whole point — GT-625 shipped an
+      # uninstallable CLI precisely because the workspace symlink hid it.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run the canary against the registry
+        id: canary
+        run: |
+          node .harness/scripts/ci/published-artifact-canary.mjs \
+            --version "${{ inputs.version || 'latest' }}" \
+            ${{ inputs.mcpVersion && format('--mcp-version {0}', inputs.mcpVersion) || '' }} \
+            2>&1 | tee canary.log
+          exit "${PIPESTATUS[0]}"
+
+      # AC4 — a red canary has to surface somewhere a human reads. A scheduled
+      # workflow that only goes red in the Actions tab is the failure mode GT-635
+      # records: nobody is subscribed to it. The issue is UPDATED rather than
+      # duplicated, so a week of red is one thread and not seven.
+      - name: Open or update the canary issue
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const log = fs.existsSync('canary.log') ? fs.readFileSync('canary.log', 'utf8') : '(no log captured)';
+            const title = 'Published artifact canary is red';
+            const body = [
+              `The published artifact canary failed on ${new Date().toISOString().slice(0, 10)}.`,
+              '',
+              'This measures **the registry**, not this branch. A red run means what users install is',
+              'broken while the tree can be entirely green — that asymmetry is why the canary exists.',
+              '',
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              '```',
+              log.slice(-4000),
+              '```',
+            ].join('\n');
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'published-canary',
+            });
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.data[0].number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['published-canary'],
+              });
+            }
+
+      # A canary nobody closes is a canary nobody believes. When the registry is
+      # healthy again the thread says so and closes itself.
+      - name: Close the canary issue when the registry is healthy again
+        if: success() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'published-canary',
+            });
+            for (const issue of existing.data) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number,
+                body: `Green again on ${new Date().toISOString().slice(0, 10)} — the published artifact installs and does real work.`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, state: 'closed',
+              });
+            }

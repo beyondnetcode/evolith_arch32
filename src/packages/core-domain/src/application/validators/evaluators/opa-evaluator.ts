@@ -56,13 +56,29 @@ export function violationBelongsToRule(
   violation: Record<string, unknown>,
   ruleId: string,
 ): boolean {
+  // GT-700 — the two claims are ADDITIVE, and writing them as alternatives was a
+  // regression GT-693 shipped.
+  //
+  // One violation legitimately answers to TWO different rules: the corpus rule that
+  // shares its id (`ACL-02`), and the gate rule that pulled the policy in
+  // (`opa-anti-corruption-layer`). GT-693 added the provenance tag as an early
+  // return, and because `main.rego` tags EVERY violation the exact-id branch below
+  // became dead code. Measured when it was found: 184 corpus rules are decidable by
+  // exact id from the shipped policies and all 184 silently stopped being claimed,
+  // which is why a whole-corpus OPA run reported 4 issues against native's 112.
+  //
+  // Found by an adversarial probe on GT-675, not by the suite that shipped GT-693 --
+  // that suite pinned provenance-first and had no case for a corpus rule whose id
+  // equals a violation id.
+  if (violation.id === ruleId) return true;
+
   const provenance = violation.policy;
   if (typeof provenance === 'string') return provenance === ruleId;
 
   // Legacy bundle: no provenance on the wire.
   const prefix = CONTEXT_AWARE_VIOLATION_PREFIXES[ruleId];
   if (prefix) return typeof violation.id === 'string' && violation.id.startsWith(prefix);
-  return violation.id === ruleId;
+  return false;
 }
 
 export class OpaEvaluator implements IRuleEvaluatorStrategy {

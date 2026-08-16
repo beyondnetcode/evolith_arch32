@@ -9847,3 +9847,28 @@ The declaration has one hole — a pack that does not declare — and the direct
 - **CLOSED 2026-08-16.** Mutation: flipping the marker to `true` turns the partition case red. Suites after a clean build: core-domain **1968**, cli 1482, mcp 575, infra-providers 179, contracts 115. **A measurement taken against a FAILED build was discarded mid-work** — the type did not exist on `ValidationIssue` yet and `tsc -b` had emitted partially, so the numbers were re-taken after `build exit=0`.
 - **What this does NOT fix.** The engine still cannot evaluate 74 of its own blocking rules on this repository. Making that legible is not making it go away, and the underlying coverage gap is `GT-694`'s and `GT-696`'s territory, not this row's. This row only guarantees that the gap is now countable.
 - **Status:** `DONE`
+
+#### GT-700
+
+**Title:** GT-693's provenance tag was written as an early return, so every corpus rule silently stopped claiming the violation carrying its own id — 184 rules, and a whole-corpus OPA run collapsed from 52 issues to 4
+
+- **Purpose:** Restore the attribution `GT-693` deleted while fixing a different one, and pin the case its own suite had no test for.
+- **Evidence:** **Found 2026-08-16 by an adversarial probe launched against `GT-675`, not by the suite that shipped the defect.** `GT-693` gave every aggregated violation a `policy` tag so a GATE rule referencing `rulesets/opa/<file>.rego` could claim it, and wrote the predicate as `if (typeof provenance === 'string') return provenance === ruleId;` — an early return. Because `main.rego` tags **every** violation, the `return violation.id === ruleId` branch below it became **dead code**. Verified directly against the shipped build: `violationBelongsToRule({id:'ACL-02', policy:'opa-anti-corruption-layer'}, 'ACL-02')` → **`false`**, while the same violation untagged → `true`. **184 corpus rules are decidable by exact id from the shipped policies, and all 184 lost their claim the day the tag landed.** Measured end to end on this repository: a whole-corpus `--engine opa` run reported **4 issues / 1 blocking**, against the **52 / 31** the board recorded on 2026-08-14 before the tag existed, and against native's 112 / 82.
+- **Use cases:**
+  - A tenant runs `--engine opa` and gets 4 findings where the same corpus yields 52.
+  - `DEP-10` is a genuine violation both engines can decide; only the OPA engine reported it green.
+  - Anyone comparing the two engines is comparing an engine to a crippled version of itself.
+- **Impact:** A false green on 26 blocking rules whose violations the engine **had already computed** and discarded to a `logger.debug` line — the worst shape available, because the evidence existed and was thrown away. It also poisoned every dual-engine measurement taken after 2026-08-15, including the ones used to size `GT-675`.
+- **Expected outcome:** provenance ADDS a claimant instead of replacing one; a violation answers to both the corpus rule sharing its id and the gate rule that pulled its policy in.
+- **Affected files:** `src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts`, `src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts`
+- **Component:** `Core Domain` · **Criticality:** P0 · **Complexity:** XS
+- **Principal:** `XS` · **Interest:** `SEVERE` · **Basis:** `estimate`
+- **Provenance:** Registered and closed 2026-08-16. **The defect was mine, shipped the previous day in `GT-693`, and it reached `main`.** `GT-693`'s suite pinned provenance-first and contained no case for a corpus rule whose id equals a violation id, so a four-case spec added the same afternoon passed over the regression. **P0 because it is a false green on a shipped path**, and `XS` because the fix is one line moved.
+- **Acceptance criteria:**
+  - [x] **FALSIFIABILITY:** a whole-corpus `--engine opa` run recovers the pre-regression figures. Before: **4 issues / 1 blocking**. After: **51 / 31**, against the **52 / 31** recorded on 2026-08-14. Both outputs recorded.
+  - [x] A corpus rule claims the tagged violation carrying its own id, and the gate rule claims it too — both asserted, since the point is that they are additive.
+  - [x] An untagged violation is unaffected, so a `policy.wasm` older than `GT-693` keeps working.
+  - [x] The test was observed RED against the shipped predicate before the fix.
+- **CLOSED 2026-08-16.** Suites after: core-domain **1972**, cli 1482, mcp 575, infra-providers 179, contracts 115; guard 28 green. **Why the residual 51 vs native's 112 is NOT this row:** the OPA engine still reports `rulesSkipped: 0` because `OpaEvaluator` has no `skipped` outcome at all — `grep -c skipped` returns **0** there against **3** in the native evaluator. That is `GT-675`, still open and now measurable against an engine that is no longer crippled.
+- **The lesson this row exists to record.** `GT-693` replaced a hand-maintained prefix table with derived provenance and was right to. The defect was writing the new mechanism as an ALTERNATIVE to the old one rather than an ADDITION, and shipping a spec that only exercised the new path. A fix that removes a mechanism must test what that mechanism used to do.
+- **Status:** `DONE`

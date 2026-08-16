@@ -9752,3 +9752,28 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
 - **CERRADO el 2026-08-16.** Mutación: poner la marca en `true` deja en rojo el caso de la partición. Suites tras un build limpio: core-domain **1968**, cli 1482, mcp 575, infra-providers 179, contratos 115. **Se descartó a mitad del trabajo una medición tomada sobre un build FALLIDO** — el tipo aún no existía en `ValidationIssue` y `tsc -b` había emitido parcialmente, así que las cifras se volvieron a tomar tras `build exit=0`.
 - **Lo que esto NO arregla.** El motor sigue sin poder evaluar 74 de sus propias reglas bloqueantes en este repositorio. Hacerlo legible no es hacerlo desaparecer, y ese hueco de cobertura es territorio de `GT-694` y `GT-696`, no de esta fila. Esta fila solo garantiza que el hueco ya es contable.
 - **Estado:** `COMPLETADO`
+
+#### GT-700
+
+**Título:** La etiqueta de procedencia de GT-693 se escribió como salida anticipada, así que toda regla del corpus dejó en silencio de reclamar la violación que lleva su propio id — 184 reglas, y una corrida OPA del corpus completo cayó de 52 issues a 4
+
+- **Propósito:** Restaurar la atribución que `GT-693` borró mientras arreglaba otra, y fijar el caso para el que su propio spec no tenía test.
+- **Evidencia:** **Encontrado el 2026-08-16 por una sonda adversarial lanzada contra `GT-675`, no por el spec que embarcó el defecto.** `GT-693` dio a cada violación agregada una etiqueta `policy` para que una regla de COMPUERTA que referencia `rulesets/opa/<fichero>.rego` pudiera reclamarla, y escribió el predicado como `if (typeof provenance === 'string') return provenance === ruleId;` — una salida anticipada. Como `main.rego` etiqueta **todas** las violaciones, la rama `return violation.id === ruleId` de abajo quedó **código muerto**. Verificado directamente contra el build embarcado: `violationBelongsToRule({id:'ACL-02', policy:'opa-anti-corruption-layer'}, 'ACL-02')` → **`false`**, mientras la misma violación sin etiqueta → `true`. **184 reglas del corpus son decidibles por id exacto desde las políticas embarcadas, y las 184 perdieron su reclamo el día que aterrizó la etiqueta.** Medido de extremo a extremo sobre este repositorio: una corrida `--engine opa` del corpus completo reportó **4 issues / 1 bloqueante**, frente a los **52 / 31** que el board registró el 2026-08-14 antes de que la etiqueta existiera, y frente a los 112 / 82 del nativo.
+- **Casos de uso:**
+  - Un tenant corre `--engine opa` y obtiene 4 hallazgos donde el mismo corpus da 52.
+  - `DEP-10` es una violación real que ambos motores pueden decidir; solo el motor OPA la reportaba en verde.
+  - Quien compare los dos motores está comparando un motor contra una versión mutilada de sí mismo.
+- **Impacto:** Un falso verde sobre 26 reglas bloqueantes cuyas violaciones el motor **ya había calculado** y descartaba a una línea de `logger.debug` — la peor forma posible, porque la evidencia existía y se tiraba. Además envenenó toda medición de doble motor tomada después del 2026-08-15, incluidas las usadas para dimensionar `GT-675`.
+- **Resultado esperado:** la procedencia AÑADE un reclamante en vez de sustituirlo; una violación responde tanto a la regla del corpus que comparte su id como a la regla de compuerta que trajo su política.
+- **Ficheros afectados:** `src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts`, `src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts`
+- **Componente:** `Core Domain` · **Criticidad:** P0 · **Complejidad:** XS
+- **Principal:** `XS` · **Interés:** `SEVERE` · **Base:** `estimate`
+- **Procedencia:** Registrado y cerrado el 2026-08-16. **El defecto fue mío, embarcado el día anterior en `GT-693`, y llegó a `main`.** El spec de `GT-693` fijaba la procedencia primero y no contenía ningún caso para una regla del corpus cuyo id coincide con el de una violación, así que un spec de cuatro casos añadido esa misma tarde pasó por encima de la regresión. **P0 porque es un falso verde en un camino embarcado**, y `XS` porque el arreglo es una línea movida.
+- **Criterios de aceptación:**
+  - [x] **FALSABILIDAD:** una corrida `--engine opa` del corpus completo recupera las cifras previas a la regresión. Antes: **4 issues / 1 bloqueante**. Después: **51 / 31**, frente a los **52 / 31** registrados el 2026-08-14. Ambas salidas registradas.
+  - [x] Una regla del corpus reclama la violación etiquetada que lleva su propio id, y la regla de compuerta también la reclama — ambas afirmadas, porque el punto es que son aditivas.
+  - [x] Una violación sin etiqueta no se ve afectada, así que un `policy.wasm` anterior a `GT-693` sigue funcionando.
+  - [x] El test se observó en ROJO contra el predicado embarcado antes del arreglo.
+- **CERRADO el 2026-08-16.** Suites después: core-domain **1972**, cli 1482, mcp 575, infra-providers 179, contratos 115; guard 28 verde. **Por qué el residual 51 frente a los 112 del nativo NO es esta fila:** el motor OPA sigue reportando `rulesSkipped: 0` porque `OpaEvaluator` no tiene ningún resultado `skipped` — `grep -c skipped` devuelve **0** ahí frente a **3** en el evaluador nativo. Eso es `GT-675`, abierto todavía y ahora medible contra un motor que ya no está mutilado.
+- **La lección que esta fila existe para registrar.** `GT-693` sustituyó una tabla de prefijos mantenida a mano por procedencia derivada, y hacía bien. El defecto fue escribir el mecanismo nuevo como ALTERNATIVA al viejo en vez de como ADICIÓN, y embarcar un spec que solo ejercitaba el camino nuevo. Un arreglo que retira un mecanismo tiene que testear lo que ese mecanismo hacía.
+- **Estado:** `COMPLETADO`

@@ -392,3 +392,49 @@ describe('an unclaimed violation is named, not dropped · GT-693 AC2', () => {
     expect(logger.getLogsByLevel('DEBUG').map((l) => l.message).join(' ')).not.toMatch(/matched no evaluated rule/);
   });
 });
+
+/**
+ * GT-700 — a regression GT-693 shipped, found by an adversarial probe on GT-675.
+ *
+ * GT-693 gave every aggregated violation a `policy` tag so a GATE rule referencing
+ * `rulesets/opa/<file>.rego` could claim it. The predicate was written as a
+ * short-circuit:
+ *
+ *     if (typeof provenance === 'string') return provenance === ruleId;
+ *     ...
+ *     return violation.id === ruleId;      // ← became unreachable
+ *
+ * Because `main.rego` now tags EVERY violation, the exact-id branch is dead code.
+ * A corpus rule stopped being able to claim the violation that carries its own id:
+ * `ACL-02` no longer matches `{ id: 'ACL-02', policy: 'opa-anti-corruption-layer' }`.
+ *
+ * MEASURED: 184 corpus rules are decidable by exact id from the shipped policies, and
+ * all 184 lost their attribution the day the tag landed. The whole-corpus OPA run
+ * reports 4 issues where the native engine reports 112.
+ *
+ * The two claims are ADDITIVE, not alternative. One violation legitimately answers to
+ * two different rules: the corpus rule that shares its id, and the gate rule that
+ * pulled the policy in. Making provenance exclusive silently deleted the first.
+ */
+describe('provenance ADDS a claimant, it does not replace one · GT-700', () => {
+  const tagged = { id: 'ACL-02', message: 'x', policy: 'opa-anti-corruption-layer' };
+
+  it('a CORPUS rule still claims the violation carrying its own id', () => {
+    // This is what GT-693 broke: before the tag existed, exact-id matching worked.
+    expect(violationBelongsToRule(tagged, 'ACL-02')).toBe(true);
+  });
+
+  it('and the GATE rule that pulled in the policy still claims it too', () => {
+    expect(violationBelongsToRule(tagged, 'opa-anti-corruption-layer')).toBe(true);
+  });
+
+  it('a rule that is neither claims nothing', () => {
+    expect(violationBelongsToRule(tagged, 'MTN-01')).toBe(false);
+    expect(violationBelongsToRule(tagged, 'opa-multi-tenancy')).toBe(false);
+  });
+
+  it('an untagged violation is unaffected — legacy bundles keep working', () => {
+    expect(violationBelongsToRule({ id: 'ACL-02', message: 'x' }, 'ACL-02')).toBe(true);
+    expect(violationBelongsToRule({ id: 'DOD-01', message: 'x' }, 'opa-dod')).toBe(true);
+  });
+});

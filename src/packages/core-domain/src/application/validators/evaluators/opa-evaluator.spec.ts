@@ -413,6 +413,31 @@ describe('every policy in the bundle is attributable · GT-693', () => {
         .find((l) => l.includes('"TPC-01"'));
       expect(topLevelKeys(tpc!).sort()).toEqual(['blocking', 'id', 'message', 'severity', 'title']);
     });
+
+    /**
+     * The OTHER number this gap states in prose, pinned for the same reason.
+     *
+     * GT-693's board row said "10 of 203", the AC4 comment above said 197, and the
+     * real answer on 2026-08-16 was 196 — three figures for one measurement, none of
+     * them re-derived since the day it was written. The collision COUNT was the only
+     * part both got right, and it is the part the gap actually turns on, so it is
+     * asserted by construction here rather than restated anywhere.
+     */
+    it('recomputes the distinct-id count and which ids two policies both emit', () => {
+      const byId = new Map<string, Set<string>>();
+      for (const { file, literals } of corpus()) {
+        for (const literal of literals) {
+          const id = literal.match(/"id":\s*"([^"]+)"/)?.[1];
+          if (id) byId.set(id, (byId.get(id) ?? new Set()).add(path.basename(file)));
+        }
+      }
+      const collide = [...byId.entries()].filter(([, files]) => files.size > 1).map(([id]) => id);
+      expect(byId.size).toBe(196);
+      expect(collide.sort()).toEqual([
+        'CLI-RR-01', 'CLI-RR-02', 'CLI-RR-03', 'CLI-RR-04', 'CLI-RR-05',
+        'TAX-05', 'TAX-06', 'TAX-07', 'TAX-08', 'TAX-11',
+      ]);
+    });
   });
 });
 
@@ -420,8 +445,11 @@ describe('every policy in the bundle is attributable · GT-693', () => {
  * GT-693 AC4 — the two id ranges that no id-based scheme can resolve.
  *
  * `CLI-RR-01..05` are emitted by BOTH `cli-readiness` and `cli-release-readiness`;
- * `TAX-05..11` by both `taxonomy` and `repository-taxonomy`. 10 of the corpus's 197
- * ids collide. Under the old prefix scheme a gate referencing one of them would have
+ * `TAX-05`, `06`, `07`, `08` and `11` by both `taxonomy` and `repository-taxonomy`.
+ * 10 of the corpus's **196** distinct ids collide — recounted 2026-08-16, when the
+ * board said 203 and this comment said 197 and neither had been re-measured. (The
+ * TAX side was also written `TAX-05..11`, a range that reads as seven; `TAX-09` and
+ * `TAX-10` do not collide.) Under the old prefix scheme a gate referencing one of them would have
  * claimed the other's findings and reported them under the wrong rule — a verdict
  * that names the wrong policy is worse than a missing one, because it sends the
  * operator to the wrong file.

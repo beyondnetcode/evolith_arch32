@@ -24,7 +24,7 @@ interface StandardsCommandOptions {
 
 @Command({
   name: 'standards',
-  description: 'Gestión de estándares Evolith (arquitectura, gobernanza, operaciones)',
+  description: 'Manage Evolith standards (architecture, governance, operations)',
 })
 export class StandardsCommand extends BaseEvolithCommand {
   constructor(@Inject('IFileSystem') private readonly fileSystem: IFileSystem) {
@@ -68,13 +68,13 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
 
     const action = await this.promptService.select({
-      message: '¿Qué acción deseas realizar?',
+      message: 'What would you like to do?',
       options: [
         { value: 'init', label: 'Inicializar', hint: 'Crear estructura de standards' },
-        { value: 'list', label: 'Listar Standards', hint: 'Ver todos los standards' },
-        { value: 'get', label: 'Ver Standard', hint: 'Detalles de un standard' },
-        { value: 'validate', label: 'Validar Código', hint: 'Validar contra standards' },
-        { value: 'export', label: 'Exportar', hint: 'Exportar standard a MD/JSON' },
+        { value: 'list', label: 'List standards', hint: 'See every standard' },
+        { value: 'get', label: 'View standard', hint: 'Details of one standard' },
+        { value: 'validate', label: 'Validate code', hint: 'Validate against the standards' },
+        { value: 'export', label: 'Export', hint: 'Export a standard to MD/JSON' },
       ],
     });
 
@@ -86,15 +86,15 @@ export class StandardsCommand extends BaseEvolithCommand {
         await this.listStandards(fs, undefined, json, meta, startedAt);
         break;
       case 'get':
-        const id = await this.promptService.text({ message: 'ID del Standard:' });
+        const id = await this.promptService.text({ message: 'Standard id:' });
         await this.getStandard(fs, id as string, json, meta, startedAt);
         break;
       case 'validate':
-        const code = await this.promptService.text({ message: 'Código a validar:' });
+        const code = await this.promptService.text({ message: 'Code to validate:' });
         await this.validateStandards(fs, code as string, json, meta, startedAt);
         break;
       case 'export':
-        const exportId = await this.promptService.text({ message: 'ID del Standard:' });
+        const exportId = await this.promptService.text({ message: 'Standard id:' });
         const format = await this.promptService.select({
           message: 'Formato:',
           options: [
@@ -127,10 +127,10 @@ export class StandardsCommand extends BaseEvolithCommand {
         console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
         this.promptService.stopSpinner();
-        this.promptService.showSuccess('✓ Estructura de standards creada');
-        this.promptService.showInfo('  Ubicación: reference/standards/');
-        this.promptService.showInfo('  Subcarpetas: rulesets/, templates/');
-        this.promptService.showInfo('\nPara ver los standards disponibles, usa: evolith standards --list');
+        this.promptService.showSuccess('✓ Standards structure created');
+        this.promptService.showInfo('  Location: reference/standards/');
+        this.promptService.showInfo('  Subfolders: rulesets/, templates/');
+        this.promptService.showInfo('\nTo see the available standards, run: evolith standards --list');
       }
     } catch (error) {
       if (!json) {
@@ -142,7 +142,7 @@ export class StandardsCommand extends BaseEvolithCommand {
         const message = error instanceof Error ? error.message : String(error);
         console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
-        this.promptService.showError('✗ Error inicializando standards');
+        this.promptService.showError('✗ Failed to initialise the standards structure');
       }
     }
   }
@@ -171,8 +171,8 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
 
     if (standards.length === 0) {
-      this.promptService.showWarning('No hay standards registrados.');
-      this.promptService.showInfo('Usa "evolith standards --init" para inicializar la estructura.');
+      this.promptService.showWarning('No standards registered.');
+      this.promptService.showInfo('Run "evolith standards --init" to create the structure.');
       return;
     }
 
@@ -198,9 +198,9 @@ export class StandardsCommand extends BaseEvolithCommand {
     if (!standard) {
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `Standard ${id} no encontrado`, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `Standard ${id} not found`, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
-        this.promptService.showError(`Standard ${id} no encontrado`);
+        this.promptService.showError(`Standard ${id} not found`);
       }
       return;
     }
@@ -229,7 +229,7 @@ export class StandardsCommand extends BaseEvolithCommand {
 
   private async validateStandards(fs: IFileSystem, code: string, json = false, meta?: any, startedAt?: number): Promise<void> {
     if (!code) {
-      const message = 'Código requerido para validación';
+      const message = 'Code is required for validation';
       if (json) {
         process.exitCode = 1;
         console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
@@ -291,14 +291,14 @@ export class StandardsCommand extends BaseEvolithCommand {
         const message = error instanceof Error ? error.message : String(error);
         console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - (startedAt || Date.now()) }), null, 2));
       } else {
-        this.promptService.showError(`Error exportando standard: ${error}`);
+        this.promptService.showError(`Failed to export the standard: ${error}`);
       }
     }
   }
 
   @Option({
     flags: '--init',
-    description: 'Inicializar estructura de standards',
+    description: 'Create the standards structure',
   })
   parseInit(): boolean {
     return true;
@@ -306,7 +306,7 @@ export class StandardsCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-l, --list',
-    description: 'Listar todos los standards',
+    description: 'List every standard',
   })
   parseList(): boolean {
     return true;
@@ -314,7 +314,7 @@ export class StandardsCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-g, --get [id]',
-    description: 'Ver standard específico',
+    description: 'View a specific standard',
   })
   parseGet(val: string): string {
     return val;
@@ -322,7 +322,7 @@ export class StandardsCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-v, --validate [code]',
-    description: 'Validar código contra standards',
+    description: 'Validate code against the standards',
   })
   parseValidate(val: string): string {
     return val;
@@ -338,7 +338,7 @@ export class StandardsCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-f, --format [format]',
-    description: 'Formato de exportación: markdown, json',
+    description: 'Export format: markdown, json',
   })
   parseFormat(val: string): string {
     return val;
@@ -346,7 +346,7 @@ export class StandardsCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-c, --category [category]',
-    description: 'Filtrar por categoría',
+    description: 'Filter by category',
   })
   parseCategory(val: string): string {
     return val;

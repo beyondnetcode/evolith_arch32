@@ -63,6 +63,13 @@ function tree(
     writeFile(join(cli, 'dist', rel), content);
   }
 
+  // The compiled Rego bundle. Every fixture here stands for a PUBLISHABLE CLI, and a
+  // publishable CLI carries it — `verifyRuntimeAssets` fails the guard without it, which
+  // is the whole point of that check (1.2.2 booted fine and shipped 87 .rego and no wasm).
+  // Generated rather than committed: the real artifact is 669 kB and the assertion is a
+  // 50 kB floor, so the fixture only has to clear the floor to be representative.
+  writeFile(join(cli, 'rulesets', 'opa', 'policy.wasm'), 'x'.repeat(60_000));
+
   writeFile(
     join(core, 'package.json'),
     JSON.stringify({

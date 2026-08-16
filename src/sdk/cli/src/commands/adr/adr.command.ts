@@ -82,7 +82,7 @@ export class ADRCommand extends BaseEvolithCommand {
       message: 'What would you like to do?',
       options: [
         { value: 'create', label: 'Crear ADR', hint: 'Nuevo Architecture Decision Record' },
-        { value: 'list', label: 'Listar ADRs', hint: 'Ver todos los ADRs' },
+        { value: 'list', label: 'List ADRs', hint: 'See every ADR' },
         { value: 'matrix', label: 'Ver Matriz', hint: 'Ver ADR Matrix summary' },
         { value: 'get', label: 'View ADR', hint: 'Details of a specific ADR' },
         { value: 'update', label: 'Actualizar Status', hint: 'Change an ADR status' },

@@ -41,7 +41,7 @@ export class DriftCommand extends BaseEvolithCommand {
       const normalized = toLegacyLevel(options.level);
       if (!normalized) {
         throw new Error(
-          `Nivel desconocido: "${options.level}". Use un id del eje progresivo ` +
+          `Unknown level: "${options.level}". Use a progressive-axis id ` +
           `(modular-monolith, distributed-modules, microservices).`,
         );
       }

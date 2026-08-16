@@ -56,6 +56,20 @@ export class RulesetValidatorService {
    */
   private readonly processRunner?: IProcessRunner;
   private readonly metrics?: IEnforcerMetrics;
+  /**
+   * GT-676 — the options this instance was built from, retained WHOLE.
+   *
+   * `rebuildValidatorForEngine` used to reconstruct from a hand-written list of
+   * fields, and every option added since had to be remembered there. It was not:
+   * measured the day this was added, the rebuild carried 7 of 10 and silently
+   * dropped `topologyCatalog`, `applyRuleApplicability` and `maxSkippedFraction` —
+   * the last of which is the coverage floor a caller had just asked for. That is
+   * GT-664's defect exactly (`processRunner` dropped the same way), and the fix
+   * there was to add the missing field, which left the next one to be forgotten.
+   *
+   * Keeping the object means the rebuild spreads it and cannot under-fill.
+   */
+  private readonly options: RulesetValidatorOptions;
 
   constructor(@Optional() @Inject(RULESET_VALIDATOR_OPTIONS) options?: RulesetValidatorOptions) {
     if (!options?.fileSystem) throw new Error('IFileSystem is required');
@@ -63,6 +77,7 @@ export class RulesetValidatorService {
     if (!options?.configParser) throw new Error('IConfigParser is required');
     if (!options?.rulesetRepo) throw new Error('IRulesetRepository is required');
 
+    this.options = options;
     this.logger = options.logger;
     this.fs = options.fileSystem;
     this.configParser = options.configParser;

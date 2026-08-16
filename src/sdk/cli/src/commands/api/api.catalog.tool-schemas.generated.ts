@@ -9,7 +9,7 @@
 import type { ToolSchema } from './api.catalog';
 
 /** sha256 of the manifest operation catalog these schemas were generated from. */
-export const GENERATED_TOOL_SCHEMAS_SHA256 = 'd41453e4c14100a7e25800b12804079035674e88bd388076a4b31c812f89b58b';
+export const GENERATED_TOOL_SCHEMAS_SHA256 = 'ad8b3dc9424cbbdabba1c752ff2248fcef38de88d37a89c5aac5c900b4bf91dc';
 
 export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
   "evolith-adr-create": {
@@ -8896,6 +8896,12 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
         "manifest": {
           "type": "string",
           "description": "JSON string or path to SatelliteManifest for pipeline evaluation. Overrides path/topology/phase."
+        },
+        "maxSkippedFraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Coverage floor: fail when the fraction of applicable rules that did NOT run exceeds this value (0..1). Absent => no floor."
         }
       },
       "required": [

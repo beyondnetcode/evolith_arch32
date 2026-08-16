@@ -153,15 +153,23 @@ describe('ValidateSatelliteUseCase', () => {
     it('CARRIES THE ENFORCER SUBSYSTEM ACROSS: the rebuilt validator keeps the process runner', async () => {
       const processRunner = { run: jest.fn() };
       const metrics = { recordDuration: jest.fn() };
+      // GT-676 — the source is shaped the way the rebuild now READS it: the
+      // options object the service retains, rather than the private fields the
+      // rebuild used to reach through. The guarantee under test is unchanged and
+      // is the one GT-664 recorded — a runner that does not survive the copy is a
+      // validator that cannot run a single `enforce:` rule while reporting
+      // `passed` over the ones it skipped.
       const source = {
         validate: jest.fn().mockResolvedValue(mockResult),
         loadRulesetById: jest.fn().mockResolvedValue([]),
-        fs: { name: 'fs' },
-        logger: { name: 'logger' },
-        configParser: { name: 'configParser' },
-        engine: { rulesetRepo: { name: 'repo' } },
-        processRunner,
-        metrics,
+        options: {
+          fileSystem: { name: 'fs' },
+          logger: { name: 'logger' },
+          configParser: { name: 'configParser' },
+          rulesetRepo: { name: 'repo' },
+          processRunner,
+          metrics,
+        },
       } as unknown as jest.Mocked<RulesetValidatorService>;
 
       const Ctor = RulesetValidatorService as unknown as jest.Mock;
@@ -179,7 +187,7 @@ describe('ValidateSatelliteUseCase', () => {
       expect(options.metrics).toBe(metrics);
       // The collaborators that were already carried must still be.
       expect(options.engineType).toBe('native');
-      expect(options.rulesetRepo).toBe(source.engine.rulesetRepo);
+      expect(options.rulesetRepo).toBe((source as any).options.rulesetRepo);
     });
   });
 
@@ -201,12 +209,16 @@ describe('ValidateSatelliteUseCase', () => {
       return {
         validate: jest.fn().mockResolvedValue(mockResult),
         loadRulesetById: jest.fn().mockResolvedValue([]),
-        fs: { name: 'fs' },
-        logger: { name: 'logger', debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn() },
-        configParser: { name: 'configParser' },
-        engine: { rulesetRepo: { name: 'repo' } },
-        processRunner: { run: jest.fn() },
-        metrics: { recordDuration: jest.fn() },
+        // GT-676 — see the note on the GT-664 stub above: same guarantee, shaped
+        // the way the rebuild reads it now.
+        options: {
+          fileSystem: { name: 'fs' },
+          logger: { name: 'logger', debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn() },
+          configParser: { name: 'configParser' },
+          rulesetRepo: { name: 'repo' },
+          processRunner: { run: jest.fn() },
+          metrics: { recordDuration: jest.fn() },
+        },
       } as unknown as jest.Mocked<RulesetValidatorService>;
     }
 
@@ -246,8 +258,8 @@ describe('ValidateSatelliteUseCase', () => {
 
       const options = Ctor.mock.calls[0][0];
       // Same GT-664 loss, on the path that documented block never covered.
-      expect(options.processRunner).toBe(source.processRunner);
-      expect(options.metrics).toBe(source.metrics);
+      expect(options.processRunner).toBe((source as any).options.processRunner);
+      expect(options.metrics).toBe((source as any).options.metrics);
     });
   });
 });

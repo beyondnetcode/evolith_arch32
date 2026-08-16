@@ -332,9 +332,29 @@ export function diffClaimedIds(diff) {
  * reporting that as "the diff claims nothing" would be a vacuous pass one layer
  * below the one this repository already guards against.
  */
+/**
+ * A `develop` -> `main` promotion TRANSPORTS rows; it does not work them.
+ *
+ * Its diff is, by construction, every board change since the last promotion — so
+ * without this it claims every id currently in flight and contests each one
+ * against the pull request that is actually doing the work. Measured when this
+ * was added: promotion #537 (GT-675 + GT-702) was reported as contesting GT-703
+ * with #536, the PR closing GT-703, purely because GT-703's already-merged
+ * registration row travelled inside it.
+ *
+ * This narrows the DIFF side only. A promotion that DECLARES an id — in its
+ * title, its branch, or after a `Closes`/`Advances`/`Claims` marker — still
+ * claims it and is still held to the rule that the row must have moved. So a
+ * promotion cannot use this to smuggle a claim past the guard; it can only stop
+ * being blamed for carrying somebody else's row.
+ */
+export function isPromotion(pr) {
+  return pr?.baseRefName === 'main' && pr?.headRefName === 'develop';
+}
+
 export function claimsOf(pr) {
   const prose = claimedIds(pr);
-  const diffKnown = typeof pr.diff === 'string';
+  const diffKnown = typeof pr.diff === 'string' && !isPromotion(pr);
   const d = diffKnown
     ? diffClaimedIds(pr.diff)
     : { ids: [], boardTouched: false, statusChanges: [], closures: [] };
@@ -494,7 +514,7 @@ export function fetchOpenPullRequests() {
   try {
     const raw = execFileSync(
       'gh',
-      ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,body,headRefName,url'],
+      ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,body,headRefName,baseRefName,url'],
       { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, stdio: ['ignore', 'pipe', 'ignore'] },
     );
     const parsed = JSON.parse(raw);

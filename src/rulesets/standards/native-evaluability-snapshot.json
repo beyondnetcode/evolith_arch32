@@ -3,7 +3,7 @@
   "title": "Native-engine evaluability class per rule (snapshot)",
   "description": "Per-rule evaluability class as computed by the Core native evaluator triage. This is a GENERATED CAPTURE, not the source of truth: the authority is src/packages/core-domain/src/application/validators/rule-evaluability.ts and the handler set registered in native-evaluator.ts. It is recorded here so the ISO/IEC 5055 mapping can be scoped to the real handler backlog without src/rulesets depending on a package it does not own. Do not hand-edit — regenerate.",
   "version": "1.1.0",
-  "capturedOn": "2026-08-15",
+  "capturedOn": "2026-08-16",
   "capturedFrom": [
     "src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)",
     "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)",

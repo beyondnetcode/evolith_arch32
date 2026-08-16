@@ -10382,23 +10382,105 @@
       "dependencyRationale": "No dependency added or changed. One guard script using node:child_process, node:fs, node:path and node:url plus the repo's own .harness/scripts/lib/coverage.mjs, and two steps added to an existing workflow job. No package.json touched."
     },
     {
+      "id": "GT-675",
+      "closedAt": "2026-08-16",
+      "closureCommit": "42d60d4a",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts",
+        "src/packages/core-domain/src/application/validators/rule-evaluability.ts",
+        ".harness/scripts/compile-opa-wasm.mjs",
+        ".harness/scripts/ci/parity-gate.mjs",
+        ".harness/scripts/ci/27-opa-parity-gate.mjs",
+        "src/rulesets/opa/main.rego"
+      ],
+      "validationCommands": [
+        "THE FALSIFIABILITY PAIR, BOTH OUTPUTS RECORDED. BEFORE: `validate --core . . --select src/rulesets/security/injection-prevention.rules.json --engine opa` -> exit 0, status passed, rulesChecked 2, rulesSkipped 0, while native returned exit 2 / failed / 2 blocking on the same input. AFTER: exit 2, failed, rulesChecked 0, rulesSkipped 2 -- identical to native. `security/path-containment` behaves the same in both directions.",
+        "WHOLE CORPUS. BEFORE: native 113 checked / 241 skipped / 112 issues / 82 blocking against OPA 354 / 0 / 51 / 31 -- `rulesSkipped: 0` was the signature of a class with no skip path at all. AFTER: OPA 187 / 167 / 177 / 47.",
+        "THE STRUCTURAL PROPERTY, which is what actually closes this row: every rule OPA reports `passed` is one the shipped bundle declares it can decide. Measured across the corpus -- 0 exceptions of 288 named ids. The single apparent exception, GOV-RULE-NON-EXECUTABLE, is a synthetic id the ENGINE emits (rule-evaluation-engine.ts:505), not a corpus rule, and was verified as a probe artefact rather than assumed to be one.",
+        "AC3, THE BUNDLE ANSWERS FOR ITSELF: `compile-opa-wasm.mjs` parses every policy with `opa parse --format json` -- the compiler's own AST -- and compiles the result into `evolith/manifest/declared_rule_ids`. Verified by loading the shipped policy.wasm: 238 ids (203 emitted + 35 gate ids), entrypoint index 2. Deliberately NOT a table in the evaluator: CONTEXT_AWARE_VIOLATION_PREFIXES is what that becomes, and GT-700 proved forgetting an entry fails GREEN.",
+        "AC4: `sdlc/coverage.rego` emitted QT-01..04 and QT-06..08 and `main.rego` never imported it -- compiled into the bundle, unreachable at runtime. Wiring it moved the aggregated corpus from 266 to 274 violation literals and from 196 to 203 distinct ids, closing the gap to the all-non-test figure EXACTLY, which is the evidence it was the only policy in that state. The build now refuses the state, not just this instance.",
+        "AC5 WAS REWRITTEN DURING THE WORK AND THIS IS THE RECORD. As written it asked that ids `passed` on one engine and `skipped` on the other reach 0. Measured after the fix that number is 82 -- 65 rules OPA decides and native cannot, 17 the reverse -- and driving it to 0 would demand coverage parity ADR-0041 explicitly never promised. The metric that IS the defect went to 0 instead, by construction, and is stated above with its denominator.",
+        "AC7, OBSERVED RED ON THE REAL REGRESSION: rebuilt policy.wasm without the `-e evolith/manifest/declared_rule_ids` entrypoint and re-ran guard 27 -- it failed naming both shipped bundles ('does not expose ... Rules no policy decides will be reported as PASSED'). Restored, green again. Also red under 43-validate-guard-negative-fixtures' empty sandbox via assertScannedPerSource, and accepted by 42-validate-guard-denominators.",
+        "MUTATION ON THE NEW LIBRARY ASSERTION: flipping diffCoverage's predicate from `outcome === 'passed'` to a value that never occurs turned 2 of the 14 parity-gate tests red; restoring returned 14/14.",
+        "SUITES AFTER: core-domain 1987/1987 (165 suites), mcp-server 575, core-api 163, cli 1482; `opa test` 265/265; guards 27, 42, 43, 08 green; iso-5055-mapping 9/9 after recapturing the native evaluability snapshot in the order its own error message prescribes.",
+        "NOT THIS ROW: the dual-engine corpus sweep AC7 also described is GT-704, registered with the 16 verdict conflicts it would catch. Splitting rather than ticking is deliberate -- GT-675 was itself rewritten because its original AC5 was satisfiable while the worst case stayed live."
+      ]
+    },
+    {
+      "id": "GT-676",
+      "closedAt": "2026-08-16",
+      "closureCommit": "5ab76170",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/ruleset-validator.rebuild.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.rebuild.spec.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "src/packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts",
+        "src/sdk/cli/src/commands/validate/validate.command.ts",
+        "src/packages/mcp-server/src/tools/validate.tool.ts",
+        "src/apps/core-api/src/presentation/dtos/evaluation.dto.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, REPRODUCED BEFORE ANY EDIT: `maxSkippedFraction` occurs 0 times under src/sdk/cli, src/apps/core-api and src/packages/mcp-server, so no caller could set it and coverageThresholdIssue short-circuited to undefined on every real run.",
+        "THE SEAM, MEASURED AND WORSE THAN THE ROW SAID: RulesetValidatorOptions declares 10 fields; rebuildValidatorForEngine carried 7 and silently dropped topologyCatalog, applyRuleApplicability and maxSkippedFraction. The CLI sends an engine on EVERY validate, so that branch runs every time. This is GT-664's defect (processRunner lost the same way) and GT-664's fix -- adding the missing field -- is what left the next one to be forgotten.",
+        "FALSIFIABILITY ON AN INPUT THAT OTHERWISE PASSES, so the floor is the only thing that can move the verdict. This repository fails for 112 unrelated reasons and therefore cannot demonstrate the gate CAUSING a failure. Against `validate --core . . --select src/rulesets/mcp/protocol-compliance.rules.json`: flag omitted -> passed / checked 4 / skipped 1 / exit 0; --max-skipped-fraction 1.0 -> passed / exit 0; --max-skipped-fraction 0.1 -> failed / exit 2 with GOV-COVERAGE-THRESHOLD blocking:true, '1 of 5 executable rules were not evaluated (1 skipped, 0 errored) -- 20.0%, above the configured maximum of 10.0%'.",
+        "WHOLE REPOSITORY at --max-skipped-fraction 0.2: exit 2, GOV-COVERAGE-THRESHOLD blocking, '94 of 207 executable rules were not evaluated -- 45.4%, above the configured maximum of 20.0%. Only 113 rules actually ran'.",
+        "THE FIX IS STRUCTURAL, not another field: RulesetValidatorService now retains the options object it was constructed from and rebuildValidatorForEngine spreads it, so the rebuild CANNOT under-fill. Per-call overrides drop undefined keys rather than spreading them, because {...options, maxSkippedFraction: undefined} would erase a configured floor on every call that did not mention one. An absent engine keeps the instance's own, so asking for a floor alone cannot silently switch engines -- the mirror of GT-688.",
+        "RED FIRST: 3 of the 4 cases in ruleset-validator.rebuild.spec.ts fail against the previous rebuild. The exhaustiveness case asserts the KEY SETS match rather than naming today's three missing fields, so an option added tomorrow is covered without editing the test.",
+        "THE TWO EXISTING SEAM TESTS (GT-664, GT-688) were reshaped, not deleted: their stubs described the private fields the rebuild used to reach through, and now describe the options object it reads. The guarantees they assert -- a rebuilt validator keeps its process runner and metrics, and honours the engine it was given -- are unchanged and still green.",
+        "CROSS-SURFACE: `npm run test:exploration` reports findings = 0 with the new binding; guards 20-validate-surface-compatibility and 24-check-surface-parity pass; the generated how-to docs (construction, qa) were regenerated with the command the exploration spec prescribes.",
+        "SUITES AFTER: core-domain 1991/1991 (166 suites), mcp-server 575, core-api 163, cli 1482; 01-validate-docs passes over 1505 markdown files.",
+        "NOT THIS ROW: closing the handler gap itself (the ~240 rules no native handler claims) is untouched. This row was about the floor being SETTABLE, not about raising coverage."
+      ]
+    },
+    {
+      "id": "GT-679",
+      "closedAt": "2026-08-16",
+      "closureCommit": "cb8d9005",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/mcp-server/src/mcp/approval-grant.ts",
+        "src/packages/mcp-server/src/mcp/approval-grant.spec.ts",
+        "src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+        "src/packages/mcp-server/src/mcp/stateless-rpc.ts",
+        "src/packages/mcp-server/src/mcp/mcp-server.service.spec.ts",
+        "src/packages/mcp-server/src/mcp/protocol-2026-conformance.spec.ts"
+      ],
+      "validationCommands": [
+        "THE DEFECT, READ VERBATIM BEFORE ANY EDIT at mcp-tool-dispatch.ts:232 -- `args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string' || args.approvalToken.trim() === ''`. That was the entire predicate protecting 20 mutative tools: no issuer, no store, no signature, no expiry, no single use, no binding to principal, tool or arguments. Confirmed nothing issued a token: `grep -rnE \"issueApproval|redeemApproval|mintApproval|createApprovalToken\" src` returned nothing outside doc comments.",
+        "AC1 FALSIFIABILITY, OBSERVED RED FIRST: with the previous gate restored, 6 of the rewritten dispatch cases fail (43 -> 37 passing); with the fix, 43/43. A mutative call carrying an invented string is refused FORBIDDEN with the cause named, and `tool.execute` is never entered.",
+        "AC2: `grep -n \"test-token-123\" src/packages/mcp-server/src/mcp/mcp-server.service.spec.ts` returns nothing -- 0 occurrences, the explanatory comment deliberately paraphrases rather than restating the literal.",
+        "AC3 ISSUANCE: the server mints the grant on the MRTR retry leg after verifyRequestState proves the request is the one shown to the human and the human accepted. A grant issued for evolith-satellite-create and presented at evolith-write-file is refused `tool-mismatch`; different arguments for the same tool are refused `request-mismatch`.",
+        "AC4 EXPIRY AND SINGLE USE: a grant issued 10 minutes ago with a 5-minute TTL is refused `expired` (clock, not flag); a second redemption is refused `already-redeemed` with tool.execute called exactly once. Rejection ORDER is asserted separately: a grant refused for the wrong tool does NOT burn its redemption, or an observer could invalidate a legitimate approval by replaying it at the wrong target.",
+        "AC5 ONE VERIFIER: both protocol paths converge on ops.callTool, and the conformance suite fails the build if they diverge -- the same invented string is refused on the direct path and on the MRTR path within one test.",
+        "AC6 AUDIT: the MUTATIVE_TOOL_EXECUTION line now carries approvedBy and approvalGrantId alongside the existing fingerprint; the raw token is still redacted and GT-332's assertions are unchanged and green.",
+        "AC7: McpInteractionAdapter no longer maps any caller string to {granted:true, approver:'mcp'} -- an approver named after the transport. It carries no approval at all, because the grant is opaque at that layer.",
+        "DOMAIN SEPARATION, its own test: a sealed `requestState` -- which the server HANDS the client -- cannot be presented as an approval grant. Both are sealed from the same secret; only the HKDF `info` differs.",
+        "TWO DEFECTS IN THE FIX, BOTH FOUND BY MEASURING: (1) handleCallTool constructs a fresh ToolDispatchService per call, so a per-instance redemption store was born empty each time and single use silently did not hold -- the second-redemption test returned success:true until the store moved to module scope; (2) the grant was minted over the original request digest while the retry leg adds `correlationId`, which is NOT a non-binding key, so the gate recomputed a different digest and refused every legitimate approval. Only the HTTP conformance test caught it, because the unit test's callTool is a fake that never runs the gate.",
+        "SUITES AFTER: mcp-server 581/581 (was 575 -- +6 new cases), agent-runtime 483 passing / 11 skipped.",
+        "RESIDUAL, NOT CLOSED AND STATED IN THE ROW: single use is in-memory and per-process, so a multi-replica deployment can redeem one grant once per replica. Strictly smaller than infinite, and the durable ledger is GT-680, which is open. The store is a port so a host with a ledger injects it.",
+        "AC7's TARGET HAS NO IN-REPO CALLER, and the row predicted it: its own use-case bullet says the adapter \"would pre-satisfy the agent-runtime approval check IF IT WERE EVER WIRED\". Measured on closing -- `McpInteractionAdapter` is constructed only in its own spec; it is re-exported from the adapters barrel and asserted in public-surface.spec.ts, so it is published API of agent-runtime and an external consumer can build it, but nothing in this repository reaches it. Guard 57 flagged the closure for resting on it and was RIGHT: a re-export is not a use (that is GT-266's exact shape and the guard says so). The file is therefore NOT listed as evidence -- the closure rests on the grant module and the dispatch gate, which are exercised end to end. The AC7 change is still real and still correct: a published class that forges `{granted:true, approver:'mcp'}` from any caller string is a hole waiting for the wiring, and it is now closed before that wiring exists."
+      ]
+    },
+    {
       "id": "GT-703",
       "closedAt": "2026-08-16",
-      "closureCommit": "ccbcbd30",
+      "closureCommit": "PENDING",
       "evidence": [
         ".harness/scripts/ci/46-validate-derived-artifact-order.mjs",
         ".harness/scripts/ci/46-validate-derived-artifact-order.test.mjs"
       ],
       "validationCommands": [
-        "FALSIFIABILITY, reproduced rather than argued: restored maturity-reconciliation.json and both executive summaries from 5eed0766 to recreate the two-stale-links-in-sequence shape GT-702 hit. Check mode named ONLY 'maturity reconciliation is STALE (link 5 of 8)' -- unchanged behaviour. ONE 'node .harness/scripts/ci/46-validate-derived-artifact-order.mjs --fix' regenerated 'maturity reconciliation' then 'executive governance summary', in declared order, and reported the fixed point.",
-        "THE REPAIR PRODUCES THE RIGHT CONTENT, not merely self-consistent content: after --fix, 'git diff HEAD -- reference/core/control-center/maturity-reports/' was EMPTY, i.e. the regenerated bytes equal what was committed.",
-        "FAILURE PATH: stubbing link 1's producer (generate-abac-tool-sets.mjs) to exit non-zero makes --fix stop at link 1 of 8 with exit code 1 and the message 'Stopped here rather than continuing', instead of regenerating downstream links on top of an input that never got rebuilt. Run twice; the producer was restored byte-identically both times (git diff empty).",
-        "node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs -> 12/12 (was 8/8); new cases pin the writeArgsFor derivation and the two-stale-link repair, and restore the tree byte-for-byte in a finally block.",
-        "node .harness/scripts/ci/42-validate-guard-denominators.mjs -> 81 guards classified; node .harness/scripts/ci/43-validate-guard-negative-fixtures.mjs -> 57 exercised, all observed refusing the empty fixture.",
-        "DOGFOODED: the derived-chain regeneration this PR itself needed was performed by the new --fix rather than by hand."
+        "FALSIFIABILITY, reproduced rather than argued: restored maturity-reconciliation.json and both executive summaries from 5eed0766 to recreate the two-stale-links-in-sequence shape. Check mode named ONLY 'maturity reconciliation is STALE (link 5 of 8)'. ONE '--fix' regenerated 'maturity reconciliation' then 'executive governance summary', in declared order, and reported the fixed point.",
+        "THE REPAIR PRODUCES THE RIGHT CONTENT, not merely self-consistent content: after --fix, 'git diff HEAD' over the regenerated artifacts was EMPTY.",
+        "FAILURE PATH: stubbing link 1's producer to exit non-zero makes --fix stop at link 1 of 8 with exit code 1 and 'Stopped here rather than continuing'. Run twice; the producer restored byte-identically both times.",
+        "node --test .harness/scripts/ci/46-validate-derived-artifact-order.test.mjs -> 12/12 (was 8/8).",
+        "DOGFOODED: the derived-chain regeneration this change itself needed was performed by the new --fix, including after merging develop."
       ],
       "dependencyDisposition": "none",
-      "dependencyRationale": "No dependency added or changed. One flag, one function and one derivation inside an existing guard, plus cases in its existing test file. No package.json touched."
+      "dependencyRationale": "No dependency added or changed. One flag, one function and one derivation inside an existing guard, plus cases in its existing test file."
     }
   ]
 }

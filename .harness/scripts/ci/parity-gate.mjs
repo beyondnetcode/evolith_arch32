@@ -56,9 +56,61 @@ export function diffDecisions(nativeDecisions = [], opaDecisions = []) {
   return drift;
 }
 
+/**
+ * GT-675 — the axis `diffDecisions` above is structurally blind to.
+ *
+ * That function keys on decisions that FIRED, so two engines that both stayed
+ * silent look identical — which is exactly how `OpaEvaluator` reported `passed`
+ * for 234 rules it had no policy for, and no parity run noticed. Silence is not
+ * agreement: it is either "evaluated, clean" or "never looked", and only one of
+ * those may be called green.
+ *
+ * The invariant checked here is narrow ON PURPOSE. It is NOT "the two engines
+ * must reach the same outcome" — measured on this corpus, 65 rules are decided by
+ * OPA and skipped by native and 17 the other way round, and that complementary
+ * coverage is legitimate; `ADR-0041` never promised parity of coverage. What is
+ * never legitimate is an engine calling a rule `passed` when it cannot decide it.
+ *
+ * @param {object} input
+ * @param {string} input.engine        which engine produced these outcomes
+ * @param {Iterable<string>} input.declared  rule ids this engine can decide
+ * @param {Array<{ruleId: string, outcome: string}>} input.outcomes
+ */
+export function diffCoverage({ engine, declared, outcomes = [] }) {
+  const decidable = declared instanceof Set ? declared : new Set(declared ?? []);
+  if (decidable.size === 0) {
+    // An engine that declares nothing cannot be checked, and treating that as
+    // "everything is drift" would make a broken build read as a coverage
+    // collapse. Report it as one explicit finding instead.
+    return [{
+      ruleId: null,
+      kind: 'undeclared-scope',
+      title: `${engine} did not declare which rules it can decide — coverage is unverifiable`,
+    }];
+  }
+  return outcomes
+    .filter((o) => o?.outcome === 'passed' && !decidable.has(String(o.ruleId)))
+    .map((o) => ({
+      ruleId: o.ruleId,
+      kind: 'unsupported-pass',
+      title: `${engine} reported '${o.ruleId}' as passed but does not declare it can decide it`,
+    }));
+}
+
 /** Build a versioned, machine-readable parity report for one fixture. */
-export function parityReport({ topology, fixture, nativeDecisions, opaDecisions, versions = {}, durationMs }) {
+export function parityReport({
+  topology, fixture, nativeDecisions, opaDecisions, versions = {}, durationMs,
+  // GT-675 — optional and additive: a caller that cannot produce them gets the
+  // pre-existing report, and a caller that can gets the coverage axis too.
+  coverage = null,
+}) {
   const drift = diffDecisions(nativeDecisions, opaDecisions);
+  if (coverage) {
+    for (const engine of ['native', 'opa']) {
+      if (!coverage[engine]) continue;
+      drift.push(...diffCoverage({ engine, ...coverage[engine] }));
+    }
+  }
   // Verdict = "deny" if either engine reports any decision.
   const nativeVerdict = nativeDecisions.length ? 'deny' : 'allow';
   const opaVerdict = opaDecisions.length ? 'deny' : 'allow';

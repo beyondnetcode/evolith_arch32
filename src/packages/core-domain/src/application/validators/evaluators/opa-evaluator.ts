@@ -13,6 +13,13 @@ const globalPolicyCache = new Map<string, any>();
 const globalSchemaCache = new Map<string, any>();
 
 /**
+ * GT-675 — the entrypoint the compiled bundle exposes so it can state its own
+ * scope. Built by `.harness/scripts/compile-opa-wasm.mjs`; the name is the only
+ * thing shared between the two, and `27-opa-parity-gate` fails if it disappears.
+ */
+export const DECLARED_RULE_IDS_ENTRYPOINT = 'evolith/manifest/declared_rule_ids';
+
+/**
  * GT-382, superseded by GT-693 — kept ONLY to read bundles compiled before the
  * provenance change, and deliberately not extended.
  *
@@ -139,6 +146,53 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
     return null;
   }
 
+  /**
+   * GT-675 AC3 — ask the BUNDLE which rule ids it can decide.
+   *
+   * The set is produced at build time by `compile-opa-wasm.mjs` from the OPA
+   * compiler's own AST and compiled into the wasm as the
+   * `evolith/manifest/declared_rule_ids` entrypoint. It is deliberately not a
+   * table in this file: `CONTEXT_AWARE_VIOLATION_PREFIXES` above is what a
+   * hand-maintained list looks like after two years, and forgetting an entry
+   * there fails GREEN.
+   *
+   * Returns `null` when the bundle cannot answer — a `policy.wasm` compiled
+   * before this entrypoint existed. That case keeps the old behaviour rather
+   * than mass-reclassifying an unknown bundle, and says so at WARN, because a
+   * silent fallback to `passed` is the exact defect this method exists to end.
+   */
+  private readDeclaredRuleIds(policyCache: any, opaUrl?: string): ReadonlySet<string> | null {
+    if (opaUrl) {
+      // The sidecar exposes documents over HTTP and this read is synchronous; the
+      // embedded wasm is the enforcing path. Say so instead of pretending.
+      this.logger.warn(
+        'OPA sidecar mode: the bundle was not asked which rules it declares, so rules with no '
+        + 'violation are reported as passed. Use the embedded wasm for a coverage-honest verdict.',
+      );
+      return null;
+    }
+    try {
+      const entrypoints = policyCache?.entrypoints;
+      if (!entrypoints || !Object.prototype.hasOwnProperty.call(entrypoints, DECLARED_RULE_IDS_ENTRYPOINT)) {
+        this.logger.warn(
+          `OPA bundle does not expose '${DECLARED_RULE_IDS_ENTRYPOINT}' — it predates GT-675. `
+          + 'Rules no policy decides will be reported as passed. Recompile with `npm run build:policy`.',
+        );
+        return null;
+      }
+      const resultSet: any = policyCache.evaluate({}, DECLARED_RULE_IDS_ENTRYPOINT);
+      const ids = resultSet?.[0]?.result;
+      if (!Array.isArray(ids) || ids.length === 0) {
+        this.logger.warn('OPA bundle declared an empty rule-id set — treating coverage as unknown.');
+        return null;
+      }
+      return new Set(ids.map((id: unknown) => String(id)));
+    } catch (err) {
+      this.logger.warn(`OPA bundle could not report its declared rule ids: ${err instanceof Error ? err.message : String(err)}`);
+      return null;
+    }
+  }
+
   async evaluateAll(
     rules: NormalizedRule[],
     ctx: WorkspaceEvaluationContext,
@@ -229,6 +283,19 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
         // what matters is that the information exists at all rather than being lost.
         const claimed = new Set<Record<string, unknown>>();
 
+        // GT-675 — the bundle is asked what it can decide, BEFORE any rule is
+        // called `passed`.
+        //
+        // Until this existed the class had no `skipped` path at all: "no violation
+        // matched" was read as conformance, so a rule no policy emits came back
+        // `passed`. Measured on this corpus: OPA reported `rulesSkipped: 0` against
+        // native's 241, and answered `passed / exit 0` on `security/injection-
+        // prevention` and `security/path-containment` where native failed with two
+        // blocking issues each. `RuleEvaluationOutcome` had declared `skipped` the
+        // whole time — the outcome existed in the type and was unreachable in the
+        // class.
+        const declared = this.readDeclaredRuleIds(policyCache, opaUrl);
+
         opaResults = passedRules.map(rule => {
           const ruleViolations = violations.filter((v: Record<string, unknown>) =>
             violationBelongsToRule(v, rule.id),
@@ -240,6 +307,17 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
               result: 'failed',
               message: ruleViolations.map((v: Record<string, unknown>) => v.message).join('; '),
             };
+          }
+          if (declared && !declared.has(rule.id)) {
+            return {
+              rule,
+              result: 'skipped',
+              evaluability: 'no-policy-in-bundle',
+              message:
+                `No reachable policy in the compiled OPA bundle decides '${rule.id}' — `
+                + `the bundle declares ${declared.size} rule id(s) and this is not one of them. `
+                + 'Not evaluated; this is not a verdict about the repository.',
+            } as RuleEvaluationResult;
           }
           return {
             rule,

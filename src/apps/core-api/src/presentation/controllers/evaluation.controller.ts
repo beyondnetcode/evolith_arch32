@@ -168,6 +168,9 @@ export class EvaluationController {
           satellitePath: body.satellitePath,
           corePath: body.corePath,
           rulesetRefs: selectionFrom(body),
+          // GT-676 — the floor the caller asked for reaches the engine on this
+          // surface too, so a REST verdict is reproducible from a CLI one.
+          maxSkippedFraction: body.maxSkippedFraction,
           manifest: {
             satellitePath: body.satellitePath,
             corePath: body.corePath,
@@ -244,6 +247,9 @@ export class EvaluationController {
           manifest,
           plan,
           rulesetRefs: selectionFrom(body),
+          // GT-676 — the floor the caller asked for reaches the engine on this
+          // surface too, so a REST verdict is reproducible from a CLI one.
+          maxSkippedFraction: body.maxSkippedFraction,
         });
         if (!out.evaluationVerdict) {
           throw new Error('Inline evaluation pipeline produced no verdict');

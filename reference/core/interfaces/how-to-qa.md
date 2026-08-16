@@ -33,6 +33,7 @@ Command: `evolith-cli validate`
 | `-a, --arch` | Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas) |
 | `-t, --topology [id]` | Topología canónica a validar (repetible): modular-monolith, distributed-modules,  |
 | `-e, --engine [engine]` | Motor de validación a utilizar: native (por defecto) u opa |
+| `--max-skipped-fraction <fraction>` | Suelo de cobertura: falla si la fracción de reglas aplicables NO evaluadas supera este valor (0..1).  |
 | `-m, --manifest [path]` | Ruta al SatelliteManifest JSON para evaluación end-to-end (activa pipeline GT-281) |
 | `-p, --phase [phase]` | Fase SDLC a evaluar: discovery, design, construction, qa, release. Activa pipeline GT-281 |
 | `--adr [id]` | Validar contra reglas ADR específicas (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050) |
@@ -129,6 +130,7 @@ Tool: `evolith-validate`
 | `topology` | string |  | Topology to target (auto-detects from manifest if omitted). Triggers end-to-end pipeline. |
 | `phase` | string |  | SDLC phase to evaluate: discovery|design|construction|qa|release. Triggers end-to-end pipeline. |
 | `manifest` | string |  | JSON string or path to SatelliteManifest for pipeline evaluation. Overrides path/topology/phase. |
+| `maxSkippedFraction` | number |  | Coverage floor: fail when the fraction of applicable rules that did NOT run exceeds this value (0..1). Absent => no floor. |
 
 Example (`tools/call`):
 ```json
@@ -326,6 +328,7 @@ Command: `evolith-cli validate --composable`
 | `-a, --arch` | Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas) |
 | `-t, --topology [id]` | Topología canónica a validar (repetible): modular-monolith, distributed-modules,  |
 | `-e, --engine [engine]` | Motor de validación a utilizar: native (por defecto) u opa |
+| `--max-skipped-fraction <fraction>` | Suelo de cobertura: falla si la fracción de reglas aplicables NO evaluadas supera este valor (0..1).  |
 | `-m, --manifest [path]` | Ruta al SatelliteManifest JSON para evaluación end-to-end (activa pipeline GT-281) |
 | `-p, --phase [phase]` | Fase SDLC a evaluar: discovery, design, construction, qa, release. Activa pipeline GT-281 |
 | `--adr [id]` | Validar contra reglas ADR específicas (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050) |

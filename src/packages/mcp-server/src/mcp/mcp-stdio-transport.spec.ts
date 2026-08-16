@@ -1,3 +1,4 @@
+import { issueGrantForCall } from './approval-grant';
 import { PassThrough } from 'node:stream';
 import { McpServerService } from './mcp-server.service';
 import { MetricsService } from './metrics.service';
@@ -90,6 +91,23 @@ class StdioClient {
   }
 }
 
+
+/**
+ * GT-679 — the local stdio session is a real principal, and its approval is now a
+ * server-issued grant rather than any non-empty string. These cases assert the
+ * TRANSPORT and the HITL gate staying closed without one; that is unchanged.
+ */
+function approvedArgs(tool: string, args: Record<string, unknown> = {}, principal = 'local-stdio-session'): Record<string, unknown> {
+  const { token } = issueGrantForCall({
+    approver: 'operator@example.com',
+    principal,
+    tenant: 'default',
+    tool,
+    args,
+  });
+  return { ...args, apply: true, approvalToken: token };
+}
+
 describe('GT-572 — MCP over stdio', () => {
   let service: McpServerService;
   let auditLogger: AuditLogger;
@@ -176,7 +194,7 @@ describe('GT-572 — MCP over stdio', () => {
     // principal, so ABAC allows the write class — the gate that stays is HITL.
     const approved = await client.request(3, 'tools/call', {
       name: 'evolith-adr-create',
-      arguments: { apply: true, approvalToken: 'human-approved' },
+      arguments: approvedArgs('evolith-adr-create'),
     });
     expect(JSON.parse(approved.result.content[0].text).success).toBe(true);
     expect(execute).toHaveBeenCalled();
@@ -194,7 +212,7 @@ describe('GT-572 — MCP over stdio', () => {
 
       const res = await client.request(2, 'tools/call', {
         name: 'evolith-deploy',
-        arguments: { apply: true, approvalToken: 'human-approved' },
+        arguments: approvedArgs('evolith-deploy'),
       });
       const envelope = JSON.parse(res.result.content[0].text);
       expect(envelope.error.code).toBe(ErrorCodes.FORBIDDEN);

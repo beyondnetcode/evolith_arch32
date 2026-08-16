@@ -22,6 +22,24 @@ import {
   verifyBaseSha,
   type HeadShaReader,
 } from './workspace-concurrency';
+import {
+  InMemoryGrantRedemptionStore,
+  describeGrantRejection,
+  verifyApprovalGrant,
+  type IGrantRedemptionStore,
+} from './approval-grant';
+import { computeRequestDigest } from './mrtr-request-state';
+
+/**
+ * GT-679 — single use is a property of the PROCESS, not of a call.
+ *
+ * `handleCallTool` constructs a fresh `ToolDispatchService` on every invocation,
+ * so a per-instance default store was born empty each time and the same grant
+ * could be redeemed for ever. Measured, not reasoned: the second-redemption test
+ * came back `success: true` until this moved to module scope. A host with a
+ * durable ledger injects its own through `DispatchDeps` (see `GT-680`).
+ */
+const defaultGrantRedemptions: IGrantRedemptionStore = new InMemoryGrantRedemptionStore();
 
 /** Keys whose values must never reach the log sink in cleartext. */
 const SENSITIVE_ARG_KEYS = new Set(['approvalToken', 'apiKey', 'api_key', 'token', 'secret', 'password', 'authorization']);
@@ -106,6 +124,16 @@ export interface CallToolDeps {
   tracer: ReturnType<typeof trace.getTracer>;
   /** GT-606 — override the HEAD reader (tests only); defaults to `git rev-parse HEAD`. */
   headShaReader?: HeadShaReader;
+  /**
+   * GT-679 — where redeemed approval grants are remembered.
+   *
+   * Defaults to a module-level in-memory store, which is honest about its limit:
+   * single use holds within one process, so a multi-replica deployment can redeem
+   * one grant once per replica. Strictly smaller than the hole it closes — before,
+   * a grant was infinitely redeemable everywhere — and the durable ledger it wants
+   * is `GT-680`, which is open and says so.
+   */
+  grantRedemptions?: IGrantRedemptionStore;
 }
 
 /** Backward-compatible aggregate. */
@@ -129,6 +157,17 @@ export class ToolDispatchService {
      * call; production always uses `git rev-parse HEAD`.
      */
     private readonly headShaReader: HeadShaReader = readHeadSha,
+    /**
+     * GT-679 — where a redeemed grant is remembered, so an approval authorises
+     * exactly one call.
+     *
+     * Injectable and in-memory by default, which is honest about its limit:
+     * single use holds within one process, and a multi-replica deployment can
+     * redeem the same grant once per replica. That is strictly smaller than the
+     * hole this closes — before, every grant was infinitely redeemable — and the
+     * durable ledger it wants is `GT-680`, which is open.
+     */
+    private readonly grantRedemptions: IGrantRedemptionStore = defaultGrantRedemptions,
   ) {}
 
   /** List tools allowed for the current user context. */
@@ -229,16 +268,55 @@ export class ToolDispatchService {
     }
 
     if (tool.mutative) {
-      if (args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string' || args.approvalToken.trim() === '') {
+      // GT-679 — this was a truthiness check, and that is the whole of what it
+      // was. Read verbatim before the fix:
+      //
+      //   args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string'
+      //     || args.approvalToken.trim() === ''
+      //
+      // No issuer, no store, no signature, no expiry, no single use, no binding
+      // to principal, tool or arguments — so an agent holding a valid `write`
+      // credential approved its own irreversible calls by typing any non-empty
+      // string, and the audit line recorded a fingerprint of something nobody
+      // had issued. The grant is now verified against THIS call: who it was
+      // minted for, which tool, which arguments, whether it has expired and
+      // whether it has already been spent.
+      if (args.apply !== true) {
         return errorEnvelope(
           failure(
             ErrorCodes.FORBIDDEN,
-            `Mutative operation '${name}' requires approval. Pass { "apply": true, "approvalToken": "..." }`,
+            `Mutative operation '${name}' requires approval. Pass { "apply": true, "approvalToken": "<server-issued grant>" }`,
             meta(Date.now() - startTime),
           ),
           Date.now() - startTime,
         );
       }
+
+      const grantTenant = tenant || userContext.tenant || '';
+      const verification = verifyApprovalGrant(
+        args.approvalToken,
+        {
+          principal: userContext.id,
+          tenant: grantTenant,
+          tool: name,
+          // The same digest the sealed request state binds, so the grant covers
+          // exactly the arguments the human was shown.
+          requestDigest: computeRequestDigest('tools/call', { name, arguments: args }),
+        },
+        { redemptions: this.grantRedemptions },
+      );
+      if (!verification.ok) {
+        return errorEnvelope(
+          failure(
+            ErrorCodes.FORBIDDEN,
+            `Mutative operation '${name}' refused: approval ${verification.reason}. ${describeGrantRejection(verification.reason, name)}`,
+            meta(Date.now() - startTime),
+            { approvalRejection: verification.reason },
+          ),
+          Date.now() - startTime,
+        );
+      }
+      const grant = verification.payload;
       // GT-606 / ADR-0093 §1 — Optimistic State Verification. This runs BEFORE
       // `tool.execute`, so a rejected call has written nothing. It is enforced
       // here, on `tool.mutative`, rather than in each tool, so that the set of
@@ -267,7 +345,14 @@ export class ToolDispatchService {
         user: { id: userContext.id, roles: userContext.roles, tenant: tenant || userContext.tenant },
         scopes: userContext.scopes,
         tool: name,
+        // GT-679 — "who approved" is now answerable. The raw token stays
+        // redacted (GT-332's assertions are unchanged) and the fingerprint stays
+        // for continuity, but the line now also carries the approver identity and
+        // the redemption id, which is what an auditor actually asks for.
         approvalTokenFingerprint: fingerprintToken(args.approvalToken as string),
+        approvedBy: grant.approver,
+        approvalGrantId: grant.jti,
+        approvalExpiresAt: new Date(grant.expiresAt).toISOString(),
         arguments: redactArgs(args),
         timestamp: new Date().toISOString(),
       }));
@@ -377,6 +462,9 @@ export async function handleCallTool(
   const service = new ToolDispatchService(
     deps.registry, deps.metrics, deps.abacEvaluator, deps.logger, deps.tracer,
     deps.headShaReader ?? readHeadSha,
+    // GT-679 — shared across calls by default, so an approval authorises exactly
+    // one call rather than one call per dispatch instance.
+    deps.grantRedemptions ?? defaultGrantRedemptions,
   );
   return service.callTool(name, args, options);
 }

@@ -125,8 +125,34 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      # `cyclonedx-npm` shells out to `npm ls --json --long --all`, and npm exits
+      # NON-ZERO (`ELSPROBLEMS`) for benign tree observations as well as for real
+      # breakage. This tree has several that are expected and not going away:
+      #
+      #   missing: @types/inquirer@^8.1.3, required by nest-commander@3.20.1
+      #   missing: webpack@^4.0.0 || ^5.0.0, required by ts-loader@9.6.2
+      #   invalid: js-yaml@5.2.1 .../@nestjs/swagger/node_modules/js-yaml
+      #
+      # The last one is GT-691: @nestjs/swagger pins js-yaml exactly, so the root
+      # override cannot move it, and npm reports the override's loser as "invalid".
+      #
+      # Without --ignore-npm-errors this step fails EVERY tag push, and the
+      # failure-notification job then files a "Release Pipeline Failed" issue. Three
+      # accumulated that way (#492, #552, #553) before anyone read one. npm still
+      # writes complete, usable JSON on stdout while exiting 1, so the SBOM this
+      # produces is not degraded -- only the exit code was ever the problem.
       - name: Generate SBOM (CycloneDX)
-        run: npx @cyclonedx/cyclonedx-npm --output-file sbom.json
+        run: npx @cyclonedx/cyclonedx-npm --ignore-npm-errors --output-file sbom.json
+
+      - name: The SBOM must have real content, not just exist
+        run: |
+          set -euo pipefail
+          COMPONENTS=$(node -p "(require('./sbom.json').components || []).length")
+          echo "sbom components: ${COMPONENTS}"
+          if [ "$COMPONENTS" -lt 100 ]; then
+            echo "::error::sbom.json declares ${COMPONENTS} component(s). --ignore-npm-errors makes the step tolerant of npm's exit code, not of an empty tree; this few components means the scan did not run."
+            exit 1
+          fi
 
       - name: Architecture Boundary Lint (eslint-plugin-boundaries)
         working-directory: ${{ env.CLI_DIR }}

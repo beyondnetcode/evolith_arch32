@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync, existsSync } from 'node:fs';
 import { evaluateWasm, normalizeOpaDecisions } from './opa-eval.mjs';
-import { diffDecisions, parityReport, scopeTopologies, contentVersion, PARITY_SCHEMA_VERSION } from './parity-gate.mjs';
+import { diffDecisions, diffCoverage, parityReport, scopeTopologies, contentVersion, PARITY_SCHEMA_VERSION } from './parity-gate.mjs';
 
 // --- Executable OPA evaluator (pinned WASM, no host binary) -----------------
 
@@ -85,4 +85,51 @@ test('contentVersion is a stable short hash', () => {
   assert.equal(contentVersion('abc'), contentVersion('abc'));
   assert.equal(contentVersion('abc').length, 12);
   assert.notEqual(contentVersion('abc'), contentVersion('abd'));
+});
+
+// --- GT-675: the axis that catches a pass nobody could have made ------------
+
+test('diffCoverage flags a rule reported passed by an engine that cannot decide it', () => {
+  const drift = diffCoverage({
+    engine: 'opa',
+    declared: ['ACL-01', 'ACL-02'],
+    outcomes: [
+      { ruleId: 'ACL-01', outcome: 'passed' },
+      { ruleId: 'SEC-INJ-01', outcome: 'passed' },
+    ],
+  });
+  assert.equal(drift.length, 1);
+  assert.equal(drift[0].kind, 'unsupported-pass');
+  assert.equal(drift[0].ruleId, 'SEC-INJ-01');
+});
+
+test('diffCoverage does NOT flag complementary coverage — passed here, skipped there is legitimate', () => {
+  // Measured on this corpus: 65 rules are decided by OPA and skipped by native,
+  // 17 the other way. ADR-0041 never promised parity of coverage, and a gate that
+  // demanded it would be permanently red for an honest reason.
+  const drift = diffCoverage({
+    engine: 'opa',
+    declared: ['ACL-01'],
+    outcomes: [{ ruleId: 'ACL-01', outcome: 'passed' }, { ruleId: 'GIT-01', outcome: 'skipped' }],
+  });
+  assert.deepEqual(drift, []);
+});
+
+test('an engine that declares nothing is reported, not silently accepted', () => {
+  const drift = diffCoverage({ engine: 'opa', declared: [], outcomes: [{ ruleId: 'X', outcome: 'passed' }] });
+  assert.equal(drift.length, 1);
+  assert.equal(drift[0].kind, 'undeclared-scope');
+});
+
+test('parityReport carries the coverage axis and stays parity-clean without it', () => {
+  const base = { topology: 't', fixture: 'f', nativeDecisions: [], opaDecisions: [] };
+  assert.equal(parityReport(base).parity, true);
+
+  const withDrift = parityReport({
+    ...base,
+    coverage: { opa: { declared: ['A'], outcomes: [{ ruleId: 'B', outcome: 'passed' }] } },
+  });
+  assert.equal(withDrift.parity, false);
+  assert.equal(withDrift.drift[0].kind, 'unsupported-pass');
+  assert.equal(withDrift.schemaVersion, PARITY_SCHEMA_VERSION);
 });

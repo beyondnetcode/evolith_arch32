@@ -109,6 +109,19 @@ jobs:
       - name: Compile OPA policy to WASM
         run: npm run build:policy
 
+      # GT-675: the compiled bundle must be able to answer "which rules do you
+      # decide?". `OpaEvaluator` falls back to the pre-GT-675 behaviour when it
+      # cannot -- deliberately, so an older policy.wasm keeps working -- and that
+      # fallback reports a rule nothing decides as PASSED. So a build that stops
+      # emitting the entrypoint does not break; it silently un-fixes 234 rules.
+      #
+      # Hosted HERE and not only in the nightly parity workflow, because this is a
+      # required check and that one is not. It also makes this the first job on the
+      # PR path that executes the OPA engine at all -- before GT-675, no CI job
+      # passed `--engine` or loaded the bundle.
+      - name: Verify the OPA bundle declares its scope (GT-675)
+        run: node .harness/scripts/ci/27-opa-parity-gate.mjs
+
       - name: Run core-domain tests with coverage
         run: npm run test:cov --workspace @beyondnet/evolith-core-domain
 

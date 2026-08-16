@@ -70,7 +70,14 @@ const CALIBRATION = ['GT-321', 'GT-266'];
 const FRAMEWORK_FILE =
   /\.(module|controller|command|wizard|middleware|guard|interceptor|filter|dto|resolver|strategy)\.ts$|[./]dtos?[./]/;
 const isProdEvidence = (p) =>
-  /^src\//.test(p) && !/\.spec\.|\.test\.|__tests__|[/\\]dist[/\\]|fixtures?/.test(p) && /\.ts$/.test(p);
+  /^src\//.test(p) &&
+  // GT-698 — test doubles live under `src/**/test/mocks/`, a PRODUCTION path by
+  // extension but consumed only by specs, which this detector deliberately does not
+  // scan. `MockLogger` and `MockConfigParser` were reported unreachable for exactly
+  // that reason; they are reachable, just not from where the detector is allowed to
+  // look.
+  !/\.spec\.|\.test\.|__tests__|[/\\](test|tests|mocks)[/\\]|[/\\]dist[/\\]|fixtures?/.test(p) &&
+  /\.ts$/.test(p);
 
 function productionSources() {
   const out = new Map();
@@ -109,6 +116,30 @@ function frameworkConstructed(text, cls, file) {
   // is a sounder signal than anything a regex can recover from the syntax.
   if (FRAMEWORK_FILE.test(file)) return true;
   if (/Error$/.test(cls) && new RegExp(`(throw new ${cls}|instanceof ${cls})`).test(text)) return true;
+
+  // GT-698 — REGISTRATION IS THE CALL SITE for a lifecycle class, and this exclusion
+  // exists because the detector got one wrong and said so.
+  //
+  // `RulesetCorpusWarmupService` was reported as unreachable and hand-described in
+  // GT-698's own row as "referenced by nothing at all". That was FALSE. It is a
+  // provider in `app.module.ts:123` implementing `OnApplicationBootstrap`, and the
+  // closure that named it has runner evidence of it executing: "Ruleset corpus
+  // loaded at startup: 393 rules". Nest invokes the hook; nothing in the codebase
+  // ever needs to call it.
+  //
+  // BOTH conditions are required. A lifecycle class nobody registers really is dead,
+  // and excluding on the interface alone would hide exactly that.
+  const declaration = text.slice(text.indexOf(`export class ${cls}`), text.indexOf(`export class ${cls}`) + 300);
+  const isLifecycle =
+    /implements\s+[^{]*\b(OnApplicationBootstrap|OnModuleInit|OnModuleDestroy|OnApplicationShutdown|NestMiddleware|CanActivate|NestInterceptor|ExceptionFilter|PipeTransform)\b/.test(
+      declaration,
+    );
+  if (isLifecycle) {
+    for (const [other, otherText] of sources) {
+      if (other === file) continue;
+      if (/\.module\.ts$/.test(other) && new RegExp(`\\b${cls}\\b`).test(otherText)) return true;
+    }
+  }
   return false;
 }
 

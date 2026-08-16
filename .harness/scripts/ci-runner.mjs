@@ -78,7 +78,8 @@ const MODES = {
       "36-validate-agent-memory.mjs",
       "38-validate-okf-projection.mjs",
       "40-validate-path-literals.mjs",
-      "56-validate-assurance-disclosure.mjs"
+      "56-validate-assurance-disclosure.mjs",
+      "57-validate-closure-reachability.mjs"
     ],
   },
   full: {

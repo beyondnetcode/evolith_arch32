@@ -4,7 +4,9 @@
   "title": "Serverless Topology Rules",
   "description": "Architectural rules for the serverless execution topology.",
   "version": "1.0.0",
-  "topologies": ["serverless"],
+  "topologies": [
+    "serverless"
+  ],
   "effectiveDate": "2026-06-20",
   "rules": [
     {
@@ -13,7 +15,8 @@
       "category": "execution-security",
       "title": "Network Security Profile",
       "description": "Serverless components MUST define a 'networkSecurity' profile in their config.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "unevaluated"
     },
     {
       "id": "SV-SEC-02",
@@ -21,7 +24,8 @@
       "category": "execution-mtls",
       "title": "mTLS Enforcement",
       "description": "mTLS must be enabled for all serverless network communications.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "unevaluated"
     },
     {
       "id": "SV-R01",
@@ -29,7 +33,8 @@
       "category": "serverless-config",
       "title": "Declared Serverless Contract",
       "description": "A Serverless satellite MUST provide serverless.config.json.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "SV-R02",
@@ -37,7 +42,8 @@
       "category": "serverless-stateless",
       "title": "Stateless Execution",
       "description": "serverless.config.json MUST declare stateless=true.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "SV-R03",
@@ -45,7 +51,8 @@
       "category": "serverless-package",
       "title": "Bounded Deployment Package",
       "description": "serverless.config.json MUST declare a positive package.maxSizeMb not exceeding 50.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     },
     {
       "id": "SV-R04",
@@ -53,7 +60,8 @@
       "category": "serverless-cold-start",
       "title": "Cold-Start Readiness",
       "description": "serverless.config.json MUST declare positive coldStart.maxInitMilliseconds and coldStart.lazyInitialization=true.",
-      "blocking": true
+      "blocking": true,
+      "assurance": "declared"
     }
   ]
 }

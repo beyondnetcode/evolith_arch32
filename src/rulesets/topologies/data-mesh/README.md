@@ -26,6 +26,22 @@ Data mesh does not weaken transactional ownership. Domain data boundaries remain
 | Quality evidence | Data products must expose validation, lineage, freshness, and reliability signals. |
 | Transactional boundary | Analytical distribution must not bypass transactional ownership or domain invariants. |
 
+### What each verdict is worth
+
+**Read the `Assurance` column before you rely on a green tick.** `observed` means the evaluation opened the repository. `declared` means the verdict was decided by comparing a field in a declaration file: a satellite that declares a control it has not built will pass. `unevaluated` means no check decides that rule today — it is shipped, and it is not enforced. These are stated here rather than left for a buyer to discover, and a guard fails the build when this table and the shipped ruleset disagree.
+
+| Rule | Control | Assurance |
+|---|---|---|
+| DAM-R01 | Data Product Designation | `declared` |
+| DAM-R02 | Data Contracts | `declared` |
+| DAM-R03 | Federated Governance | `declared` |
+| DAM-R04 | Data Product Lineage Tracking | `unevaluated` |
+| DAM-R05 | Retention Policy on Data Products | `declared` |
+| DAM-R06 | Explicit Consumption Contracts | `unevaluated` |
+| DAM-R07 | Data Quality SLO Declaration | `observed` |
+| DAM-R08 | Data Contract Backward Compatibility | `unevaluated` |
+| DAM-R09 | Data Product Discoverability Registration | `unevaluated` |
+
 ## Required Authority
 
 | Artifact | Role |

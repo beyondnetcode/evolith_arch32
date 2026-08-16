@@ -26,6 +26,18 @@ Edge workloads must remain governed by explicit synchronization, security, obser
 | Observability | Edge workloads must report health, failure, and trace context despite intermittent connectivity. |
 | Domain ownership | Edge logic must not fork domain behavior outside the owning bounded context. |
 
+### What each verdict is worth
+
+**Read the `Assurance` column before you rely on a green tick.** `observed` means the evaluation opened the repository. `declared` means the verdict was decided by comparing a field in a declaration file: a satellite that declares a control it has not built will pass. `unevaluated` means no check decides that rule today — it is shipped, and it is not enforced. These are stated here rather than left for a buyer to discover, and a guard fails the build when this table and the shipped ruleset disagree.
+
+| Rule | Control | Assurance |
+|---|---|---|
+| EC-SEC-01 | Network Security Profile | `unevaluated` |
+| EC-SEC-02 | mTLS Enforcement | `unevaluated` |
+| EC-R01 | Mandatory Synchronization Strategy | `declared` |
+| EC-R02 | Edge Node Isolation | `declared` |
+| EC-R03 | Conflict Resolution Strategy | `declared` |
+
 ## Required Authority
 
 | Artifact | Role |

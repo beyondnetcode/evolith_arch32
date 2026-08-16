@@ -26,6 +26,19 @@ Serverless does not replace domain architecture. It composes with `modular-monol
 | Boundary control | Serverless handlers must not bypass domain ownership or persistence boundaries. |
 | Provider neutrality | Core guidance remains provider-neutral; provider choices belong to product or platform profiles. |
 
+### What each verdict is worth
+
+**Read the `Assurance` column before you rely on a green tick.** `observed` means the evaluation opened the repository. `declared` means the verdict was decided by comparing a field in a declaration file: a satellite that declares a control it has not built will pass. `unevaluated` means no check decides that rule today — it is shipped, and it is not enforced. These are stated here rather than left for a buyer to discover, and a guard fails the build when this table and the shipped ruleset disagree.
+
+| Rule | Control | Assurance |
+|---|---|---|
+| SV-SEC-01 | Network Security Profile | `unevaluated` |
+| SV-SEC-02 | mTLS Enforcement | `unevaluated` |
+| SV-R01 | Declared Serverless Contract | `declared` |
+| SV-R02 | Stateless Execution | `declared` |
+| SV-R03 | Bounded Deployment Package | `declared` |
+| SV-R04 | Cold-Start Readiness | `declared` |
+
 ## Required Authority
 
 | Artifact | Role |

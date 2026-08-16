@@ -26,6 +26,19 @@ Serverless no reemplaza la arquitectura de dominio. Se compone con `modular-mono
 | Control de frontera | Los handlers serverless no deben saltarse ownership de dominio ni fronteras de persistencia. |
 | Neutralidad de proveedor | La guia Core permanece neutral respecto del proveedor; las selecciones de proveedor pertenecen a perfiles de producto o plataforma. |
 
+### Que vale cada veredicto
+
+**Lee la columna `Garantia` antes de fiarte de un visto bueno.** `observed` significa que la evaluacion abrio el repositorio. `declared` significa que el veredicto se decidio comparando un campo de un fichero de declaracion: un satelite que declara un control que no ha construido va a pasar. `unevaluated` significa que hoy ninguna comprobacion decide esa regla: se embarca y no se aplica. Se dicen aqui en vez de dejar que lo descubra quien compra, y un guard hace fallar el build cuando esta tabla y el ruleset embarcado discrepan.
+
+| Regla | Control | Garantia |
+|---|---|---|
+| SV-SEC-01 | Network Security Profile | `unevaluated` |
+| SV-SEC-02 | mTLS Enforcement | `unevaluated` |
+| SV-R01 | Declared Serverless Contract | `declared` |
+| SV-R02 | Stateless Execution | `declared` |
+| SV-R03 | Bounded Deployment Package | `declared` |
+| SV-R04 | Cold-Start Readiness | `declared` |
+
 ## Autoridad Requerida
 
 | Artefacto | Rol |

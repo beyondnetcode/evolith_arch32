@@ -26,6 +26,22 @@ La integracion event-driven no autoriza esconder workflows de negocio en infraes
 | Observabilidad | El flujo de eventos debe exponer correlacion, lag, fallos y evidencia de replay. |
 | Ownership | Los productores poseen el significado del evento; los consumidores poseen sus reacciones locales. |
 
+### Que vale cada veredicto
+
+**Lee la columna `Garantia` antes de fiarte de un visto bueno.** `observed` significa que la evaluacion abrio el repositorio. `declared` significa que el veredicto se decidio comparando un campo de un fichero de declaracion: un satelite que declara un control que no ha construido va a pasar. `unevaluated` significa que hoy ninguna comprobacion decide esa regla: se embarca y no se aplica. Se dicen aqui en vez de dejar que lo descubra quien compra, y un guard hace fallar el build cuando esta tabla y el ruleset embarcado discrepan.
+
+| Regla | Control | Garantia |
+|---|---|---|
+| ED-R01 | Strict AsyncAPI Contract | `declared` |
+| ED-R02 | Transactional Outbox | `declared` |
+| ED-R03 | Dead Letter Queue | `declared` |
+| ED-R04 | Event Ordering Guarantee | `declared` |
+| ED-R05 | Idempotent Consumer Contract | `declared` |
+| ED-R06 | Backward-Compatible Schema Evolution | `declared` |
+| ED-R07 | Retention Policy Declaration | `unevaluated` |
+| ED-R08 | Event Observability (Correlation and Trace Propagation) | `observed` |
+| ED-R09 | Explicit Consumer Group Registration | `unevaluated` |
+
 ## Autoridad Requerida
 
 | Artefacto | Rol |

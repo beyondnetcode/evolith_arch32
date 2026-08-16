@@ -26,6 +26,22 @@ Data mesh no debilita el ownership transaccional. Las fronteras de datos de domi
 | Evidencia de calidad | Los productos de datos deben exponer validacion, lineage, frescura y senales de confiabilidad. |
 | Frontera transaccional | La distribucion analitica no debe saltarse ownership transaccional ni invariantes de dominio. |
 
+### Que vale cada veredicto
+
+**Lee la columna `Garantia` antes de fiarte de un visto bueno.** `observed` significa que la evaluacion abrio el repositorio. `declared` significa que el veredicto se decidio comparando un campo de un fichero de declaracion: un satelite que declara un control que no ha construido va a pasar. `unevaluated` significa que hoy ninguna comprobacion decide esa regla: se embarca y no se aplica. Se dicen aqui en vez de dejar que lo descubra quien compra, y un guard hace fallar el build cuando esta tabla y el ruleset embarcado discrepan.
+
+| Regla | Control | Garantia |
+|---|---|---|
+| DAM-R01 | Data Product Designation | `declared` |
+| DAM-R02 | Data Contracts | `declared` |
+| DAM-R03 | Federated Governance | `declared` |
+| DAM-R04 | Data Product Lineage Tracking | `unevaluated` |
+| DAM-R05 | Retention Policy on Data Products | `declared` |
+| DAM-R06 | Explicit Consumption Contracts | `unevaluated` |
+| DAM-R07 | Data Quality SLO Declaration | `observed` |
+| DAM-R08 | Data Contract Backward Compatibility | `unevaluated` |
+| DAM-R09 | Data Product Discoverability Registration | `unevaluated` |
+
 ## Autoridad Requerida
 
 | Artefacto | Rol |

@@ -23,9 +23,14 @@
 # second action.yml in this repository claim the same name.
 # ============================================================================
 name: Evolith Governance Validation
+# The Marketplace listing card renders this as the subtitle, so it is written for a
+# stranger rather than for this repository. The previous text said "Evolith Core
+# standards" and "satellite repositories" -- both internal vocabulary that tells a
+# reader nothing about what the action does or why it is different.
 description: >
-  Validates repository compliance against Evolith Core standards using evolith-cli validate.
-  Designed to run as a PR gate in satellite repositories.
+  Architecture and policy governance as a PR gate. Evaluates your repository against a
+  Rego/OPA rule corpus and reports a rule it could NOT evaluate as a failure, never as a
+  silent pass -- so coverage and compliance stop looking identical.
 
 # Required to publish to GitHub Marketplace, and constrained: the icon must be a
 # Feather name and the color one of eight literals. Guard 64 checks both against

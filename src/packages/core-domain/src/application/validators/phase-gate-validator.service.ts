@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { findCoreFromSatellite } from '../paths/rulesets-location';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { RulesetLoader } from './ruleset-loader';
 import { EvidenceValidator } from './evidence-validator';
@@ -221,18 +222,42 @@ export class PhaseGateValidatorService {
    * `reference/` tree. Markers are tried one at a time, each walking the full
    * ancestry, so a shallow `rulesets` never wins over a correct `reference` root.
    */
+  /**
+   * GT-705 — no name-shaped fallback, and content-qualified.
+   *
+   * This ended `return path.join(projectPath, '..', 'evolith')` — a sibling directory
+   * named after the vendor's own monorepo. Measured on the published MCP server:
+   * 50 tools announced, RULESET_NOT_FOUND on every corpus-dependent one, because
+   * nobody looked where the corpus lives. The walk also qualified by EXISTENCE,
+   * which is GT-566's defect: `rulesets/agents` shares the name and holds no rules.
+   *
+   * Returning the satellite itself when nothing is found is deliberate: the
+   * repository then reports "no corpus under <a real path>" instead of naming a
+   * directory that never existed.
+   */
+  /**
+   * GT-705 — no name-shaped fallback, and content-qualified.
+   *
+   * This ended `return path.join(projectPath, '..', 'evolith')` — a sibling
+   * directory named after the vendor's own monorepo — and qualified candidates by
+   * EXISTENCE, which is GT-566's defect: `rulesets/agents` shares the name and
+   * holds no rules.
+   *
+   * The GATE tree is probed FIRST and that ordering is load-bearing, not tidiness.
+   * This repository keeps the corpus at `<root>/src/rulesets` and the gate
+   * definitions at `<root>/reference/governance/sdlc/gates`; a corpus-only walk
+   * stops at `<root>/src`, which holds rules and no gates, and every gate
+   * evaluation then fails looking for them. GT-572 is the record of that.
+   */
   private findCorePath(projectPath: string): string {
-    const markers = [path.join('reference', 'governance', 'sdlc', 'gates'), 'rulesets'];
-    for (const marker of markers) {
-      const parts = projectPath.split(path.sep);
-      while (parts.length > 0) {
-        parts.pop();
-        const root = parts.join(path.sep);
-        if (this.fs.existsSync(path.join(root, marker))) {
-          return root;
-        }
-      }
+    const gates = path.join('reference', 'governance', 'sdlc', 'gates');
+    const parts = projectPath.split(path.sep);
+    while (parts.length > 0) {
+      parts.pop();
+      const root = parts.join(path.sep);
+      if (root && this.fs.existsSync(path.join(root, gates))) return root;
     }
-    return path.join(projectPath, '..', 'evolith');
+    return findCoreFromSatellite(projectPath, { existsSync: (p) => this.fs.existsSync(p) }, path.sep)
+      ?? projectPath;
   }
 }

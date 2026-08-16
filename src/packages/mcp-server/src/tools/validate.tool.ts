@@ -1,4 +1,5 @@
 import { Injectable, Optional } from '@nestjs/common';
+import { resolveCorePath } from '../mcp/core-path';
 import { RulesetValidatorService, ValidationResult, rebuildValidatorForEngine } from '@beyondnet/evolith-core';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
 import { safeParseSatelliteManifest } from '@beyondnet/evolith-core-domain/schemas';
@@ -67,7 +68,10 @@ export class ValidateTool implements McpTool {
     const path = args.path as string | undefined;
     const format = (args.format as string) || 'json';
     const ruleset = args.ruleset as string | undefined;
-    const corePath = args.corePath as string | undefined;
+    // GT-705 — resolve, do not forward `undefined`. Passing it on let core-domain
+    // fall back to its own guess (`<satellite>/../evolith`), which is why the
+    // corpus this package now bundles was still not found: nobody looked for it.
+    const corePath = resolveCorePath(args.corePath as string | undefined, path);
     const topology = args.topology as string | undefined;
     const phase = args.phase as string | undefined;
     const manifestArg = args.manifest as string | undefined;
@@ -209,5 +213,5 @@ async function findCorePath(satellitePath: string): Promise<string> {
       // keep walking up
     }
   }
-  return path.join(satellitePath, '..', 'evolith');
+  return resolveCorePath();
 }

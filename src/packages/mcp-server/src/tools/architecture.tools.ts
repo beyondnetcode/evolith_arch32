@@ -1,4 +1,5 @@
 import * as path from 'node:path';
+import { resolveCorePath } from '../mcp/core-path';
 import type { IFileSystem, IConfigParser } from '@beyondnet/evolith-core';
 import {
   DeepArchitectureAnalyzer,
@@ -81,7 +82,7 @@ export function createArchitectureTools(
 
         // OPA parity via the shared ruleset validator.
         try {
-          const corePath = path.join(repoPath, '..', 'evolith');
+          const corePath = resolveCorePath();
           const opaResult = await validator.validate(repoPath, corePath);
           for (const issue of opaResult.issues.filter((i) => /^F[123]/.test(i.ruleId))) {
             issues.push({
@@ -124,7 +125,7 @@ export function createArchitectureTools(
       },
       execute: async (args) => {
         const repoPath = args.path as string;
-        const corePath = (args.corePath as string) || path.join(repoPath, '..', 'evolith');
+        const corePath = resolveCorePath(args.corePath as string | undefined);
         if (!repoPath) return { error: true, message: 'path is required' };
 
         try {

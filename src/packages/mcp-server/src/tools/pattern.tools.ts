@@ -1,4 +1,5 @@
 import * as path from 'node:path';
+import { resolveCorePath } from '../mcp/core-path';
 import type { IFileSystem, ILogger } from '@beyondnet/evolith-core';
 import { PatternCatalogService } from '@beyondnet/evolith-core';
 import type { PatternCatalogFilters, PatternCategory, PatternKind } from '@beyondnet/evolith-core';
@@ -21,8 +22,13 @@ const PATTERN_CATEGORIES: readonly PatternCategory[] = [
 
 const PATTERN_KINDS: readonly PatternKind[] = ['pattern', 'anti-pattern'];
 
-function resolveCorePath(args: Record<string, unknown>): string {
-  return (args.corePath as string) || path.join(process.cwd(), '..', 'evolith');
+/**
+ * GT-705 — this file's own helper now delegates instead of guessing. It used to
+ * return `path.join(process.cwd(), '..', 'evolith')` when the caller named no
+ * core path.
+ */
+function corePathFor(args: Record<string, unknown>): string {
+  return resolveCorePath(args.corePath as string | undefined);
 }
 
 function envelope<T>(command: string, data: T) {
@@ -83,7 +89,6 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
         },
       },
       execute: async (args) => {
-        const corePath = resolveCorePath(args);
         const category = args.category as PatternCategory | undefined;
         const kind = args.kind as PatternKind | undefined;
         if (category && !PATTERN_CATEGORIES.includes(category)) {
@@ -104,6 +109,10 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
         const hasFilters = Object.keys(filters).length > 0;
 
         try {
+          // GT-705 — resolved AFTER argument validation: a bad `kind` must fail as a
+          // bad `kind`, not as a missing corpus. The resolver now refuses an override
+          // that holds no corpus, so its throw would otherwise mask the real error.
+          const corePath = corePathFor(args);
           const patterns = await catalog.list(corePath, hasFilters ? filters : undefined);
           return envelope('evolith-pattern-list', {
             count: patterns.length,
@@ -134,7 +143,7 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
       execute: async (args) => {
         const id = args.id as string;
         if (!id) throw new DomainException(ErrorCodes.VALIDATION_FAILED, 'id is required');
-        const corePath = resolveCorePath(args);
+        const corePath = corePathFor(args);
 
         let pattern;
         try {
@@ -167,7 +176,7 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
       execute: async (args) => {
         const topology = args.topology as string;
         if (!topology) throw new DomainException(ErrorCodes.VALIDATION_FAILED, 'topology is required');
-        const corePath = resolveCorePath(args);
+        const corePath = corePathFor(args);
 
         try {
           const applications = await catalog.listByTopology(corePath, topology);

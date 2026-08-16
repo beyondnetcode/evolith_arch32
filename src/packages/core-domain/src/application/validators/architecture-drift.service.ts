@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { findCoreFromSatellite } from '../paths/rulesets-location';
 import { IFileSystem, ILogger, IConfigParser } from '../../domain/interfaces';
 import { RulesetValidatorService, ArchitectureValidationResult, ValidationIssue } from './ruleset-validator.service';
 
@@ -363,15 +364,20 @@ export class ArchitectureDriftService {
     return parts[parts.length - 1] || 'unknown';
   }
 
+  /**
+   * GT-705 — no name-shaped fallback, and content-qualified.
+   *
+   * This ended `return path.join(projectPath, '..', 'evolith')` — a sibling directory
+   * named after the vendor's own monorepo. Measured on the published MCP server:
+   * 50 tools announced, RULESET_NOT_FOUND on every corpus-dependent one, because
+   * nobody looked where the corpus lives. The walk also qualified by EXISTENCE,
+   * which is GT-566's defect: `rulesets/agents` shares the name and holds no rules.
+   *
+   * Returning the satellite itself when nothing is found is deliberate: the
+   * repository then reports "no corpus under <a real path>" instead of naming a
+   * directory that never existed.
+   */
   private findCorePath(projectPath: string): string {
-    const parts = projectPath.split(path.sep);
-    while (parts.length > 0) {
-      parts.pop();
-      const candidate = path.join(parts.join(path.sep), 'rulesets');
-      if (this.fs.existsSync(candidate)) {
-        return parts.join(path.sep);
-      }
-    }
-    return path.join(projectPath, '..', 'evolith');
+    return findCoreFromSatellite(projectPath, { existsSync: (p) => this.fs.existsSync(p) }, path.sep) ?? projectPath;
   }
 }

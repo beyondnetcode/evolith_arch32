@@ -201,6 +201,13 @@ rag-backfill-receipt.json
 /test-project/
 /rulesets/
 
+# GT-705 — build output, exactly like the CLI's bundled corpus: the MCP package
+# now ships the ruleset corpus and the SDLC gate definitions so an installed
+# server can answer the tools it announces. Written by
+# `mcp-server/scripts/copy-corpus.js` on every build; the SSOT stays src/rulesets.
+/src/packages/mcp-server/rulesets/
+/src/packages/mcp-server/reference/
+
 # GT-583 capability-operation generator scratch files. The generator writes
 # these inside the MCP package only while it asks the live registry for its
 # projection; committed copies can carry stale absolute paths from another

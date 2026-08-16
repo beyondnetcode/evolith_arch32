@@ -255,3 +255,57 @@ export function probeRulesetsLocationSync(
 
   return { probes };
 }
+
+/**
+ * GT-705 — find the Core root from a satellite, WITHOUT guessing its name.
+ *
+ * Four services carried their own copy of this walk and every one of them ended
+ * the same way:
+ *
+ *     return path.join(satellitePath, '..', 'evolith');
+ *
+ * A sibling directory named `evolith` — the Evolith monorepo's own layout, taken
+ * as a property of the filesystem. Measured on the published MCP server from a
+ * clean npm prefix: the server announced 50 tools, `evolith-gate-evaluate`
+ * answered RULESET_NOT_FOUND for `<cwd>/../evolith/reference/governance/sdlc/gates`
+ * and `evolith-validate` "could not locate the Evolith ruleset corpus". Nothing was
+ * broken in the corpus; nobody was looking where it lives.
+ *
+ * Two changes, and the first matters as much as the second:
+ *
+ *   - the walk qualifies a candidate BY CONTENT, through `RULESETS_CORPUS_MARKERS`.
+ *     Existence was GT-566's defect: the Core repo has a satellite-side
+ *     `rulesets/agents` directory that shares the name and holds no rules, and an
+ *     existence check latches onto it and reports emptiness as an answer.
+ *   - there is no name-shaped fallback. When the walk finds nothing it returns
+ *     `undefined`, and the caller reports "no corpus here" naming a real path,
+ *     instead of a path that never existed.
+ */
+export function findCoreFromSatellite(
+  satellitePath: string,
+  fsPort: { existsSync(p: string): boolean },
+  sep = '/',
+): string | undefined {
+  // Content qualification WITHOUT a readdir, because `IFileSystem` exposes only
+  // `existsSync` synchronously and widening a port shared by every adapter to
+  // serve one walk is a worse trade than probing the markers directly. Same
+  // semantics as `probeRulesetsLocationSync`: a directory qualifies when it holds
+  // a canonical ruleset family, never merely by being named `rulesets`.
+  const qualifies = (dir: string): boolean => {
+    for (const marker of RULESETS_CORPUS_MARKERS) {
+      if (fsPort.existsSync([dir, marker].join(sep))) return true;
+    }
+    return false;
+  };
+
+  const parts = satellitePath.split(sep);
+  while (parts.length > 0) {
+    parts.pop();
+    const root = parts.join(sep);
+    if (!root) break;
+    for (const candidate of RULESETS_CANDIDATE_SUBPATHS) {
+      if (qualifies([root, ...candidate].join(sep))) return root;
+    }
+  }
+  return undefined;
+}

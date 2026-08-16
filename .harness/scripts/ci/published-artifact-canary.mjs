@@ -42,6 +42,7 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertScanned } from '../lib/coverage.mjs';
 
 const require = createRequire(import.meta.url);
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -60,7 +61,9 @@ const MCP_VERSION = versionOf('--mcp-version', CLI_VERSION);
 
 const failures = [];
 const notes = [];
+let checksRun = 0;
 function check(label, fn) {
+  checksRun += 1;
   try {
     const detail = fn();
     console.log(`  ✓ ${label}${detail ? ` — ${detail}` : ''}`);
@@ -260,6 +263,13 @@ check('the published MCP server starts and serves a tools/call over stdio', () =
 });
 
 cleanup();
+
+// GT-578 — the denominator. A canary that silently executed zero checks would
+// print no failures and exit 0, which is the vacuous pass `42-validate-guard-
+// denominators` exists to make impossible. `checksRun` is incremented by `check`
+// itself, so a check deleted from this file moves the number rather than leaving
+// a stale constant behind.
+assertScanned(checksRun, { what: 'published-artifact checks', where: [`cli@${CLI_VERSION}`, `mcp@${MCP_VERSION}`] });
 
 console.log('');
 for (const note of notes) console.log(`  · ${note}`);

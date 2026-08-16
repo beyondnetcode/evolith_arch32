@@ -77,7 +77,7 @@ describe('ScaffoldCommand', () => {
       expect(mockStrategy.generateLibrary).toHaveBeenCalledWith('design', 'domain');
       expect(mockStrategy.generateLibrary).toHaveBeenCalledWith('db-schema', 'shared');
       expect(mockStrategy.generateLibrary).toHaveBeenCalledWith('mocks', 'shared');
-      expect(mockSpinnerInstance.stop).toHaveBeenCalledWith('Andamiaje arquitectónico completado exitosamente.');
+      expect(mockSpinnerInstance.stop).toHaveBeenCalledWith('Architectural scaffolding completed.');
       expect(mockOutro).toHaveBeenCalled();
     });
 

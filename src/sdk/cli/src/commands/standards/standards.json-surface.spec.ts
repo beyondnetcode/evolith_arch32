@@ -179,7 +179,7 @@ describe('StandardsCommand — ADR-0073 JSON surface', () => {
 
       expect(mockValidate).not.toHaveBeenCalled();
       expect(process.exitCode).toBe(1);
-      expect(JSON.stringify(soleEnvelope())).toContain('Código requerido');
+      expect(JSON.stringify(soleEnvelope())).toContain('Code is required');
     });
   });
 

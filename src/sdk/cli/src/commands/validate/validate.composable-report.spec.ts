@@ -4,7 +4,7 @@
  * `createComposableEngine()` es una funcion local del comando, pero carga los
  * modos con `require(...)` en tiempo de llamada -- asi que se pueden mockear por
  * ruta de modulo y devolver resultados a medida. Sin eso, todo el bloque que
- * imprime modos, fallos por severidad, remedios y reglas OK quedaba sin
+ * printing modes, failures by severity, remedies and OK rules was left without
  * ejercitar: son ramas de presentacion guiadas por la FORMA de los datos, y solo
  * se distinguen alimentando cada forma.
  */
@@ -44,7 +44,7 @@ import { ValidateCommand } from './validate.command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { CLI_EXIT_CODES } from '../../infrastructure/cli/exit-codes';
 
-describe('ValidateCommand — reporte del motor composable', () => {
+describe('ValidateCommand — composable engine report', () => {
   let command: ValidateCommand;
   let info: jest.SpyInstance;
   let warn: jest.SpyInstance;
@@ -71,20 +71,20 @@ describe('ValidateCommand — reporte del motor composable', () => {
 
   const run = () => command.run([], { composable: true } as never);
 
-  it('resume modos, reglas verificadas y rendimiento', async () => {
+  it('summarises modes, checked rules and performance', async () => {
     sdlcResult = {
       mode: 'sdlc', status: 'passed', rulesChecked: 7,
       issues: [{ ruleId: 'OK-1', status: 'pass', message: 'bien', severity: 'info' }],
     };
     await run();
     const out = said();
-    expect(out).toMatch(/Motor Composable GT-312/);
+    expect(out).toMatch(/Composable engine GT-312/);
     expect(out).toMatch(/Modos ejecutados: sdlc/);
-    expect(out).toMatch(/7 verificadas/);
+    expect(out).toMatch(/7 checked/);
     expect(out).toMatch(/Rendimiento:/);
   });
 
-  it('lista las reglas OK de un modo cuando las hay', async () => {
+  it('lists a mode\u0027s OK rules when there are any', async () => {
     sdlcResult = {
       mode: 'sdlc', status: 'passed', rulesChecked: 2,
       issues: [
@@ -93,7 +93,7 @@ describe('ValidateCommand — reporte del motor composable', () => {
       ],
     };
     await run();
-    expect(said()).toMatch(/Modo sdlc: 2 reglas OK/);
+    expect(said()).toMatch(/Mode sdlc: 2 rules OK/);
   });
 
   it('marca cada severidad de fallo con su icono', async () => {
@@ -110,7 +110,7 @@ describe('ValidateCommand — reporte del motor composable', () => {
     expect(out).toMatch(/\[RED\] \[E-1\]/);
     expect(out).toMatch(/\[YELLOW\] \[W-1\]/);
     expect(out).toMatch(/\[BLUE\] \[I-1\]/);
-    expect(out).toMatch(/Modo sdlc: 3 fallos/);
+    expect(out).toMatch(/Mode sdlc: 3 failures/);
   });
 
   it('muestra el remedio solo en los fallos que lo traen', async () => {

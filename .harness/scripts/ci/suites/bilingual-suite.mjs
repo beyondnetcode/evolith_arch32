@@ -8,14 +8,28 @@ import {
 } from "../../lib/generated-doc-exclusions.mjs";
 import { assertScanned } from "../../lib/coverage.mjs";
 import { languageOf } from "../../lib/language-heuristic.mjs";
+import {
+  ENTRY_SURFACE,
+  isEntrySurface,
+  spanishHalfOf,
+  summarizeCoverage,
+  formatCoverageReport
+} from "../../lib/bilingual-scope.mjs";
 
 const root = process.cwd();
 const failures = [];
 const orphans = [];
 /** Every English .md under reference/ (repo-relative, POSIX) — input to the exclusion partition. */
 const referenceEnglishDocs = [];
-/** English docs under reference/ with no .es.md sibling, before exclusions are applied. */
-const orphanCandidates = [];
+/**
+ * ADR-0126: entry-surface English docs actually found on disk. Its own denominator,
+ * because the parity loop below can be alive while this list is empty — a walk rooted
+ * in the wrong directory finds markdown and finds none of THESE, and the orphan check
+ * would then iterate a list of sixteen paths that exist nowhere and report a clean pass.
+ */
+const entrySurfaceFound = [];
+/** ADR-0126: EN/ES pairs that exist and are no longer enforced. The released denominator. */
+const releasedPairs = [];
 
 const PARITY_EXEMPT_BASENAMES = new Set([
   "CHANGELOG.md",
@@ -70,6 +84,47 @@ function countHeaders(content) {
   return matches.length;
 }
 
+/**
+ * ADR-0126 — block-level HTML tags that open and never close, or close having never
+ * opened.
+ *
+ * ## Why this is here and not in a markdown linter
+ *
+ * The defect it was written for: `README.es.md` lost the `<div align="center">` on its
+ * first line and kept the `</div>` on line 24. GitHub renders the Spanish landing page
+ * left-aligned while the English one is centred — the first thing a Spanish-speaking
+ * visitor sees, wrong, for as long as it took to notice.
+ *
+ * Two guards purpose-built for EN/ES parity were green throughout, and CORRECTLY so:
+ * the file existed, its heading count matched, and it read as Spanish. Every question
+ * they ask is about the document's TEXT. Nothing asked whether the markup still
+ * bracketed. That is the hole, and it is narrow enough to close exactly:
+ *
+ *   - Only the entry surface is checked. A malformed `<div>` matters where it is
+ *     rendered to a stranger; in a deep reference document nobody has opened, it is
+ *     noise, and a noisy guard is a guard that gets switched off.
+ *   - Only block tags that must nest. Void elements (`<br/>`, `<img>`) and inline
+ *     `<kbd>`/`<sub>`/`<b>` are excluded — `README.md` uses them unclosed and legally.
+ *   - Fenced code is stripped first, or every shell heredoc becomes a finding.
+ */
+const BALANCED_TAGS = ["div", "details", "table", "picture", "figure"];
+
+function unbalancedTags(content) {
+  const stripped = stripCodeBlocks(content);
+  const findings = [];
+  for (const tag of BALANCED_TAGS) {
+    const opens = (stripped.match(new RegExp(`<${tag}(?=[\\s>])[^>]*?(?<!/)>`, "gi")) ?? []).length;
+    const closes = (stripped.match(new RegExp(`</${tag}\\s*>`, "gi")) ?? []).length;
+    if (opens !== closes) {
+      findings.push(
+        `<${tag}> opened ${opens} time(s) and closed ${closes} time(s)` +
+        (opens < closes ? " — a closing tag with nothing to close" : " — a block left open")
+      );
+    }
+  }
+  return findings;
+}
+
 function walk(directory, files = []) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     if (entry.isDirectory()) {
@@ -104,8 +159,10 @@ for (const file of markdownFiles) {
   const relative = path.relative(root, file);
   const content = fs.readFileSync(file, "utf8");
   
-  // 1. Structural Parity Check
-  if (!PARITY_EXEMPT_BASENAMES.has(path.basename(file))) {
+  // 1. Structural Parity Check — ADR-0126: entry surface only. A pair outside it keeps
+  //    its .es.md untouched and simply stops being judged; the count of what that drops
+  //    is printed below rather than left to be inferred from a green tick.
+  if (isEntrySurface(relative) && !PARITY_EXEMPT_BASENAMES.has(path.basename(file))) {
     if (relative.endsWith(".es.md")) {
       const englishFile = file.replace(/\.es\.md$/, ".md");
       if (!fs.existsSync(englishFile)) {
@@ -152,39 +209,75 @@ for (const file of markdownFiles) {
     }
   }
 
-  // 2. Orphan Check (Only for files under 'reference/')
+  // 2. Markup balance — entry surface only, both halves. See unbalancedTags above.
+  if (isEntrySurface(relative)) {
+    for (const finding of unbalancedTags(content)) {
+      failures.push(`${relative}: ${finding}`);
+    }
+  }
+
+  // 3. Coverage denominators. Neither is a check. `referenceEnglishDocs` is the corpus the
+  //    pre-ADR-0126 prefix rule would have judged, kept so the exclusion table below is still
+  //    partitioned over its real shape. `releasedPairs` is what the narrowing actually drops:
+  //    every EN/ES pair that EXISTS and is no longer looked at — repo-wide, not reference/-only,
+  //    because the pairs under src/ and product/ were being enforced by the parity branch too.
   if (relative.startsWith("reference") && relative.endsWith(".md") && !relative.endsWith(".es.md")) {
     referenceEnglishDocs.push(relative.split(path.sep).join("/"));
-    const spanishFile = file.replace(/\.md$/, ".es.md");
-    if (!fs.existsSync(spanishFile)) {
-      orphanCandidates.push(relative.split(path.sep).join("/"));
+  }
+
+  if (relative.endsWith(".md") && !relative.endsWith(".es.md")) {
+    const posix = relative.split(path.sep).join("/");
+    if (isEntrySurface(posix)) {
+      entrySurfaceFound.push(posix);
+    } else if (fs.existsSync(file.replace(/\.md$/, ".es.md"))) {
+      releasedPairs.push(posix);
     }
   }
 }
 
-// Declared exclusions: generator-written English-only output. The exclusion table lives in
-// .harness/scripts/lib/generated-doc-exclusions.mjs — each entry names its generator and its
-// reason, and membership is proven by a content marker or a pinned inventory. Partition over
-// EVERY English doc under reference/ (not just the orphans) so a count-pinned tree is measured
-// against its real shape rather than against whichever subset happens to be untranslated.
+// Two denominators, both asserted. `referenceEnglishDocs` no longer gates anything — it is
+// the size of the corpus ADR-0126 stopped enforcing, and it is asserted anyway because a
+// coverage line reporting "0 pairs outside the surface" would understate the waiver rather
+// than overstate the check, which is the quieter half of the same dishonesty.
 assertScanned(referenceEnglishDocs.length, {
-  what: "English docs under reference/ (the orphan-check corpus)",
+  what: "English docs under reference/ (the corpus ADR-0126 released from enforcement)",
   where: path.join(root, "reference"),
 });
+
+// The orphan check is now a list, not a walk: every entry-surface document must carry its
+// .es.md. Generated-doc exclusions do not apply — no entry-surface file is generator output,
+// which is a property of the list and is why it is a list. `partitionByExclusions` still runs
+// over the released corpus so the operator can see the exclusion table has not silently
+// become the thing doing the work.
+assertScanned(entrySurfaceFound.length, {
+  what: `entry-surface English documents (ADR-0126; ${ENTRY_SURFACE.length} declared)`,
+  where: [root, `declared in .harness/scripts/lib/bilingual-scope.mjs`],
+});
+
+for (const relative of ENTRY_SURFACE) {
+  if (!fs.existsSync(path.join(root, relative))) {
+    failures.push(
+      `${relative}: declared in the ADR-0126 entry surface and does not exist. ` +
+      `Either the document moved and the list was not updated, or the list is aspirational — ` +
+      `both are defects in the list, not in the tree.`
+    );
+    continue;
+  }
+  if (!fs.existsSync(path.join(root, spanishHalfOf(relative)))) {
+    orphans.push(`${relative} → missing ${spanishHalfOf(relative)}`);
+  }
+}
 
 const partition = partitionByExclusions(
   referenceEnglishDocs,
   (rel) => fs.readFileSync(path.join(root, rel), "utf8")
 );
-const excludedPaths = new Set(partition.excluded.flatMap((x) => x.files));
 
-for (const relative of orphanCandidates) {
-  if (excludedPaths.has(relative)) continue;
-  orphans.push(`${relative} → missing ${relative.replace(/\.md$/, ".es.md")}`);
-}
-
-// Always printed, pass or fail. An exclusion the operator cannot see is a false green.
+// Always printed, pass or fail. An exclusion the operator cannot see is a false green — and
+// so is a narrowed scope the operator cannot see. The coverage line is the second half of
+// that rule and was added with the narrowing, not after it.
 console.log(formatExclusionReport(partition));
+console.log(formatCoverageReport(summarizeCoverage({ enforcedFound: entrySurfaceFound.length, releasedPairs: releasedPairs.length })));
 
 let hasError = false;
 
@@ -202,7 +295,12 @@ if (orphans.length > 0) {
   for (const orphan of orphans) {
     console.error(`  \x1b[31m✗\x1b[0m ${orphan}`);
   }
-  console.error("\nEvery English document under reference/ must have a Spanish counterpart (.es.md).");
+  console.error(
+    "\nEvery document in the ADR-0126 entry surface must have a Spanish counterpart (.es.md)." +
+    "\nThe surface is declared in .harness/scripts/lib/bilingual-scope.mjs — sixteen files a" +
+    "\nstranger reaches within two clicks. If the document does not belong there, remove it" +
+    "\nfrom the list and say why in the ADR; do not add a translation to silence this."
+  );
 }
 
 if (hasError) {
@@ -210,8 +308,10 @@ if (hasError) {
 }
 
 console.log(
-  `\x1b[32m✓\x1b[0m Bilingual Suite (Parity & Orphans) passed ` +
+  `\x1b[32m✓\x1b[0m Bilingual Suite (Parity, Orphans & Markup) passed ` +
   `(${markdownFiles.length} markdown file(s) scanned; ` +
-  `${referenceEnglishDocs.length} English doc(s) under reference/ checked for an ES counterpart)`,
+  `${entrySurfaceFound.length}/${ENTRY_SURFACE.length} entry-surface document(s) enforced). ` +
+  `This tick covers the entry surface ONLY — it makes no claim about the ` +
+  `${releasedPairs.length} pair(s) ADR-0126 released.`,
 );
 process.exit(0);

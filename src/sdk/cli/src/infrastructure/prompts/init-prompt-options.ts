@@ -34,10 +34,10 @@ export const AGENT_OPTIONS: InitPromptOption[] = [
 ];
 
 export function validateProjectName(value: string | undefined): string | undefined {
-  if (!value) return 'Por favor ingresa un nombre.';
-  if (value.includes(' ')) return 'El nombre no debe contener espacios.';
+  if (!value) return 'Please enter a name.';
+  if (value.includes(' ')) return 'The name must not contain spaces.';
   if (!/^[a-zA-Z][a-zA-Z0-9-_]*$/.test(value)) {
-    return 'El nombre debe empezar con letra y contener solo letras, números, guiones.';
+    return 'The name must start with a letter and contain only letters, numbers and hyphens.';
   }
   return undefined;
 }

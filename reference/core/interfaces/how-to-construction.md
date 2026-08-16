@@ -89,21 +89,21 @@ Command: `evolith-cli validate`
 
 | Flag | Description |
 | --- | --- |
-| `-f, --format [string]` | Formato de salida (json, table, yaml, markdown) |
-| `-o, --output [string]` | Ruta para guardar el reporte JSON |
-| `-s, --satellite [path]` | Ruta al repositorio satélite (default: cwd) |
-| `-c, --core [path]` | Ruta al repositorio Evolith Core (default: auto-detect) |
-| `--select <ref>` | Evaluar SOLO el/los ruleset(s) indicados, por el ref que publica  |
-| `-r, --ruleset [id]` | Validar ruleset específico (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability) |
-| `-a, --arch` | Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas) |
-| `-t, --topology [id]` | Topología canónica a validar (repetible): modular-monolith, distributed-modules,  |
-| `-e, --engine [engine]` | Motor de validación a utilizar: native (por defecto) u opa |
-| `--max-skipped-fraction <fraction>` | Suelo de cobertura: falla si la fracción de reglas aplicables NO evaluadas supera este valor (0..1).  |
-| `-m, --manifest [path]` | Ruta al SatelliteManifest JSON para evaluación end-to-end (activa pipeline GT-281) |
+| `-f, --format [string]` | Output format (json, table, yaml, markdown) |
+| `-o, --output [string]` | Path to write the JSON report to |
+| `-s, --satellite [path]` | Path to the satellite repository (default: cwd) |
+| `-c, --core [path]` | Path to the Evolith Core repository (default: auto-detect) |
+| `--select <ref>` | Evaluate ONLY the named ruleset(s), by the ref `evolith rulesets`  |
+| `-r, --ruleset [id]` | Validate a specific ruleset (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability) |
+| `-a, --arch` | Validate architecture across the whole progressive axis (equivalent to the three progressive topologies) |
+| `-t, --topology [id]` | Canonical topology to validate (repeatable): modular-monolith, distributed-modules,  |
+| `-e, --engine [engine]` | Validation engine to use: native (default) or opa |
+| `--max-skipped-fraction <fraction>` | Coverage floor: fail if the fraction of applicable rules NOT evaluated exceeds this value (0..1).  |
+| `-m, --manifest [path]` | Path to the SatelliteManifest JSON for end-to-end evaluation (enables the GT-281 pipeline) |
 | `-p, --phase [phase]` | Fase SDLC a evaluar: discovery, design, construction, qa, release. Activa pipeline GT-281 |
-| `--adr [id]` | Validar contra reglas ADR específicas (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050) |
-| `--file [path]` | Validar archivo individual (modo ad-hoc) |
-| `--composable` | Usar motor de validación composable (GT-312) con resolución inteligente de modos |
+| `--adr [id]` | Validate against specific ADR rules (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050) |
+| `--file [path]` | Validate a single file (ad-hoc mode) |
+| `--composable` | Use the composable validation engine (GT-312) with smart mode resolution |
 
 Example:
 ```bash
@@ -384,21 +384,21 @@ Command: `evolith-cli validate --composable`
 
 | Flag | Description |
 | --- | --- |
-| `-f, --format [string]` | Formato de salida (json, table, yaml, markdown) |
-| `-o, --output [string]` | Ruta para guardar el reporte JSON |
-| `-s, --satellite [path]` | Ruta al repositorio satélite (default: cwd) |
-| `-c, --core [path]` | Ruta al repositorio Evolith Core (default: auto-detect) |
-| `--select <ref>` | Evaluar SOLO el/los ruleset(s) indicados, por el ref que publica  |
-| `-r, --ruleset [id]` | Validar ruleset específico (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability) |
-| `-a, --arch` | Validar arquitectura sobre todo el eje progresivo (equivale a las tres topologías progresivas) |
-| `-t, --topology [id]` | Topología canónica a validar (repetible): modular-monolith, distributed-modules,  |
-| `-e, --engine [engine]` | Motor de validación a utilizar: native (por defecto) u opa |
-| `--max-skipped-fraction <fraction>` | Suelo de cobertura: falla si la fracción de reglas aplicables NO evaluadas supera este valor (0..1).  |
-| `-m, --manifest [path]` | Ruta al SatelliteManifest JSON para evaluación end-to-end (activa pipeline GT-281) |
+| `-f, --format [string]` | Output format (json, table, yaml, markdown) |
+| `-o, --output [string]` | Path to write the JSON report to |
+| `-s, --satellite [path]` | Path to the satellite repository (default: cwd) |
+| `-c, --core [path]` | Path to the Evolith Core repository (default: auto-detect) |
+| `--select <ref>` | Evaluate ONLY the named ruleset(s), by the ref `evolith rulesets`  |
+| `-r, --ruleset [id]` | Validate a specific ruleset (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability) |
+| `-a, --arch` | Validate architecture across the whole progressive axis (equivalent to the three progressive topologies) |
+| `-t, --topology [id]` | Canonical topology to validate (repeatable): modular-monolith, distributed-modules,  |
+| `-e, --engine [engine]` | Validation engine to use: native (default) or opa |
+| `--max-skipped-fraction <fraction>` | Coverage floor: fail if the fraction of applicable rules NOT evaluated exceeds this value (0..1).  |
+| `-m, --manifest [path]` | Path to the SatelliteManifest JSON for end-to-end evaluation (enables the GT-281 pipeline) |
 | `-p, --phase [phase]` | Fase SDLC a evaluar: discovery, design, construction, qa, release. Activa pipeline GT-281 |
-| `--adr [id]` | Validar contra reglas ADR específicas (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050) |
-| `--file [path]` | Validar archivo individual (modo ad-hoc) |
-| `--composable` | Usar motor de validación composable (GT-312) con resolución inteligente de modos |
+| `--adr [id]` | Validate against specific ADR rules (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050) |
+| `--file [path]` | Validate a single file (ad-hoc mode) |
+| `--composable` | Use the composable validation engine (GT-312) with smart mode resolution |
 
 Example:
 ```bash

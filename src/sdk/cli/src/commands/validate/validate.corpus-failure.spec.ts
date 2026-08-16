@@ -130,7 +130,7 @@ describe('ValidateCommand — corpus resolution failures', () => {
       // as a passing gate.
       expect(exitSpy).toHaveBeenCalledWith(1);
       expect(prompt.showError).toHaveBeenCalledWith(expect.stringContaining('Rulesets not found'));
-      expect(prompt.showOutro).toHaveBeenCalledWith(expect.stringContaining('abortada'));
+      expect(prompt.showOutro).toHaveBeenCalledWith(expect.stringContaining('aborted'));
     });
 
     it('writes a RULESET_NOT_FOUND envelope to stdout in JSON mode rather than exiting on empty output', async () => {
@@ -166,7 +166,7 @@ describe('ValidateCommand — corpus resolution failures', () => {
       // "it checked and mostly passed", so it is a BLOCKING failure.
       expect(exitSpy).toHaveBeenCalledWith(1);
       expect(prompt.showError).toHaveBeenCalledWith(expect.stringContaining('No rulesets resolved'));
-      expect(prompt.showOutro).toHaveBeenCalledWith(expect.stringContaining('abortada'));
+      expect(prompt.showOutro).toHaveBeenCalledWith(expect.stringContaining('aborted'));
     });
 
     it('emits the ADR-0073 error envelope in JSON mode and exits non-zero', async () => {

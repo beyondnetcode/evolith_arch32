@@ -216,7 +216,7 @@ describe('ValidateCommand', () => {
       await command.run([], { architecture: true });
 
       expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
-        expect.stringContaining('fallado')
+        expect.stringContaining('Validation failed')
       );
     });
 
@@ -271,7 +271,7 @@ describe('ValidateCommand', () => {
       await command.run([], { format: 'unknown' });
 
       expect(promptServiceMock.showSuccess).toHaveBeenCalledWith(
-        expect.stringContaining('problemas')
+        expect.stringContaining('No issues found')
       );
     });
 
@@ -281,7 +281,7 @@ describe('ValidateCommand', () => {
       await command.run([], {});
 
       expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
-        expect.stringContaining('cumple')
+        expect.stringContaining('meets every Evolith standard')
       );
     });
 
@@ -301,7 +301,7 @@ describe('ValidateCommand', () => {
       // apart from 1 (the tool could not reach a verdict at all).
       expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
       expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
-        expect.stringContaining('fallado'),
+        expect.stringContaining('Validation failed'),
       );
       expect(promptServiceMock.showError).toHaveBeenCalledWith(
         expect.stringContaining('GOV-CORE-UNRESOLVED'),
@@ -319,7 +319,7 @@ describe('ValidateCommand', () => {
 
       expect(exitSpy).not.toHaveBeenCalled();
       expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
-        expect.stringContaining('cumple'),
+        expect.stringContaining('meets every Evolith standard'),
       );
     });
 
@@ -342,7 +342,7 @@ describe('ValidateCommand', () => {
       await command.run([], {});
 
       expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
-        expect.stringContaining('advertencias')
+        expect.stringContaining('with warnings')
       );
     });
 
@@ -365,7 +365,7 @@ describe('ValidateCommand', () => {
       await command.run([], {});
 
       expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
-        expect.stringContaining('fallado')
+        expect.stringContaining('Validation failed')
       );
       expect(exitSpy).toHaveBeenCalledWith(CLI_EXIT_CODES.BLOCKED);
     });
@@ -398,7 +398,7 @@ describe('ValidateCommand', () => {
       await command.run([], { format: 'unknown' });
 
       expect(promptServiceMock.showError).toHaveBeenCalledWith(
-        expect.stringContaining('bloqueante')
+        expect.stringContaining('blocking')
       );
     });
 
@@ -421,7 +421,7 @@ describe('ValidateCommand', () => {
       await command.run([], { format: 'unknown' });
 
       expect(promptServiceMock.showWarning).toHaveBeenCalledWith(
-        expect.stringContaining('advertencia')
+        expect.stringContaining('warning')
       );
     });
 

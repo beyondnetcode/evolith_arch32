@@ -61,11 +61,15 @@ test("exits 0 for root-level paired files (Pattern A)", () => {
   }
 });
 
-test("exits 1 when EN file lacks ES counterpart", () => {
+// ADR-0126 narrowed the GATE to the entry surface, so the unpaired file has to BE on it
+// for this test to prove anything. `reference/core/architecture/README.md` is one of the
+// sixteen; `reference/architecture/README.md`, which this fixture used before, is not —
+// and the test would have passed vacuously against a gate that had stopped looking.
+test("exits 1 when an ENTRY-SURFACE EN file lacks its ES counterpart", () => {
   const root = setupFixture({
     "README.md": "# EN",
     "README.es.md": "# ES",
-    "architecture/README.md": "# Unpaired EN",
+    "core/architecture/README.md": "# Unpaired EN",
   });
   try {
     const out = runIn(root);
@@ -75,11 +79,11 @@ test("exits 1 when EN file lacks ES counterpart", () => {
   }
 });
 
-test("exits 1 when ES file lacks EN counterpart", () => {
+test("exits 1 when an ENTRY-SURFACE ES file lacks its EN counterpart", () => {
   const root = setupFixture({
     "README.md": "# EN",
     "README.es.md": "# ES",
-    "architecture/README.es.md": "# Orphan ES",
+    "core/architecture/README.es.md": "# Orphan ES",
   });
   try {
     const out = runIn(root);
@@ -140,6 +144,24 @@ test("reports only [OK] status in area breakdown", () => {
     assert.match(out.stdout, /README\.md.*1.*1.*1.*OK/);
     assert.match(out.stdout, /architecture.*2.*2.*2.*OK/);
     assert.match(out.stdout, /governance.*1.*1.*1.*OK/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+// The other half of ADR-0126, asserted rather than assumed. A document outside the
+// entry surface with no twin is deliberately NOT a gate failure any more, and the two
+// tests above would happily pass against a gate that had stopped looking at everything.
+// This one fails if the narrowing is ever silently widened back.
+test("exits 0 when a NON-entry-surface file is unpaired (ADR-0126)", () => {
+  const root = setupFixture({
+    "README.md": "# EN",
+    "README.es.md": "# ES",
+    "core/architecture/deep/some-internal-note.md": "# Unpaired, and released by ADR-0126",
+  });
+  try {
+    const out = runIn(root);
+    assert.equal(out.status, 0, out.stdout + out.stderr);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

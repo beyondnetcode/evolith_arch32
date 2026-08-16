@@ -38,4 +38,27 @@ if ! npx --no -- commitlint --version >/dev/null 2>&1; then
   exit 1
 fi
 
-exec npx --no -- commitlint --edit "$1"
+npx --no -- commitlint --edit "$1" || exit 1
+
+# DCO — the verification half. `.husky/prepare-commit-msg` adds the trailer, so
+# reaching this branch means it was stripped, the hook was bypassed, or git
+# user.name/user.email changed mid-commit. Checked rather than assumed for the
+# same reason the commitlint branch above fails closed: "the hook ran" and "the
+# trailer is present" are different facts, and a provenance record nobody
+# verifies is a provenance record nobody can rely on.
+#
+# The pattern is deliberately loose on the name and strict on the shape: a
+# sign-off must name a human and an address, and this hook has no business
+# adjudicating what a real name looks like.
+if ! grep -qiE '^[[:space:]]*Signed-off-by:[[:space:]]*.+[[:space:]]+<[^[:space:]]+@[^[:space:]]+>' "$1"; then
+  echo "commit-msg: no Signed-off-by trailer — the commit is not signed off." >&2
+  echo "" >&2
+  echo "  This repository uses the Developer Certificate of Origin 1.1." >&2
+  echo "  Signing off certifies you wrote the change or may submit it under MIT." >&2
+  echo "  You keep the copyright in your contribution." >&2
+  echo "" >&2
+  echo "  Fix:    git commit -s          (or --amend -s for the last commit)" >&2
+  echo "  See:    https://developercertificate.org/" >&2
+  echo "  Bypass: git commit --no-verify" >&2
+  exit 1
+fi

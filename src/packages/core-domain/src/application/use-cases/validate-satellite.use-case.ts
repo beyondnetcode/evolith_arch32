@@ -25,6 +25,17 @@ export interface ValidateSatelliteInput {
   rulesetRefs?: readonly string[];
   engine?: 'native' | 'opa';
   /**
+   * GT-676 — the coverage floor, per call.
+   *
+   * `GT-569` built the gate and `RulesetValidatorOptions` has carried it since,
+   * but no surface could set it: measured, `maxSkippedFraction` appeared zero
+   * times across `src/sdk/cli`, `src/apps/core-api` and `src/packages/mcp-server`,
+   * so `coverageThresholdIssue` short-circuited to `undefined` on every real run.
+   *
+   * Absent ⇒ no floor, which is what every recorded verdict was produced under.
+   */
+  maxSkippedFraction?: number;
+  /**
    * Optional manifest to trigger the end-to-end evaluation pipeline.
    * When provided, the use case resolves topology from the manifest,
    * loads GT-280 structured phase/gate data, executes Rego rules,
@@ -62,7 +73,7 @@ export class ValidateSatelliteUseCase {
   }
 
   async execute(input: ValidateSatelliteInput): Promise<ValidateSatelliteOutput> {
-    const { satellitePath, corePath, rulesetId, rulesetRefs, engine, manifest, plan } = input;
+    const { satellitePath, corePath, rulesetId, rulesetRefs, engine, manifest, plan, maxSkippedFraction } = input;
 
     // If a manifest was provided, run the end-to-end evaluation pipeline
     if (manifest) {
@@ -73,11 +84,14 @@ export class ValidateSatelliteUseCase {
 
     // Fall back to the standard validation logic
     let activeValidator = this.validator;
-    if (engine && this.validator) {
+    if ((engine || maxSkippedFraction !== undefined) && this.validator) {
       // GT-701 — one rebuild, shared. This branch and `buildValidator` below held
       // two hand-copied versions of the same construction; GT-664 was one of them
       // dropping `processRunner` while the other kept it.
-      activeValidator = rebuildValidatorForEngine(this.validator, engine);
+      // GT-676 — the floor travels with the rebuild. The engine defaults to the
+      // instance's own so asking only for a coverage floor does not silently
+      // switch engines, which is the mirror of the GT-688 defect.
+      activeValidator = rebuildValidatorForEngine(this.validator, engine, { maxSkippedFraction });
     }
 
     let result: ValidationResult;

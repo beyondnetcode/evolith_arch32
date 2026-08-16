@@ -109,8 +109,22 @@ export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.free
   // Both values below were read off a FRESH build (`rm tsconfig.tsbuildinfo` + rebuild of
   // core-domain/mcp, then `node .harness/scripts/generate-capability-operations.mjs`):
   // this suite is green against a stale `dist` and red against a rebuilt one.
-  operationsSha256: 'd41453e4c14100a7e25800b12804079035674e88bd388076a4b31c812f89b58b',
-  sha256: '07e387a3dd1e607f46bb8bdcb9b029a10ff234ba53d4b5782092c635829545f0',
+  // GT-676 — re-pinned for an ARGUMENT, not an operation: `evolith-validate` gained an
+  // optional `maxSkippedFraction` (the coverage floor GT-569 built, which until now no
+  // surface could set — measured zero occurrences across the CLI, REST and MCP trees, so
+  // the gate short-circuited to `undefined` on every real run). The operation count is
+  // unchanged at 52; `operationsSha256` moves because that tool's inputSchema grew, which
+  // is exactly what it exists to detect — the same re-pin GT-677 and GT-688 made.
+  //
+  // Previous, for the record: GT-688 pinned
+  //   operations d41453e4…, manifest 07e387a3…
+  // when `evolith-evaluate` gained `design` and `schemaVersion` went 1.0.0 -> 2.0.0.
+  //
+  // Both values below were read off a FRESH build (every `tsconfig.tsbuildinfo` deleted,
+  // then `tsc -b`, then `node .harness/scripts/generate-capability-operations.mjs`): this
+  // suite is green against a stale `dist` and red against a rebuilt one.
+  operationsSha256: 'ad8b3dc9424cbbdabba1c752ff2248fcef38de88d37a89c5aac5c900b4bf91dc',
+  sha256: 'fbeadd89523a2011e40a7bbbebf6f231f014e537448e650f3d1883f6f71b948e',
 }) as CapabilityManifestShape;
 
 /**

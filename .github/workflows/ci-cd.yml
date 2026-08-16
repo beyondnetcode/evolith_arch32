@@ -120,6 +120,14 @@ jobs:
       # PR path that executes the OPA engine at all -- before GT-675, no CI job
       # passed `--engine` or loaded the bundle.
       - name: Verify the OPA bundle declares its scope (GT-675)
+        # EVOLITH_PARITY_FULL is how the gate's own refusal path says to declare a
+        # sweep with no change signal: this job runs on a shallow checkout, so
+        # `git diff HEAD~1 HEAD` cannot resolve and the gate refuses rather than
+        # silently evaluating everything. Declaring it here is the documented
+        # answer, not a workaround -- the bundle check is scope-independent
+        # anyway, since it interrogates the compiled artifact itself.
+        env:
+          EVOLITH_PARITY_FULL: 'true'
         run: node .harness/scripts/ci/27-opa-parity-gate.mjs
 
       - name: Run core-domain tests with coverage

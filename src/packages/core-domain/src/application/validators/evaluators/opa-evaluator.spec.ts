@@ -355,14 +355,12 @@ describe('every policy in the bundle is attributable · GT-693', () => {
     function topLevelKeys(literal: string): string[] {
       const keys: string[] = [];
       let depth = 0;
-      let inString = false;
+      // No `inString` state: the `"` branch below consumes the whole string by
+      // jumping to its closing quote, so a separate flag was never assigned `true`
+      // and its block was unreachable. CodeQL flagged it as a useless conditional and
+      // was right -- removed rather than silenced.
       for (let i = 0; i < literal.length; i++) {
         const c = literal[i];
-        if (inString) {
-          if (c === '\\') i++;
-          else if (c === '"') inString = false;
-          continue;
-        }
         if (c === '"') {
           const close = literal.slice(i + 1).search(/(?<!\\)"/) + i + 1;
           const after = literal.slice(close + 1).match(/^\s*:/);

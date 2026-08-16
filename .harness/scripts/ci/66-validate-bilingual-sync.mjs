@@ -63,9 +63,7 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
  * defect and belongs in the fix, not in this list.
  */
 const ALLOWED = new Map([
-  ['1a04f031', 'ES-only repair of a status literal so 08-validate-tracking could parse it; no EN counterpart exists to change.'],
-  ['0fb29909', 'The defect that motivated this guard: the EN catalog was corrected and the ES twin left asserting "las 251 literales". Mirrored in a follow-up; kept here so the audit sweep stays green without pretending it never happened.'],
-  ['fa551a3a', 'EN tracking deferrals landed alone. Re-measured 2026-08-16: no surviving divergence — all 673 rows carry equivalent statuses in both files — so there is nothing left to mirror.'],
+  ['1a04f031', 'ES-only repair of a status literal so 08-validate-tracking could parse it; no EN counterpart exists to change, so it never converges and never will.'],
 ]);
 
 function fail(lines) {
@@ -127,6 +125,32 @@ export function oneSidedInRange(commits, pairExists) {
     offenders.push(touched.has(en) ? `${en} (EN moved, ES did not)` : `${es} (ES moved, EN did not)`);
   }
   return [...new Set(offenders)].sort();
+}
+
+/**
+ * Did the pair CONVERGE after a one-sided edit?
+ *
+ * The per-commit view below asks "was this commit self-consistent", and for a REPAIR
+ * the honest answer is no: mirroring a one-sided edit is itself one-sided. So the audit
+ * sweep flagged `ba5fec8b` — the commit that fixed `0fb29909` by bringing the ES catalog
+ * back in line — as a defect, when it is the cure. That was papered over with allowlist
+ * entries, and the shape of that mistake is worth naming: a list that absorbs every
+ * repair grows one entry per fix, forever, and each reads like a granted exception
+ * rather than what it is — the guard unable to tell drift from its own remedy.
+ *
+ * `git log` returns newest-first, so a LOWER index is a LATER commit, and convergence
+ * means the missing half moved AFTER the one-sided edit. A looser "touched anywhere in
+ * the window" rule was written first and is wrong in a way only the negative test
+ * showed: `gap-tracking.es.md` is touched by dozens of unrelated commits, so every
+ * one-sided edit to its English half looked repaired — including one made deliberately
+ * and never mirrored. A classifier that clears the case it exists to catch is worse
+ * than no classifier.
+ */
+function convergedAfter(commits) {
+  return (missingHalf, index) => {
+    for (let i = 0; i < index; i++) if (commits[i].files.includes(missingHalf)) return true;
+    return false;
+  };
 }
 
 /**
@@ -308,12 +332,34 @@ function main() {
     return;
   }
 
-  const violations = oneSidedEdits(commits, pairExists);
-  if (violations.length > 0) {
+  // Split per-commit findings by whether the pair converged afterwards. A repair is
+  // one-sided BY CONSTRUCTION, so counting it as a defect makes the sweep permanently
+  // red — which is what it was, unnoticed, because only range mode runs in CI.
+  const converged = convergedAfter(commits);
+  const open = [];
+  const healed = [];
+  for (const v of oneSidedEdits(commits, pairExists)) {
+    const index = commits.findIndex((c) => c.sha === v.sha);
+    const stillOpen = v.offenders.filter((o) => {
+      const file = o.split(' ')[0];
+      const en = englishHalf(file);
+      const es = `${en.slice(0, -3)}.es.md`;
+      // The half this commit did NOT touch is the one that must move later.
+      return !converged(o.startsWith(en) ? es : en, index);
+    });
+    (stillOpen.length ? open : healed).push({ ...v, offenders: stillOpen.length ? stillOpen : v.offenders });
+  }
+
+  if (healed.length > 0) {
+    console.log(`  ${healed.length} one-sided commit(s) CONVERGED afterwards (not defects):`);
+    for (const v of healed) console.log(`    ${v.sha}  ${v.subject}`);
+  }
+
+  if (open.length > 0) {
     fail([
-      `${violations.length} commit(s) changed ONE side of a bilingual pair.`,
+      `${open.length} commit(s) left a bilingual pair one-sided, and nothing after it mirrored the other half.`,
       '',
-      ...violations.flatMap((v) => [`${v.sha}  ${v.subject}`, ...v.offenders.map((o) => `    ${o}`)]),
+      ...open.flatMap((v) => [`${v.sha}  ${v.subject}`, ...v.offenders.map((o) => `    ${o}`)]),
       ...tail,
     ]);
   }

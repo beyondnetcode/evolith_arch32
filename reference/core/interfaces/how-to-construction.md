@@ -129,6 +129,7 @@ Response shape (captured live):
         "blocking": "<boolean>",
         "category": "<string>",
         "description": "<string>",
+        "evaluated": "<boolean>",
         "ruleId": "<string>",
         "severity": "<string>",
         "title": "<string>"
@@ -225,6 +226,7 @@ Response shape (captured live):
         "blocking": "<boolean>",
         "category": "<string>",
         "description": "<string>",
+        "evaluated": "<boolean>",
         "ruleId": "<string>",
         "severity": "<string>",
         "title": "<string>"
@@ -316,6 +318,7 @@ Response shape (captured live):
         "blocking": "<boolean>",
         "category": "<string>",
         "description": "<string>",
+        "evaluated": "<boolean>",
         "ruleId": "<string>",
         "severity": "<string>",
         "title": "<string>"

@@ -9821,3 +9821,29 @@ The declaration has one hole — a pack that does not declare — and the direct
 - **REVISED, AND THIS IS THE NUMBER THAT MATTERS:** `published-api` **14**, `built-tested-unwired` **17** (15 distinct classes across 16 closures), `singleton-nobody-imports` **6**, `dead` **0**. The `dead` bucket is now empty — both of its former members were published exports.
 - **From 59 alleged findings to 15 distinct classes of real debt, across eight detector corrections, every one found by triaging rather than by writing the detector.** The instrument built to catch over-claiming over-claimed by a factor of four, and only entry-by-entry verification exposed it. That is the single most useful thing this row produced, and it argues for the general rule the audit already implied: **a measurement is not evidence until something has tried to refute it.**
 - **Status:** `PENDING`
+
+#### GT-699
+
+**Title:** A finding that says "I could not evaluate this" is indistinguishable from a finding that says "your repository violates this", so 74 of 82 blocking issues are false alarms nobody can filter
+
+- **Purpose:** Let a reader count violations without counting the engine's own admissions as violations.
+- **Evidence:** **Measured 2026-08-16 through the shipped CLI on this repository, and every figure the audit offered was re-derived here rather than trusted.** `evolith validate` reports **112 issues, 82 blocking**. Of those 82, **74 are in `blockingSkippedRuleIds`** — their text reads *"This rule is declared `blocking: true` and was NOT evaluated"*. Only **8** are verdicts about the code. And the two kinds are INDISTINGUISHABLE: an admission and a violation carry the same fields, the same `severity: MUST` and the same `blocking: true`. A reader sees 82 problems and has 8. **The run already knows the difference** — it publishes `blockingSkippedRuleIds`, `blockingNonExecutableRuleIds`, `rulesNotApplicable`, `rulesNonExecutable` and `rulesExecutable` in its own counters — and then flattens it away in `issues[]`, which is the array a human and the Tracker actually read.
+- **TWO CLAIMS FROM THE AUDIT THAT DID NOT SURVIVE RE-MEASUREMENT, corrected before acting on them.** (1) *"An empty directory earns 53 passes, 35 blocking."* It does not: an empty directory **FAILS**, with 120 issues and 82 blocking. (2) *"Only 62 of 411 rules change verdict between an empty directory and the full repo."* Once admissions are separated from verdicts the picture inverts — of 19 verdicts on this repository and 20 on an empty directory, only **4 overlap**, and two of those four are the meta-rules `GOV-RULE-NON-EXECUTABLE` and `GOV-RULE-NOT-APPLICABLE`. **15 fire only on this repository and 16 only on an empty one. The verdicts discriminate; it was the admissions that never did.**
+- **Use cases:**
+  - A buyer reads a report and needs the number of things wrong with their code, not that number plus the engine's coverage gaps.
+  - The Tracker ingests a verdict and must not raise 74 findings a customer cannot act on.
+  - An operator triaging a failed gate needs the 8 real ones first.
+- **Impact:** The product's headline output overstates violations by roughly 10x on its own repository. It is not that the engine cannot fail — it fails loudly and correctly — it is that its failure is unreadable, and an unreadable signal gets muted, which is how a governance tool stops being consulted.
+- **Expected outcome:** every finding declares whether it is a verdict or an admission, and no consumer has to parse prose to tell them apart.
+- **Affected files:** `src/packages/core-domain/src/application/validators/rule-evaluation-engine.ts`, `src/packages/core-domain/src/application/validators/ruleset-validator.types.ts`, `src/packages/core-domain/src/evaluation/contracts/finding.ts`
+- **Component:** `Core Domain` · **Criticality:** P1 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `SEVERE` · **Basis:** `estimate`
+- **Provenance:** Registered and closed 2026-08-16 from the owner's instruction to fix "the product cannot fail". The instruction rested on the root-cause audit, and the first act here was to REPRODUCE the audit rather than act on it — which is what surfaced the two refuted claims above. **`SEVERE` interest because the cost compounds per run:** every evaluation any customer performs carries the same 10x overstatement.
+- **Acceptance criteria:**
+  - [x] **FALSIFIABILITY:** a consumer can partition the findings of a real run without reading prose. Before: `82 blocking, 0 distinguishable`. After, same repository: **19 verdicts (8 blocking) and 93 admissions (74 blocking)**. Both outputs recorded.
+  - [x] `GT-595` keeps firing — an unevaluated blocking rule is still `blocking: true` and can never read as green. Asserted directly, because making them legible must never become suppressing them.
+  - [x] All three sites that build an unevaluated finding carry the marker: the blocking-skipped issue, the handler-threw issue and the MUST-not-evaluated issue.
+  - [x] The field is OPTIONAL, so absence means "verdict" and every existing consumer keeps its current reading.
+- **CLOSED 2026-08-16.** Mutation: flipping the marker to `true` turns the partition case red. Suites after a clean build: core-domain **1968**, cli 1482, mcp 575, infra-providers 179, contracts 115. **A measurement taken against a FAILED build was discarded mid-work** — the type did not exist on `ValidationIssue` yet and `tsc -b` had emitted partially, so the numbers were re-taken after `build exit=0`.
+- **What this does NOT fix.** The engine still cannot evaluate 74 of its own blocking rules on this repository. Making that legible is not making it go away, and the underlying coverage gap is `GT-694`'s and `GT-696`'s territory, not this row's. This row only guarantees that the gap is now countable.
+- **Status:** `DONE`

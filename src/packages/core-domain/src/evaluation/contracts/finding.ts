@@ -63,6 +63,17 @@ export interface ValidationIssueLike {
   readonly expected?: string;
   readonly actual?: string;
   readonly blocking: boolean;
+  /**
+   * GT-699 — did the engine actually evaluate the rule, or is this finding an
+   * admission that it could not?
+   *
+   * Absent means "a verdict about the repository", which is what every finding
+   * before this field was assumed to be. `false` means the rule is declared
+   * `blocking: true` and never ran, so it is reported (GT-595) but must not be
+   * counted as a violation. Measured when this was added: 74 of 82 blocking issues
+   * on this repository were of that second kind, and nothing on the issue said so.
+   */
+  readonly evaluated?: boolean;
 }
 
 /** Schema version of this contract (bumped only on incompatible changes). */

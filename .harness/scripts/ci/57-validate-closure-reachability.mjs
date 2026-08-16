@@ -144,41 +144,63 @@ function frameworkConstructed(text, cls, file) {
 }
 
 /**
- * GT-698 — the `export const x = new X()` singleton, found by triage.
- *
- * `hasProductionCallSite` skips the declaring file, so a class constructed into a
- * module-level singleton in its own file looks unreached. It is not: what travels is
- * the CONST. `CommandExecutor`, `ErrorReporter` and `GateRoleEnforcer` were all
- * reported unreachable while their singletons are imported across production.
- *
- * The const must actually be CONSUMED elsewhere. The six `GT-346` providers
- * (`DockerProvider`, `NpmProvider`, `NxProvider`, `PythonProvider`, `DotnetProvider`,
- * `GitHubActionsProvider`) construct singletons that nobody imports, and they stay
- * flagged — which is the whole point of requiring the second half.
+ * GT-698 — comments are not code, and this nearly disabled the detector's own
+ * calibration. `AuditService` appears as `AuditService.record` inside a prose
+ * docblock, and `StructuralReviewProvider` inside a `//` comment. Both would read as
+ * static call sites to a naive scan.
  */
-function singletonIsConsumed(cls, declaringFile, text) {
-  let konst = null;
-  for (const line of text.split('\n')) {
-    const m = line.match(new RegExp(`^export\\s+const\\s+(\\w+)\\b.*=\\s*new\\s+${cls}\\s*\\(`));
-    if (m) { konst = m[1]; break; }
-  }
-  if (!konst) return false;
+function stripComments(text) {
+  return text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+}
+
+/**
+ * GT-698 — REACHED THROUGH ITS OWN FILE, the rule that replaced two narrower ones.
+ *
+ * `hasProductionCallSite` skips the declaring file, so anything constructed there is
+ * invisible to it. Triage found two separate shapes hiding behind that blind spot:
+ *   - `export const commandExecutor = new CommandExecutor()` — a singleton, imported
+ *     across production.
+ *   - `ToolDispatchService`, constructed at `mcp-tool-dispatch.ts:377` inside the
+ *     `@deprecated handleCallTool` wrapper that four production files still call.
+ *     The class is the CURRENT implementation; the functions are the old shim that
+ *     delegates to it. The detector had it exactly backwards.
+ *
+ * One rule covers both: if the declaring file constructs the class AND exports
+ * something production consumes, the class is reached. The second half is required —
+ * the six GT-346 providers construct singletons nobody imports and stay flagged.
+ */
+function reachedThroughOwnFile(cls, declaringFile, text) {
+  if (!new RegExp(`new\\s+${cls}\\s*\\(`).test(stripComments(text))) return false;
+
+  const exported = [
+    ...text.matchAll(/^export\s+(?:async\s+)?(?:function|const|class)\s+(\w+)/gm),
+  ]
+    .map((m) => m[1])
+    .filter((name) => name !== cls);
+  if (exported.length === 0) return false;
+
   for (const [file, other] of sources) {
     if (file === declaringFile) continue;
-    if (new RegExp(`\\b${konst}\\b`).test(other)) return true;
+    const body = stripComments(other);
+    if (exported.some((name) => new RegExp(`\\b${name}\\b`).test(body))) return true;
   }
   return false;
 }
 
 function hasProductionCallSite(cls, declaringFile) {
   const uses = new RegExp(
-    `(new\\s+${cls}\\s*\\(|:\\s*${cls}\\b|<${cls}>|extends\\s+${cls}\\b|@Inject\\(${cls}\\)|useClass:\\s*${cls}\\b)`,
+    // GT-698 — `Cls.method(` added after triage: `PluginModule`, which app.module.ts
+    // imports, reaches `PluginLoader` only through `PluginLoader.loadPlugins()`, and
+    // two live CLI commands reach `AgentRuntimeFactory` only through its statics. A
+    // class used exclusively through static members is reached, and was being called
+    // dead.
+    `(new\\s+${cls}\\s*\\(|:\\s*${cls}\\b|<${cls}>|extends\\s+${cls}\\b|@Inject\\(${cls}\\)|useClass:\\s*${cls}\\b|\\b${cls}\\.[A-Za-z_])`,
   );
   for (const [file, text] of sources) {
     if (file === declaringFile) continue;
     // Import and re-export lines are NOT use. GT-266 was registered as a provider and
     // exported from its module, and still nothing called it.
-    const body = text
+    const body = stripComments(text)
       .split('\n')
       .filter((l) => !/^\s*import\s/.test(l) && !/^\s*export\s+\{/.test(l))
       .join('\n');
@@ -200,7 +222,7 @@ for (const record of records) {
       const cls = match[1];
       if (frameworkConstructed(text, cls, file)) continue;
       classesScanned++;
-      if (!hasProductionCallSite(cls, file) && !singletonIsConsumed(cls, file, text)) {
+      if (!hasProductionCallSite(cls, file) && !reachedThroughOwnFile(cls, file, text)) {
         const key = `${record.id}::${cls}`;
         if (!found.has(key)) found.set(key, { gap: record.id, cls, file, closedAt: record.closedAt });
       }

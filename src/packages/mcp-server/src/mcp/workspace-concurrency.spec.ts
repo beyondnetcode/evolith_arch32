@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import * as path from 'node:path';
 import { AbacEvaluator } from './abac-evaluator';
 import { MetricsService } from './metrics.service';
+import { issueGrantForCall } from './approval-grant';
 import { ToolDispatchService } from './mcp-tool-dispatch';
 import { ToolRegistryService } from './tool-registry.service';
 import { McpTool } from './tool.interface';
@@ -84,7 +85,26 @@ function envelopeOf(result: { structuredContent?: Record<string, unknown> }): an
   return result.structuredContent;
 }
 
-const APPROVAL = { apply: true, approvalToken: 'gt606-approval' };
+/**
+ * GT-679 — these cases are about CONCURRENCY, and they used to reach their
+ * assertions by handing the approval gate a fixed placeholder string. That
+ * string is no longer an approval: the gate now verifies a server-issued grant
+ * bound to principal, tenant, tool and a digest of these very arguments, so the
+ * approval has to be minted per call rather than shared as a constant.
+ *
+ * Nothing about what these tests assert has changed — only how they get past a
+ * gate that finally has teeth.
+ */
+function approved(tool: string, args: Record<string, unknown> = {}): Record<string, unknown> {
+  const { token } = issueGrantForCall({
+    approver: 'gt606-approver@example.com',
+    principal: 'anonymous',
+    tenant: 'default',
+    tool,
+    args,
+  });
+  return { ...args, apply: true, approvalToken: token };
+}
 
 describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools', () => {
   const tempDirs: string[] = [];
@@ -151,8 +171,8 @@ describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools
       return readHeadSha(dir);
     });
 
-    const pB = serviceB.callTool('evolith-test-write', { path: repo, baseSha: shaA, ...APPROVAL });
-    const pA = serviceA.callTool('evolith-test-advance-head', { path: repo, ...APPROVAL });
+    const pB = serviceB.callTool('evolith-test-write', approved('evolith-test-write', { path: repo, baseSha: shaA }));
+    const pA = serviceA.callTool('evolith-test-advance-head', approved('evolith-test-advance-head', { path: repo }));
 
     const [resB, resA] = await Promise.all([pB, pA]);
     const shaB = await aCommitted.promise;
@@ -197,11 +217,8 @@ describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools
       }),
     ]);
 
-    const res = await service.callTool('evolith-test-write', {
-      path: repo,
-      baseSha: '0000000000000000000000000000000000000000',
-      ...APPROVAL,
-    });
+    const res = await service.callTool('evolith-test-write', approved('evolith-test-write', { path: repo,
+      baseSha: '0000000000000000000000000000000000000000' }));
 
     const env = envelopeOf(res);
     expect(env.success).toBe(false);
@@ -221,11 +238,8 @@ describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools
       }),
     ]);
 
-    const res = await service.callTool('evolith-test-write', {
-      path: repo,
-      baseSha: await readHeadSha(repo),
-      ...APPROVAL,
-    });
+    const res = await service.callTool('evolith-test-write', approved('evolith-test-write', { path: repo,
+      baseSha: await readHeadSha(repo) }));
 
     expect(envelopeOf(res).success).toBe(true);
     expect(executed).toBe(true);
@@ -235,11 +249,8 @@ describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools
     const repo = newRepo();
     const service = dispatchFor([tool('evolith-test-write', async () => ({ ok: true }))]);
 
-    const res = await service.callTool('evolith-test-write', {
-      path: repo,
-      baseSha: git(repo, 'rev-parse', '--short=12', 'HEAD'),
-      ...APPROVAL,
-    });
+    const res = await service.callTool('evolith-test-write', approved('evolith-test-write', { path: repo,
+      baseSha: git(repo, 'rev-parse', '--short=12', 'HEAD') }));
 
     expect(envelopeOf(res).success).toBe(true);
   });
@@ -254,11 +265,8 @@ describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools
       }),
     ]);
 
-    const res = await service.callTool('evolith-test-write', {
-      path: notARepo,
-      baseSha: 'f12f060ebb72',
-      ...APPROVAL,
-    });
+    const res = await service.callTool('evolith-test-write', approved('evolith-test-write', { path: notARepo,
+      baseSha: 'f12f060ebb72' }));
 
     const env = envelopeOf(res);
     expect(env.success).toBe(false);
@@ -271,10 +279,8 @@ describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools
     const repo = newRepo();
     const service = dispatchFor([tool('evolith-test-read', async () => ({ ok: true }), false)]);
 
-    const res = await service.callTool('evolith-test-read', {
-      path: repo,
-      baseSha: '0000000000000000000000000000000000000000',
-    });
+    const res = await service.callTool('evolith-test-read', approved('evolith-test-read', { path: repo,
+      baseSha: '0000000000000000000000000000000000000000' }));
 
     expect(envelopeOf(res).success).toBe(true);
   });
@@ -297,7 +303,7 @@ describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools
         }),
       ]);
 
-      const res = await service.callTool('evolith-test-write', { path: repo, ...APPROVAL });
+      const res = await service.callTool('evolith-test-write', approved('evolith-test-write', { path: repo }));
 
       const env = envelopeOf(res);
       expect(env.success).toBe(false);
@@ -310,7 +316,7 @@ describe('GT-606 / ADR-0093 §1 — optimistic concurrency on mutative MCP tools
       delete process.env.EVOLITH_MCP_REQUIRE_BASE_SHA;
       const repo = newRepo();
       const service = dispatchFor([tool('evolith-test-write', async () => ({ ok: true }))]);
-      const res = await service.callTool('evolith-test-write', { path: repo, ...APPROVAL });
+      const res = await service.callTool('evolith-test-write', approved('evolith-test-write', { path: repo }));
       expect(envelopeOf(res).success).toBe(true);
     });
   });

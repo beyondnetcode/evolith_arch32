@@ -62,16 +62,23 @@ they are meant to make possible.
 | `GT-704` | P2 | *"Nobody runs the two engines side by side, so they can drift apart unnoticed."* Dual-engine parity is the **receipt** for the launch claim. Going to Hacker News saying two engines must agree, with nothing checking that they do, is the one thing a skeptic can end the thread with. |
 | `GT-703` | P3 | **Work already in flight.** PR [#536](https://github.com/beyondnetcode/evolith_arch32/pull/536) is open against it. Deferring a row whose pull request is open does not save an hour — it orphans one that has already been spent, and leaves an open PR pointing at a deferred gap. It was flipped to `DEFERRED` in the first pass of this triage and reverted on noticing the PR. |
 
-### Deferred to 2026-11-16 — 18 rows
+### Deferred to 2026-11-16 — 17 rows
 
-`GT-669` · `GT-670` · `GT-672` · `GT-673` · `GT-674` · `GT-678` · `GT-679` · `GT-680` ·
-`GT-681` · `GT-682` · `GT-684` · `GT-685` · `GT-686` · `GT-687` · `GT-689` · `GT-690` ·
-`GT-692` · `GT-698`
+`GT-669` · `GT-670` · `GT-672` · `GT-673` · `GT-674` · `GT-678` · `GT-680` · `GT-681` ·
+`GT-682` · `GT-684` · `GT-685` · `GT-686` · `GT-687` · `GT-689` · `GT-690` · `GT-692` ·
+`GT-698`
 
-Criticality spread: 4 × P1, 12 × P2, 1 × P3. **None is a P0.** They are real work and they are
+> **`GT-679` left this list by being CLOSED, not by being reconsidered.** It was deferred here on
+> 2026-08-16, and [#542](https://github.com/beyondnetcode/evolith_arch32/pull/542) landed the MCP
+> human-approval second factor on `develop` the same day. A deferral is a statement about the
+> maintainer’s next quarter, not a claim over work already in flight elsewhere: the closure wins
+> and the row is `DONE`. This was found by the merge conflict it caused, which is the honest way
+> for two parallel sessions to discover they disagreed.
+
+Criticality spread: 3 × P1, 12 × P2, 1 × P3 — GT-679 was the fourth P1. **None is a P0.** They are real work and they are
 not urgent, which is the definition of the thing that eats a quarter.
 
-Board after the pass: **642 DONE · 28 DEFERRED · 4 PENDING · 2 IN-PROGRESS**, identical in both
+Board after the pass, merged with `develop`: **643 DONE · 27 DEFERRED · 4 PENDING · 2 IN-PROGRESS**, identical in both
 languages, with the `**Progress:**` counters on both boards updated to match.
 
 Deferred means **deferred, not cancelled**: the rows keep their catalog entries, their
@@ -100,10 +107,10 @@ judgement — as a measurement. Record it in the week-8 review either way.
 
 Read the [adoption scoreboard](./baseline-2026-08-16.md) first, then decide in this order:
 
-1. **If the campaign worked** (≥4/5 placements, ≥1 external issue or PR): the 19 deferred rows
+1. **If the campaign worked** (≥4/5 placements, ≥1 external issue or PR): the 17 deferred rows
    reopen, but behind the work of converting the first external contributor into a second
-   reviewer. A second pair of hands is worth more than any of the 19.
-2. **If it did not work**: the diagnosis is almost never *wrong channel*. Do not reopen the 19
+   reviewer. A second pair of hands is worth more than any of the 17.
+2. **If it did not work**: the diagnosis is almost never *wrong channel*. Do not reopen the 17
    as consolation — run the five cold-install sessions named in the plan first.
 3. **Either way**: do not extend the freeze silently. Extending it is a decision and gets
    written down here, with the same shape as this one.

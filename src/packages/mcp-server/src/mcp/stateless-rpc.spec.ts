@@ -8,7 +8,8 @@ import {
   PROTOCOL_REVISION_STATELESS,
   isStatelessRevisionRequest,
 } from './protocol-revisions';
-import { __resetEphemeralStateSecret } from './mrtr-request-state';
+import { __resetEphemeralStateSecret, computeRequestDigest } from './mrtr-request-state';
+import { verifyApprovalGrant } from './approval-grant';
 import type { McpUserContext } from './mcp-user-context';
 
 /**
@@ -195,9 +196,35 @@ describe('stateless (2026-07-28) JSON-RPC path (GT-582)', () => {
       const second = await handleStatelessRpc(retry, principal, ops(), { env });
 
       expect((second.body as any).result.resultType).toBe('complete');
-      expect(calls).toEqual([
-        { name: 'evolith-scaffold', args: expect.objectContaining({ repo: 'alpha', apply: true, approvalToken: 'tok-123' }) },
-      ]);
+      // GT-679 — the forwarded approval is NOT the string the client sent. The
+      // server mints a grant here, after `verifyRequestState` proved this is the
+      // request the human was shown and the human accepted; the client's
+      // `approvalToken` is their confirmation and never leaves that function.
+      expect(calls).toHaveLength(1);
+      expect(calls[0].name).toBe('evolith-scaffold');
+      expect(calls[0].args).toEqual(expect.objectContaining({ repo: 'alpha', apply: true }));
+      const forwarded = (calls[0].args as Record<string, unknown>).approvalToken;
+      expect(forwarded).not.toBe('tok-123');
+      const verified = verifyApprovalGrant(
+        forwarded,
+        {
+          principal: principal.id,
+          tenant: principal.tenant,
+          tool: 'evolith-scaffold',
+          // The grant is minted over the arguments AS FORWARDED, which include the
+          // correlation id the retry carries over from the sealed state. Binding
+          // the original request instead looked equivalent and was not — the gate
+          // recomputes from what it receives, and the HTTP conformance test is
+          // what caught the difference.
+          requestDigest: computeRequestDigest('tools/call', {
+            name: 'evolith-scaffold',
+            arguments: { ...(calls[0].args as Record<string, unknown>) },
+          }),
+        },
+        { env },
+      );
+      expect(verified.ok).toBe(true);
+      expect(verified.ok && verified.payload.approver).toBe(`elicitation:${principal.id}`);
     });
 
     it('carries the correlation id from the sealed state onto the retry', async () => {

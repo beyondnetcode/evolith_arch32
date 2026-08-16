@@ -39,6 +39,7 @@ import {
   sealRequestState,
   verifyRequestState,
 } from './mrtr-request-state';
+import { issueGrantForCall } from './approval-grant';
 import type { McpUserContext } from './mcp-user-context';
 import type { ToolCallResult } from './mcp-tool-dispatch';
 import { generateCorrelationId } from '../common/envelopes';
@@ -286,6 +287,13 @@ async function handleToolsCall(
   // not a new precondition — forcing a round trip on a caller who has already
   // been approved would break the working seam GT-608 proved end to end.
   // The gate itself still runs inside `callTool`; nothing is waived here.
+  //
+  // GT-679 — this shortcut was named as a bypass and it is not one, BUT it only
+  // stopped being one when the gate grew teeth. Both legs converge on
+  // `ops.callTool`, so the grant is verified identically whichever produced it:
+  // a bare string that walks through here is now refused downstream with a
+  // reason, where before it was accepted for being non-empty. The parity test
+  // asserts exactly that, so the two legs cannot drift apart.
   if (args.apply === true && typeof args.approvalToken === 'string' && args.approvalToken.trim() !== '') {
     const result = await ops.callTool(name, args);
     return { status: 200, body: jsonRpcResult(id, { resultType: 'complete', ...result }, ops.serverInfo) };
@@ -347,15 +355,47 @@ async function handleToolsCall(
         ),
       };
     }
+    // GT-679 — THE SERVER MINTS THE GRANT HERE, and this is the whole point.
+    //
+    // Everything needed has just been proved: `verifyRequestState` established
+    // that this is the request that was shown to the human, for this principal
+    // and tenant, unexpired and untampered; and the human answered `accept` with
+    // `approve: true`. What used to happen next was that the CLIENT'S OWN
+    // `approvalToken` string was forwarded to a gate that only checked it was
+    // non-empty — so the caller was, in effect, approving itself.
+    //
+    // The string the human typed is still REQUIRED above (it is their
+    // confirmation) but it is no longer the authority: it never leaves this
+    // function. The grant that does travel is bound to principal, tenant, tool
+    // and a digest of these arguments, expires, and can be redeemed once.
+    const approver =
+      (approval.content?.approver as string | undefined)?.trim()
+      || `elicitation:${principal.id}`;
+
+    // The forwarded arguments are built FIRST, and the grant is minted over them.
+    //
+    // Minting over the request's own digest looked equivalent and was not: the
+    // retry adds `correlationId`, which is not in `NON_BINDING_ARG_KEYS`, so the
+    // gate recomputed a different digest and refused every legitimate approval.
+    // The HTTP conformance test caught it; the unit test could not, because its
+    // `callTool` is a fake that never runs the gate.
+    const forwarded = {
+      ...args,
+      apply: true,
+      correlationId: (args.correlationId as string | undefined) ?? verification.payload.correlationId,
+    };
+    const { token: grantToken } = issueGrantForCall({
+      approver,
+      principal: principal.id,
+      tenant,
+      tool: name,
+      args: forwarded,
+    }, env);
+
     // The existing approval gate remains the authority — MRTR only carries the
     // decision to it, and the correlation id comes from the sealed state so the
     // two legs land in the audit trail as one operation.
-    const result = await ops.callTool(name, {
-      ...args,
-      apply: true,
-      approvalToken: token,
-      correlationId: (args.correlationId as string | undefined) ?? verification.payload.correlationId,
-    });
+    const result = await ops.callTool(name, { ...forwarded, approvalToken: grantToken });
     return { status: 200, body: jsonRpcResult(id, { resultType: 'complete', ...result }, ops.serverInfo) };
   }
 

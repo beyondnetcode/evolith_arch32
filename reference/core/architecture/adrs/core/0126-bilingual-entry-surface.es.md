@@ -57,13 +57,24 @@ escotilla era un muro justo delante de las personas que el proyecto intenta atra
 
 ### 1. El mandato aplica a una superficie de entrada, no a un prefijo de ruta
 
-Dieciséis documentos, declarados por nombre en `.harness/scripts/lib/bilingual-scope.mjs`. El
+Diecisiete documentos, declarados por nombre en `.harness/scripts/lib/bilingual-scope.mjs`. El
 listón para pertenecer: **un extraño alcanza el documento en dos clics desde la página de
 aterrizaje del repositorio, o el proyecto lo trata como autoritativo.** La lista son los seis
-ficheros de aterrizaje y salud comunitaria, los ocho hubs de `reference/` enlazados directamente
-desde `README.md` — la espina navegacional, que es lo que los hace alcanzables siquiera — y
-`gap-tracking.md`, incluido no porque lo lea un extraño sino porque el proyecto trata ambas
-mitades como su registro de verdad, que es el defecto por el que GT-702 registró el guard 66.
+ficheros de aterrizaje y salud comunitaria, el quickstart, los ocho hubs de `reference/`
+enlazados directamente desde `README.md` — la espina navegacional, que es lo que los hace
+alcanzables siquiera — y los dos documentos de gaps, incluidos no porque los lea un extraño sino
+porque el proyecto trata ambas mitades como su registro de verdad, que es el defecto por el que
+GT-702 registró el guard 66.
+
+**Enmendado el 2026-08-16: el catálogo se suma al board.** El primer corte nombró solo a
+`gap-tracking.md`, y eso no cubría el caso que citaba. La divergencia real de GT-702 estaba en
+`gap-reference-catalog.es.md`, que afirmó un conteo refutado durante un día entero de checks en
+verde; el board nunca fue el fichero que divergió. Medido después de aterrizar este ADR, una
+edición de un solo lado del catálogo se detectaba **0** veces — el guard ya no podía cazar su
+propio caso de reproducción. `gap-reference-catalog.md` entra por tanto en la superficie según
+el listón de arriba, no relajándolo: el catálogo es autoritativo, es a donde enlaza cada fila
+del board para su evidencia, y que sus dos mitades se contradigan es justo el fallo para el que
+existe el guard.
 
 ### 2. Nada fuera de la superficie se borra, se mueve ni se sella
 

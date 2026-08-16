@@ -26,6 +26,18 @@ Los workloads edge deben permanecer gobernados por reglas explicitas de sincroni
 | Observability | Los workloads edge deben reportar salud, fallo y trace context pese a conectividad intermitente. |
 | Ownership de dominio | La logica edge no debe bifurcar comportamiento de dominio fuera del bounded context propietario. |
 
+### Que vale cada veredicto
+
+**Lee la columna `Garantia` antes de fiarte de un visto bueno.** `observed` significa que la evaluacion abrio el repositorio. `declared` significa que el veredicto se decidio comparando un campo de un fichero de declaracion: un satelite que declara un control que no ha construido va a pasar. `unevaluated` significa que hoy ninguna comprobacion decide esa regla: se embarca y no se aplica. Se dicen aqui en vez de dejar que lo descubra quien compra, y un guard hace fallar el build cuando esta tabla y el ruleset embarcado discrepan.
+
+| Regla | Control | Garantia |
+|---|---|---|
+| EC-SEC-01 | Network Security Profile | `unevaluated` |
+| EC-SEC-02 | mTLS Enforcement | `unevaluated` |
+| EC-R01 | Mandatory Synchronization Strategy | `declared` |
+| EC-R02 | Edge Node Isolation | `declared` |
+| EC-R03 | Conflict Resolution Strategy | `declared` |
+
 ## Autoridad Requerida
 
 | Artefacto | Rol |

@@ -76,15 +76,24 @@ if [ "$TTY_AVAILABLE" = false ]; then
     exit 0
   fi
 
-  echo ""
-  echo "ERROR: No TTY available and not an owner."
-  echo "Set these env vars or run interactively:"
-  echo "  EVOLITH_CI_MODE       (skip|fast|governance|auto|full)"
-  echo "  EVOLITH_PUSH_TARGET   (develop|main|sync|none)"
-  echo "  EVOLITH_MERGE_METHOD  (merge|squash|rebase)"
-  echo ""
-  echo "Or mark yourself as owner: git config --global evolith.owner <email>"
-  exit 1
+  # THIS USED TO BE `exit 1`, AND IT REJECTED THE COMMIT.
+  #
+  # A contributor committing from an editor, a script, an agent or any other
+  # non-TTY context got their commit refused, and the remedy offered was
+  # "mark yourself as owner: git config --global evolith.owner" — telling a
+  # stranger to claim ownership of somebody else's repository in order to be
+  # allowed to commit to their own fork.
+  #
+  # Nothing here is a correctness check. This hook chooses a LOCAL validation
+  # mode and records a release-macro intent that only owners can act on. There
+  # is nothing to fail closed about: the real gates are commit-msg (Conventional
+  # Commits and DCO, both of which still run) and CI.
+  #
+  # So a non-owner with no TTY commits, with no push intent recorded at all.
+  echo "No TTY and no owner config — committing without local validation."
+  echo "  (Conventional Commits and the DCO sign-off are still checked by commit-msg.)"
+  echo "  Optional: EVOLITH_CI_MODE=fast|governance|auto|full to run local checks."
+  exit 0
 fi
 
 # ---------------------------------------------------------------------------
@@ -98,6 +107,42 @@ echo "  3) 🏛️  Governance — docs + tracking + maturity + contracts (~3s)"
 echo "  4) 🔍 Auto       — detect changed files (~1-3s)"
 echo "  5) 🔬 Full       — all 30 CI scripts (~6-8s)"
 echo ""
+
+# ---------------------------------------------------------------------------
+# THE BRANCH AND MERGE-METHOD PROMPTS ARE OWNER-ONLY.
+#
+# They record an intent that `.husky/pre-push` acts on by merging develop into
+# main and pushing both. A non-owner cannot perform that and should never be
+# asked to authorize it — yet the menu offered it to everyone with `d) develop`
+# as the DEFAULT, so pressing Enter twice recorded an intent to push a branch
+# they have no write access to, and `m) main` was one keystroke away.
+#
+# A contributor picks a local validation mode and nothing else. No intent is
+# recorded, so pre-push has nothing to dispatch and their `git push` is theirs.
+# ---------------------------------------------------------------------------
+if [ "$IS_OWNER" != true ]; then
+  read -p "  CI Mode [1-5, default: 1]: " CHOICE
+  case "${CHOICE:-1}" in
+    1) MODE="skip" ;;
+    2) MODE="fast" ;;
+    3) MODE="governance" ;;
+    4) MODE="auto" ;;
+    5) MODE="full" ;;
+    *) MODE="skip" ;;
+  esac
+
+  if [ "$MODE" = "skip" ]; then
+    echo ""
+    echo "Skipping local validation. Your push is your own — this hook records no push intent."
+    exit 0
+  fi
+
+  echo ""
+  echo "Running CI in $MODE mode..."
+  node .harness/scripts/ci-runner.mjs "$MODE"
+  exit 0
+fi
+
 echo "  Branch:"
 echo "  d) develop      — push to develop (default)"
 echo "  m) main         — merge to main + push"

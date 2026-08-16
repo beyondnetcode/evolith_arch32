@@ -24,6 +24,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { assertScanned } from '../lib/coverage.mjs';
+
 const TOPOLOGY = 'src/rulesets/topologies/agentic-ai';
 const RULESET = join(TOPOLOGY, 'agentic-ai.rules.json');
 const READMES = [join(TOPOLOGY, 'README.md'), join(TOPOLOGY, 'README.es.md')];
@@ -43,6 +45,13 @@ function fail(lines) {
 }
 
 const rules = JSON.parse(readFileSync(RULESET, 'utf8')).rules;
+
+// GT-578 — a guard that scanned nothing did not run. An emptied ruleset, or a
+// README whose table was deleted, would otherwise let this print its success line
+// over zero comparisons, which is the exact failure it exists to catch elsewhere.
+assertScanned(rules.length, { what: 'agentic-ai rules', where: RULESET });
+assertScanned(READMES.length, { what: 'buyer-facing READMEs', where: TOPOLOGY });
+
 const problems = [];
 
 const untyped = rules.filter((r) => !VALID.has(r.assurance));

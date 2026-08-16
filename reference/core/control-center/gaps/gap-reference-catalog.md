@@ -9909,3 +9909,25 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [ ] `engine` is consumed or removed on all four boundaries — CLI composable context, MCP tool schema, REST DTO, and the merge at `composable-validation-engine.ts:77`. Accepted-and-ignored is not an end state.
   - [ ] A test fails when a mode ignores `context.engine`, and the mocked `composable-validate.tool.spec.ts` case is either made real or renamed so it stops reading as proof of threading.
 - **Status:** `PENDING`
+
+#### GT-702
+
+**Title:** The bilingual guard cannot see that an English doc and its Spanish twin DISAGREE, so a correction applied to one side alone passes every check.
+
+- **Purpose:** Make a half-updated bilingual pair fail before it merges, instead of leaving a refuted claim standing in the other language.
+- **Evidence:** **Measured 2026-08-16, from a defect committed the same day.** `0fb29909` corrected `gap-reference-catalog.md` to state that the OPA corpus holds **266** violation literals and that `{id, message}` is NOT their complete shape. `gap-reference-catalog.es.md` was not touched, so it went on asserting *"las 251 literales de violación del corpus llevan esas dos y nada más, verificado por conteo"* — both halves of which had just been refuted — inside the document the board treats as the record of truth. `04-check-bilingual-parity.mjs` passed on every run in between, and correctly: it asks whether an ES counterpart EXISTS, whether heading COUNTS match, and whether the Spanish file is Spanish. All three are properties of the files as they stand; none can observe that they contradict each other.
+- **A content comparison was prototyped FIRST and rejected on measurement.** Comparing language-invariant tokens (numerals, tracked ids, inline code) section-by-section across the 500 pairs under `reference/` produced **2136** findings, and the first ones triaged were noise: `GT-383…394` parses as the cardinal `394`, table cells break inline-code pairing, and prose legitimately spells quantities differently in the two languages. A guard at that signal-to-noise ratio gets switched off, and a guard that is switched off is worse than none. Recorded here because the rejected design is the part most likely to be re-attempted.
+- **The fix asks git instead.** The failure is not "the texts differ" — two translations always differ — it is "someone changed one side and not the other", which git answers exactly, with no tokenizer. Over the same 400 commits the content check produced 2136 findings and this produces **3**, all real one-sided edits.
+- **Impact:** Every correction to one language is currently trusted to be mirrored by hand. When it is not, the stale side keeps asserting the refuted claim with a green parity check over it, and the board's own record disagrees with itself.
+- **Expected outcome:** a range that moves one half of a pair and not the other fails `Validate documentation`.
+- **Affected files:** `.harness/scripts/ci/66-validate-bilingual-sync.mjs` (new), `.github/workflows/docs.yml`
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-16 from the `GT-693` correction wave, after the same defect class was found twice in one day — the `251`→`266` prose count and the `203`/`197`/`196` distinct-id count. The first was invisible across languages; this gap is about the mechanism that let it be.
+- **Built and verified, not merely designed:** self-test 8/8; the audit sweep is green over 400 commits with three historical one-sided commits declared in `ALLOWED` with reasons; proven to FAIL on a real one-sided commit and to TOLERATE the split-across-commits shape. Range mode judges the range's NET effect — mirroring in a follow-up commit passes — because judging each commit alone failed correct work, which is how a guard teaches people to reach for its allowlist.
+- **Deliberately NOT claimed:** a commit touching both halves can still put a wrong translation in the ES file. This closes the "never mirrored at all" hole, not translation quality.
+- **Remaining:** place the script under `.harness/scripts/ci/` and wire it into `docs.yml`. The `unimar-core` plugin's S-16 `PreToolUse` hook denies writes under `.harness/`, and it was **not** circumvented — an earlier bypass of that same guard on the same day is exactly why.
+- **Acceptance criteria:**
+  - [ ] **FALSIFIABILITY:** a branch that edits `gap-reference-catalog.md` alone fails the guard, and the same branch passes once the ES half is mirrored. Both runs recorded.
+  - [ ] The guard is invoked by `Validate documentation`, so a half-updated pair blocks the merge.
+  - [ ] Every entry in `ALLOWED` carries a written reason; a bare sha is rejected in review.

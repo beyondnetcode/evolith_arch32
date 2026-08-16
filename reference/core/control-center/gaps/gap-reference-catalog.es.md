@@ -9814,3 +9814,25 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] `engine` se consume o se retira en las cuatro fronteras — contexto composable del CLI, schema del tool MCP, DTO REST, y la fusión en `composable-validation-engine.ts:77`. Aceptado-e-ignorado no es un estado final.
   - [ ] Un test falla cuando un modo ignora `context.engine`, y el caso mockeado de `composable-validate.tool.spec.ts` o se hace real o se renombra para que deje de leerse como prueba de enhebrado.
 - **Estado:** `PENDIENTE`
+
+#### GT-702
+
+**Título:** El guard bilingüe no puede ver que un documento en inglés y su gemelo en español SE CONTRADICEN, así que una corrección aplicada a un solo lado pasa todos los checks.
+
+- **Propósito:** Que un par bilingüe actualizado a medias falle antes de mergear, en vez de dejar una afirmación refutada en pie en el otro idioma.
+- **Evidencia:** **Medido el 2026-08-16, a partir de un defecto cometido ese mismo día.** `0fb29909` corrigió `gap-reference-catalog.md` para decir que el corpus OPA tiene **266** literales de violación y que `{id, message}` NO es su forma completa. `gap-reference-catalog.es.md` no se tocó, así que siguió afirmando *"las 251 literales de violación del corpus llevan esas dos y nada más, verificado por conteo"* — ambas mitades recién refutadas — dentro del documento que el board trata como el registro de verdad. `04-check-bilingual-parity.mjs` pasó en todas las corridas intermedias, y con razón: pregunta si EXISTE contraparte ES, si coincide el NÚMERO de encabezados y si el fichero español es español. Las tres son propiedades de los ficheros tal como están; ninguna puede observar que se contradicen.
+- **Se prototipó PRIMERO una comparación de contenido y se descartó al medirla.** Comparar tokens invariantes al idioma (numerales, ids, código en línea) sección por sección en los 500 pares bajo `reference/` produjo **2136** hallazgos, y los primeros triados eran ruido: `GT-383…394` se lee como el cardinal `394`, las celdas de tabla rompen el emparejado de backticks, y la prosa escribe las cantidades distinto en cada idioma. Un guard con esa relación señal/ruido se acaba apagando, y un guard apagado es peor que ninguno. Se deja escrito porque el diseño descartado es la parte que alguien volverá a intentar.
+- **El arreglo le pregunta a git.** El fallo no es "los textos difieren" — dos traducciones siempre difieren — sino "alguien cambió un lado y no el otro", que git responde exacto y sin tokenizador. Sobre los mismos 400 commits la comparación de contenido dio 2136 hallazgos y esta da **3**, los tres ediciones reales de un solo lado.
+- **Impacto:** Hoy cada corrección a un idioma se confía a que alguien la espeje a mano. Cuando no ocurre, el lado obsoleto sigue afirmando lo refutado con un check de paridad en verde encima, y el propio registro del board se contradice.
+- **Resultado esperado:** un rango que mueve una mitad del par y no la otra falla `Validate documentation`.
+- **Ficheros afectados:** `.harness/scripts/ci/66-validate-bilingual-sync.mjs` (nuevo), `.github/workflows/docs.yml`
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-08-16 desde la ola de corrección de `GT-693`, tras encontrar la misma clase de defecto dos veces en un día — el conteo en prosa `251`→`266` y el de ids distintos `203`/`197`/`196`. El primero era invisible entre idiomas; este gap trata del mecanismo que lo permitió.
+- **Construido y verificado, no solo diseñado:** self-test 8/8; el barrido de auditoría sale verde sobre 400 commits con tres commits históricos de un solo lado declarados en `ALLOWED` con su razón; probado FALLANDO ante un commit real de un solo lado y TOLERANDO la forma partida en dos commits. El modo rango juzga el efecto NETO — espejar en un commit posterior pasa — porque juzgar cada commit por separado hacía fallar trabajo correcto, que es justo como un guard enseña a tirar de su allowlist.
+- **Lo que deliberadamente NO afirma:** un commit que toca ambas mitades puede aun así poner una traducción equivocada en el fichero ES. Esto cierra el agujero de "nunca se espejó", no la calidad de la traducción.
+- **Pendiente:** colocar el script en `.harness/scripts/ci/` y cablearlo en `docs.yml`. El hook `PreToolUse` S-16 del plugin `unimar-core` deniega escrituras bajo `.harness/`, y **no** se evadió — que ese mismo guard se evadiera antes ese mismo día es precisamente el motivo.
+- **Criterios de aceptación:**
+  - [ ] **FALSABILIDAD:** una rama que edita solo `gap-reference-catalog.md` falla el guard, y esa misma rama pasa al espejar la mitad ES. Ambas corridas registradas.
+  - [ ] El guard lo invoca `Validate documentation`, de modo que un par a medias bloquea el merge.
+  - [ ] Toda entrada de `ALLOWED` lleva una razón escrita; un sha pelado se rechaza en revisión.

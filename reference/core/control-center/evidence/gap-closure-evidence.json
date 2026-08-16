@@ -10362,6 +10362,24 @@
         "NOT THIS ROW: GT-675 (the OPA engine has no `skipped` outcome) is untouched and still PENDING. This row was split out of it precisely so a fix to one could not tick a criterion belonging to the other."
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-702",
+      "closedAt": "2026-08-16",
+      "closureCommit": "2e3a49de",
+      "evidence": [
+        ".harness/scripts/ci/66-validate-bilingual-sync.mjs",
+        ".github/workflows/docs.yml"
+      ],
+      "validationCommands": [
+        "FALSIFIABILITY, run on throwaway branches rather than argued: a branch editing ONLY reference/core/control-center/gaps/gap-reference-catalog.md fails -> '1 bilingual pair(s) moved on one side only across develop..HEAD' (exit 1); the same branch passes (exit 0) once the ES half is mirrored, INCLUDING when the mirror lands in a separate commit. That last case is why range mode judges the range's net effect: the first implementation judged each commit alone and failed correct work, which is how a guard teaches people to reach for its allowlist.",
+        "node .harness/scripts/ci/66-validate-bilingual-sync.mjs --self-test -> 8/8 cases pass, in place.",
+        "node .harness/scripts/ci/66-validate-bilingual-sync.mjs --audit -> green over 400 commits, with three historical one-sided commits declared in ALLOWED with written reasons.",
+        "node .harness/scripts/ci/66-validate-bilingual-sync.mjs --since origin/develop -> green on this branch, the exact invocation docs.yml uses.",
+        "REJECTED DESIGN, recorded because it is what gets re-attempted: comparing language-invariant tokens across the 500 pairs under reference/ produced 2136 findings and the first ones triaged were noise (GT-383...394 parses as the cardinal 394; table cells break inline-code pairing). The git-based check produces 3 over the same 400 commits, all real."
+      ],
+      "dependencyDisposition": "none",
+      "dependencyRationale": "No dependency added or changed. One guard script using node:child_process, node:fs, node:path and node:url plus the repo's own .harness/scripts/lib/coverage.mjs, and two steps added to an existing workflow job. No package.json touched."
     }
   ]
 }

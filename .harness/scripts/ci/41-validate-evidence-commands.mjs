@@ -712,8 +712,47 @@ export function classifyExecutability(cmd, root = ROOT) {
     if (writer) {
       return { executable: false, bucket: 'writes-to-tree', reason: `source calls ${writer} — executing it would edit the working tree` };
     }
+    // GT-706 — a guard that reads emitted `dist/` cannot run where nothing is built.
+    //
+    // `67-validate-declared-exports.mjs` reads each package's PACKLIST, so an
+    // unbuilt workspace reports every declared target as missing. This job builds
+    // five of the nine it scans, so executing it here fails on the absence of a
+    // build and not on anything it was written to check — the same shape as
+    // GT-675's remote-ref case, where the command was fine and the ENVIRONMENT
+    // was the wrong one.
+    //
+    // The declaration lives in the guard, not in a list here. A hardcoded roster
+    // of build-dependent scripts is one more thing that silently stops covering a
+    // new one; a marker the script itself carries moves with it. Classifying, not
+    // skipping: the command stays in the census and is reported, it is simply not
+    // executed in a job that cannot answer it.
+    if (declaresBuiltWorkspace(join(root, cmd.cwd || '.', script))) {
+      return {
+        executable: false,
+        bucket: 'heavy-toolchain',
+        reason: 'declares REQUIRES_BUILT_WORKSPACE — reads emitted dist/, which this job does not produce',
+      };
+    }
   }
   return { executable: true };
+}
+
+/**
+ * Does a script declare that it needs an emitted `dist/`?
+ *
+ * Read from source rather than imported: importing every referenced script to ask
+ * one question would execute their module bodies, and a classifier that runs the
+ * thing it is classifying is not a classifier.
+ *
+ * @param {string} abs absolute path to the script
+ * @returns {boolean}
+ */
+function declaresBuiltWorkspace(abs) {
+  try {
+    return /^export const REQUIRES_BUILT_WORKSPACE = true;/m.test(readFileSync(abs, 'utf8'));
+  } catch {
+    return false;
+  }
 }
 
 /** First filesystem-write API found in a script's source, or null. */

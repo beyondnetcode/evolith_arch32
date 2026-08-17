@@ -58,13 +58,21 @@ const GUARD = '66-validate-bilingual-sync';
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
 /**
- * Commits permitted to touch one side alone, each with the reason it is legitimate.
- * A bare sha is not enough: if the reason cannot be written down, the commit is a
- * defect and belongs in the fix, not in this list.
+ * Commits permitted to touch one side alone. EMPTY, and that is the design.
+ *
+ * It held three entries; all three are now cleared by `convergedAfter` instead — the
+ * evidence that the other half moved, rather than a name on a list. The last one out
+ * was `1a04f031`, an ES-only status-literal repair with no English counterpart to
+ * change, and removing it is what exposed the limit documented on that function: its
+ * pair is touched by 90 of the last 400 commits, so the "converged" verdict it earns
+ * is traffic, not a mirror.
+ *
+ * That is why this stays empty rather than being deleted outright. A commit that is
+ * genuinely and permanently one-sided — one whose counterpart will never move for any
+ * reason — belongs here WITH its reason, because for that case the classifier has
+ * nothing to observe. Nothing in this repository is currently in that position.
  */
-const ALLOWED = new Map([
-  ['1a04f031', 'ES-only repair of a status literal so 08-validate-tracking could parse it; no EN counterpart exists to change, so it never converges and never will.'],
-]);
+const ALLOWED = new Map([]);
 
 function fail(lines) {
   console.error(`\n\x1b[31m✗\x1b[0m ${GUARD}: ${lines[0]}`);
@@ -196,9 +204,15 @@ function selfTest() {
     if (!ok) failed++;
     console.log(`  ${ok ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m'} ${c.name} (expected ${c.expect}, got ${got})`);
   }
-  // The allowlist must SUPPRESS, or it is decoration.
+  // The allowlist must SUPPRESS, or it is decoration. It is EMPTY by design now, so
+  // the case injects an entry rather than leaning on a live one — a mechanism that is
+  // only exercised while some real commit happens to need it is a mechanism that
+  // breaks unnoticed the moment the list is cleaned, which is exactly what happened
+  // here the first time.
+  ALLOWED.set('deadbeef', 'self-test only');
   const suppressed = oneSidedEdits(
-    [{ sha: '1a04f031', subject: 'allowed', files: ['reference/a.es.md'] }], pairExists).length;
+    [{ sha: 'deadbeef', subject: 'allowed', files: ['reference/a.es.md'] }], pairExists).length;
+  ALLOWED.delete('deadbeef');
   let ok = suppressed === 0;
   if (!ok) failed++;
   console.log(`  ${ok ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m'} an ALLOWED sha is suppressed (expected 0, got ${suppressed})`);
@@ -352,7 +366,29 @@ function main() {
 
   if (healed.length > 0) {
     console.log(`  ${healed.length} one-sided commit(s) CONVERGED afterwards (not defects):`);
-    for (const v of healed) console.log(`    ${v.sha}  ${v.subject}`);
+    for (const v of healed) {
+      const i = commits.findIndex((c) => c.sha === v.sha);
+      const missing = v.offenders[0].split(' ')[0];
+      const en = englishHalf(missing);
+      const other = v.offenders[0].startsWith(en) ? `${en.slice(0, -3)}.es.md` : en;
+      let gap = 0;
+      for (let k = i - 1; k >= 0; k--) { gap++; if (commits[k].files.includes(other)) break; }
+      console.log(`    ${v.sha}  +${gap} commit(s) later  ${v.subject}`);
+    }
+    // The distance is printed as CONTEXT, not as a signal — and that distinction was
+    // measured, not assumed. The first version of this line claimed a small gap meant a
+    // real mirror and a large one meant traffic. It does not: `gap-tracking.{md,es.md}`
+    // is touched by 90 of the last 400 commits, so the expected gap to the next touch
+    // is ~4 whatever the intent. `1a04f031` reports +3 and its +3 is `a63205ce`,
+    // unrelated GT-647 work that happened to touch both halves.
+    //
+    // So CONVERGED means precisely one thing: the other half moved later, and the pair
+    // was not left dangling. It does NOT mean the change was mirrored. On a
+    // high-traffic pair no cheap test can tell those apart, and pretending otherwise
+    // would put a confident label on a weak inference — which is the failure this
+    // guard was written to stop, one level up.
+    console.log('    (CONVERGED = the other half moved later, NOT that the edit was mirrored;');
+    console.log('     on a pair touched every ~4 commits the distance is noise, not evidence)');
   }
 
   if (open.length > 0) {

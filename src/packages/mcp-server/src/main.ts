@@ -48,7 +48,40 @@ const USAGE =
 /** Parse argv + environment into normalized start options. */
 export function parseArgs(argv: string[], env: NodeJS.ProcessEnv): CliArgs {
   const args = argv.slice(2);
-  const command = args.find((a) => !a.startsWith('-')) ?? 'serve';
+
+  // `--version` and `--help` are flags by shape and commands by intent. Without
+  // this, the `find` below skips anything starting with `-`, `command` falls back
+  // to 'serve', and `evolith-mcp --version` BOOTS THE MCP SERVER instead of
+  // answering. Measured against the published 1.3.2:
+  //
+  //   stdin closed  -> exit 0, stdout EMPTY   (the stdio transport takes EOF and leaves)
+  //   stdin open    -> never returns          (timed out at 10s, printed nothing)
+  //
+  // The second is what a terminal, a doctor script or a CI probe actually does,
+  // and asking a binary its version is the first thing anyone does after
+  // installing it. `evolith-mcp version` already worked; only the flag spelling
+  // did not, which is the spelling everyone reaches for first.
+  // A second defect the tests for the first one exposed: the old `find` also
+  // matched a FLAG'S VALUE. `evolith-mcp --transport http` resolved command to
+  // 'http' and died with `Unknown command: http`, because `http` is the first
+  // token not starting with `-`. So classify once, skipping the value each
+  // value-taking flag consumes, and read both answers off that.
+  const VALUE_FLAGS = new Set(['--transport', '-t', '--port', '-p', '--api-key']);
+  const free: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    if (VALUE_FLAGS.has(args[i])) {
+      i++; // its value is not a command, and not a version flag either
+      continue;
+    }
+    free.push(args[i]);
+  }
+
+  const asCommand = free.some((a) => a === '--version' || a === '-v' || a === '-V')
+    ? 'version'
+    : free.some((a) => a === '--help' || a === '-h')
+      ? 'help'
+      : undefined;
+  const command = asCommand ?? free.find((a) => !a.startsWith('-')) ?? 'serve';
 
   const flag = (long: string, short?: string): string | undefined => {
     for (let i = 0; i < args.length; i++) {
@@ -154,6 +187,11 @@ async function bootstrap(): Promise<void> {
 
   if (cli.command === 'version') {
     process.stdout.write(`@beyondnet/evolith-mcp v${VERSION}\n`);
+    return;
+  }
+
+  if (cli.command === 'help') {
+    process.stdout.write(`${USAGE}\n`);
     return;
   }
 

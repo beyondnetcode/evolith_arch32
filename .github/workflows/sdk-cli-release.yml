@@ -229,6 +229,13 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      # Same reason as build-and-test: a subpath import of a sibling needs that
+      # sibling's dist/, which a bare `npm ci` does not produce. #604 added this to
+      # build-and-test and left the other two jobs with the identical sequence, so
+      # v1.3.5 got past build-and-test and died here instead, on the same TS2307s.
+      - name: Build every workspace
+        run: npm run build
+
       - name: Build
         working-directory: ${{ env.CLI_DIR }}
         run: npm run build
@@ -324,6 +331,13 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      # Same reason as build-and-test: a subpath import of a sibling needs that
+      # sibling's dist/, which a bare `npm ci` does not produce. #604 added this to
+      # build-and-test and left the other two jobs with the identical sequence, so
+      # v1.3.5 got past build-and-test and died here instead, on the same TS2307s.
+      - name: Build every workspace
+        run: npm run build
 
       - name: Build
         working-directory: ${{ env.CLI_DIR }}

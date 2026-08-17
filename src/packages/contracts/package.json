@@ -1,6 +1,6 @@
 {
   "name": "@beyondnet/evolith-contracts",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Versioned SemVer boundary for the Evolith Core public contract: machine-contract/schema set (sha256) and the capability manifest served by GET /api/v1/capabilities",
   "keywords": [
     "evolith",

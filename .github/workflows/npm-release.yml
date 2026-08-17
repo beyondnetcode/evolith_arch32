@@ -256,6 +256,25 @@ jobs:
             | tar -xz -C /usr/local/bin mcp-publisher
           mcp-publisher --version
 
+      # server.json duplicates a version that package.json already owns, and a duplicated fact
+      # drifts. It drifted within hours of being written: a parallel patch bump moved
+      # package.json to 1.3.2 and left server.json at 1.3.1. Nothing caught it, because the
+      # mcpName assertion below reads package.json while `mcp-publisher` reads server.json --
+      # so the step that was supposed to be the gate was verifying a different version than the
+      # one about to be published. Assert all three agree BEFORE either runs.
+      - name: server.json must declare the version that package.json publishes
+        working-directory: src/packages/mcp-server
+        run: |
+          set -euo pipefail
+          PKG=$(node -p "require('./package.json').version")
+          SRV=$(node -p "require('./server.json').version")
+          SRVPKG=$(node -p "require('./server.json').packages[0].version")
+          echo "package.json=${PKG}  server.json=${SRV}  server.json packages[0]=${SRVPKG}"
+          if [ "$SRV" != "$PKG" ] || [ "$SRVPKG" != "$PKG" ]; then
+            echo "::error file=src/packages/mcp-server/server.json::server.json declares ${SRV} (packages[0] ${SRVPKG}) but package.json publishes ${PKG}. The registry listing would advertise a version npm does not hold. Set both server.json versions to ${PKG}."
+            exit 1
+          fi
+
       - name: The published npm version must already carry mcpName
         working-directory: src/packages/mcp-server
         run: |

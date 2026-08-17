@@ -1,6 +1,6 @@
 {
   "name": "@beyondnet/evolith-core-domain",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Shared Domain and Application logic for Evolith Core",
   "keywords": [
     "evolith",
@@ -63,10 +63,6 @@
     "./infrastructure/transparency": {
       "types": "./dist/infrastructure/transparency/index.d.ts",
       "default": "./dist/infrastructure/transparency/index.js"
-    },
-    "./infrastructure/adapters/*": {
-      "types": "./dist/infrastructure/adapters/*.d.ts",
-      "default": "./dist/infrastructure/adapters/*.js"
     },
     "./domain/interfaces": {
       "types": "./dist/domain/interfaces.d.ts",

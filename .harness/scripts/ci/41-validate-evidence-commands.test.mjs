@@ -311,6 +311,33 @@ describe('classifyExecutability', () => {
     assert.equal(c.bucket, 'writes-to-tree');
   });
 
+  // GT-706 — a guard that reads emitted `dist/` fails on the absence of a build
+  // rather than on what it was written to check. The declaration lives in the
+  // guard, so the pair of tests below is the whole contract: a script that
+  // declares it is classified, and one that does not is still executed. A
+  // classification that could not be observed to NOT apply is a silent skip.
+  test('a script declaring REQUIRES_BUILT_WORKSPACE is classified, not executed', () => {
+    writeFileSync(
+      join(fixtureRoot, 'scripts', 'needs-build.mjs'),
+      'export const REQUIRES_BUILT_WORKSPACE = true;\nconsole.log("ok");\n',
+    );
+    const c = classifyExecutability(extractCommand('node scripts/needs-build.mjs'), fixtureRoot);
+    assert.equal(c.executable, false);
+    assert.equal(c.bucket, 'heavy-toolchain');
+    assert.match(c.reason, /REQUIRES_BUILT_WORKSPACE/);
+  });
+
+  test('a script that merely MENTIONS the marker is still executed', () => {
+    // The marker is a declaration, not a keyword: matching it in a comment or a
+    // string would let any script opt out of execution by talking about it.
+    writeFileSync(
+      join(fixtureRoot, 'scripts', 'mentions-marker.mjs'),
+      '// see REQUIRES_BUILT_WORKSPACE in 67-validate-declared-exports.mjs\nconsole.log("ok");\n',
+    );
+    const c = classifyExecutability(extractCommand('node scripts/mentions-marker.mjs'), fixtureRoot);
+    assert.equal(c.executable, true, 'a mention must not opt a script out of execution');
+  });
+
   test('`gh api ...` is excluded as needing credentials, not silently dropped', () => {
     const c = classifyExecutability(extractCommand('gh api repos/o/r/branches/main/protection'), fixtureRoot);
     assert.equal(c.bucket, 'network-or-credentials');

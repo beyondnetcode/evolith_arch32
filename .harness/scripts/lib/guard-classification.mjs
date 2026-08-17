@@ -41,6 +41,19 @@ export const CALLS_COVERAGE = /\b(?:assertScanned|assertScannedPerSource|scanned
  */
 export const SELF_GUARDED = [
   {
+    file: '67-validate-declared-exports.mjs',
+    proof: /ZERO publishable workspaces resolved/,
+    reason:
+      'GT-706 declared-exports guard; its denominator is the set of publishable workspaces, read ' +
+      'from the root manifest rather than hardcoded, and all three ways it could pass over ' +
+      'nothing are hard failures: zero workspaces resolved (the "workspaces" field moved or ' +
+      'stopped matching), a package directory with no manifest, and a packlist `npm pack` cannot ' +
+      'produce — that last one is the state in which "nothing was found to be missing" is most ' +
+      'misleading, so it refuses instead of skipping the package. The guard exists because a ' +
+      'check that asked a NARROWER question than the manifest read as clean; one that asked ' +
+      'nothing at all would read the same way',
+  },
+  {
     file: '63-validate-npm-audit-gate.mjs',
     proof: /denominator is unknown/,
     reason:

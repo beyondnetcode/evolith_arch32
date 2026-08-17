@@ -9923,3 +9923,41 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [x] Si la respuesta es «el servidor exige un corePath explícito», se niega en vez de anunciar herramientas que no puede servir. **NO ES LA RESPUESTA ELEGIDA, y la fila deja escrito por qué.** Se decidió autosuficiente con override: el paquete lleva corpus como suelo, `EVOLITH_CORE_PATH` y un `corePath` por llamada siempre ganan, y `describeCorpusAtStartup()` dice cuál respondió. Es lo que ya hacía el CLI, así que las dos superficies dejan de discrepar.
   - [x] El canario de `GT-671` retira su exención de limitación conocida en el mismo cambio. **CUMPLIDO, y mejor que retirada — ahora CADUCA SOLA.** La exención se ata a la CAUSA (¿trae corpus el paquete instalado?) y no a una versión ni a una fecha, porque el canario mide el REGISTRO y `latest` sigue siendo anterior a este arreglo. En cuanto se publique un build con corpus, la exención deja de aplicar y la aserción de gate muerde, sin que nadie tenga que acordarse. Verificado en ambos sentidos: el paquete arreglado trae corpus, el publicado no.
 - **Estado:** `COMPLETADO`
+
+---
+
+#### GT-706
+
+**Título:** Nada asegura que los `exports` que un paquete declara resuelvan dentro de su propio tarball, así que un productor puede publicar una subruta fantasma y solo la descubre un consumidor — una publicación demasiado tarde
+
+- **Propósito:** Que un paquete demuestre su propio manifiesto antes de publicarse, en vez de que se entere el siguiente paquete de la release.
+- **Evidencia, medida el 2026-08-16 durante la release 1.3.x.** `@beyondnet/evolith-contracts@1.1.0`, publicado el 2026-07-18, declara una subruta de export cuyo fichero no incluye. El fallo no salió en su propia publicación. Salió en `@beyondnet/evolith-infra-providers@1.2.1`, cuyo smoke de instalación en sala limpia rechazó el paquete porque `@beyondnet/evolith-contracts/ingest` era irresoluble — **después de que `@beyondnet/evolith-core-domain@1.3.1` ya hubiera llegado al registry de forma irreversible.** La release quedó a medio entregar, y npm prohíbe despublicar pasadas 72 horas, así que la única salida fue una versión nueva de `contracts`.
+- **La comprobación que existe es real, y tiene la forma equivocada.** `npm-release.yml:206-220` asegura que el tarball contiene los puntos de entrada que promete el manifiesto — y calcula «prometidos» como `[pkg.main, ...Object.values(pkg.bin)]` (`:213`). **`exports` no está en esa lista.** La aserción responde una pregunta más estrecha que la que hace el manifiesto, y un paquete cuyo mapa de `exports` apunta a ficheros que nunca empaquetó la pasa.
+- **Falsabilidad demostrada, OBSERVADA en verde.** Se construyó un paquete de dos ficheros que declara `"./ingest": "./dist/ingest/index.js"` con solo `dist/index.js` en disco, y se corrió la aserción de la release **literal** desde `npm-release.yml:208-220` contra él:
+
+  ```
+  2 file(s) packed; entry points declared: dist/index.js
+  packlist assertion exit=0          <-- VERDE, con un export fantasma declarado
+  require phantom-proof/ingest -> MODULE_NOT_FOUND
+  ```
+
+- **Por qué el smoke de sala limpia tampoco lo cubre, y no es un defecto de ese script.** `check-install-smoke.mjs` resuelve cada especificador `@beyondnet/*` que un paquete **importa** (`:74-101`), lo cual es del lado consumidor por diseño — es lo que llegó a cazar este caso. Pero un export fantasma del productor es invisible hasta que alguien lo importa, así que la comprobación dispara **en el turno del consumidor dentro del orden de publicación**, es decir, cuando el productor y todo lo anterior ya son inmutables en el registry. Tarde e irreversible es la parte que cuesta.
+- **Exposición, medida en todo el workspace:** 3 de 8 paquetes publicables declaran subrutas de export — `contracts` (5), `core-domain` (16), `agent-runtime` (2) — **23 subrutas, ninguna asegurada por la release.** Dos de los tres declaran además un comodín `./*`, que promete que *cualquier* `./dist/*.js` es importable y por construcción no tiene cota.
+- **Lo que esta fila NO afirma, porque se midió y es falso.** Hoy no hay ningún export fantasma en el registry. Instalando los publicados actuales `contracts@1.2.0`, `core-domain@1.3.1` y `agent-runtime@1.2.0` en un prefijo limpio y resolviendo cada subruta declarada: **22 resuelven, 0 fantasmas.** El registry está sano; lo que falta es algo que lo mantenga así. Registrar esto como «hay exports rotos» habría sido una fila que se cierra sola por accidente en la siguiente release.
+- **Casos de uso:**
+  - Un paquete gana una subruta de export y un cambio de `files`/build deja de incluirla en silencio; la release se niega en vez de publicar un manifiesto que miente.
+  - Una actualización de consumidor deja de fallar en instalación por un defecto que pertenece a un paquete publicado días antes.
+  - Una release que no puede completarse deja de abandonar hermanos publicados de forma irreversible por detrás.
+- **Impacto:** Un manifiesto publicado es un contrato. Cuando declara más de lo que lleva el tarball, todo consumidor de esa subruta se rompe en la instalación, la versión del productor no se puede retirar pasadas 72 horas, y el diagnóstico le cae a quien toque publicar después y no a quien la entregó.
+- **Resultado esperado:** que la release asegure, para cada paquete que va a publicar, que todo destino de `exports` sin comodín está presente en el packlist de ese mismo paquete — fallando antes del paso irreversible, en el turno del productor.
+- **Ficheros afectados:** `.github/workflows/npm-release.yml:206-220`, `src/sdk/cli/scripts/check-install-smoke.mjs`, `src/packages/contracts/package.json`, `src/packages/core-domain/package.json`, `src/packages/agent-runtime/package.json`
+- **Componente:** `Infra` · **Criticidad:** P1 · **Complejidad:** S
+- **Principal:** `S` · **Interés:** `HIGH` · **Base:** `estimate`
+- **Procedencia:** Registrada el 2026-08-16 desde la release 1.3.x, donde la clase costó dos intentos de publicación fallidos y una release parcial irreversible. Hermana de [`GT-625`](./gap-reference-catalog.es.md#gt-625) y [`GT-671`](./gap-reference-catalog.es.md#gt-671): la misma asimetría árbol-contra-tarball, una capa antes — esas dos preguntan si el artefacto PUBLICADO funciona, esta pregunta si debió publicarse siquiera.
+- **Criterios de aceptación:**
+  - [ ] La release resuelve cada destino de `exports` sin comodín contra el packlist del propio paquete, y tumba la publicación cuando falta uno.
+  - [ ] La aserción corre ANTES del paso irreversible, en el turno del productor — no en la instalación de un consumidor.
+  - [ ] El comodín `./*` se trata de forma explícita en vez de saltarse: o la fila registra por qué una promesa sin cota es aceptable, o el comodín se estrecha a lo que realmente se incluye.
+  - [ ] Falsabilidad demostrada: un paquete que declara un export que no empaqueta pone la comprobación en rojo, OBSERVADO, y la misma comprobación sigue verde sobre los tres paquetes reales cuyas 23 subrutas miden sanas hoy.
+  - [ ] La comprobación nombra el destino que falta y el paquete, para que el fallo sea accionable sin abrir el tarball.
+- **Estado:** `PENDIENTE`

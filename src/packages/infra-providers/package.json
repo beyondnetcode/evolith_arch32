@@ -27,7 +27,7 @@
     "test:cov": "jest --coverage"
   },
   "dependencies": {
-    "@beyondnet/evolith-contracts": "^1.1.0",
+    "@beyondnet/evolith-contracts": "^1.2.0",
     "@beyondnet/evolith-core-domain": "^1.2.0",
     "@nestjs/common": "11.1.27",
     "ajv": "8.20.0",

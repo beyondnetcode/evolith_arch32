@@ -20,8 +20,7 @@
     "lint:boundaries": "eslint \"src/**/*.ts\"",
     "test": "jest --passWithNoTests",
     "test:cov": "jest --coverage --passWithNoTests",
-    "test:e2e": "jest --config ./test/jest-e2e.json --passWithNoTests",
-    "prepublishOnly": "npm run copy-corpus && npm run build"
+    "test:e2e": "jest --config ./test/jest-e2e.json --passWithNoTests"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -10529,6 +10529,28 @@
         "SUITES AFTER: core-domain 1992/1992, mcp-server 590/590.",
         "NOT CLOSED BY THIS ROW: the fix is in the tree, not in the registry. GT-671 stays IN-PROGRESS until a build carrying the corpus is published and its canary observes a real gate verdict from npm."
       ]
+    },
+    {
+      "id": "GT-706",
+      "closedAt": "2026-08-16",
+      "closureCommit": "e61af1da",
+      "dependencyDisposition": "none",
+      "evidence": [
+        ".harness/scripts/ci/67-validate-declared-exports.mjs",
+        ".harness/scripts/ci/67-validate-declared-exports.test.mjs",
+        ".github/workflows/npm-release.yml",
+        ".github/workflows/ci-cd.yml",
+        "src/packages/core-domain/package.json"
+      ],
+      "validationCommands": [
+        "THE CHECK THAT EXISTED WAS THE WRONG SHAPE, MEASURED: npm-release.yml:213 computed 'promised' as [pkg.main, ...Object.values(pkg.bin)], and `exports` was not in that list. A two-file package declaring \"./ingest\": \"./dist/ingest/index.js\" with only dist/index.js on disk passed that assertion run VERBATIM with exit 0, while `require pkg/ingest` answered MODULE_NOT_FOUND.",
+        "THE GUARD REFUTED THIS ROW'S OWN CLAIM ON ITS FIRST RUN. The row said the registry was clean -- 22 of 22 subpaths resolve, 0 phantom. That measurement excluded wildcard keys by its own filter. core-domain declares ./infrastructure/adapters/* and there is NO adapters directory: 0 matches in a 796-file packlist, MODULE_NOT_FOUND from the published 1.3.1 for every name under it. `git log --all --name-only` over that path returns nothing -- the key was introduced by 2453f9a2 and no commit in this repository ever carried it. Deleted rather than widened, because there was never anything behind it.",
+        "TWO PLACES ON PURPOSE: ci-cd.yml runs it over every publishable workspace at PR time, npm-release.yml runs it per package inside the publish loop immediately before `npm publish`. A red PR costs a commit; a red release costs a version nobody can withdraw after 72 hours.",
+        "FALSIFIABILITY OBSERVED ON BOTH SIDES, four ways. RED: the ./ingest fixture; core-domain on the real tree; and a file present ON DISK but excluded by `files`, which a filesystem check would call clean. GREEN: the same fixture once the file ships, and the whole repository -- 68 declared targets across 9 publishable packages.",
+        "SUPERSET, NOT A SECOND OPINION: main and bin are folded into the same check, and every string leaf of the condition tree counts, so a missing types/*.d.ts fails exactly as a missing default/*.js does.",
+        "node .harness/scripts/ci/67-validate-declared-exports.mjs --verbose",
+        "node --test .harness/scripts/ci/67-validate-declared-exports.test.mjs"
+      ]
     }
   ]
 }

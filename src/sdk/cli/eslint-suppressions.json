@@ -1,0 +1,311 @@
+{
+  "src/app.module.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/adr/adr.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/adr/adr.command.ts": {
+    "default-case": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 6
+    }
+  },
+  "src/commands/agents/agents.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/agents/agents.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "default-case": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/alias/alias.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/api/api.catalog.tool-schemas.generated.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/api/api.command.ts": {
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/commands/architecture/scaffold.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/architecture/scaffold.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/chat/chat.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/commands/completion/completion.command.ts": {
+    "default-case": {
+      "count": 1
+    }
+  },
+  "src/commands/docs/docs.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/drift/drift.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/drift/drift.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/enforce/enforce.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/evaluate/evaluate.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/commands/fixtures/fixtures.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "default-case": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/gate/gate.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/history/history.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/history/history.command.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/init/init.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/init/init.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/init/init.wizard.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/commands/patterns/patterns.json-surface.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/patterns/patterns.shared.ts": {
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/commands/phase/phase-advance.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/satellite/satellite-adopt.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/satellite/satellite-adopt.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/satellite/satellite-create.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/sdlc/generate-domain.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/sdlc/handoff.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/sdlc/handoff.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/standards/standards.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/standards/standards.command.ts": {
+    "default-case": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 6
+    }
+  },
+  "src/commands/topology/phase-artifacts.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/update/update.command.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/upgrade/upgrade.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/upgrade/upgrade.command.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "src/commands/validate/validate.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/validate/validate.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/commands/waiver/waiver.command.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/commands/waiver/waiver.command.ts": {
+    "complexity": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 2
+    }
+  },
+  "src/infrastructure/adapters/agent-registry.service.ts": {
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/infrastructure/cli/command-executor.ts": {
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/infrastructure/cli/machine-channel.ts": {
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/infrastructure/cli/providers/providers.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/infrastructure/formatters/output-formatter.service.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/infrastructure/observability/error-reporter.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  },
+  "src/infrastructure/prompts/non-interactive-contract.spec.ts": {
+    "max-params": {
+      "count": 1
+    }
+  },
+  "src/infrastructure/prompts/wizard.service.spec.ts": {
+    "max-lines": {
+      "count": 1
+    }
+  }
+}

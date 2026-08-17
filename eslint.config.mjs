@@ -88,7 +88,15 @@ export default [
       // → CWE-480, Security + Reliability + Maintainability
       'no-cond-assign': 'error',
       // → CWE-597, Reliability
-      eqeqeq: 'error',
+      //
+      // `null: 'ignore'` is ESLint's documented option for the deliberate `x != null`
+      // idiom, which tests null AND undefined in one comparison. The three violations
+      // this rule reported in src/sdk/cli were all that idiom
+      // (output-formatter.service.ts:152,153,165) — correct code, flagged by a config
+      // that did not match it. Suppressing them into a baseline would have recorded
+      // correct code as debt; loosening the operator generally would have weakened
+      // CWE-597. This is the narrow option that does neither.
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
       // → CWE-783, Security + Maintainability
       'no-unsafe-negation': 'error',
       // → CWE-476, Reliability

@@ -10018,3 +10018,41 @@ The declaration has one hole — a pack that does not declare — and the direct
   - [x] If the answer is "the server requires an explicit corePath", it refuses rather than announcing tools it cannot serve. **NOT THE ANSWER CHOSEN, and the row records why.** Self-sufficient with override was the decision: the package bundles a corpus as its floor, `EVOLITH_CORE_PATH` and a per-call `corePath` always win, and `describeCorpusAtStartup()` names which one answered. That matches what the CLI already does, so the two surfaces stop disagreeing.
   - [x] `GT-671`'s canary drops its known-limitation exemption in the same change. **MET, and better than dropped — it now EXPIRES BY ITSELF.** The exemption is keyed on the CAUSE (does the installed package carry a corpus?) rather than on a version or a date, because the canary measures the REGISTRY and `latest` still predates this fix. The moment a published build ships a corpus the exemption stops matching and the gate assertion bites, with nobody having to remember. Verified both ways: the fixed package ships a corpus, the published one does not.
 - **Status:** `DONE`
+
+---
+
+#### GT-706
+
+**Title:** Nothing asserts that a package's own declared `exports` resolve inside its own tarball, so a producer can publish a phantom subpath and only a consumer discovers it — one publish too late
+
+- **Purpose:** Make a package prove its own manifest before it is published, instead of letting the next package in the release find out.
+- **Evidence, measured 2026-08-16 during the 1.3.x release.** `@beyondnet/evolith-contracts@1.1.0`, published 2026-07-18, declares an export subpath whose file it does not ship. The failure did not surface at its own publish. It surfaced at `@beyondnet/evolith-infra-providers@1.2.1`, whose clean-room install smoke refused the package because `@beyondnet/evolith-contracts/ingest` was unresolvable — **after `@beyondnet/evolith-core-domain@1.3.1` had already gone to the registry irreversibly.** The release stopped half-shipped, and npm forbids unpublishing after 72 hours, so the only recovery was a new `contracts` version.
+- **The check that exists is real, and it is the wrong shape.** `npm-release.yml:206-220` asserts the tarball contains the entry points the manifest promises — and computes "promised" as `[pkg.main, ...Object.values(pkg.bin)]` (`:213`). **`exports` is not in that list.** So the assertion answers a narrower question than the one the manifest asks, and a package whose `exports` map points at files it never packed passes it.
+- **Proven falsifiable, OBSERVED green.** A two-file package was built declaring `"./ingest": "./dist/ingest/index.js"` with only `dist/index.js` on disk, and the release's assertion was run **verbatim** from `npm-release.yml:208-220` against it:
+
+  ```
+  2 file(s) packed; entry points declared: dist/index.js
+  packlist assertion exit=0          <-- GREEN, with a phantom export declared
+  require phantom-proof/ingest -> MODULE_NOT_FOUND
+  ```
+
+- **Why the clean-room smoke does not cover it either, and it is not a defect of that script.** `check-install-smoke.mjs` resolves every `@beyondnet/*` specifier a package **imports** (`:74-101`), which is consumer-side by design — it is what caught this one at all. But a producer's phantom export is invisible until somebody imports it, so the check fires **at the consumer's turn in the publish order**, which is after the producer and everything before it are already immutable on the registry. Late and irreversible is the part that costs.
+- **Exposure, measured across the workspace:** 3 of 8 publishable packages declare export subpaths — `contracts` (5), `core-domain` (16), `agent-runtime` (2) — **23 subpaths, none of them asserted by the release.** Two of the three also declare a `./*` wildcard, which promises that *any* `./dist/*.js` is importable and is therefore unbounded by construction.
+- **What this row does NOT claim, because it was measured and is false.** There is no phantom export on the registry today. Installing the current published `contracts@1.2.0`, `core-domain@1.3.1` and `agent-runtime@1.2.0` into a clean prefix and resolving every declared subpath gives **22 resolve, 0 phantom**. The registry is healthy; what is missing is anything that keeps it that way. Registering this as "there are broken exports" would have been a row that closes itself by accident on the next release.
+- **Use cases:**
+  - A package gains an export subpath and a `files`/build change silently stops shipping it; the release refuses instead of publishing a manifest that lies.
+  - A consumer upgrade stops failing at install time for a defect that belongs to a package published days earlier.
+  - A release that cannot complete stops leaving irreversibly-published siblings behind it.
+- **Impact:** A published manifest is a contract. When it declares more than the tarball carries, every consumer of that subpath breaks at install, the producer's version cannot be withdrawn after 72 hours, and the diagnosis lands on whoever happens to be publishing next rather than on whoever shipped it.
+- **Expected outcome:** the release asserts, for each package it is about to publish, that every non-wildcard `exports` target is present in that package's own packlist — failing before the irreversible step, in the producer's own turn.
+- **Affected files:** `.github/workflows/npm-release.yml:206-220`, `src/sdk/cli/scripts/check-install-smoke.mjs`, `src/packages/contracts/package.json`, `src/packages/core-domain/package.json`, `src/packages/agent-runtime/package.json`
+- **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-16 from the 1.3.x release, where the class cost two failed publish attempts and one irreversible partial release. Sibling of [`GT-625`](./gap-reference-catalog.md#gt-625) and [`GT-671`](./gap-reference-catalog.md#gt-671): the same tree-versus-tarball asymmetry, one layer earlier — those two ask whether the PUBLISHED artifact works, this one asks whether the artifact should have been published at all.
+- **Acceptance criteria:**
+  - [ ] The release resolves every non-wildcard `exports` target of a package against that package's own packlist, and fails the publish when one is absent.
+  - [ ] The assertion runs BEFORE the irreversible step, in the producer's own turn — not at a consumer's install.
+  - [ ] The `./*` wildcard is handled explicitly rather than skipped: either the row records why an unbounded promise is acceptable, or the wildcard is narrowed to what is actually shipped.
+  - [ ] Proven falsifiable: a package declaring an export it does not pack turns the check red, OBSERVED, and the same check stays green on the three real packages whose 23 subpaths measure healthy today.
+  - [ ] The check names the missing target and the package, so the failure is actionable without opening the tarball.
+- **Status:** `PENDING`

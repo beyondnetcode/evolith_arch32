@@ -125,6 +125,24 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      # BUILD THE SIBLINGS BEFORE TYPE-CHECKING THE THING THAT IMPORTS THEM.
+      #
+      # "Type Check and Build" below runs `npm run build` inside src/sdk/cli, which compiles
+      # the CLI and nothing else. In a workspace, `@beyondnet/*` resolve to the local packages
+      # by symlink — but a subpath import needs that package's `dist/` to exist. It does not
+      # after a bare `npm ci`, so the tag run died with 100+ of these:
+      #
+      #   error TS2307: Cannot find module '@beyondnet/evolith-core-domain/domain/interfaces'
+      #   error TS2307: Cannot find module '@beyondnet/evolith-infra-providers'
+      #
+      # npm-release.yml has always had this step — it is called "Build every workspace" there.
+      # This workflow never did, and nothing noticed because `build-and-test` is gated on
+      # `release_created`: it is SKIPPED on every branch push and only executes on a `v*` tag,
+      # where it has now failed three times for three different reasons (SBOM on v1.3.0, lint
+      # on v1.3.3, this on v1.3.4). Each fix uncovered the next.
+      - name: Build every workspace
+        run: npm run build
+
       # `cyclonedx-npm` shells out to `npm ls --json --long --all`, and npm exits
       # NON-ZERO (`ELSPROBLEMS`) for benign tree observations as well as for real
       # breakage. This tree has several that are expected and not going away:

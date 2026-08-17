@@ -10082,6 +10082,25 @@
       "dependencyRationale": "No dependency added or changed, and none could be: the change deletes a dependency rather than adding one. The test previously depended on git AND on the remote-tracking ref origin/develop being present and pointing at the pre-fix artifact — an external, mutable input. It now reads a file committed in this repository, using only node:fs, which the file already imported. The fixture itself is inert data with no imports. Nothing is imported by relative path from domain code: this is a harness test reading a harness fixture, and the corpus JSON under src/rulesets is untouched."
     },
     {
+      "id": "GT-671",
+      "closedAt": "2026-08-16",
+      "closureCommit": "213cc718",
+      "dependencyDisposition": "none",
+      "evidence": [
+        ".github/workflows/published-canary.yml",
+        ".harness/scripts/ci/published-artifact-canary.mjs",
+        "src/sdk/cli/examples/gate-verdict.assert.js"
+      ],
+      "validationCommands": [
+        "WHAT THE ROW CLAIMED AND WHAT MEASUREMENT NARROWED: 'nothing re-verifies the published artifact' is false as written -- one check existed, `evolith-cli --help` at release time (sdk-cli-release.yml:328-332). It is a weak oracle, MEASURED: every published version answers `--version` with exit 0, INCLUDING the one GT-625 recorded as broken. A check that cannot tell a working artifact from a broken one is not a check, so the row was scoped to what that check cannot see.",
+        "THE CANARY MEASURES THE REGISTRY, NOT THE TREE. Packages install into a throwaway npm prefix and are driven from a temp directory; the checkout carries only the assertion and the script, deliberately off the resolution path -- GT-625 shipped an uninstallable CLI precisely because the workspace symlink hid it from every suite.",
+        "PROVEN FALSIFIABLE WITH A FIXTURE THAT WAS MEASURED, NOT ASSUMED. The row named cli@1.2.0 as the red fixture; measured, that version installs, runs `init` and returns a valid envelope. The real red fixture is cli@1.1.0, on three independent counts: no `evolith` bin (only `evolith-cli`), `init --name` writes a subdirectory so no evolith.yaml appears where the canary looks, and `validate --format json` truncates its own envelope through a pipe at 65,386 bytes of a 163,622-byte document. Green against latest, red against 1.1.0, BOTH OBSERVED.",
+        "AC3 WAS THE LAST ONE OPEN AND EXPIRED BY ITSELF. Its exemption was keyed on `installedPackageShipsNoCorpus()` -- a property of the INSTALLED TARBALL, not a version number and not a date. GT-705 shipped as mcp@1.3.2; run 31987205590 (published-canary.yml, cli@1.3.1 + mcp@1.3.2) reports 'the published MCP server answers a tools/call with a real gate verdict -- verdict asserted by gate-verdict.assert.js', and its log contains ZERO occurrences of 'exempt'. Nobody had to remember to delete anything. A blanket skip would still be green today with the defect fixed by accident.",
+        "SAME RUN, SAME INSTALL: `validate --format json` returns an ADR-0073 envelope with verdict `failed`, 41/159 rules checked -- a real denominator, so an install shipping no rulesets fails even when it exits 0.",
+        "node .harness/scripts/ci/published-artifact-canary.mjs --version 1.3.1 --mcp-version 1.3.2"
+      ]
+    },
+    {
       "id": "GT-677",
       "closedAt": "2026-08-14",
       "closureCommit": "943b798c",

@@ -267,14 +267,55 @@ function verifyTree(treeDir, packageName, boot, declaredSiblingDeps = null) {
 
   const bin = join(packageDir, 'dist', 'main.js');
   if (!existsSync(bin)) fail([`entry point missing from the installed package: ${bin}`]);
-  const res = run(process.execPath, [bin, '--version'], { cwd: treeDir });
+
+  // The exit status alone is not evidence that `--version` answered.
+  //
+  // This check used to assert only `status === 0` and then PRINT the stdout it
+  // never inspected. Release run 31986300098 logged, verbatim:
+  //
+  //     ✓ the installed binary boots: --version prints
+  //
+  // — an empty observable, reported as a pass. `@beyondnet/evolith-mcp@1.3.2`
+  // was ignoring the flag and booting the MCP server; the stdio transport read
+  // EOF from the closed stdin this spawn gives it, exited 0, and the gate agreed.
+  // With stdin held open the same command never returns at all.
+  //
+  // So: a timeout, because a binary that hangs must fail rather than hang CI, and
+  // an assertion that the output actually carries the version the manifest
+  // declares. That last part is what makes it non-vacuous — it would still pass
+  // on any non-empty string otherwise, including an error message.
+  const res = run(process.execPath, [bin, '--version'], { cwd: treeDir, timeout: 30_000 });
+  if (res.error && res.error.code === 'ETIMEDOUT') {
+    fail([
+      '`node dist/main.js --version` did not answer within 30s from a clean install.',
+      'A binary that hangs on --version is one that never parsed the flag: asking a tool',
+      'its version is the first thing anyone does after installing it.',
+    ]);
+  }
   if (res.status !== 0) {
     fail([
       `\`node dist/main.js --version\` exited ${res.status} from a clean install.`,
       ...String(res.stderr || res.stdout || '').split('\n').slice(0, 6).map((l) => `    ${l}`),
     ]);
   }
-  console.log(`✓ the installed binary boots: --version prints ${String(res.stdout).trim()}`);
+  const printed = String(res.stdout || '').trim();
+  const expected = JSON.parse(readFileSync(join(packageDir, 'package.json'), 'utf8')).version;
+  if (!printed) {
+    fail([
+      '`--version` exited 0 and printed NOTHING on stdout.',
+      `Expected output carrying ${expected}. An exit code is not an answer: a binary that`,
+      'ignores the flag and starts a server exits 0 too, which is exactly how this went',
+      'unnoticed until it was already on the registry.',
+    ]);
+  }
+  if (!printed.includes(expected)) {
+    fail([
+      `\`--version\` printed ${JSON.stringify(printed)}, which does not contain ${expected}.`,
+      'The reported version must match the manifest being published, or the binary is',
+      'answering for a different build than the one in this tarball.',
+    ]);
+  }
+  console.log(`✓ the installed binary answers --version: ${printed} (matches manifest ${expected})`);
 }
 
 function main(argv) {
@@ -306,7 +347,15 @@ function main(argv) {
 
   const existingTree = opt('--tree');
   if (existingTree) {
-    verifyTree(resolve(existingTree), packageName, boot, declaredSiblingDeps);
+    // In --tree mode the artifact under test is the TREE, not this workspace.
+    // `boot` above is decided from `pkgRoot/dist/main.js` — the local build — so
+    // on a checkout that has not been built it came out false, the boot check
+    // never ran, and the guard still printed a pass. The strongest signal it has
+    // must not depend on unrelated local state.
+    const treeDir = resolve(existingTree);
+    const treeBoot = !has('--no-boot')
+      && existsSync(join(treeDir, 'node_modules', ...packageName.split('/'), 'dist', 'main.js'));
+    verifyTree(treeDir, packageName, treeBoot, declaredSiblingDeps);
     console.log(`✓ ${GUARD} passed (offline, existing tree).`);
     return;
   }

@@ -189,7 +189,11 @@ jobs:
   # GATE 3: Publish to NPM
   # ============================================
   publish-npm:
-    needs: build-and-test
+    # `release-gate` was referenced by this job (needs.release-gate.outputs.version) without
+    # being declared here, and `needs.<job>` only resolves for jobs listed in `needs`. So the
+    # version interpolated to the EMPTY STRING and the confirmation step announced
+    # "Published @beyondnet/evolith-cli@ to NPM".
+    needs: [release-gate, build-and-test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -211,15 +215,67 @@ jobs:
         working-directory: ${{ env.CLI_DIR }}
         run: npm run build
 
+      # ASK THE REGISTRY BEFORE PUBLISHING (#569).
+      #
+      # This job used to run a bare `npm publish`. Any re-run against an already-published
+      # version — a retry after an unrelated flake, a workflow_dispatch, a re-pushed tag —
+      # died on "You cannot publish over the previously published versions", and that failure
+      # reached `failure-notification`, which files a "Release Pipeline Failed" issue. Three
+      # of those accumulated (#492, #552, #553) before anyone read one. A harmless re-run
+      # manufactured a bug report.
+      #
+      # Idempotence belongs BEFORE the publish, as a question with an answer — not after it,
+      # as a swallowed error. `continue-on-error` or `|| true` on the publish itself would
+      # make a genuine failure indistinguishable from this one, which is the whole defect
+      # wearing a different hat. The `|| true` below is on a QUERY, where a non-zero exit
+      # simply means "not found", and its answer is then compared explicitly.
+      #
+      # npm-release.yml has solved this since `plan-npm-release.mjs`; this workflow predates
+      # it and never adopted it.
+      - name: Is this version already on the registry?
+        id: plan
+        working-directory: ${{ env.CLI_DIR }}
+        run: |
+          set -euo pipefail
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          {
+            echo "name=$NAME"
+            echo "version=$VERSION"
+          } >> "$GITHUB_OUTPUT"
+          if [ "$(npm view "$NAME@$VERSION" version 2>/dev/null || true)" = "$VERSION" ]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$NAME@$VERSION is already on the registry. Skipping the publish — this is not a failure. Bump the version to ship a change."
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "$NAME@$VERSION is not on the registry — publishing."
+          fi
+
       - name: Publish to NPM
+        if: steps.plan.outputs.published != 'true'
         working-directory: ${{ env.CLI_DIR }}
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Confirm Publication
+      # An echo is not a confirmation. The previous version of this step printed a success
+      # message it had no evidence for — and printed it with an empty version, at that.
+      # Verify against the registry, which is the only authority on what was published.
+      - name: Confirm the registry holds it
         run: |
-          echo "✅ Published @beyondnet/evolith-cli@${{ needs.release-gate.outputs.version }} to NPM"
+          set -euo pipefail
+          NAME='${{ steps.plan.outputs.name }}'
+          VERSION='${{ steps.plan.outputs.version }}'
+          for attempt in 1 2 3 4 5; do
+            if [ "$(npm view "$NAME@$VERSION" version 2>/dev/null || true)" = "$VERSION" ]; then
+              echo "confirmed on registry: $NAME@$VERSION"
+              exit 0
+            fi
+            echo "not visible yet (attempt $attempt/5), waiting"
+            sleep 10
+          done
+          echo "::error::$NAME@$VERSION is NOT on the registry after this job ran. The publish reported success and the registry disagrees."
+          exit 1
 
   # ============================================
   # GATE 4: Package Binaries
@@ -361,7 +417,11 @@ jobs:
   # GATE 6: Upload Release Assets
   # ============================================
   upload-assets:
-    needs: [package-binaries, smoke-test, smoke-test-functional]
+    # Same dangling reference as publish-npm had, and this one is worse: the step below
+    # interpolates needs.release-gate.outputs.tag_name into the GitHub Release's `tag_name`
+    # and `name`, so without release-gate declared here it publishes a Release named
+    # "Release " against an empty tag.
+    needs: [release-gate, package-binaries, smoke-test, smoke-test-functional]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -9,7 +9,7 @@ Asegúrese de que el conocimiento de la arquitectura seleccionada siga siendo co
 Cada artefacto de Architecture Intelligence debe verificar:
 
 - Utiliza nombres de archivos de kebab-case.
-- Vive bajo `referencia/conocimiento/arquitectura-inteligencia/`.
+- Vive bajo `product/research/architecture-intelligence/`.
 - Tiene un título y un propósito claros.
 - Define problema, contexto, solución, beneficios y compensaciones.
 - Define la posición de Evolith y el nivel de adopción cuando es un patrón.

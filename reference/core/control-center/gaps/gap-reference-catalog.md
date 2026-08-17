@@ -3545,12 +3545,12 @@ Discovered by the **ADR-0109 Phase-0b spike** while validating the prospective m
 
 #### GT-23
 
-**Título:** Relleno de traducción al español del corpus de referencia.
+**Title:** Spanish translation backfill for the reference corpus.
 
-- **Objetivo:** todos los documentos bajo `referencia/` y `conjuntos de reglas/` son legibles en español sin marcadores de posición esqueleto declarados.
-- **Objetivo:** Traducir los 76 archivos actualmente marcados como "esqueleto inicial / pendiente de traduccion [completado]", concentrados en `governance/standards/ai-augmented/*`, `knowledge/architecture-intelligence/patterns` y organismos ADR seleccionados. El inglés sigue siendo la fuente decisiva; Estructura de cabecera de espejos españoles. Los esqueletos consumidos por herramientas bajo `.harness/` y `.bmad-core/` permanecen fuera del alcance a menos que se promocionen al corpus de referencia.
-- **Hecho cuando:** `grep -rl "pendiente de traduccion [completado]" reference/rulesets/` devuelve cero archivos y `check-bilingual-parity.mjs` pasa.
-- **Referencias:** [Índice bilingüe](../../BILINGUAL_INDEX.md) · [Glosario de terminología](../../../../.harness/scripts/bilingual-terminology-glossary.md)
+- **Purpose:** every document under `reference/` and `rulesets/` is readable in Spanish, with no declared skeleton placeholders left standing.
+- **Scope:** translate the 76 files currently marked *"initial skeleton / pending translation"*, concentrated in `governance/standards/ai-augmented/*`, `knowledge/architecture-intelligence/patterns` and selected ADR bodies. English remains the deciding source; the Spanish half mirrors its heading structure. Skeletons consumed by tooling under `.harness/` and `.bmad-core/` stay out of scope unless they are promoted into the reference corpus.
+- **Done when:** `grep -rl "pending translation" reference/ rulesets/` returns zero files and `check-bilingual-parity.mjs` passes.
+- **References:** [Bilingual index](../../BILINGUAL_INDEX.md) · [Terminology glossary](../../../../.harness/scripts/bilingual-terminology-glossary.md)
 #### GT-24
 
 **Title:** Execute declared documentation migrations

@@ -693,6 +693,27 @@ jobs:
           node .harness/scripts/ci/65-validate-standards-rule-class.mjs --verbose
           node --test .harness/scripts/ci/65-validate-standards-rule-class.test.mjs
 
+      # GT-706 — a package must prove its own manifest before it is published.
+      #
+      # `contracts@1.1.0` declared an export subpath it did not ship. That failed
+      # at `infra-providers@1.2.1`'s install smoke, AFTER `core-domain@1.3.1` was
+      # already irreversibly on the registry, leaving the release half-shipped
+      # with no unpublish available past 72 hours.
+      #
+      # The release's own assertion could not see it: it computes "promised" as
+      # `[pkg.main, ...bin]`, and `exports` is not in that list. Measured — a
+      # package declaring `./ingest` with only `dist/index.js` on disk passes it
+      # with exit 0 while `require pkg/ingest` answers MODULE_NOT_FOUND.
+      #
+      # Running it HERE, at PR time, is the point: the release also runs it (see
+      # npm-release.yml), but by then the producer's turn is the last moment
+      # before something irreversible. A red PR costs a commit; a red release
+      # costs a version nobody can withdraw.
+      - name: A package's declared exports are present in its own tarball
+        run: |
+          node .harness/scripts/ci/67-validate-declared-exports.mjs --verbose
+          node --test .harness/scripts/ci/67-validate-declared-exports.test.mjs
+
       # GT-650 / ADR-0125 — the artifact registry is the accepted single declaration, and the gate
       # corpus is still hand-maintained while the migration lands. For as long as both exist, the
       # only thing making that intermediate state safe is that they are checked to agree. This

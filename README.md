@@ -25,16 +25,36 @@ evolith validate --engine opa
 ## What just happened
 
 That third command evaluated this repository's own rule corpus against a freshly initialized
-satellite, using the compiled Rego bundle. Real output, from `@beyondnet/evolith-cli@1.3.0`
+satellite, using the compiled Rego bundle. This is what `@beyondnet/evolith-cli@1.3.0` printed
 in a container with nothing but Node installed:
 
 ```
-Rules: 133 checked / 26 skipped / 0 errored / 159 total
-37 blocking issue(s)
-exit code 2
+**Status:** failed
+**Rules Checked:** 133
+**Rules Skipped:** 26
+**Rules Errored:** 0
+**Rules Total:** 159
 
-  26 rule(s) were NOT evaluated - their result is UNKNOWN, not passed.
+### Issues
+| Rule Id | Severity | Category | Title | Blocking |
+| --- | --- | --- | --- | --- |
+| ACL-01 | MUST | anti-corruption | Schema Validation Before Ingestion | YES |
+...
+| SEC-INJ-01 | MUST | security | Blocking rule did not run: No shell exec with user input | YES |
+| SEC-INJ-02 | MUST | security | Blocking rule did not run: Parameter allowlists for scaffold tools | YES |
+| SEC-PATH-01 | MUST | security | Blocking rule did not run: Path input sanitization | YES |
+...
+└  ❌ Validation failed. See the errors above.
+
+$ echo $?
+2
 ```
+
+Every line above is the tool's own, character for character. The `...` marks issue rows cut for
+length and nothing else -- there are 72 in all, 37 of them blocking. The run also opens with
+three `[Nest] WARN Skipping non-standard ruleset` lines: three ruleset files ship in the tarball
+that the shipped validator's own schema rejects. That is a real defect, and a README arguing
+that unevaluated is not the same as passing does not get to quietly drop it from the capture.
 
 The Core carries **412 rules**; the 159 above is what this one satellite's run selected from
 them. Two different denominators, and a report that blurred them would be the exact defect

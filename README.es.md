@@ -25,16 +25,37 @@ evolith validate --engine opa
 ## Qué acaba de pasar
 
 Ese tercer comando evaluó el corpus de reglas de este propio repositorio contra un satélite
-recién inicializado, usando el bundle Rego compilado. Salida real de
+recién inicializado, usando el bundle Rego compilado. Esto es lo que imprimió
 `@beyondnet/evolith-cli@1.3.0` en un contenedor con nada más que Node instalado:
 
 ```
-Rules: 133 checked / 26 skipped / 0 errored / 159 total
-37 blocking issue(s)
-exit code 2
+**Status:** failed
+**Rules Checked:** 133
+**Rules Skipped:** 26
+**Rules Errored:** 0
+**Rules Total:** 159
 
-  26 rule(s) were NOT evaluated - their result is UNKNOWN, not passed.
+### Issues
+| Rule Id | Severity | Category | Title | Blocking |
+| --- | --- | --- | --- | --- |
+| ACL-01 | MUST | anti-corruption | Schema Validation Before Ingestion | YES |
+...
+| SEC-INJ-01 | MUST | security | Blocking rule did not run: No shell exec with user input | YES |
+| SEC-INJ-02 | MUST | security | Blocking rule did not run: Parameter allowlists for scaffold tools | YES |
+| SEC-PATH-01 | MUST | security | Blocking rule did not run: Path input sanitization | YES |
+...
+└  ❌ Validation failed. See the errors above.
+
+$ echo $?
+2
 ```
+
+Cada línea de arriba es la de la herramienta, carácter por carácter. Los `...` marcan filas de
+issues recortadas por longitud y nada más -- hay 72 en total, 37 de ellas bloqueantes. La
+ejecución además abre con tres líneas `[Nest] WARN Skipping non-standard ruleset`: tres ficheros
+de ruleset viajan en el tarball y el propio esquema del validador publicado los rechaza. Eso es
+un defecto real, y un README que sostiene que *no evaluado* no es lo mismo que *pasó* no tiene
+derecho a borrarlo de la captura.
 
 El Core carga **412 reglas**; el 159 de arriba es lo que la ejecución de este satélite
 seleccionó de ellas. Dos denominadores distintos, y un informe que los mezclara sería el

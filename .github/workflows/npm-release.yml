@@ -188,19 +188,36 @@ jobs:
             # This reads the packlist and fails when `main` or any `bin` target is absent,
             # which is the narrowest question that would have caught it, and is general
             # enough to catch the next mechanism rather than only this one.
+            # Done in node, in one process, on purpose. The first version of this check was a
+            # shell pipeline — `echo "$PACKED" | grep -qxF "$f"` — and it reported a FALSE
+            # POSITIVE on its first real run: it named dist/main.js missing from a tarball that
+            # contained it, and failed the release.
+            #
+            # The mechanism, reproduced rather than guessed. mcp-server's packlist is 799 paths,
+            # 71832 bytes, and a pipe buffer is 65536. `echo` blocks with the buffer full,
+            # `grep -q` exits the moment it matches, `echo` takes SIGPIPE, and `set -o pipefail`
+            # — which this step sets — promotes that into the pipeline's exit status. So the
+            # `||` branch fires on a SUCCESSFUL match. contracts (24 files) and infra-providers
+            # (70) passed in the same run because their packlists fit in the buffer, which is
+            # what makes it a size-dependent trap rather than an obvious bug.
+            #
+            # A `<<<` herestring fixes it too. node fixes the whole class: no pipe to break, no
+            # word-splitting on the promised list, and the JSON is already JSON.
             echo "-- packlist assertion"
             ( cd "$DIR" && npm pack --dry-run --json > /tmp/packlist.json )
-            PACKED=$(jq -r '.[0].files[].path' /tmp/packlist.json)
-            PROMISED=$(node -p "const p=require('$(pwd)/$DIR/package.json'); [...new Set([p.main, ...Object.values(p.bin || {})].filter(Boolean).map(s => s.replace(/^\.\//, '')))].join('\n')")
-            echo "   $(echo "$PACKED" | grep -c .) file(s) packed; entry points declared: $(echo "$PROMISED" | tr '\n' ' ')"
-            MISSING=""
-            for f in $PROMISED; do
-              echo "$PACKED" | grep -qxF "$f" || MISSING="$MISSING $f"
-            done
-            if [ -n "$MISSING" ]; then
-              echo "::error::$NAME@$VERSION would publish WITHOUT:$MISSING — the tarball does not contain the entry points its own package.json declares. Publishing it would put a package on the registry that cannot be required or executed."
-              exit 1
-            fi
+            node -e '
+              const fs = require("fs");
+              const dir = process.argv[1];
+              const pkg = JSON.parse(fs.readFileSync(dir + "/package.json", "utf8"));
+              const packed = new Set(JSON.parse(fs.readFileSync("/tmp/packlist.json", "utf8"))[0].files.map((f) => f.path));
+              const promised = [...new Set([pkg.main, ...Object.values(pkg.bin || {})].filter(Boolean).map((s) => s.replace(/^\.\//, "")))];
+              console.log("   " + packed.size + " file(s) packed; entry points declared: " + (promised.join(", ") || "(none)"));
+              const missing = promised.filter((p) => !packed.has(p));
+              if (missing.length) {
+                console.log("::error::" + pkg.name + "@" + pkg.version + " would publish WITHOUT: " + missing.join(", ") + " — the tarball does not contain the entry points its own package.json declares. Publishing it would put a package on the registry that cannot be required or executed.");
+                process.exit(1);
+              }
+            ' "$DIR"
 
             if [ "$DRY_RUN" = "true" ]; then
               ( cd "$DIR" && npm publish --dry-run --provenance --access public )

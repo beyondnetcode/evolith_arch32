@@ -529,6 +529,21 @@ jobs:
           # one, so the extractor has to be built or the guard has nothing to run. It
           # fails loudly in that case instead of reporting "no cycles found".
           npm run build --workspace @beyondnet/evolith-repo-facts
+          # GT-706: the declared-exports guard reads each package's PACKLIST, and a
+          # package whose dist has not been emitted packs no dist — so an unbuilt
+          # workspace reports every declared target as missing. This list was five
+          # workspaces and the guard covers nine; the four added here are exactly the
+          # ones whose absence turned it red on its first CI run, MEASURED by parking
+          # every dist locally and replaying only the five builds above:
+          #   core -> dist/index.js, sdk -> dist/index.js, mcp -> dist/main.js,
+          #   cli  -> dist/index.js
+          # Building the subset the guard scans is the alternative that was rejected:
+          # scanning only what happens to be built is the same "narrower question than
+          # the manifest asks" that let contracts@1.1.0 through in the first place.
+          npm run build --workspace @beyondnet/evolith-core
+          npm run build --workspace @beyondnet/evolith-sdk
+          npm run build --workspace @beyondnet/evolith-mcp
+          npm run build --workspace src/sdk/cli
 
       # STRICT. Every script under .harness/scripts/ci must either refuse a
       # zero-element scan or be registered, with a reason, as something that is

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as p from '@clack/prompts';
+import { clack as p } from './clack';
 import chalk from 'chalk';
 import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
 import { isInteractiveSession } from './interactivity';

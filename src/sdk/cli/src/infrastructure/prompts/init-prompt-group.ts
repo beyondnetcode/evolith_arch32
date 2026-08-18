@@ -1,4 +1,4 @@
-import * as p from '@clack/prompts';
+import { clack as p } from './clack';
 import { CatalogLoader } from '../catalog/catalog-loader';
 import { InitProjectInput } from '@beyondnet/evolith-core-domain/application/services';
 import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import Conf from 'conf';
+import { Conf, type ConfInstance } from './conf-module';
 
 export interface SyncConfig {
   upstreamRoot: string;
@@ -44,7 +44,7 @@ const DEFAULT_PROFILE = 'default';
 
 @Injectable()
 export class ConfigService {
-  private config: Conf<Record<string, unknown>>;
+  private config: ConfInstance<Record<string, unknown>>;
   private readonly logger = new Logger(ConfigService.name);
 
   constructor() {

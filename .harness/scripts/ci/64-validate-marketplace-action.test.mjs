@@ -184,6 +184,25 @@ describe('64-validate-marketplace-action', () => {
     }
   });
 
+  test('discovery does NOT descend into a nested checkout — the state that made this guard red everywhere but CI', () => {
+    // Written against the unfixed walker first, where it failed: `.claude/worktrees/<name>/`
+    // are git worktrees of this same repository, each carrying a verbatim copy of the root
+    // manifest, so the duplicate-identity rule fired once per worktree. CI's checkout has
+    // none, so the guard was green there and red in every working copy that had one.
+    const root = scratch((r) => {
+      writeFileSync(path.join(r, 'action.yml'), 'name: Root\n');
+      mkdirSync(path.join(r, 'wt/copy'), { recursive: true });
+      // A worktree marks itself with a `.git` FILE (a gitdir pointer), not a directory.
+      writeFileSync(path.join(r, 'wt/copy/.git'), 'gitdir: /elsewhere/.git/worktrees/copy\n');
+      writeFileSync(path.join(r, 'wt/copy/action.yml'), 'name: Root\n');
+    });
+    try {
+      assert.deepEqual(findActionManifests(root), ['action.yml']);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   test('the root manifest actually carries the branding the repo claims', () => {
     // Reads the file rather than trusting the guard's own output: the guard and
     // this assertion must be able to disagree.

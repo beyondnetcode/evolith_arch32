@@ -142,4 +142,42 @@ Esta accion se ejercita desde [`evolith-validate-dogfood.yml`](../../workflows/e
 
 ---
 
+## Publicar el listing del Marketplace — el paso del owner (GT-651)
+
+Nada en este repositorio puede crear el listing: GitHub no expone API para ello, y el
+Marketplace Developer Agreement se acepta por CUENTA, en la UI y por una persona. Por eso
+`64-validate-marketplace-action.mjs` afirma que nada de aquí bloquea el paso — nunca que
+haya ocurrido. Esta sección existe para que el paso sea una sola pasada y no una
+investigación.
+
+**Estado del lado del repositorio, medido el 2026-08-18:**
+
+| prerrequisito | estado |
+|---|---|
+| un único fichero de metadatos en la raíz del repositorio | `action.yml`, 15 592 bytes |
+| `branding` con icono y color (sin ellos el Marketplace rechaza el listing) | `shield` / `blue` |
+| ningún segundo manifiesto reclamando el `name` del de la raíz | ninguno |
+| una release desde la que publicar | `v1.3.0` (la última) —y el tag flotante `v1`— llevan el `action.yml` de la raíz con ese mismo tamaño exacto, comprobado con la API de contenidos en cada ref |
+
+Así que no hace falta una release nueva: el listing puede crearse desde `v1.3.0`.
+
+**El flujo, tal como lo documenta GitHub** (registrado como documentado, no como
+observado — la UI no se manejó desde aquí):
+
+1. Abre las **Releases** del repositorio y edita la release desde la que publicar (`v1.3.0`).
+2. Marca **Publish this Action to the GitHub Marketplace**. La casilla solo aparece cuando
+   el fichero de metadatos está en la raíz — que es de lo que trata la tabla de arriba.
+3. Acepta el **GitHub Marketplace Developer Agreement** cuando lo pida. Una vez por cuenta.
+4. Elige una categoría primaria y una secundaria. El icono y el color se leen del
+   `branding` de `action.yml`; no se vuelven a introducir aquí.
+5. Publica. Los consumidores lo referencian entonces por tag — fija `v1.3.0`, o el flotante `v1`.
+
+**Cuando esté hecho**, se puede marcar el último criterio abierto de `GT-651` en el tablero
+de gaps, y es lo único que puede marcarlo. La otra mitad abierta de la fila son los paquetes
+de gobernanza por tenant, que son trabajo del Tracker: `EAG-23`, `DIFERIDO` en aquel tablero
+y bloqueado por `EAG-01`/`EAG-05` (un plugin distribuido fuera sigue sin forma de
+autenticarse) — confirmado allí el 2026-08-18.
+
+---
+
 [Volver a Evolith Core](../../../reference/core/control-center/README.md)

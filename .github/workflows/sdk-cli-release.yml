@@ -5,13 +5,23 @@ concurrency:
   cancel-in-progress: false
 
 on:
+  # The comment that used to sit here claimed "branch pushes run validation only".
+  # They did not: build-and-test was gated on release_created, so a branch push ran
+  # NOTHING but core-validation, and every downstream job skipped with it. The
+  # validation half only ever executed on a v* tag, which is how five consecutive
+  # tags each discovered a different long-standing defect.
+  pull_request:
+    paths:
+      - 'src/sdk/cli/**'
+      - 'src/packages/**'
+      - '.github/workflows/sdk-cli-release.yml'
+      - '.harness/**'
   push:
-    # Branch pushes run validation only. A release is driven by an annotated
-    # v* tag (or workflow_dispatch below) — see the release-gate job.
     branches:
       - main
     paths:
       - 'src/sdk/cli/**'
+      - 'src/packages/**'
       - '.github/workflows/sdk-cli-release.yml'
       - '.harness/**'
     tags:
@@ -107,8 +117,9 @@ jobs:
   # GATE 2: Build and Test
   # ============================================
   build-and-test:
+    # Deliberately NOT gated on release_created. This is the job that lints, type-checks,
+    # tests and packs; gating it meant it only ran when a release already depended on it.
     needs: release-gate
-    if: ${{ needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -212,6 +223,10 @@ jobs:
     # version interpolated to the EMPTY STRING and the confirmation step announced
     # "Published @beyondnet/evolith-cli@ to NPM".
     needs: [release-gate, build-and-test]
+    # The gate removed from build-and-test lands here, on the step that has irreversible
+    # consequences. Without it, ungating validation would have made every push to main
+    # attempt a real npm publish.
+    if: ${{ needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -306,7 +321,10 @@ jobs:
   # GATE 4: Package Binaries
   # ============================================
   package-binaries:
-    needs: publish-npm
+    # Was `needs: publish-npm`, which meant it could not run without a publish — so on a
+    # pull request it skipped, and `pkg` being unable to target node20 stayed invisible
+    # until v1.3.6. It packages from source and needs nothing the publish produces.
+    needs: build-and-test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -477,7 +495,10 @@ jobs:
     # interpolates needs.release-gate.outputs.tag_name into the GitHub Release's `tag_name`
     # and `name`, so without release-gate declared here it publishes a Release named
     # "Release " against an empty tag.
-    needs: [release-gate, package-binaries, smoke-test, smoke-test-functional]
+    needs: [release-gate, publish-npm, package-binaries, smoke-test, smoke-test-functional]
+    # publish-npm is listed explicitly because package-binaries no longer depends on it:
+    # a GitHub Release must not be cut when the npm publish failed.
+    if: ${{ needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -548,7 +569,9 @@ jobs:
   # ============================================
   failure-notification:
     needs: [release-gate, publish-npm, package-binaries, smoke-test, smoke-test-functional, upload-assets]
-    if: failure()
+    # Only for an actual release. Without the second clause, ungating the validation jobs
+    # would file a "Release Pipeline Failed" issue for every red pull request.
+    if: ${{ failure() && needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -82,6 +82,30 @@ jobs:
           node .harness/scripts/ci/67-validate-declared-exports.mjs --verbose
           node --test .harness/scripts/ci/67-validate-declared-exports.test.mjs
 
+      # GT-704 — the two engines are allowed to disagree about COVERAGE and never
+      # about FACTS, and until this step nothing measured whether they did.
+      #
+      # `27-opa-parity-gate.mjs` proves the bundle can state its own scope and
+      # `28-native-evaluator-parity.mjs` proves every fixture is exercised. Neither
+      # runs both engines over the corpus and compares the verdicts, so a `.rego`
+      # edited into contradiction with its native handler produced no signal at all.
+      # Measured on the real corpus: of 28 rules BOTH engines decide, 11 reach
+      # opposite verdicts.
+      #
+      # IT LIVES IN THIS JOB BECAUSE THIS JOB BUILDS THE CLI. The sweep runs
+      # `evolith validate --engine {native,opa}`, which needs `dist/main.js` (built
+      # above) and `policy.wasm` (built here). `Test` is a REQUIRED check, which is
+      # the other half of the row: `27` had to be hosted in `test-core-domain` for
+      # the same reason, and the schedule-only parity workflow would not block a
+      # merge. Measured cost of the two engine runs: ~18 s.
+      - name: Compile OPA policy to WASM
+        run: npm run build:policy
+
+      - name: The two engines do not disagree about facts (GT-704)
+        run: |
+          node --test .harness/scripts/ci/68-validate-engine-verdict-parity.test.mjs
+          node .harness/scripts/ci/68-validate-engine-verdict-parity.mjs --verbose --json
+
       # GT-588, criterion 3 — the transparency rule is RUN, not merely declared.
       #
       # `AUD-TRANSP-01…04` and their negative tests existed while
@@ -99,6 +123,7 @@ jobs:
       # spawns and the core-domain dist its fixtures are signed with.
       - name: The transparency rule still fires (GT-588)
         run: node .harness/scripts/ci/69-validate-audit-transparency-gate.mjs --verbose
+
 
       # CD gate = the evolith-cli unit suite (fast, deterministic). The full e2e
       # (env-sensitive: spawns servers, loads rulesets) is covered by the

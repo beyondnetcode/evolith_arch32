@@ -10570,7 +10570,7 @@
         "FALSIFIABILITY OBSERVED BOTH WAYS. `governance.rego`'s single INH-06 body made unsatisfiable so OPA passed a rule native still fails -> exit 1 naming INH-06 as unregistered; reverted and bundle rebuilt -> exit 0. Recorded because it is worth knowing: a first probe against TAX-05 did NOT go red, because two policies emit that id (repository-taxonomy.rego and taxonomy.rego). The probe was wrong, not the guard.",
         "THE BASELINE IS A RATCHET IN BOTH DIRECTIONS: an unregistered conflict fails, and so does an entry that no longer conflicts, so a fix cannot land without deleting its own entry. Each of the 11 carries its own measured reason naming the exact .rego line and fact path; a shared justification was refused.",
         "DEVIATION RECORDED RATHER THAN SATISFIED ON PAPER: diffCoverage is deliberately NOT called. Its input is the ids an ARTIFACT declares decidable, which only the compiled bundle can answer and which 27-opa-parity-gate.mjs already asks it there; calling it here would compare a set against itself and always return clean.",
-        "node .harness/scripts/ci/68-validate-engine-verdict-parity.mjs --verbose --json",
+        "npm run build --workspace src/sdk/cli && npm run build:policy && node .harness/scripts/ci/68-validate-engine-verdict-parity.mjs --verbose --json # the two builds are a real prerequisite, not decoration: the sweep spawns the CLI dist and loads policy.wasm",
         "node --test .harness/scripts/ci/68-validate-engine-verdict-parity.test.mjs"
       ]
     }

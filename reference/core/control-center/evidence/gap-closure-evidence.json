@@ -10551,6 +10551,27 @@
         "node .harness/scripts/ci/67-validate-declared-exports.mjs --verbose",
         "node --test .harness/scripts/ci/67-validate-declared-exports.test.mjs"
       ]
+    },
+    {
+      "id": "GT-691",
+      "closedAt": "2026-08-18",
+      "closureCommit": "be8da489",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/apps/core-api/package.json",
+        "package-lock.json",
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        ".harness/config/npm-audit-exceptions.json"
+      ],
+      "validationCommands": [
+        "CLOSED BY AN UPGRADE, NOT A DISMISSAL. @nestjs/swagger 11.4.7 declares \"js-yaml\": \"5.3.0\"; the only source change is src/apps/core-api/package.json 11.4.6 -> 11.4.7, and package-lock.json now resolves node_modules/@nestjs/swagger/node_modules/js-yaml to 5.3.0 -- a lockfile entry, which is the proof the row asked for, not a package.json intention.",
+        "THE ROW'S TRIGGER NAMED THE WRONG RELEASE. It said to wait for a stable @nestjs/swagger 12, having declared the 11.4.x line exhausted; the fix arrived two days later as a PATCH on that line. Waiting on the major would have kept the row open past its own fix.",
+        "FALSIFIABILITY RE-MEASURED against the 11.4.7 tree rather than inherited: grep over @nestjs/swagger/dist still returns 1 yaml.dump and zero load, and js-yaml@5.x still has exactly one consumer. Neither falsifier fired.",
+        "THE EXCEPTION LIST EMPTIED ITSELF, AS DESIGNED. 63-validate-npm-audit-gate went RED on this branch because the two js-yaml entries declared on 2026-08-08 stopped matching any advisory — \"the good news arriving as a red check\". Both were deleted; the file now declares 0 exceptions and the gate is green.",
+        "npm audit --json  # 1 high -> 0 high / 0 critical; the 2 remaining moderates (hono, @hono/node-server) are unrelated and predate this row",
+        "npm ls js-yaml --all  # @nestjs/swagger@11.4.7 -> js-yaml@5.3.0",
+        "npm run build && npm test --workspace core-api  # tsc -b clean; 31 suites / 163 tests"
+      ]
     }
   ]
 }

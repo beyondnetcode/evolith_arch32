@@ -10551,6 +10551,28 @@
         "node .harness/scripts/ci/67-validate-declared-exports.mjs --verbose",
         "node --test .harness/scripts/ci/67-validate-declared-exports.test.mjs"
       ]
+    },
+    {
+      "id": "GT-704",
+      "closedAt": "2026-08-18",
+      "closureCommit": "4a15fcf4",
+      "dependencyDisposition": "none",
+      "evidence": [
+        ".harness/scripts/ci/68-validate-engine-verdict-parity.mjs",
+        ".harness/scripts/ci/68-validate-engine-verdict-parity.test.mjs",
+        ".harness/scripts/ci/engine-verdict-parity.baseline.json",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "THE ROW'S OWN HEADLINE NUMBER DID NOT REPRODUCE, and the guard is why that is now recoverable. Registered 2026-08-16: 16 verdict conflicts. Measured 2026-08-18: 11 — and the denominator that matters is not the 412-rule corpus but the 28 rules BOTH engines decide, so the disagreement rate is 11 of 28. Two of the five ids the row named (TAX-05, INH-02) fail on BOTH engines today. Because it published a COUNT and 5 of its 16 ids, 'five were fixed since' and 'the count was wrong' cannot be told apart from what it wrote; every run now publishes namedIds.",
+        "THE COVERAGE AXIS DOES REPRODUCE under the row's own definition (deciding side `passed`): 64 OPA-decides/native-skips against the registered 65, and 17 the other way, exact. That is what makes the conflict discrepancy a real finding rather than a different measurement.",
+        "THE COMPARISON HINGES ON ONE PRECEDENCE RULE, pinned by unit test: a rule listed as `skipped` that ALSO carries a 'blocking rule did not run' issue is skipped, not failed. Reading those as verdicts would have manufactured 144 fake conflicts on this corpus and shipped a guard measuring noise.",
+        "FALSIFIABILITY OBSERVED BOTH WAYS. `governance.rego`'s single INH-06 body made unsatisfiable so OPA passed a rule native still fails -> exit 1 naming INH-06 as unregistered; reverted and bundle rebuilt -> exit 0. Recorded because it is worth knowing: a first probe against TAX-05 did NOT go red, because two policies emit that id (repository-taxonomy.rego and taxonomy.rego). The probe was wrong, not the guard.",
+        "THE BASELINE IS A RATCHET IN BOTH DIRECTIONS: an unregistered conflict fails, and so does an entry that no longer conflicts, so a fix cannot land without deleting its own entry. Each of the 11 carries its own measured reason naming the exact .rego line and fact path; a shared justification was refused.",
+        "DEVIATION RECORDED RATHER THAN SATISFIED ON PAPER: diffCoverage is deliberately NOT called. Its input is the ids an ARTIFACT declares decidable, which only the compiled bundle can answer and which 27-opa-parity-gate.mjs already asks it there; calling it here would compare a set against itself and always return clean.",
+        "node .harness/scripts/ci/68-validate-engine-verdict-parity.mjs --verbose --json",
+        "node --test .harness/scripts/ci/68-validate-engine-verdict-parity.test.mjs"
+      ]
     }
   ]
 }

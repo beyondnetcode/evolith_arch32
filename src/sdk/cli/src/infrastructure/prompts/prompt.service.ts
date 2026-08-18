@@ -1,5 +1,5 @@
-import * as p from '@clack/prompts';
-import type { Option } from '@clack/prompts';
+import { clack as p } from './clack';
+import type { Option } from './clack';
 import chalk from 'chalk';
 import { CatalogLoader } from '../catalog/catalog-loader';
 import { InitProjectInput } from '@beyondnet/evolith-core-domain/application/services';

@@ -235,7 +235,23 @@ function classificationChanged(previous, triage) {
     return ka.length === kb.length && ka.every((k, i) => kb[i] === k && a[k] === b[k]);
   };
 
-  return !sameMap(previous.counts, triage.counts) || !sameMap(previous.classes, triage.classes);
+  // COMPARE THE RENDERED CLASSIFICATION, NOT THE RAW TRIAGE.
+  //
+  // The comment above describes this bug being fixed for key ORDER. It survived in
+  // another form: the renderer OMITS classes with no members, while the raw triage
+  // keeps them at zero.
+  //
+  //   previous.counts (rendered, on disk)  6 keys
+  //   triage.counts   (raw)                7 keys, incl. "no-policy-in-bundle": 0
+  //
+  // `sameMap` requires equal key counts, so `changed` was ALWAYS true, the date was
+  // rewritten on every run, and `--check` went red on every day except the one the
+  // snapshot was captured. It was green on 2026-08-17 and red from 2026-08-18 with
+  // the classification untouched — 412 rules, none reclassified, no keys added or
+  // removed. Diffing the rendered document against the rendered document compares
+  // like with like and cannot drift apart from the writer again.
+  const fresh = JSON.parse(triage.document);
+  return !sameMap(previous.counts, fresh.counts) || !sameMap(previous.classes, fresh.classes);
 }
 
 /**

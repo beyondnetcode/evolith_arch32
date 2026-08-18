@@ -10553,6 +10553,47 @@
       ]
     },
     {
+      "id": "GT-707",
+      "closedAt": "2026-08-18",
+      "closureCommit": "757762f4",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/sdk/cli/scripts/vendor-esm-deps.mjs",
+        "src/sdk/cli/src/infrastructure/prompts/clack.ts",
+        "src/sdk/cli/src/infrastructure/config/conf-module.ts",
+        "src/sdk/cli/package.json"
+      ],
+      "validationCommands": [
+        "MEASURED ON A REAL PACKAGED BINARY, not on a local dist: --help exits 0, --version prints 1.3.2, and `echo test-project | evolith-cli init --runtime nodejs --monorepo none --arch clean` exits 0 and writes evolith.yaml, package.json, src/ and both READMEs. Before this change every one of the three died with ERR_REQUIRE_ESM before parsing an argument.",
+        "THIS ROW'S FIRST EVIDENCE WAS WRONG TWICE, and both errors are structural fixes now. (1) 'the only ESM-only dependency' came from probing require('<dep>/package.json'), which EIGHT of 25 direct dependencies refuse with ERR_PACKAGE_PATH_NOT_EXPORTED -- an error that reads like 'fine'. Reading manifests FROM DISK found three: @clack/prompts, conf and @modelcontextprotocol/sdk (the last is only a .d.ts here, so it never enters the snapshot). pkg had been reporting conf all along and the first pass stopped at the first error. (2) The fallback required './vendor/clack.cjs' from a file that compiles to dist/infrastructure/prompts/, so it resolved to a path that does not exist; nothing failed at build time and the BINARY failed at run time with the package's error, because the fallback's MODULE_NOT_FOUND was swallowed by a rethrow of the original.",
+        "THE ORDER IN THE SHIMS IS THE LOAD-BEARING DECISION: the package is required FIRST and the vendored bundle is the fallback. A shim loading the bundle first would silently unmock the ~24 specs that jest.mock('@clack/prompts'), leaving the suite green while asserting against the real library. Fallback triggers on ANY load failure because the same cause is ERR_REQUIRE_ESM under pkg@5.8.1 and MODULE_NOT_FOUND under @yao-pkg/pkg@6.",
+        "THE BUILD STEP REFUSES A BUNDLE IT CANNOT LOAD: each vendored file is required back in a child process with --no-experimental-require-module (the closest an ordinary Node process gets to the snapshot's no-ESM contract) and its export surface compared against the real package; and the relative path is read out of each COMPILED shim and resolved, which is the check that catches defect (2). Observed red against the broken path, naming the resolved location.",
+        "PACKAGER DELIBERATELY UNCHANGED: the fix removes the ESM require rather than changing who resolves it, so it holds under pkg@5.8.1 (what CI runs) and under @yao-pkg/pkg@6 (where it was proven locally, pkg@5.8.1 being unable to fetch a node20 arm64 base on this machine).",
+        "npm run build --workspace src/sdk/cli && npm run test:unit --workspace src/sdk/cli # 106 suites / 1485 tests, tsc -b clean"
+      ]
+    },
+    {
+      "id": "GT-691",
+      "closedAt": "2026-08-18",
+      "closureCommit": "be8da489",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/apps/core-api/package.json",
+        "package-lock.json",
+        "reference/core/control-center/gaps/gap-reference-catalog.md",
+        ".harness/config/npm-audit-exceptions.json"
+      ],
+      "validationCommands": [
+        "CLOSED BY AN UPGRADE, NOT A DISMISSAL. @nestjs/swagger 11.4.7 declares \"js-yaml\": \"5.3.0\"; the only source change is src/apps/core-api/package.json 11.4.6 -> 11.4.7, and package-lock.json now resolves node_modules/@nestjs/swagger/node_modules/js-yaml to 5.3.0 -- a lockfile entry, which is the proof the row asked for, not a package.json intention.",
+        "THE ROW'S TRIGGER NAMED THE WRONG RELEASE. It said to wait for a stable @nestjs/swagger 12, having declared the 11.4.x line exhausted; the fix arrived two days later as a PATCH on that line. Waiting on the major would have kept the row open past its own fix.",
+        "FALSIFIABILITY RE-MEASURED against the 11.4.7 tree rather than inherited: grep over @nestjs/swagger/dist still returns 1 yaml.dump and zero load, and js-yaml@5.x still has exactly one consumer. Neither falsifier fired.",
+        "THE EXCEPTION LIST EMPTIED ITSELF, AS DESIGNED. 63-validate-npm-audit-gate went RED on this branch because the two js-yaml entries declared on 2026-08-08 stopped matching any advisory — \"the good news arriving as a red check\". Both were deleted; the file now declares 0 exceptions and the gate is green.",
+        "npm audit --json  # 1 high -> 0 high / 0 critical; the 2 remaining moderates (hono, @hono/node-server) are unrelated and predate this row",
+        "npm ls js-yaml --all  # @nestjs/swagger@11.4.7 -> js-yaml@5.3.0",
+        "npm run build && npm test --workspace core-api  # tsc -b clean; 31 suites / 163 tests"
+      ]
+    },
+    {
       "id": "GT-704",
       "closedAt": "2026-08-18",
       "closureCommit": "4a15fcf4",

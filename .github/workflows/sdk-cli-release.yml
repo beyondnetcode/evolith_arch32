@@ -5,13 +5,23 @@ concurrency:
   cancel-in-progress: false
 
 on:
+  # The comment that used to sit here claimed "branch pushes run validation only".
+  # They did not: build-and-test was gated on release_created, so a branch push ran
+  # NOTHING but core-validation, and every downstream job skipped with it. The
+  # validation half only ever executed on a v* tag, which is how five consecutive
+  # tags each discovered a different long-standing defect.
+  pull_request:
+    paths:
+      - 'src/sdk/cli/**'
+      - 'src/packages/**'
+      - '.github/workflows/sdk-cli-release.yml'
+      - '.harness/**'
   push:
-    # Branch pushes run validation only. A release is driven by an annotated
-    # v* tag (or workflow_dispatch below) — see the release-gate job.
     branches:
       - main
     paths:
       - 'src/sdk/cli/**'
+      - 'src/packages/**'
       - '.github/workflows/sdk-cli-release.yml'
       - '.harness/**'
     tags:
@@ -107,8 +117,9 @@ jobs:
   # GATE 2: Build and Test
   # ============================================
   build-and-test:
+    # Deliberately NOT gated on release_created. This is the job that lints, type-checks,
+    # tests and packs; gating it meant it only ran when a release already depended on it.
     needs: release-gate
-    if: ${{ needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -212,6 +223,10 @@ jobs:
     # version interpolated to the EMPTY STRING and the confirmation step announced
     # "Published @beyondnet/evolith-cli@ to NPM".
     needs: [release-gate, build-and-test]
+    # The gate removed from build-and-test lands here, on the step that has irreversible
+    # consequences. Without it, ungating validation would have made every push to main
+    # attempt a real npm publish.
+    if: ${{ needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -228,6 +243,13 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      # Same reason as build-and-test: a subpath import of a sibling needs that
+      # sibling's dist/, which a bare `npm ci` does not produce. #604 added this to
+      # build-and-test and left the other two jobs with the identical sequence, so
+      # v1.3.5 got past build-and-test and died here instead, on the same TS2307s.
+      - name: Build every workspace
+        run: npm run build
 
       - name: Build
         working-directory: ${{ env.CLI_DIR }}
@@ -299,7 +321,10 @@ jobs:
   # GATE 4: Package Binaries
   # ============================================
   package-binaries:
-    needs: publish-npm
+    # Was `needs: publish-npm`, which meant it could not run without a publish — so on a
+    # pull request it skipped, and `pkg` being unable to target node20 stayed invisible
+    # until v1.3.6. It packages from source and needs nothing the publish produces.
+    needs: build-and-test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -325,14 +350,45 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      # Same reason as build-and-test: a subpath import of a sibling needs that
+      # sibling's dist/, which a bare `npm ci` does not produce. #604 added this to
+      # build-and-test and left the other two jobs with the identical sequence, so
+      # v1.3.5 got past build-and-test and died here instead, on the same TS2307s.
+      - name: Build every workspace
+        run: npm run build
+
       - name: Build
         working-directory: ${{ env.CLI_DIR }}
         run: npm run build
 
+      # TWO DEFECTS IN ONE LINE, BOTH MEASURED.
+      #
+      # 1. `pkg@5.8.1` is the final release of the unmaintained vercel/pkg and carries no
+      #    node20 base binaries. Against this matrix's targets it fails outright:
+      #      pkg@5.8.1 --targets node20-linux-x64  -> exit 2
+      #                "Error! No available node version satisfies 'node20'"
+      #      pkg@5.8.1 --targets node18-linux-x64  -> exit 0
+      #    Pinning the target back to node18 would ship a binary embedding Node 18 for a
+      #    project whose engines require >=20, so the TOOL moves rather than the target.
+      #    `@yao-pkg/pkg` is the maintained fork and its 5.x line keeps these flags:
+      #      @yao-pkg/pkg@5.16.1 --targets node20-linux-x64 --out-path ./binaries -> exit 0
+      #      produces ELF 64-bit LSB executable, x86-64, 53M, embedding v20.18.0
+      #
+      # 2. `--output-dir` IS NOT A pkg FLAG. Its options are `-o/--output` and `--out-path`.
+      #    pkg ignores the unknown flag silently, so even on a target that works the binary
+      #    lands in the CWD and `./binaries` is never created — and "Rename Binary" below
+      #    then `cd`s into a directory that does not exist. Measured on node18, where the
+      #    tool does succeed:
+      #      --output-dir ./binaries -> ./binaries ABSENT, binary at ./probe
+      #      --out-path   ./binaries -> ./binaries/probe
+      #
+      # So this line has never produced a usable artifact on any target, and the job only
+      # ever runs on a tag — which is why five tags found four earlier failures before
+      # anything reached it.
       - name: Package Binary
         id: pkg
         working-directory: ${{ env.CLI_DIR }}
-        run: npx pkg@5.8.1 . --targets ${{ matrix.target }} --output-dir ./binaries
+        run: npx @yao-pkg/pkg@5.16.1 . --targets ${{ matrix.target }} --out-path ./binaries
 
       - name: Rename Binary
         shell: bash
@@ -439,7 +495,10 @@ jobs:
     # interpolates needs.release-gate.outputs.tag_name into the GitHub Release's `tag_name`
     # and `name`, so without release-gate declared here it publishes a Release named
     # "Release " against an empty tag.
-    needs: [release-gate, package-binaries, smoke-test, smoke-test-functional]
+    needs: [release-gate, publish-npm, package-binaries, smoke-test, smoke-test-functional]
+    # publish-npm is listed explicitly because package-binaries no longer depends on it:
+    # a GitHub Release must not be cut when the npm publish failed.
+    if: ${{ needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -510,7 +569,9 @@ jobs:
   # ============================================
   failure-notification:
     needs: [release-gate, publish-npm, package-binaries, smoke-test, smoke-test-functional, upload-assets]
-    if: failure()
+    # Only for an actual release. Without the second clause, ungating the validation jobs
+    # would file a "Release Pipeline Failed" issue for every red pull request.
+    if: ${{ failure() && needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

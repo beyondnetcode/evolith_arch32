@@ -29,7 +29,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | 2 | Highest-risk area | `Governance` has the largest weighted open load. | [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-669](../gaps/gap-reference-catalog.md#gt-669), [GT-672](../gaps/gap-reference-catalog.md#gt-672), [GT-689](../gaps/gap-reference-catalog.md#gt-689), [GT-588](../gaps/gap-reference-catalog.md#gt-588), +2 |
 | 3 | Quick wins | High criticality with XS/S complexity. | [GT-684](../gaps/gap-reference-catalog.md#gt-684) |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-684](../gaps/gap-reference-catalog.md#gt-684), [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-680](../gaps/gap-reference-catalog.md#gt-680), [GT-681](../gaps/gap-reference-catalog.md#gt-681), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-669](../gaps/gap-reference-catalog.md#gt-669), [GT-448](../gaps/gap-reference-catalog.md#gt-448) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-674](../gaps/gap-reference-catalog.md#gt-674), [GT-685](../gaps/gap-reference-catalog.md#gt-685), [GT-686](../gaps/gap-reference-catalog.md#gt-686), [GT-687](../gaps/gap-reference-catalog.md#gt-687), +13 |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-444](../gaps/gap-reference-catalog.md#gt-444), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-674](../gaps/gap-reference-catalog.md#gt-674), [GT-685](../gaps/gap-reference-catalog.md#gt-685), [GT-686](../gaps/gap-reference-catalog.md#gt-686), [GT-687](../gaps/gap-reference-catalog.md#gt-687), +12 |
 
 ## Current Blockers
 
@@ -43,13 +43,13 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-08-08 |
 | Total gaps | 705 |
-| Closed gaps | 673 |
-| Open gaps | 32 |
+| Closed gaps | 674 |
+| Open gaps | 31 |
 | Open P0 | 1 |
 | Open P1 | 8 |
-| Open P2 | 19 |
-| Total closure | 95.5% |
-| Closure evidence records | 655 |
+| Open P2 | 18 |
+| Total closure | 95.6% |
+| Closure evidence records | 656 |
 | Recorded readiness | 4 PASS |
 
 | Area | Open | P0 | P1 | First IDs |
@@ -57,7 +57,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | `Governance` | 8 | 0 | 3 | [GT-670](../gaps/gap-reference-catalog.md#gt-670), [GT-585](../gaps/gap-reference-catalog.md#gt-585), [GT-669](../gaps/gap-reference-catalog.md#gt-669), [GT-672](../gaps/gap-reference-catalog.md#gt-672), +4 |
 | `Cross` | 3 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.md#gt-435), [GT-448](../gaps/gap-reference-catalog.md#gt-448), [GT-651](../gaps/gap-reference-catalog.md#gt-651) |
 | `MCP Server` | 3 | 0 | 3 | [GT-684](../gaps/gap-reference-catalog.md#gt-684), [GT-680](../gaps/gap-reference-catalog.md#gt-680), [GT-681](../gaps/gap-reference-catalog.md#gt-681) |
-| `Infra` | 6 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-685](../gaps/gap-reference-catalog.md#gt-685), [GT-691](../gaps/gap-reference-catalog.md#gt-691), +2 |
+| `Infra` | 5 | 0 | 1 | [GT-324](../gaps/gap-reference-catalog.md#gt-324), [GT-464](../gaps/gap-reference-catalog.md#gt-464), [GT-685](../gaps/gap-reference-catalog.md#gt-685), [GT-691](../gaps/gap-reference-catalog.md#gt-691), +1 |
 | `Core Domain` | 4 | 0 | 0 | [GT-674](../gaps/gap-reference-catalog.md#gt-674), [GT-687](../gaps/gap-reference-catalog.md#gt-687), [GT-678](../gaps/gap-reference-catalog.md#gt-678), [GT-704](../gaps/gap-reference-catalog.md#gt-704) |
 
 ## Source and Refresh Rule

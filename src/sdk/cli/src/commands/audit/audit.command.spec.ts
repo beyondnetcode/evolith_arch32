@@ -124,6 +124,25 @@ describe('evolith audit verify (GT-588)', () => {
     expect(env.success).toBe(false);
   });
 
+  it('carries the findings in the JSON envelope on the FAILING branch — the branch that has findings', async () => {
+    // Written against the unfixed command, where it failed: `--format json` emitted
+    // `{code: GATE_BLOCKED, message}` and discarded the payload, so a machine consumer
+    // learned that something was wrong and nothing about what. Every case in this file
+    // asserted `success === false` and none looked inside, which is how it survived.
+    const { file, anchorsFile } = await writeLedger('details.jsonl');
+    const { command, log } = setup();
+
+    await command.executeCommand(['verify'], { ledger: file, trustAnchors: anchorsFile, format: 'json' });
+
+    const details = envelope(log).error?.details;
+    expect(details).toBeDefined();
+    expect(details.entryCount).toBeGreaterThan(0);
+    expect(details.cryptographicallyIntact).toBe(true);
+    expect(details.trustAnchors).toBe('anchored');
+    expect(details.recomputedRoot).toMatch(/^[0-9a-f]{64}$/);
+    expect(details.violations.map((v: { ruleId: string }) => v.ruleId)).toContain('AUD-TRANSP-04');
+  });
+
   it('BLOCKS (exit 2) when a decision was edited after signing', async () => {
     const { file, anchorsFile } = await writeLedger('tampered.jsonl', (entries) => {
       (entries[1].decision as { verdict?: string }).verdict = 'PASS';

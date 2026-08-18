@@ -153,6 +153,24 @@ const parseYaml = (() => {
 const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', 'coverage', '.next', '.turbo']);
 
 /**
+ * GT-651 follow-up — a NESTED CHECKOUT is not part of this repository's tree.
+ *
+ * The walk below found `action.yml` inside `.claude/worktrees/<name>/`, which are
+ * full git worktrees of this same repository living under an ignored path. Each
+ * carries a verbatim copy of the root manifest, so the duplicate-identity rule
+ * fired twice and the guard was RED in any working copy that had one — while CI,
+ * whose checkout has none, stayed green. A guard that cannot be run where the work
+ * happens gets run nowhere.
+ *
+ * The exclusion is stated as a property rather than a path list: a directory that
+ * carries its own `.git` entry is a separate checkout (worktree, submodule, vendored
+ * clone) and its contents are not what a consumer of THIS repository receives.
+ */
+function isNestedCheckout(dir) {
+  return existsSync(join(dir, '.git'));
+}
+
+/**
  * Every action metadata file in the tree, root first.
  *
  * @param {string} root
@@ -171,6 +189,7 @@ export function findActionManifests(root) {
       const full = join(dir, entry.name);
       if (entry.isDirectory()) {
         if (SKIP_DIRS.has(entry.name)) continue;
+        if (isNestedCheckout(full)) continue;
         walk(full);
       } else if (entry.name === 'action.yml' || entry.name === 'action.yaml') {
         found.push(relative(root, full));

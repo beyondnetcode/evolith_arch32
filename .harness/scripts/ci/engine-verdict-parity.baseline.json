@@ -1,0 +1,103 @@
+{
+  "$comment": [
+    "GT-704 — the verdict conflicts between the native and OPA engines that exist TODAY, one entry per rule id.",
+    "This file is a ratchet, not permission. `68-validate-engine-verdict-parity.mjs` fails when a conflict is",
+    "missing from it (a new divergence) AND when an entry here no longer conflicts (a stale exemption). So a fix",
+    "cannot land without deleting its entry, and an entry cannot outlive the disagreement it describes.",
+    "Every `reason` is measured against this repository on the date recorded and is specific to its own rule:",
+    "the row that registered this work refused a bulk baseline with one shared justification, and so does this.",
+    "`followUp` says what would REMOVE the entry. It is not a promise that anyone is working on it."
+  ],
+  "measuredOn": "2026-08-18",
+  "method": "evolith validate --engine {native,opa} --format json over the whole corpus, both from the repository root; only rules BOTH engines decided are compared.",
+  "conflicts": [
+    {
+      "ruleId": "ACL-01",
+      "native": "passed",
+      "opa": "failed",
+      "family": "supplied-facet-absent",
+      "reason": "`anti-corruption-layer.rego:5` fires on `not input.adapter.schemaValidated`. Per GT-694 the `adapter` facet is SUPPLIED by the caller, not observed by the Core, so a bare `evolith validate` hands OPA no adapter block at all and the absent fact reads as a violation. The native handler instead probes the tree, finds no ACL adapter to judge, and passes. Neither engine is wrong about its own input; they were given different inputs.",
+      "followUp": "Decide what a SUPPLIED facet means when nothing supplied it — default-deny (OPA's behaviour) or not-applicable (native's) — and make both engines say the same thing."
+    },
+    {
+      "ruleId": "ACL-04",
+      "native": "passed",
+      "opa": "failed",
+      "family": "supplied-facet-absent",
+      "reason": "`anti-corruption-layer.rego:17` fires on `not input.adapter.coreCompatibilityVersion`. Same missing facet as ACL-01 but a different fact and a different message ('Adapter must declare coreCompatibilityVersion'): the two would have to be fixed by the same decision, and are registered separately so that fixing one does not silently carry the other.",
+      "followUp": "Same decision as ACL-01. Removing one entry without the other is a real state and the guard will say so."
+    },
+    {
+      "ruleId": "DORA-01",
+      "native": "passed",
+      "opa": "failed",
+      "family": "supplied-facet-absent",
+      "reason": "`executive-scorecards.rego:5` fires on `not input.satellite.scorecards.deploymentFrequencyDeclared`. Deployment frequency is a fact the CALLER holds — GT-694 classifies the whole `scorecards` facet as supplied — and a CLI run over a checkout supplies none of it. Native does not compute a DORA metric from a working tree either, and passes rather than inventing one.",
+      "followUp": "Either the scorecards facet becomes required input (and a run without it refuses rather than half-deciding), or the policy distinguishes 'not declared' from 'not supplied'."
+    },
+    {
+      "ruleId": "SPACE-04",
+      "native": "passed",
+      "opa": "failed",
+      "family": "supplied-facet-absent",
+      "reason": "`executive-scorecards.rego:33` fires on `not input.satellite.scorecards.collaborationIndexComputed`. The collaboration index is computed from cross-team PRs and shared ADRs — data no engine can read from a checkout — so OPA's failure states the absence of a supplied number, while native makes no claim about it.",
+      "followUp": "Same as DORA-01; this id leaves the baseline when the scorecards facet stops being silently absent."
+    },
+    {
+      "ruleId": "SPACE-05",
+      "native": "passed",
+      "opa": "failed",
+      "family": "supplied-facet-absent",
+      "reason": "`executive-scorecards.rego:37` fires on `not input.satellite.scorecards.executiveSponsorAssigned`. Whether an executive sponsor exists is an organisational fact, not a repository one. Registered separately from SPACE-04 because it is a different fact with a different owner, and one could be supplied without the other.",
+      "followUp": "Same as DORA-01."
+    },
+    {
+      "ruleId": "SVC-01",
+      "native": "passed",
+      "opa": "failed",
+      "family": "supplied-facet-absent",
+      "reason": "`satellite-contracts.rego:5` fires on `not input.satellite.contracts.hasEvolyamlAtProjectRoot`. Here the disagreement is decidable and OPA is the one that is wrong about THIS repository: `evolith.yaml` is present at the root — it is one of the three ROOT_MARKERS `lib/paths.mjs` finds the repository by — so the native pass is correct and the OPA failure is the absent `contracts` facet defaulting to deny.",
+      "followUp": "Emit the `satellite.contracts` facts from `opa-input-builder.ts` for the facts the Core CAN observe (this one is a file existence check), which removes this entry and probably SVC-03 with it."
+    },
+    {
+      "ruleId": "SVC-03",
+      "native": "failed",
+      "opa": "passed",
+      "family": "supplied-facet-absent",
+      "reason": "The same missing facet with the opposite polarity, which is why it is registered rather than folded into SVC-01. `satellite-contracts.rego:14` needs `input.satellite.contracts.phase == \"F1\"` before it can fire; with no contracts facts the guard clause is never satisfied, so OPA's pass is silence, not agreement. Native reads the phase from the tree, concludes F1, and fails the rule for not referencing `core/ADR-0047`.",
+      "followUp": "Same builder change as SVC-01. Note the direction: supplying the facts is expected to turn this OPA pass into a failure, matching native — a fix that makes CI redder, which is the point."
+    },
+    {
+      "ruleId": "TAX-01",
+      "native": "failed",
+      "opa": "passed",
+      "family": "authored-rule-divergence",
+      "reason": "Not a fact gap — the two implementations of the SAME rule exempt different things. `repository-taxonomy.rego:11` excludes `.md`, `.json`, `.yaml`, `.yml`, `.rego`, `.ts`, `.mjs` and `.js` before testing `[A-Z_\\s]`; the native handler does not, and its failure names `Dockerfile, Dockerfile, README.md` — `README.md` is exempt under the Rego by construction, and `Dockerfile` is not in the file list OPA was given. The rule text does not say which exemption list is canonical.",
+      "followUp": "Decide the canonical exemption list for kebab-case (conventional filenames like `Dockerfile`, `README.md`, `LICENSE` are the real question) and make handler and policy read from it."
+    },
+    {
+      "ruleId": "CLI-EXIT-01",
+      "native": "failed",
+      "opa": "passed",
+      "family": "native-context-assumption",
+      "reason": "The most defect-shaped of the eleven. `cli-exit-taxonomy-rule.handler.ts:132` builds its scan root as `path.join(ctx.corePath, 'src', 'sdk', 'cli', 'src')`, and in a CLI run `ctx.corePath` already resolves to `.../src/sdk/cli`, so the root becomes `.../src/sdk/cli/src/sdk/cli/src` — a path that does not exist. The handler reports a missing tree as `failed` deliberately (a skip on a blocking rule would be the silent pass it exists to prevent), so the verdict is about a doubled path and not about exit codes. OPA decides the same id from the fact document `exit-code-taxonomy-facts.mjs` emits and finds no offender.",
+      "followUp": "Resolve the CLI source root from the CLI package rather than by re-appending its own path to `corePath`. That deletes this entry and CLI-EXIT-03 together."
+    },
+    {
+      "ruleId": "CLI-EXIT-03",
+      "native": "failed",
+      "opa": "passed",
+      "family": "native-context-assumption",
+      "reason": "Same doubled root as CLI-EXIT-01, reported through the other branch of the same handler: 'exit-code taxonomy not declared: .../src/sdk/cli/src/sdk/cli/src/infrastructure/cli/exit-codes.ts not found'. Registered separately because a partial fix that repaired only the scan and not the taxonomy read is a real state, and the guard should be able to say which half moved.",
+      "followUp": "Same fix as CLI-EXIT-01."
+    },
+    {
+      "ruleId": "GOV-RULE-NON-EXECUTABLE",
+      "native": "failed",
+      "opa": "passed",
+      "family": "undeclared-id-reported-passed",
+      "reason": "A synthetic rule the native reporter raises about its own corpus — '13 corpus rules are not executable by any engine', severity COULD — so there is no policy for OPA to decide it with. Measured against the compiled bundle: `evolith/manifest/declared_rule_ids` returns 238 ids and this is not one of them, yet the OPA run reports it `passed` rather than `skipped`. That is the GT-675 shape surviving in one instance, because a synthetic id never passes through the decidability filter the corpus rules go through.",
+      "followUp": "Route synthetic/reporter-emitted ids through the same declared-scope filter as corpus rules, so an engine with no policy for them reports `skipped`. Then this becomes a coverage difference and the entry goes."
+    }
+  ]
+}

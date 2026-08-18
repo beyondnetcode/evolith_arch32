@@ -82,6 +82,24 @@ jobs:
           node .harness/scripts/ci/67-validate-declared-exports.mjs --verbose
           node --test .harness/scripts/ci/67-validate-declared-exports.test.mjs
 
+      # GT-588, criterion 3 — the transparency rule is RUN, not merely declared.
+      #
+      # `AUD-TRANSP-01…04` and their negative tests existed while
+      # `grep -rn "AUD-TRANSP" src/rulesets .harness .github` returned 0 and no workflow
+      # ran `evolith audit verify`. A rule CI never runs is the ornament that row was
+      # opened to replace.
+      #
+      # What this asserts is NOT "the ledger verifies" — this repository has none, and
+      # the step prints that as the open gap rather than failing the build over work
+      # that is blocked on external key custody. It asserts the property whose quiet
+      # loss makes every future green meaningless: each of the four rules still fires
+      # on the state it was written for, checked by damaging real signed ledgers.
+      #
+      # Same host reason as the step above: this job builds both the CLI dist the gate
+      # spawns and the core-domain dist its fixtures are signed with.
+      - name: The transparency rule still fires (GT-588)
+        run: node .harness/scripts/ci/69-validate-audit-transparency-gate.mjs --verbose
+
       # CD gate = the evolith-cli unit suite (fast, deterministic). The full e2e
       # (env-sensitive: spawns servers, loads rulesets) is covered by the
       # dedicated sdk-cli-ci.yml e2e job + the per-flow E2E playbooks, not here.

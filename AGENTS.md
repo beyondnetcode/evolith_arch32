@@ -114,7 +114,7 @@ The primary frontend router for the Evolith BMAD ecosystem. All raw user intents
 
 ## Intake and Discovery Agents (Phases 00 and 01.1)
 
-The agents supporting the Architecture Planning Gate (Phase 00) and the Knowledge-First Discovery subphase (01.1) have been extracted to a dedicated file to optimize context loading.
+The agents supporting the Architecture Planning Gate (Phase 00) have been extracted to a dedicated file to optimize context loading.
 
 > **See:** [`.harness/agents/discovery-agents.md`](./.harness/agents/discovery-agents.md) for the full list of agents, scopes, inputs, outputs, and handoffs.
 

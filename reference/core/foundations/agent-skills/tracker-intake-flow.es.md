@@ -47,7 +47,6 @@ Capturar las decisiones guiadas por el dueño sobre **cómo entra el trabajo a E
                    │                     │
                    ▼                cerrada con historial
             DISCOVERY (formal)
-            (+ KDD opcional)
 ```
 
 ## 3. Registros de Aprendizaje (L-001 … L-012)
@@ -60,16 +59,15 @@ Capturar las decisiones guiadas por el dueño sobre **cómo entra el trabajo a E
 | L-004 | Feedback de rechazo **dual** (humano+agente), **evolutivo**, **versionado**; itera hasta lograrlo o hasta que el proponente acepta. | El rechazo no es terminal por defecto; ciclo de mejora gobernado con historial. | La propuesta de entrada es un artefacto versionado en el grafo de evidencias; Gate 0 es **re-entrante**. |
 | L-005 | `IIniciativa` es una **interface única**; Intake y Oportunidad tienen cada una su interface + ACL que adapta a ella. Aprobada → estado **PENDIENTE**. | Un solo concepto río abajo; la diversidad de origen se encapsula en la frontera. | **ACLs simétricos** (`OpportunityACL` interno, `IntakeACL` externo); ningún concepto de origen se filtra al dominio; nuevo estado `PENDIENTE`. |
 | L-006 | **Gate 0 inteligente**: Core define criterios mínimos de aceptación por defecto; el **tenant puede override** a su realidad. | El default protege el estándar; el override respeta la realidad tenant/producto (valor enterprise). | Extiende `TenantConfig`. **Responde directamente a los gaps GT-08…GT-11 de Core** (existencia → contenido/umbral + parametrización). |
-| L-007 | Activar una iniciativa PENDIENTE **inicia Discovery formal** (flujo/artefactos KDD opcionales). | PENDIENTE → Discovery = "aceptada" → "en elaboración". | `PENDIENTE` precede a Discovery; realinear con el `Initiative (DRAFT)` actual; KDD es módulo de feature-override. |
+| L-007 | Activar una iniciativa PENDIENTE **inicia Discovery formal**. | PENDIENTE → Discovery = "aceptada" → "en elaboración". | `PENDIENTE` precede a Discovery; realinear con el `Initiative (DRAFT)` actual. |
 | L-008 | **Todo lo canónico vive en Core** y se hereda (Tracker **y** satélites) como formato. | Un estándar sirve a todo el ecosistema; menor costo de gobernanza. | Confirma Hub-and-Spoke (Visión §4.1); los overrides locales nunca mutan el canon sin aprobación del Board. |
-| L-009 | **KDD = Knowledge-Driven Development**: conjunto de artefactos que garantizan el entendimiento del producto/feature. | Entrega entendimiento verificable antes de avanzar. | Schema propio (candidato al corpus de Core); cuando está activo, sus artefactos son evidencia de gate en Discovery. |
 | L-010 | El **piso inmutable lo define CORE** (no el ADMIN ROOT del SaaS). El ADMIN ROOT solo opera la capa overrideable. | Los tenants no pueden vaciar el gate; nuevo actor de plataforma (ADMIN ROOT) acotado. | Preserva Visión §4.3 ("Core rule definition → Evolith Core"); resuelve la divergencia de satélites — el piso es de Core para todos. |
 | L-011 | La **terminación del ciclo de rechazo es configurable** (default en Core + override tenant). | Parametrizable (máx iteraciones / ventana de estancamiento). | Política `rejectionCycle` en el corpus de Core; el Gate 0 la lee para auto-archivo/escalamiento. |
 | L-012 | La activación PENDIENTE → Discovery es **agéntica/mixta** (agente de priorización + confirmación humana opcional). | Confirma "aprobada ≠ activada"; PENDIENTE es una cola de portafolio gobernada. | El agente de priorización = capability gobernada (capacidad/ROI/deps) + `IApprovalPort`; punto de transición auditable. |
 
 ## 4. Implicaciones Cross-Repo y de Core
 
-- **Adiciones implícitas al corpus de Core:** schema del formato unificado de entrada (L-002/L-008), criterios default de aceptación del Gate 0 + designación del piso inmutable (L-006/L-010), política `rejectionCycle` (L-011), schema de artefactos KDD (L-009). Candidatos a `src/rulesets/schema/` + rulesets, heredados por Tracker y satélites.
+- **Adiciones implícitas al corpus de Core:** schema del formato unificado de entrada (L-002/L-008), criterios default de aceptación del Gate 0 + designación del piso inmutable (L-006/L-010), política `rejectionCycle` (L-011). Candidatos a `src/rulesets/schema/` + rulesets, heredados por Tracker y satélites.
 - **Conexión estratégica:** L-006 aporta el requisito de producto para cerrar **GT-08…GT-11** (validación de contenido/umbral de gates) — la mayor brecha de credibilidad del maturity assessment actual.
 - **Nuevo actor:** ADMIN ROOT (super-admin del SaaS) — opera solo la capa overrideable; no tiene autoridad del piso (L-010).
 - **Cambio de máquina de estados:** el modelo one-shot `PROMOTED | REJECTED` del Intake se reemplaza por una máquina iterativa, versionada y re-entrante (L-004/L-011).
@@ -77,12 +75,11 @@ Capturar las decisiones guiadas por el dueño sobre **cómo entra el trabajo a E
 ## 5. Ítems Abiertos
 
 - Realinear `PENDIENTE` con el `Initiative (DRAFT)` actual del Tracker (US-DIS-001): renombrar vs. preceder.
-- Confirmar el conjunto de artefactos KDD y cuáles son obligatorios vs. opcionales por tenant.
 - Decidir el detalle de precedencia dentro de la capa overrideable (tenant vs producto).
 
 ## 6. Procedencia
 
-Capturado durante una sesión de flujo de producto guiada por el dueño (2026-07-04). Notas de trabajo fuente rastreadas en la sesión. Próximo bloque: **Discovery (Fase 1)** con el módulo KDD. La promoción de cualquier ítem a reglas vinculantes de Core requiere un ADR.
+Capturado durante una sesión de flujo de producto guiada por el dueño (2026-07-04). Notas de trabajo fuente rastreadas en la sesión. Próximo bloque: **Discovery (Fase 1)**. La promoción de cualquier ítem a reglas vinculantes de Core requiere un ADR.
 
 ---
 

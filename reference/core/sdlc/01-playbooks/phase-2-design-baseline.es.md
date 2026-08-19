@@ -22,7 +22,7 @@ Este playbook operacionaliza la compuerta Design Baseline Approved. Toda salida 
 | 2 | Evaluar Extraction Readiness (ADR-0045 ≥70%); confirmar progresión ADR-0047 justificada | Score documentado |
 | 3 | Confirmar ADR-0002; ejecutar Checklist de Simplicidad Fase 1 | Baseline de arquitectura |
 | 4 | Producir Mapa de Bounded Contexts (Plantilla DDD); aplicar ADR-0031 + ADR-0032 | Mapa de Bounded Contexts |
-| 5 | Refinar Story Seeds → Historias Funcionales (KDD L2+) o escribir desde cero; descomponer → Historias de Usuario; organizar Agile Backlog | Historias Funcionales, Backlog |
+| 5 | Escribir Historias Funcionales desde el alcance aprobado; descomponer → Historias de Usuario; organizar Agile Backlog | Historias Funcionales, Backlog |
 | 6 | Documentar decisiones de límites como ADRs; completar Análisis de Impacto CLI; consultar ADR-0018; verificar Alineación con Blueprint | Registro ADR (completo) |
 | 7 | Ejecutar `evolith validate --topology distributed-modules` — las 8 reglas DM deben pasar | Validación de topología |
 | 8 | (Condicional) Validar DOMA si topología F3 en roadmap (ADR-0076) | Cumplimiento DOMA |
@@ -47,7 +47,7 @@ Antes de abrir la compuerta, confirmar:
 | # | Evidencia Obligatoria | Plantilla / Esquema | Criterio de Aceptación |
 |---|---|---|---|
 | 1 | Registro de ADRs | [`adr-template.es.md`](../04-artifact-templates/adr-template.es.md) | Toda decisión que cruza fronteras tiene un ADR numerado y aceptado. No quedan decisiones "no documentadas". |
-| 2 | Functional Stories | [`functional-story-template.es.md`](../04-artifact-templates/functional-story-template.es.md) · [`functional-story.schema.json`](../../../../src/rulesets/schema/functional-story.schema.json) | Todas las historias en `Ready` con criterios de aceptación BDD; estándar de redacción cumplido. Nota KDD: Si existen Story Seeds de Fase 1.1 KDD Nivel 2+, refinándolas aquí en Historias Funcionales. |
+| 2 | Functional Stories | [`functional-story-template.es.md`](../04-artifact-templates/functional-story-template.es.md) · [`functional-story.schema.json`](../../../../src/rulesets/schema/functional-story.schema.json) | Todas las historias en `Ready` con criterios de aceptación BDD; estándar de redacción cumplido. |
 | 3 | Alineación con Reference Blueprint | Conjunto de diagramas de arquitectura | Diagramas trazables al Reference Blueprint; las desviaciones llevan ADR. El Blueprint de Referencia es un artefacto de consulta — no lo produces; el Gate F2 verifica trazabilidad. |
 | 4 | Checklist de Simplicidad Fase 1 | Checklist de simplicidad | Aprobado — sin señales de over-engineering (abstracción prematura, capas especulativas, frameworks sin uso). A pesar del nombre 'Fase 1', este checklist se ejecuta en Fase 2. El identificador del artefacto está registrado en el validador de máquina — no renombrar. |
 | 5 | Bounded Context Map | Artefacto de context map | Todos los contextos con propietario, estrategia de persistencia y estilo de integración |

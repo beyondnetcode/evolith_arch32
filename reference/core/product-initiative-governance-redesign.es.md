@@ -21,6 +21,8 @@
 **Owner:** Evolith Architecture Board
 **Origen:** Análisis multi-agente anclado en código real (9 agentes, verificación adversarial). Ver Apéndice B.
 
+> **⚠ Segundo aviso de corrección (2026-08-18) — la mitad KDD de este análisis quedó sin objeto.** Varias filas de abajo prescriben *reetiquetar* las plantillas de Knowledge-First Discovery (`story-seed-bank`, `epic-candidate-matrix`, `capability-map`, `discovery-knowledge-brief`, `discovery-context-pack`, `discovery-readiness-gate`, `assumptions-questions-log`) y anotar la cadena `epicCandidateId → storySeedId → backlogItemId`. Esos ficheros ya no existen y esa cadena ya desapareció: **la Fase 1.1 y el concepto KDD fueron retirados por completo** — ver [ADR-0127](./architecture/adrs/core/0127-retire-knowledge-first-discovery.es.md). El diagnóstico de esas filas era correcto; su remedio quedó superado por la eliminación, así que no ejecutes las instrucciones tal como están escritas.
+
 ---
 
 ## Tesis central

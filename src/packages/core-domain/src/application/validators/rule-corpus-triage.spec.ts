@@ -112,7 +112,10 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // ADR owes one, `generate-adr-rulesets.mjs` wrote it, and it lands here for the same
   // reason every generated ADR ruleset does — its validationQuery says nothing a native
   // handler can execute. A decision written down, not a check that stopped working.
-  'documentation-only': 138,
+  // 138 -> 139 on 2026-08-18: ADR-0127's, by the same mechanism. Worth noting what the
+  // count is measuring here — the ADR retires Knowledge-First Discovery, so the corpus
+  // grows by one rule in order to record the removal of a concept that never had one.
+  'documentation-only': 139,
   'unimplemented-native': 52,
   'needs-external-system': 20,
   'needs-runtime': 17,
@@ -245,9 +248,12 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     //
     // 151 -> 152 on 2026-08-16: ADR-0126's generated conformance ruleset, the same +1
     // recorded against `documentation-only` above.
-    expect(SUMMARY.nonExecutable).toBe(152);
-    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 152);
-    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(152);
+    // 152 -> 153 on 2026-08-18: ADR-0127's, by the same mechanism — the ADR that retires
+    // Knowledge-First Discovery. The corpus grows by one rule nothing can run in order to
+    // record the removal of a concept nothing could run either.
+    expect(SUMMARY.nonExecutable).toBe(153);
+    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 153);
+    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(153);
   });
 
   it('names the blocking rules that can never produce a verdict', () => {
@@ -307,8 +313,9 @@ describe('GT-595 · the handler slice that landed', () => {
     // 134 -> 135 on 2026-08-16: ADR-0126 (the bilingual mandate narrows to an entry
     // surface). Same shape as the ADR-0125 bump above — one accepted ADR, one generated
     // conformance placeholder, claimed by the conformance handler.
+    // 135 -> 136 on 2026-08-18: ADR-0127 (Knowledge-First Discovery is retired). Same shape.
     const adrConformance = CORPUS.filter(r => r.category === 'adr-conformance');
-    expect(adrConformance).toHaveLength(135);
+    expect(adrConformance).toHaveLength(136);
     expect(adrConformance.every(claims)).toBe(true);
   });
 

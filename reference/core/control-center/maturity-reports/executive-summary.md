@@ -41,7 +41,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Indicator | Value |
 |---|---:|
-| Canonical board date | 2026-08-08 |
+| Canonical board date | 2026-08-18 |
 | Total gaps | 705 |
 | Closed gaps | 676 |
 | Open gaps | 29 |

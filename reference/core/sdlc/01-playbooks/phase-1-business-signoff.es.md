@@ -20,7 +20,6 @@ Antes de abrir la compuerta, confirmar:
 - La iniciativa está registrada en el backlog de portafolio con un identificador único.
 - Existen Patrocinador Ejecutivo y Product Owner nominados y reconocidos.
 - Se identificaron el Reference Blueprint de Evolith aplicable y la línea base topológica.
-- El nivel de adopción de la Fase 1.1 (Knowledge-First Discovery) ha sido declarado. Si se seleccionó Nivel ≥ 1, el resultado del Gate de Preparación de Discovery (PASS o CONDITIONAL) debe estar archivado. Un resultado FAIL bloquea esta compuerta. Ver [Playbook Fase 1.1](./phase-1.1-knowledge-first-discovery.es.md).
 
 Si falta cualquier condición, **no iniciar la compuerta**. Volver más tarde evita retrabajo.
 
@@ -33,10 +32,10 @@ Cada fila se corresponde con una entrada `mandatoryEvidence` de la compuerta de 
 | # | Evidencia Obligatoria | Plantilla / Esquema | Criterio de Aceptación |
 |---|---|---|---|
 | 1 | PRD — Product Requirements Document | [`prd-template.es.md`](../04-artifact-templates/prd-template.es.md) · [`prd.schema.json`](../../../../src/rulesets/schema/prd.schema.json) | `status = Approved`, `approvalEvidence` poblado, `approvalDate` completada |
-| 2 | Discovery Canvas | Registro de la iniciativa | Dolores del cliente, valor esperado y persona objetivo documentados. Si se aplicó Fase 1.1 Nivel ≥ 1, este artefacto debe reflejar el Discovery Knowledge Brief. |
+| 2 | Discovery Canvas | Registro de la iniciativa | Dolores del cliente, valor esperado y persona objetivo documentados. |
 | 3 | Canvas de Factibilidad Técnica | [`technical-feasibility.schema.json`](../../../../src/rulesets/schema/technical-feasibility.schema.json) | Atributos de calidad y NFRs registrados con umbrales medibles |
-| 4 | Estimación Ballpark | Bitácora T-Shirt sizing | Composición del equipo y supuestos de sizing declarados. Si se aplicó Fase 1.1 Nivel ≥ 2, el sizing del Story Seed Bank debe ser incorporado. |
-| 5 | Matriz MoSCoW | Worksheet MoSCoW | Al menos un MUST y distribución Must/Should/Could/Won't válida. Si se aplicó Fase 1.1 Nivel ≥ 2, la Matriz de Candidatos a Épica sirve como este artefacto — no se requiere worksheet MoSCoW independiente. |
+| 4 | Estimación Ballpark | Bitácora T-Shirt sizing | Composición del equipo y supuestos de sizing declarados. |
+| 5 | Matriz MoSCoW | Worksheet MoSCoW | Al menos un MUST y distribución Must/Should/Could/Won't válida. |
 | 6 | Análisis Build-versus-Compose | [`build-vs-compose.schema.json`](../../../../src/rulesets/schema/build-vs-compose.schema.json) | Disposición Adoptar / Embeber / Integrar / Extender / Construir / Rechazar con costo a 3 años, licenciamiento, aislamiento por tenant, reemplazabilidad y requisitos de PoC (Product Vision §5.3) |
 
 ---

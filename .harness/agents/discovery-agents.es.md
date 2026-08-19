@@ -2,7 +2,7 @@
 
 > **Navegación Bilingüe:** [English Version](./discovery-agents.md)
 
-Los siguientes agentes soportan el Architecture Planning Gate (Fase 00) y la subfase Knowledge-First Discovery (01.1). Cada agente sigue la regla de Calidad de Actualización de Agente: alcance, entradas, salidas, restricciones, handoff, checklist de validación y formato de auditoría.
+Los siguientes agentes soportan el Architecture Planning Gate (Fase 00). Cada agente sigue la regla de Calidad de Actualización de Agente: alcance, entradas, salidas, restricciones, handoff, checklist de validación y formato de auditoría.
 
 | Agente | Alcance | Entradas | Salidas | Handoff A |
 |--------|---------|----------|---------|-----------|

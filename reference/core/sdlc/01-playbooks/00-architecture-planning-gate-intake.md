@@ -80,8 +80,6 @@ After a plan is **APPROVED** and **EXECUTED**, the system instantiates the SDLC:
 ```
 Architecture Plan (Approved) ──→ Initiative Created 
                                      │
-                                     ├──→ SDLC Phase 01.1 (Knowledge-First Discovery)
-                                     │
                                      └──→ Mandatory ADRs / Artifacts linked
 ```
 

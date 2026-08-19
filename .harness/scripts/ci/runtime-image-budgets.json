@@ -1,0 +1,43 @@
+{
+  "$comment": [
+    "GT-692 — the measured size of every deployable image, before and after the runtime-stage fix.",
+    "This file is a RECORD, not yet a gate: `70-validate-runtime-image-shape.mjs` checks the two lines",
+    "that cause the size (prune + no recursive chown) and prints these numbers, but does not build",
+    "images to compare against them. A real budget check needs a Docker-building job; when one exists,",
+    "the baseline is already written down here instead of being re-derived from memory.",
+    "Measured locally with `docker build` on the same tree, same day, same base image."
+  ],
+  "measuredOn": "2026-08-19",
+  "method": "docker build -f <dockerfile> -t <tag> . ; docker images --format '{{.Size}}'",
+  "images": [
+    {
+      "id": "core-api",
+      "dockerfile": "src/apps/core-api/Dockerfile",
+      "before": "1.96GB",
+      "after": "862MB",
+      "boot": "runs; GET /health -> HTTP 200; corpus loaded (413 rules); 0 restarts"
+    },
+    {
+      "id": "agent-runtime-api",
+      "dockerfile": "src/apps/agent-runtime-api/Dockerfile",
+      "before": "2.49GB",
+      "after": "1.13GB",
+      "boot": "runs; GET /health -> HTTP 200"
+    },
+    {
+      "id": "mcp-server",
+      "dockerfile": "src/packages/mcp-server/Dockerfile",
+      "before": "1.89GB",
+      "after": "825MB",
+      "boot": "runs; 'Evolith MCP HTTP server listening'. NOTE: the prune first exposed `Cannot find module 'keyv'` — a runtime dependency of `@nestjs/cache-manager` that mcp-server never declared. Declared as a production dependency; the prune found the defect, it did not create it."
+    },
+    {
+      "id": "cli",
+      "dockerfile": "src/sdk/cli/Dockerfile",
+      "before": "2.00GB",
+      "after": "890MB",
+      "boot": "runs; `--version` -> 1.3.2"
+    }
+  ],
+  "total": { "before": "8.34GB", "after": "3.71GB", "saved": "4.63GB" }
+}

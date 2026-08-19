@@ -21,7 +21,7 @@ This playbook operationalises the Design Baseline Approved gate. Every Phase 2 e
 | 2 | Consult ADR-0056 (ubiquitous language); initialize ADR Registry | All artifacts |
 | 3 | Confirm ADR-0002; run Simplicity Checklist | Evidence #4 |
 | 4 | Produce Bounded Context Map (DDD Model Template); apply ADR-0031 + ADR-0032 | Evidence #5 |
-| 5 | Refine Story Seeds (if KDD L2+) or write Functional Stories from scratch | Evidence #2 |
+| 5 | Write Functional Stories from the approved scope | Evidence #2 |
 | 6 | Document boundary decisions as ADRs; complete CLI Impact Analysis; verify Blueprint Alignment | Evidence #1, #3 |
 | 7 | Run `evolith validate --topology distributed-modules` — all 8 DM rules must pass | Gate readiness |
 | 8 | Conditional: validate DOMA if F3 topology in scope (ADR-0076) | Blocking criterion |
@@ -44,7 +44,7 @@ This playbook operationalises the Design Baseline Approved gate. Every Phase 2 e
 | # | Mandatory Evidence | Template / Schema | Acceptance Criterion |
 |---|---|---|---|
 | 1 | ADR Registry | [`adr-template.md`](../04-artifact-templates/adr-template.md) | Every boundary-crossing decision has a numbered, accepted ADR. No "undocumented" decisions remain. |
-| 2 | Functional Stories | [`functional-story-template.md`](../04-artifact-templates/functional-story-template.md) · [`functional-story.schema.json`](../../../../src/rulesets/schema/functional-story.schema.json) | All stories in `Ready` state with BDD acceptance criteria; story writing standard satisfied. If Phase 1.1 Story Seeds exist (KDD Level 2+), refine them into Functional Stories at this step. Story Seeds do not replace Functional Stories. |
+| 2 | Functional Stories | [`functional-story-template.md`](../04-artifact-templates/functional-story-template.md) · [`functional-story.schema.json`](../../../../src/rulesets/schema/functional-story.schema.json) | All stories in `Ready` state with BDD acceptance criteria; story writing standard satisfied. |
 | 3 | Reference Blueprint Alignment | Architecture diagram set | Verification step — not a document you produce. Architecture diagrams are produced here and checked against the Reference Blueprint. |
 | 4 | Simplicity Checklist Phase 1 | Simplicity checklist | Named 'Phase 1' because it guards against Phase 1 over-engineering entering the design baseline. Executed in Phase 2. Do not rename — machine-registered. |
 | 5 | Bounded Context Map | Context map artefact | All contexts named with ownership, persistence strategy, and integration style |

@@ -9535,7 +9535,9 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD, y tiene que ser un ARRANQUE y no un build:** cada imagen afectada se levanta y sirve una petición real después, conforme a [`GT-647`](./gap-reference-catalog.es.md#gt-647), cuyo hallazgo entero fue que una lista de copiado mantenida a mano produce una imagen que compila en verde y muere en tiempo de `require`.
   - [ ] El job fallido del consumidor se vuelve a ejecutar contra la nueva imagen y la importación termina; se registran tanto el `no space left on device` literal como la ejecución que pasa.
   - [ ] Un check falla cuando una imagen desplegable crece por encima de un presupuesto declarado, para que la próxima regresión se cace aquí y no en el pipeline de otro.
-- **Estado:** `DIFERIDO`
+- **Estado:** `EN-PROGRESO`
+
+**AVANCE 2026-08-19.** Etapas de runtime arregladas en las cuatro imágenes y medidas antes y después sobre el mismo árbol: `core-api` 1,96 GB → **862 MB**, `agent-runtime-api` 2,49 GB → **1,13 GB**, `mcp-server` 1,89 GB → **825 MB**, `cli` 2,00 GB → **890 MB**; total **8,34 GB → 3,71 GB**. Dos causas, y la segunda no estaba en la evidencia original: además de la poda de dependencias de desarrollo, `RUN … chown -R` era una **capa de 586 MB** en `core-api` —un chown recursivo reescribe cada fichero en una capa nueva— y ahora la propiedad viaja en `COPY --chown`. Cada imagen se **arrancó**, no solo se construyó, y esa comprobación destapó `Cannot find module 'keyv'` en `mcp-server`: una dependencia de runtime de `@nestjs/cache-manager` que nunca se declaró y que sobrevivía porque `eslint` hoisteaba una copia. La poda encontró el defecto, no lo creó. `70-validate-runtime-image-shape.mjs` mantiene ambas causas arregladas y se observó en rojo contra el Dockerfile anterior. **Quedan dos criterios abiertos a propósito:** re-ejecutar el job del consumidor exige una imagen que este pull request aún no publica, y un presupuesto de tamaño real necesita un job que construya con Docker — las líneas base están en `runtime-image-budgets.json`.
 
 #### GT-693
 
@@ -10011,4 +10013,40 @@ Los dos se arreglaron de forma estructural y no como correcciones: el rethrow no
 **Lo que se entrega.** `scripts/vendor-esm-deps.mjs` empaqueta cada dependencia solo-ESM con esbuild (clack 107 kB, conf 410 kB) y luego carga cada bundle de vuelta en un proceso hijo con `--no-experimental-require-module` —lo más cerca que un proceso Node normal está del contrato sin-ESM del snapshot— y compara su superficie de exports con la del paquete real. Dos shims prueban primero el paquete y caen al bundle ante **cualquier** fallo de carga, porque la misma causa aflora como `ERR_REQUIRE_ESM` con un empaquetador y como `MODULE_NOT_FOUND` con otro; una condición que enumera códigos vuelve a equivocarse la próxima vez. El workflow de release no se toca: el arreglo elimina el require de ESM en vez de cambiar quién lo resuelve.
 
 **Medido sobre un binario real:** `--help` código 0, `--version` `1.3.2`, `init --runtime nodejs --monorepo none --arch clean` código 0 escribiendo un satélite. `tsc -b` limpio; 106 suites / 1485 tests en verde.
+
+#### GT-708
+
+**Título:** KDD existía solo en prosa, en dos repositorios, y una compuerta real dependía de él
+
+- **Propósito:** Que el modelo de cinco fases se lea igual en los documentos que en los datos, y que el Gate 1 deje de depender de una subfase que nada puede ejecutar.
+- **Evidencia, medida el 2026-08-18 en todas las superficies ejecutables:**
+
+  | superficie | ¿KDD presente? |
+  |---|---|
+  | Rulesets del Core (`phase-gates.rules.json`, `artifact-registry.json`) | **no** — cinco gates para las fases 1..5; ninguno de los siete artefactos KDD entre los 33 registrados |
+  | Código del Core (TypeScript) | **no** — cero ficheros con `KDD`, `knowledge-first`, `knowledgeBrief`, `discoveryReadiness`, `storySeed`, `epicCandidate` |
+  | CLI | **no** — 31 comandos, cero menciones; `--phase discovery` mapea a la **fase 1 entera** (`phase-id.ts`: `f1: 'discovery'`) |
+  | Servidor MCP | **no** — cero ficheros |
+  | Código y UI del Tracker | **no** — sin pantalla ni entidad; el menú «Discovery» cuelga Strategic intake, Opportunities, Initiatives |
+  | `prd.schema.json` | **sin sección KDD** — la decisión `D-004` nunca llegó a schema |
+
+- **Dos cosas distintas bajo tres letras, y esta fila existe porque se confundieron con una.** La **Fase 1.1 — Knowledge-First Discovery** es una subfase opcional y progresiva con su propia compuerta de preparación y siete plantillas. **KDD — Knowledge-Driven Development** es una lectura posterior y más estrecha, de la sesión guiada por el dueño del 2026-07-04 (`tracker-intake-flow` L-009, `tracker-discovery-flow` D-004): una sección opcional *dentro del PRD*, activable por tenant vía feature-override. El primer análisis de esta fila trató 45 ficheros como un solo concepto; la respuesta del dueño —que KDD se retira de Core y Tracker en cualquier forma— lo resolvió, pero la distinción queda registrada porque el próximo lector chocará con la misma colisión.
+- **Aun así, la prosa tenía dientes.** `phase-1-business-signoff.es.md` convertía *«el nivel de adopción de la Fase 1.1 ha sido declarado»* en **precondición para abrir el Gate 1**, con *«un resultado FAIL bloquea esta compuerta»*, y tres filas de su tabla de evidencia llevaban cláusulas condicionadas a Niveles 1+ y 2+ de KDD. El `ADR-0103` (Aceptado 2026-07-02) situaba el Architecture Planning Gate *antes* de Knowledge-First Discovery y descartaba embeber la planificación en la Fase 1.1 — una decisión aceptada apoyada en un vecino que no existe.
+- **Casos de uso:**
+  - Un satélite lee el playbook de la Fase 1 y no puede satisfacer una precondición que nombra una subfase sin gate, sin schema y sin comando.
+  - Alguien implementa `REQ-DIS-13` (Tracker) o las siete plantillas, construyendo una capacidad que el dueño decidió no tener.
+  - Un auditor pregunta cuántas fases gobierna Evolith y obtiene cinco de los datos y seis de los documentos.
+- **Impacto:** El modelo documentado y el ejecutable discrepaban en cuántas fases existen, y la discrepancia era estructural: vivía en las precondiciones de la única compuerta por la que pasa toda iniciativa.
+- **Resultado esperado:** KDD ausente de todas las superficies de ambos repositorios, con la retirada registrada como decisión y no como borrado silencioso — y `CHANGELOG` y `ADR-0103` intactos a propósito, porque son registros de lo que era cierto cuando se escribieron.
+- **Ficheros afectados:** `reference/core/sdlc/01-playbooks/`, `reference/core/sdlc/04-artifact-templates/`, `reference/core/foundations/agent-skills/`, `reference/core/architecture/adrs/core/0127-retire-knowledge-first-discovery.es.md`
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Procedencia:** Registrado el 2026-08-18. Encontrado tirando de un hilo: el playbook de auditoría profunda reportaba `0 markdown fases`, que resultó ser un desajuste de cero a la izquierda (`phase-0[1-5]` frente a `phase-1`, `phase-1.1`) — y preguntar si `phase-1.1` debía contar destapó que nada la cuenta porque nada la implementa.
+- **Criterios de aceptación:**
+  - [x] `KDD` y `knowledge-first` devuelven cero coincidencias en ambos repositorios, salvo en `CHANGELOG.md` y el `ADR-0103`, que quedan como registros históricos a propósito. **CUMPLIDO para el Core.** Tras el barrido los tokens sobreviven en exactamente seis ficheros: `CHANGELOG.md`, el `ADR-0103` (EN/ES), el `ADR-0127` (EN/ES) —la propia retirada— más el tablero de gaps y el aviso de corrección del documento de rediseño. La mitad del Tracker es su propio pull request en `evolith_tracker`.
+  - [x] Las precondiciones y la tabla de evidencia del Gate 1 se sostienen solas, sin referencia a ninguna subfase ni a niveles de KDD. **CUMPLIDO** — desapareció la viñeta *«el nivel de adopción de la Fase 1.1 ha sido declarado… un resultado FAIL bloquea esta compuerta»*, y las tres filas de evidencia (Discovery Canvas, Ballpark Estimation, MoSCoW) ya no llevan sus cláusulas `Si se aplicó Fase 1.1 Nivel ≥ n`.
+  - [x] La retirada es un **ADR**, y el `ADR-0103` queda enmendado por él en vez de editado — una decisión aceptada se supersede, no se reescribe. **CUMPLIDO** — el `ADR-0127` lleva la decisión y enuncia la enmienda: el Planning Gate precede ahora directamente a la Fase 1, y la opción que el `ADR-0103` descartó queda sin objeto, no equivocada. El propio `ADR-0103` queda intacto.
+  - [x] Los `REQ-DIS-12` y `REQ-DIS-13` del Tracker se van con él; un requisito numerado que queda en pie es una instrucción de construir la cosa. **CUMPLIDO** — `evolith_tracker#153` (mergeado `97e1bc8e`) elimina ambos requisitos, la viñeta de gobierno de la subfase 01.1, la sección entera `Fase 1 · Subfase 01.1` del catálogo de artefactos, la viñeta de insumos de preparación del blueprint, las cláusulas KDD del índice del hub de Discovery (con el rango corregido de `REQ-DIS-01..13` a `..11`) y los bloques KDD de `.bmad-core`. El criterio de aceptación del `REQ-DIS-13` decía *«un resultado FAIL bloquea la apertura de la compuerta de Business Sign-Off»* — los mismos dientes que tenía la precondición de la Fase 1 en el Core, en el otro repositorio.
+  - [x] **FALSABILIDAD:** ningún enlace de ninguno de los dos repositorios resuelve a un fichero KDD borrado, comprobado tras el barrido y no supuesto desde la lista de borrados. **CUMPLIDO para el Core** — buscar los ocho nombres borrados en todos los markdown no devuelve nada fuera del `ADR-0127` y del aviso de corrección del documento de rediseño, que los nombran como retirados en vez de enlazarlos.
+- **Estado:** `COMPLETADO`
 

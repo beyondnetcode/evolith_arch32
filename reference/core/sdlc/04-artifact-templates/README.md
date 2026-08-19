@@ -74,7 +74,7 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 
 > **Phase 2 Notes:**
 > - **DDD Model** — Produces the Bounded Context Map required by Gate F2.
-> - **Functional Story** — Authoring format for "Functional Stories" (Gate F2 evidence). Refine Story Seeds from Phase 1.1 KDD here.
+> - **Functional Story** — Authoring format for "Functional Stories" (Gate F2 evidence).
 >
 > **Phase 3 Notes:**
 > - **Technical Story** — Each must carry a `functionalStoryRef` linking to a Phase 2 Functional Story. Follows the Construction-Focused SDLC Framework DoD.

@@ -47,7 +47,6 @@ Capture the owner-guided decisions about **how work enters Evolith Tracker**, so
                    │                     │
                    ▼                closed w/ full history
             DISCOVERY (formal)
-            (+ KDD optional)
 ```
 
 ## 3. Learning Records (L-001 … L-012)
@@ -60,16 +59,15 @@ Capture the owner-guided decisions about **how work enters Evolith Tracker**, so
 | L-004 | Rejection feedback is **dual** (human+agent), **evolutionary**, **versioned**; iterate until success or proposer accepts. | Rejection is not terminal by default; a governed improvement cycle with history. | Entry proposal is a versioned artifact in the evidence graph; Gate 0 is **re-entrant**. |
 | L-005 | `IInitiative` is a **single interface**; Intake and Opportunity each have their own interface + ACL adapting to it. Approved → status **PENDING**. | One downstream concept; origin diversity encapsulated at the boundary. | **Symmetric ACLs** (`OpportunityACL` internal, `IntakeACL` external); no origin concept leaks into the domain; new `PENDING` state. |
 | L-006 | **Intelligent Gate 0**: Core sets default minimum acceptance criteria; **tenant can override** to its reality. | Default protects the standard; override respects tenant/product reality (enterprise value). | Extends `TenantConfig`. **Directly answers Core gaps GT-08…GT-11** (existence-checks → content/threshold + parametrization). |
-| L-007 | Activating a PENDING initiative **starts formal Discovery** (KDD flow/artifacts optional). | PENDING → Discovery = "accepted" → "in elaboration". | `PENDING` precedes Discovery; realign with current `Initiative (DRAFT)`; KDD is a feature-override module. |
+| L-007 | Activating a PENDING initiative **starts formal Discovery**. | PENDING → Discovery = "accepted" → "in elaboration". | `PENDING` precedes Discovery; realign with current `Initiative (DRAFT)`. |
 | L-008 | **Everything canonical lives in Core** and is inherited (Tracker **and** satellites) as format. | One standard serves the whole ecosystem; lower governance cost. | Confirms Hub-and-Spoke (Vision §4.1); local overrides never mutate the canon without Board approval. |
-| L-009 | **KDD = Knowledge-Driven Development**: a set of artifacts guaranteeing product/feature understanding. | Delivers verifiable understanding before advancing. | Own schema (Core corpus candidate); when active, its artifacts are Discovery gate evidence. |
 | L-010 | The immutable **floor is defined by CORE** (not the SaaS ADMIN ROOT). ADMIN ROOT only operates the overrideable layer. | Tenants cannot empty the gate; new platform actor (ADMIN ROOT) bounded. | Preserves Vision §4.3 ("Core rule definition → Evolith Core"); resolves satellite divergence — floor is Core's for all. |
 | L-011 | Rejection-cycle **termination is configurable** (Core default + tenant override). | Parametrizable (max iterations / staleness window). | `rejectionCycle` policy in Core corpus; Gate 0 reads it for auto-archive/escalation. |
 | L-012 | PENDING → Discovery activation is **agentic/mixed** (prioritization agent + optional human confirmation). | Confirms "approved ≠ activated"; PENDING is a governed portfolio queue. | Prioritization agent = governed capability (capacity/ROI/deps) + `IApprovalPort`; auditable transition point. |
 
 ## 4. Cross-Repo & Core Implications
 
-- **Core corpus additions implied:** unified entry-format schema (L-002/L-008), Gate 0 default acceptance criteria + immutable-floor designation (L-006/L-010), `rejectionCycle` policy (L-011), KDD artifact schema (L-009). Candidates for `src/rulesets/schema/` + rulesets, inherited by Tracker and satellites.
+- **Core corpus additions implied:** unified entry-format schema (L-002/L-008), Gate 0 default acceptance criteria + immutable-floor designation (L-006/L-010), `rejectionCycle` policy (L-011). Candidates for `src/rulesets/schema/` + rulesets, inherited by Tracker and satellites.
 - **Strategic connection:** L-006 supplies the product requirement to close **GT-08…GT-11** (gate content/threshold validation) — the single biggest credibility gap in the current maturity assessment.
 - **New actor:** ADMIN ROOT (SaaS super-admin) — operates the overrideable layer only; does not hold floor authority (L-010).
 - **State-machine change:** the one-shot `PROMOTED | REJECTED` Intake model is replaced by an iterative, versioned, re-entrant machine (L-004/L-011).
@@ -77,12 +75,11 @@ Capture the owner-guided decisions about **how work enters Evolith Tracker**, so
 ## 5. Open Items
 
 - Realign `PENDING` with the Tracker's current `Initiative (DRAFT)` (US-DIS-001): rename vs. precede.
-- Confirm KDD artifact set and which are mandatory vs. optional per tenant.
 - Decide precedence detail within the overrideable layer (tenant vs product).
 
 ## 6. Provenance
 
-Captured during an owner-guided product-flow session (2026-07-04). Source working notes tracked in-session. Next block: **Discovery (Fase 1)** with the KDD module. Promotion of any item into binding Core rules requires an ADR.
+Captured during an owner-guided product-flow session (2026-07-04). Source working notes tracked in-session. Next block: **Discovery (Fase 1)**. Promotion of any item into binding Core rules requires an ADR.
 
 ---
 

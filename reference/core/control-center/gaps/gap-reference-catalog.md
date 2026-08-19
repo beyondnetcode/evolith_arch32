@@ -9624,12 +9624,12 @@ The declaration has one hole — a pack that does not declare — and the direct
 - **Principal:** `S` · **Interest:** `MED` · **Basis:** `estimate`
 - **Provenance:** Registered 2026-08-15 from three consecutive failures of a DIFFERENT repository's CI (`evolith_tracker` PRs #149 and #150) — the defect is ours and it was found by a consumer, which is the shape worth noting: nothing in this repository measures the size of what it publishes. **Deliberately not fixed in the promotion that found it:** pruning the runtime tree changes what every deployable image contains and needs its own verification — [`GT-647`](./gap-reference-catalog.md#gt-647) is the precedent for how a copy-list change breaks an image at startup, and that row's lesson was that the fix must be verified by BOOTING, not by reading the diff.
 - **Acceptance criteria:**
-  - [ ] The runtime stage of each deployable image carries production dependencies only, by an `--omit=dev` install or an equivalent, and the mechanism is the same in all of them.
-  - [ ] The image is measurably smaller, with the before and after sizes recorded — a claim of "smaller" without both numbers does not close this.
-  - [ ] **FALSIFIABILITY, and it must be a BOOT not a build:** each affected image is started and serves a real request afterwards, per [`GT-647`](./gap-reference-catalog.md#gt-647), whose whole finding was that a hand-maintained copy list produces an image that builds green and dies at `require` time.
+  - [x] The runtime stage of each deployable image carries production dependencies only, by an `--omit=dev` install or an equivalent, and the mechanism is the same in all of them. **MET, and the same mechanism in all four** — `RUN npm prune --omit=dev --legacy-peer-deps` at the end of every builder stage. Pruned there and not in the runner because the runner has no npm context: it receives `node_modules` by `COPY`. `--omit=dev` walks the whole workspace, so the non-hoisted trees under `src/*/*/node_modules` are pruned with it.
+  - [x] The image is measurably smaller, with the before and after sizes recorded — a claim of "smaller" without both numbers does not close this. **MET, both numbers for all four, same tree and same day:** `core-api` 1.96 GB → **862 MB**, `agent-runtime-api` 2.49 GB → **1.13 GB**, `mcp-server` 1.89 GB → **825 MB**, `cli` 2.00 GB → **890 MB**; total **8.34 GB → 3.71 GB**. Recorded in `.harness/scripts/ci/runtime-image-budgets.json` with the method. **Half of the saving was not the prune:** `RUN … chown -R` was a 586 MB layer on `core-api` alone — a recursive chown rewrites every file into a new layer — and that cause was not in this row's original evidence.
+  - [x] **FALSIFIABILITY, and it must be a BOOT not a build:** each affected image is started and serves a real request afterwards, per [`GT-647`](./gap-reference-catalog.md#gt-647), whose whole finding was that a hand-maintained copy list produces an image that builds green and dies at `require` time. **MET — every image was started, not merely built.** `core-api` and `agent-runtime-api` answer `GET /health` with **HTTP 200** (the former loading its full corpus, 413 rules, with 0 restarts); `mcp-server` reaches «Evolith MCP HTTP server listening»; the `cli` image prints `1.3.2`. **The boot is what earned this row its second finding:** `mcp-server` first died with `Cannot find module 'keyv'` — a runtime dependency of `@nestjs/cache-manager` that it never declared, surviving only because `eslint` hoisted a copy of it. Declared as a production dependency, which is what it always was. The prune exposed the defect; it did not create it.
   - [ ] The consumer's failing job is re-run against the new image and the import completes; the literal `no space left on device` failure and the passing run are both recorded.
   - [ ] A check fails when a deployable image grows past a declared budget, so the next regression is caught here rather than in someone else's pipeline.
-- **Status:** `DEFERRED`
+- **Status:** `IN-PROGRESS`
 
 #### GT-693
 
@@ -10106,4 +10106,40 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
 **What ships.** `scripts/vendor-esm-deps.mjs` bundles each ESM-only dependency with esbuild (clack 107 kB, conf 410 kB), then loads each bundle back in a child process with `--no-experimental-require-module` — the closest an ordinary Node process gets to the snapshot's no-ESM contract — and compares its export surface against the real package. Two shims try the package first and fall back on **any** load failure, because the same cause surfaces as `ERR_REQUIRE_ESM` under one packager and `MODULE_NOT_FOUND` under another; a condition enumerating codes gets this wrong again next time. The release workflow is untouched: the fix removes the ESM require rather than changing who resolves it.
 
 **Measured on a real binary:** `--help` exit 0, `--version` `1.3.2`, `init --runtime nodejs --monorepo none --arch clean` exit 0 writing a satellite. `tsc -b` clean; 106 suites / 1485 tests green.
+
+#### GT-708
+
+**Title:** KDD existed only in prose, in two repositories, and a real gate depended on it
+
+- **Purpose:** Make the five-phase model read the same in the documents as in the data, and stop Gate 1 depending on a subphase nothing can execute.
+- **Evidence, measured 2026-08-18 across every executable surface:**
+
+  | surface | KDD present? |
+  |---|---|
+  | Core rulesets (`phase-gates.rules.json`, `artifact-registry.json`) | **no** — five gates for phases 1..5; none of the seven KDD artifacts among the 33 registered |
+  | Core code (TypeScript) | **no** — zero files matching `KDD`, `knowledge-first`, `knowledgeBrief`, `discoveryReadiness`, `storySeed`, `epicCandidate` |
+  | CLI | **no** — 31 commands, zero mentions; `--phase discovery` maps to **phase 1 entire** (`phase-id.ts`: `f1: 'discovery'`) |
+  | MCP server | **no** — zero files |
+  | Tracker code and UI | **no** — no screen, no entity; the "Discovery" menu carries Strategic intake, Opportunities, Initiatives |
+  | `prd.schema.json` | **no KDD section** — the `D-004` decision never reached a schema |
+
+- **Two different things under three letters, and the row exists because they were confused for one.** **Phase 1.1 — Knowledge-First Discovery** is an optional, progressive subphase with its own readiness gate and seven artifact templates. **KDD — Knowledge-Driven Development** is a later, narrower reading from the owner-guided session of 2026-07-04 (`tracker-intake-flow` L-009, `tracker-discovery-flow` D-004): an optional section *inside the PRD*, activated per tenant by feature-override. The first analysis of this row treated 45 files as one concept; the owner's answer — that KDD is retired in both Core and Tracker in any form — resolved it, but the distinction is recorded because a future reader will hit the same collision.
+- **The prose had teeth.** `phase-1-business-signoff.md` made *"Phase 1.1 (Knowledge-First Discovery) adoption level has been declared"* a **precondition for opening Gate 1**, with *"a FAIL result blocks this gate"*, and three rows of its evidence table carried clauses keyed to KDD Levels 1+ and 2+. `ADR-0103` (Accepted 2026-07-02) positioned the Architecture Planning Gate *before* Knowledge-First Discovery and rejected embedding planning into Phase 1.1 — an accepted decision resting on a neighbour that does not exist.
+- **Use cases:**
+  - A satellite reads the Phase 1 playbook and cannot satisfy a precondition that names a subphase with no gate, no schema and no command.
+  - Someone implements `REQ-DIS-13` (Tracker) or the seven templates, building a capability the owner decided not to have.
+  - An auditor asks which phases Evolith governs and gets five from the data and six from the documents.
+- **Impact:** The documented model and the executable model disagreed about how many phases exist, and the disagreement was load-bearing: it sat in the preconditions of the one gate every initiative must pass.
+- **Expected outcome:** KDD absent from every surface of both repositories, with the retirement recorded as a decision rather than as a silent deletion — and `CHANGELOG` and `ADR-0103` deliberately untouched, because they are records of what was true when written.
+- **Affected files:** `reference/core/sdlc/01-playbooks/`, `reference/core/sdlc/04-artifact-templates/`, `reference/core/foundations/agent-skills/`, `reference/core/architecture/adrs/core/0127-retire-knowledge-first-discovery.md`
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-18. Found by pulling a thread: the deep-audit playbook reported `0 markdown fases`, which turned out to be a zero-padding mismatch (`phase-0[1-5]` vs `phase-1`, `phase-1.1`) — and asking whether `phase-1.1` should count exposed that nothing counts it because nothing implements it.
+- **Acceptance criteria:**
+  - [x] `KDD` and `knowledge-first` return zero matches across both repositories, except in `CHANGELOG.md` and `ADR-0103`, which are left as historical records on purpose. **MET for the Core.** After the sweep the tokens survive in exactly six files: `CHANGELOG.md`, `ADR-0103` (EN/ES), `ADR-0127` (EN/ES) — the retirement itself — plus the gap board and the redesign doc's correction notice. The Tracker half is its own pull request in `evolith_tracker`.
+  - [x] Gate 1's preconditions and evidence table stand on their own, with no reference to a subphase or to KDD levels. **MET** — the *"Phase 1.1 adoption level has been declared… a FAIL result blocks this gate"* bullet is gone, and the three evidence rows (Discovery Canvas, Ballpark Estimation, MoSCoW) no longer carry their `If Phase 1.1 Level ≥ n` clauses.
+  - [x] The retirement is an **ADR**, and `ADR-0103` is amended by it rather than edited — an accepted decision is superseded, not rewritten. **MET** — `ADR-0127` carries the decision and states the amendment: the Planning Gate now precedes Phase 1 directly, and the option `ADR-0103` rejected is moot rather than wrong. `ADR-0103` itself is untouched.
+  - [x] The Tracker's `REQ-DIS-12` and `REQ-DIS-13` go with it; a numbered requirement left standing is an instruction to build the thing. **MET** — `evolith_tracker#153` (merged `97e1bc8e`) removes both requirements, the subphase-01.1 governance bullet, the whole `Phase 1 · Subphase 01.1` section of the artifact catalog, the blueprint's readiness-inputs bullet, the KDD clauses in the Discovery hub index (with the range corrected `REQ-DIS-01..13` → `..11`), and the KDD blocks in `.bmad-core`. `REQ-DIS-13`'s acceptance criterion was *"a FAIL result blocks opening the Business Sign-Off gate"* — the same teeth the Core's Phase 1 precondition had, in the other repository.
+  - [x] **FALSIFIABILITY:** no link in either repository resolves to a deleted KDD file, checked after the sweep rather than assumed from the delete list. **MET for the Core** — searching the eight deleted filenames across every markdown file returns nothing outside `ADR-0127` and the redesign doc's correction notice, both of which name them as retired rather than link to them.
+- **Status:** `DONE`
 

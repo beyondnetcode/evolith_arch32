@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Versión en Español](./discovery-agents.es.md)
 
-The following agents support the Architecture Planning Gate (Phase 00) and the Knowledge-First Discovery subphase (01.1). Each agent follows the Agent Update Quality rule: scope, inputs, outputs, constraints, handoff, validation checklist, and audit output format.
+The following agents support the Architecture Planning Gate (Phase 00). Each agent follows the Agent Update Quality rule: scope, inputs, outputs, constraints, handoff, validation checklist, and audit output format.
 
 | Agent | Scope | Inputs | Outputs | Handoff To |
 |-------|-------|--------|---------|------------|

@@ -80,8 +80,6 @@ Después de que un plan es **APROBADO** y **EJECUTADO**, el sistema instancia el
 ```
 Architecture Plan (Aprobado) ──→ Iniciativa Creada 
                                      │
-                                     ├──→ Fase SDLC 01.1 (Knowledge-First Discovery)
-                                     │
                                      └──→ ADRs Obligatorios / Artefactos vinculados
 ```
 

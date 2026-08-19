@@ -102,7 +102,7 @@ El enrutador frontal principal para el ecosistema BMAD de Evolith. Todas las int
 
 ## Agentes de Intake y Discovery (Fases 00 y 01.1)
 
-Los agentes que soportan el Architecture Planning Gate (Fase 00) y la subfase Knowledge-First Discovery (01.1) han sido extraídos a un archivo dedicado para optimizar la carga de contexto.
+Los agentes que soportan el Architecture Planning Gate (Fase 00) han sido extraídos a un archivo dedicado para optimizar la carga de contexto.
 
 > **Ver:** [`.harness/agents/discovery-agents.es.md`](./.harness/agents/discovery-agents.es.md) para la lista completa de agentes, alcances, entradas, salidas y handoffs.
 

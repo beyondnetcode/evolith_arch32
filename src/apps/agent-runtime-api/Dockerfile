@@ -35,6 +35,13 @@ RUN test -f src/apps/agent-runtime-api/dist/main.js || { \
       echo "       Check that .dockerignore still excludes **/*.tsbuildinfo."; \
       exit 1; }
 
+
+# GT-692 — the runner receives the tree the BUILD needed, compiler included. Pruned
+# here because the runner has no npm context: it gets `node_modules` by COPY, and
+# `--omit=dev` walks the whole workspace so the non-hoisted trees are pruned with it.
+# Build artifacts are already emitted, so removing the compiler cannot affect them.
+RUN npm prune --omit=dev --legacy-peer-deps
+
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
@@ -48,25 +55,28 @@ WORKDIR /repo
 # Workspace symlinks in node_modules/@beyondnet/evolith-* point at packages/*, so we ship
 # the compiled dist + package.json of each needed workspace plus the hoisted
 # third-party modules.
-COPY --from=builder /repo/node_modules ./node_modules
-COPY --from=builder /repo/package.json ./package.json
-COPY --from=builder /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
-COPY --from=builder /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
-COPY --from=builder /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist
-COPY --from=builder /repo/src/packages/agent-runtime/package.json ./src/packages/agent-runtime/package.json
-COPY --from=builder /repo/src/apps/agent-runtime-api/dist ./src/apps/agent-runtime-api/dist
-COPY --from=builder /repo/src/apps/agent-runtime-api/package.json ./src/apps/agent-runtime-api/package.json
+# GT-692 — the user is created BEFORE the copies so `COPY --chown` can name it. A
+# recursive `chown -R` at the end rewrites every file into a NEW layer: measured on
+# `core-api`, that single RUN was 586 MB, a byte-for-byte duplicate of everything
+# above it.
+RUN addgroup -g 1001 -S evolith && \
+    adduser -S evolith -u 1001 -G evolith
+
+COPY --from=builder --chown=evolith:evolith /repo/node_modules ./node_modules
+COPY --from=builder --chown=evolith:evolith /repo/package.json ./package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/package.json ./src/packages/agent-runtime/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/apps/agent-runtime-api/dist ./src/apps/agent-runtime-api/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/apps/agent-runtime-api/package.json ./src/apps/agent-runtime-api/package.json
 
 # Optional corpus so the real .harness / OPA adapters can be enabled by env
 # (AGENT_RUNTIME_HARNESS_ROOT / AGENT_RUNTIME_OPA_*) without rebuilding. Copied
 # from the builder stage so the bundled OPA binary and policy.wasm match the
 # container platform, not the developer host.
-COPY --from=builder /repo/.harness ./corpus/.harness
-COPY --from=builder /repo/src/rulesets ./corpus/rulesets
-
-RUN addgroup -g 1001 -S evolith && \
-    adduser -S evolith -u 1001 -G evolith && \
-    chown -R evolith:evolith /repo
+COPY --from=builder --chown=evolith:evolith /repo/.harness ./corpus/.harness
+COPY --from=builder --chown=evolith:evolith /repo/src/rulesets ./corpus/rulesets
 
 USER evolith
 

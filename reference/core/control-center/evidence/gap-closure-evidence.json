@@ -10614,6 +10614,27 @@
         "npm run build --workspace src/sdk/cli && npm run build:policy && node .harness/scripts/ci/68-validate-engine-verdict-parity.mjs --verbose --json # the two builds are a real prerequisite, not decoration: the sweep spawns the CLI dist and loads policy.wasm",
         "node --test .harness/scripts/ci/68-validate-engine-verdict-parity.test.mjs"
       ]
+    },
+    {
+      "id": "GT-708",
+      "closedAt": "2026-08-18",
+      "closureCommit": "144fce23",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "reference/core/architecture/adrs/core/0127-retire-knowledge-first-discovery.md",
+        "reference/core/sdlc/01-playbooks/phase-1-business-signoff.md",
+        "reference/core/sdlc/sdlc-evolith-artifact-mapping.md",
+        "reference/core/foundations/agent-skills/tracker-discovery-flow.md"
+      ],
+      "validationCommands": [
+        "NOTHING TO DE-IMPLEMENT, MEASURED BEFORE DELETING: five gates for phases 1..5; none of the seven KDD artifacts among the 33 in artifact-registry.json; zero TypeScript files matching KDD/knowledge-first/knowledgeBrief/discoveryReadiness/storySeed/epicCandidate; 31 CLI commands with zero mentions and --phase discovery mapping to phase 1 ENTIRE; zero in the MCP server; no Tracker screen or entity; no KDD section in prd.schema.json.",
+        "THE PROSE HAD TEETH IN BOTH REPOSITORIES, IN DIFFERENT WORDS: the Core made 'Phase 1.1 adoption level has been declared' a precondition for opening Gate 1 ('a FAIL result blocks this gate'); the Tracker gave REQ-DIS-13 the acceptance criterion 'a FAIL result blocks opening the Business Sign-Off gate'. One non-existent gate, blocking on paper the only gate every initiative must pass.",
+        "TWO CONCEPTS UNDER THREE LETTERS, and the first analysis confused them: Phase 1.1 (subphase gate, seven templates) versus KDD = Knowledge-Driven Development (optional section INSIDE the PRD, per-tenant feature-override, owner session 2026-07-04, L-009/D-004). The owner retired both.",
+        "ADR-0103 IS AMENDED, NOT EDITED. ADR-0127 carries the retirement; ADR-0103 and CHANGELOG.md keep their KDD text because they record what was true when written, as do the Tracker's two audit-board rows.",
+        "THE ADR ITSELF GREW THE CORPUS BY ONE: generate-adr-rulesets.mjs owes every accepted ADR a conformance ruleset, so documentation-only went 138->139, nonExecutable 152->153 and adr-conformance 135->136. The corpus grows by one rule nothing can run, to record the removal of a concept nothing could run either.",
+        "BOTH HALVES: evolith_arch32#623 (144fce23) and evolith_tracker#153 (97e1bc8e).",
+        "node .harness/scripts/ci/08-validate-tracking.mjs && node --test src/rulesets/standards/iso-5055-mapping.test.mjs"
+      ]
     }
   ]
 }

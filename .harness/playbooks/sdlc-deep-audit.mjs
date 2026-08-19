@@ -100,7 +100,10 @@ function auditCorpus() {
 // ── 2. MODELO SDLC EJECUTABLE ────────────────────────────────────────
 
 function auditSdlc() {
-  const sdlcDir = "reference/core/sdlc/sdlc";
+  // The segment was doubled: the SDLC surface lives at `reference/core/sdlc`, and
+  // `.../sdlc/sdlc` has never existed. `exists()` made that a silent zero rather than an
+  // error, so this dimension was scored over no files at all.
+  const sdlcDir = "reference/core/sdlc";
   const files = exists(sdlcDir) ? walk(sdlcDir) : [];
 
   const phaseFiles = files.filter(f => f.match(/phase-0[1-5]/i) || f.match(/fase-0[1-5]/i));

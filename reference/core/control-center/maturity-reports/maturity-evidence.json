@@ -1,38 +1,38 @@
 {
   "schemaVersion": "1.0.0",
-  "asOf": "2026-08-08",
+  "asOf": "2026-08-18",
   "checks": [
     {
       "id": "cli-baseline",
       "status": "PASS",
-      "observedAt": "2026-07-20",
-      "commit": "92390d6d",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29785778145",
-      "summary": "Re-observed 2026-07-20 on develop and GREEN — the CLI CI pipeline is fully green for the first time since 2026-06-30. Run 29785778145 shows all thirteen jobs succeeding, CI Gate included: Lint and Type Check, Package Integrity, Architecture Validation, Evolith Core Validation, CodeQL SAST, Trivy, gitleaks, Unit Tests, E2E Tests, DAST OWASP ZAP, Winston Agentic Review, Security Audit, and the CI Gate. The three blockages this check tracked across its history are all closed: the MCP smoke (GT-561), the branch-coverage gate (GT-562, 75.54%), and the Security Audit advisories (GT-568 — js-yaml/brace-expansion/protobufjs patched via targeted overrides, 0 vulnerabilities). No active gap remains mapped because none is blocking."
+      "observedAt": "2026-08-18",
+      "commit": "398def5b",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/32193798343",
+      "summary": "Re-observed 2026-08-18 on develop (398def5b) and GREEN. Run 32193798343 shows all THIRTEEN jobs of the CLI CI pipeline succeeding, CI Gate included: Lint and Type Check, Package Integrity, Unit Tests, E2E Tests, Architecture Validation, Evolith Core Validation, Security Audit, Secret Detection (gitleaks), Trivy Container Scan, CodeQL SAST, DAST OWASP ZAP, Winston Agentic Review and CI Gate. WHY THIS RE-OBSERVATION HAPPENED AT ALL, stated plainly: the previous entry was 30 days old and its sibling `documentation` had just crossed the 30-day window, failing `09-reconcile-maturity.mjs` on a promotion whose content had nothing to do with it. The window is the point -- evidence that ages out is supposed to be re-taken, not extended -- so this is a fresh observation of the same claim, not a date bump."
     },
     {
       "id": "coverage",
       "status": "PASS",
-      "observedAt": "2026-07-20",
-      "commit": "6066a4b2",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29780735123",
-      "summary": "Re-observed 2026-07-20 on develop and GREEN. The Unit Tests job succeeds: 85 suites, 1250 tests, 0 failures, and the blocking gate clears -- Branches 75.54% (2023/2678) against the unchanged 75% global threshold, with statements 88.23%, functions 86.54%, lines 88.52%. The regression recorded on 2026-07-18 (62.89%) was repaid, not relaxed: the threshold in jest.config.js is untouched. GT-562, which owned this blockage, is DONE. Two commits were needed and the second matters for anyone reading this later: 7cffd734 earned the branches back, and 6066a4b2 fixed a leak that made the job fail ANYWAY with everything passing -- under --runInBand, which is how CI runs, a CLI command setting process.exitCode = 1 to carry its verdict leaves it set for the rest of the shared process. That leak predates the coverage work, so this job could not have gone green at any coverage level; the gate had been taking the blame for two failures while concealing one."
+      "observedAt": "2026-08-18",
+      "commit": "398def5b",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/32193798343",
+      "summary": "Re-observed 2026-08-18 on develop (398def5b) and GREEN. The Unit Tests job of run 32193798343 succeeds with 106 suites and 1486 tests, 0 failures, and the blocking coverage gate clears: Branches 75.69% (2376/3139) against the unchanged 75% global threshold. Both the suite count and the branch total have grown since the previous observation (85 suites / 1250 tests, 2023/2678 branches), so the margin over the threshold is being held while the corpus grows rather than by shrinking what is measured."
     },
     {
       "id": "documentation",
       "status": "PASS",
-      "observedAt": "2026-07-19",
-      "commit": "27e7a01f",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29702785020",
-      "summary": "Re-observed 2026-07-19 on main (787d2bab) and GREEN as a documentation check. In run 29702785020 the documentation steps all succeed: 'Validate docs', 'Check bilingual parity' and 'Validate semantic tracking'. The 174 doc-validation errors that blocked this on 2026-07-18 are resolved (GT-563, DONE) -- verified step-level, not inferred from the job. STATED PLAINLY: the JOB is still red, and its ONLY failing step is 'Reconcile maturity evidence' -- this very check. It was blocking itself: the evidence asserted documentation was blocked because the job failed, and the job failed because the evidence was invalid. Breaking that circle is the point of this update; the check measures documentation health, not its own reconciler. Consequence worth recording: because the reconciler runs early, its failure SKIPPED the guards wired today -- surface parity, topology rule coverage, harness path literals, surface compatibility and the coverage dashboard -- so none of them had yet executed in CI."
+      "observedAt": "2026-08-18",
+      "commit": "398def5b",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/32193798361",
+      "summary": "Re-observed 2026-08-18 on develop (398def5b) and GREEN. Run 32193798361 of Documentation Validation has both of its jobs succeeding -- 'Validate documentation' and 'Validate semantic tracking (guard)' -- so the reconciler, the bilingual parity suite and the gap-board tracking guard all pass on the same tree. THIS ENTRY IS THE ONE THAT AGED OUT: at 31 days it tripped the 0..30 day window and turned `Validate documentation` red on a promotion PR, which is the check working as designed. Its three siblings were at exactly 30 days and would have followed within a day, so all four are re-taken together against the same commit."
     },
     {
       "id": "release",
       "status": "PASS",
-      "observedAt": "2026-07-20",
-      "commit": "0fcf6599",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/29777507059",
-      "summary": "Re-observed 2026-07-20 on main and GREEN: the Evolith SDK CLI Release Pipeline completed with conclusion success in run 29777507059 (and again in 29776938707), where the previous entry had recorded it red on 2026-07-19. The two blockages that entry named are gone -- Unit Tests now passes (GT-562, DONE) and DAST OWASP ZAP passes (GT-561's follow-on 37cbeae1). The GT-562 mapping is cleared because the gap is closed and this check no longer needs one."
+      "observedAt": "2026-08-18",
+      "commit": "398def5b",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/32200256288",
+      "summary": "Re-observed 2026-08-18 on 398def5b and GREEN THROUGH THE BINARY JOBS FOR THE FIRST TIME. Run 32200256288 of the Evolith SDK CLI Release Pipeline succeeds across release-gate, build-and-test, Evolith Core Validation, package-binaries on all three platforms, smoke-test on all three platforms and smoke-test-functional. That last group is what makes this observation different from every previous one: until GT-707 landed, every packaged binary died on `--help` with ERR_REQUIRE_ESM, so smoke-test had never passed and `upload-assets` -- which needs it -- had never run. publish-npm, upload-assets and failure-notification are `skipped` because this run is not a tag."
     }
   ]
 }

@@ -233,7 +233,10 @@ function auditEvaluationEngine() {
 
 function auditClientIngestion() {
   // Check for client manifest / schema that external projects use
-  const schemaDir = "rulesets/schema";
+  // GT-707-era layout: `rulesets/` moved under `src/` (ADR-0048). This path was left
+  // behind, so `exists()` is false and the audit reports ZERO client schemas over a
+  // directory that holds 50 of them.
+  const schemaDir = "src/rulesets/schema";
   const schemas = exists(schemaDir) ? walk(schemaDir) : [];
   const clientSchemaFiles = schemas.filter(f => f.endsWith(".schema.json") && !f.includes("node_modules"));
 

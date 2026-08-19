@@ -88,11 +88,11 @@ flowchart LR
 
 | Artifact | Location | Why it is required |
 |---|---|---|
-| **Discovery Canvas** | [discovery-canvas-template.md](./04-artifact-templates/discovery-canvas-template.md) | Initiative registration, customer pain point, and expected value. At KDD Level 1+, inform this artifact from the Discovery Knowledge Brief. |
+| **Discovery Canvas** | [discovery-canvas-template.md](./04-artifact-templates/discovery-canvas-template.md) | Initiative registration, customer pain point, and expected value. |
 | **Technical Feasibility Canvas** | [technical-feasibility-template.md](./04-artifact-templates/technical-feasibility-template.md) | Technical feasibility, cloud quotas, and NFRs. |
-| **Ballpark Estimation** | [ballpark-estimation-template.md](./04-artifact-templates/ballpark-estimation-template.md) | T-Shirt Sizing estimation of effort and team size. At KDD Level 2+, incorporate Story Seed Bank sizing. |
+| **Ballpark Estimation** | [ballpark-estimation-template.md](./04-artifact-templates/ballpark-estimation-template.md) | T-Shirt Sizing estimation of effort and team size. |
 | **PRD — Product Requirements Document** | [prd-template.md](./04-artifact-templates/prd-template.md) | Captures scope, personas, goals, constraints, non-goals, and approval evidence. |
-| **MoSCoW Prioritization Matrix** | [moSCoW template](./04-artifact-templates/ballpark-estimation-template.md) | MoSCoW analysis with at least one MUST item. At KDD Level 2+, derived from Epic Candidate Matrix. |
+| **MoSCoW Prioritization Matrix** | [moSCoW template](./04-artifact-templates/ballpark-estimation-template.md) | MoSCoW analysis with at least one MUST item. |
 | **Build-versus-Compose Analysis** | [build-vs-compose.schema.json](../../../src/rulesets/schema/build-vs-compose.schema.json) | Adopt/Embed/Integrate/Extend/Build/Reject disposition per Product Vision §5.3. |
 
 > **Evolith Compliance Baseline (§7):** Architectural Directives, Repository Taxonomy, Agnostic Baseline, ADR-0047, and Engineering Manifesto are cross-cutting standards governed by the Compliance Baseline. Consult them during Phase 1 but do not produce them here — they are already governed.
@@ -105,18 +105,6 @@ flowchart LR
 | Maturity Assessment | [maturity-assessment.md](../control-center/maturity-reports/maturity-assessment.md) | When assessing a brownfield product or formal maturity position. |
 | Architecture Communication Strategy | [architecture-communication-strategy.md](../foundations/common-rules/communication/architecture-communication-strategy.md) | When preparing stakeholder or executive architecture briefings. |
 | UMS Reference Model | [ums-reference-model.md](../../../product/research/demo/ums-reference-model.md) | When the product operates in identity, access management, or multi-tenant authorization. |
-
-### Subphase 01.1 — Knowledge-First Discovery (Optional)
-
-| Artifact | Location | Level | When to Use |
-|---|---|---|---|
-| Discovery Knowledge Brief | [discovery-knowledge-brief-template.md](./04-artifact-templates/discovery-knowledge-brief-template.md) | 1+ | Any initiative where knowledge gaps could cause rework |
-| Assumptions & Questions Log | [assumptions-questions-log-template.md](./04-artifact-templates/assumptions-questions-log-template.md) | 1+ | When assumptions need tracking and validation |
-| Discovery Context Pack | [discovery-context-pack-template.md](./04-artifact-templates/discovery-context-pack-template.md) | 1+ | When AI agents or satellite repos need exportable context |
-| Capability Map | [capability-map-template.md](./04-artifact-templates/capability-map-template.md) | 2+ | When domain decomposition is needed before epic planning |
-| Epic Candidate Matrix | [epic-candidate-matrix-template.md](./04-artifact-templates/epic-candidate-matrix-template.md) | 2+ | When capabilities must be traced to epic candidates |
-| Story Seed Bank | [story-seed-bank-template.md](./04-artifact-templates/story-seed-bank-template.md) | 2+ | When minimal story seeds are needed before backlog refinement |
-| Discovery Readiness Gate | [discovery-readiness-gate-template.md](./04-artifact-templates/discovery-readiness-gate-template.md) | 3+ | When formal gate validation of knowledge sufficiency is required |
 
 ---
 
@@ -137,7 +125,7 @@ flowchart LR
 | **ADR-0032 — Protocol Selection Matrix** | [ADR-0032](../architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md) | REST, gRPC, and GraphQL use must be resolved before API contracts are produced. |
 | **ADR-0056 — Naming and Design Conventions** | [ADR-0056](../architecture/adrs/core/0056-enterprise-naming-design-conventions.md) | Ubiquitous language and naming rules must be established before entity and endpoint naming. |
 | **ADR-0045 — Extraction Readiness Criteria** | [ADR-0045](../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) | Required — satellites declaring F2 must document their Extraction Readiness Score (≥70%). Enforced by satellite contract rule SVC-04. |
-| **Functional Stories** | [functional-story-template.md](./04-artifact-templates/functional-story-template.md) | BDD-ready stories in Ready state, traceable to PRD. Use Functional Story Template as authoring format and Functional Story Writing Standard as quality guide. If Story Seeds exist from Phase 1.1 KDD Level 2+, refine them into Functional Stories here. |
+| **Functional Stories** | [functional-story-template.md](./04-artifact-templates/functional-story-template.md) | BDD-ready stories in Ready state, traceable to PRD. Use Functional Story Template as authoring format and Functional Story Writing Standard as quality guide. |
 | **Simplicity Checklist Phase 1** | [simplicity-checklist-phase-01.md](../architecture/blueprints/simplicity-checklist-phase-01.md) | Despite the 'Phase 1' name, this checklist runs during Phase 2. Its purpose: verify no premature over-engineering enters the design baseline. The artifact identifier is registered in the machine validator — do not rename it. |
 | **CLI Impact Analysis** | [cli-impact-analysis.md](./04-artifact-templates/cli-impact-analysis.md) | Required CLI capabilities once design is baselined. |
 
@@ -210,7 +198,7 @@ Phase 2 implies a specific progressive topology. The following actions are requi
 | 2 | Assess Extraction Readiness (ADR-0045 ≥70%); confirm ADR-0047 progression justified | Score documented |
 | 3 | Confirm ADR-0002; run Simplicity Checklist Phase 1 | Architecture baseline |
 | 4 | Produce Bounded Context Map (DDD Model Template); apply ADR-0031 + ADR-0032 | Bounded Context Map |
-| 5 | Refine Story Seeds → Functional Stories (KDD L2+) or write from scratch | Functional Stories |
+| 5 | Write Functional Stories from the approved scope | Functional Stories |
 | 6 | Document boundary decisions as ADRs; complete CLI Impact Analysis; consult ADR-0018; verify Blueprint Alignment | ADR Registry (complete) |
 | 7 | Run `evolith validate --topology distributed-modules` — all 8 DM rules must pass | Topology validation |
 | 8 | (Conditional) Validate DOMA if F3 topology in roadmap (ADR-0076) | DOMA compliance |

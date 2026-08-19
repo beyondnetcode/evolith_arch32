@@ -10107,3 +10107,39 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
 
 **Measured on a real binary:** `--help` exit 0, `--version` `1.3.2`, `init --runtime nodejs --monorepo none --arch clean` exit 0 writing a satellite. `tsc -b` clean; 106 suites / 1485 tests green.
 
+#### GT-708
+
+**Title:** KDD existed only in prose, in two repositories, and a real gate depended on it
+
+- **Purpose:** Make the five-phase model read the same in the documents as in the data, and stop Gate 1 depending on a subphase nothing can execute.
+- **Evidence, measured 2026-08-18 across every executable surface:**
+
+  | surface | KDD present? |
+  |---|---|
+  | Core rulesets (`phase-gates.rules.json`, `artifact-registry.json`) | **no** — five gates for phases 1..5; none of the seven KDD artifacts among the 33 registered |
+  | Core code (TypeScript) | **no** — zero files matching `KDD`, `knowledge-first`, `knowledgeBrief`, `discoveryReadiness`, `storySeed`, `epicCandidate` |
+  | CLI | **no** — 31 commands, zero mentions; `--phase discovery` maps to **phase 1 entire** (`phase-id.ts`: `f1: 'discovery'`) |
+  | MCP server | **no** — zero files |
+  | Tracker code and UI | **no** — no screen, no entity; the "Discovery" menu carries Strategic intake, Opportunities, Initiatives |
+  | `prd.schema.json` | **no KDD section** — the `D-004` decision never reached a schema |
+
+- **Two different things under three letters, and the row exists because they were confused for one.** **Phase 1.1 — Knowledge-First Discovery** is an optional, progressive subphase with its own readiness gate and seven artifact templates. **KDD — Knowledge-Driven Development** is a later, narrower reading from the owner-guided session of 2026-07-04 (`tracker-intake-flow` L-009, `tracker-discovery-flow` D-004): an optional section *inside the PRD*, activated per tenant by feature-override. The first analysis of this row treated 45 files as one concept; the owner's answer — that KDD is retired in both Core and Tracker in any form — resolved it, but the distinction is recorded because a future reader will hit the same collision.
+- **The prose had teeth.** `phase-1-business-signoff.md` made *"Phase 1.1 (Knowledge-First Discovery) adoption level has been declared"* a **precondition for opening Gate 1**, with *"a FAIL result blocks this gate"*, and three rows of its evidence table carried clauses keyed to KDD Levels 1+ and 2+. `ADR-0103` (Accepted 2026-07-02) positioned the Architecture Planning Gate *before* Knowledge-First Discovery and rejected embedding planning into Phase 1.1 — an accepted decision resting on a neighbour that does not exist.
+- **Use cases:**
+  - A satellite reads the Phase 1 playbook and cannot satisfy a precondition that names a subphase with no gate, no schema and no command.
+  - Someone implements `REQ-DIS-13` (Tracker) or the seven templates, building a capability the owner decided not to have.
+  - An auditor asks which phases Evolith governs and gets five from the data and six from the documents.
+- **Impact:** The documented model and the executable model disagreed about how many phases exist, and the disagreement was load-bearing: it sat in the preconditions of the one gate every initiative must pass.
+- **Expected outcome:** KDD absent from every surface of both repositories, with the retirement recorded as a decision rather than as a silent deletion — and `CHANGELOG` and `ADR-0103` deliberately untouched, because they are records of what was true when written.
+- **Affected files:** `reference/core/sdlc/01-playbooks/`, `reference/core/sdlc/04-artifact-templates/`, `reference/core/foundations/agent-skills/`, `reference/core/architecture/adrs/core/0127-retire-knowledge-first-discovery.md`
+- **Component:** `Governance` · **Criticality:** P2 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-08-18. Found by pulling a thread: the deep-audit playbook reported `0 markdown fases`, which turned out to be a zero-padding mismatch (`phase-0[1-5]` vs `phase-1`, `phase-1.1`) — and asking whether `phase-1.1` should count exposed that nothing counts it because nothing implements it.
+- **Acceptance criteria:**
+  - [x] `KDD` and `knowledge-first` return zero matches across both repositories, except in `CHANGELOG.md` and `ADR-0103`, which are left as historical records on purpose. **MET for the Core.** After the sweep the tokens survive in exactly six files: `CHANGELOG.md`, `ADR-0103` (EN/ES), `ADR-0127` (EN/ES) — the retirement itself — plus the gap board and the redesign doc's correction notice. The Tracker half is its own pull request in `evolith_tracker`.
+  - [x] Gate 1's preconditions and evidence table stand on their own, with no reference to a subphase or to KDD levels. **MET** — the *"Phase 1.1 adoption level has been declared… a FAIL result blocks this gate"* bullet is gone, and the three evidence rows (Discovery Canvas, Ballpark Estimation, MoSCoW) no longer carry their `If Phase 1.1 Level ≥ n` clauses.
+  - [x] The retirement is an **ADR**, and `ADR-0103` is amended by it rather than edited — an accepted decision is superseded, not rewritten. **MET** — `ADR-0127` carries the decision and states the amendment: the Planning Gate now precedes Phase 1 directly, and the option `ADR-0103` rejected is moot rather than wrong. `ADR-0103` itself is untouched.
+  - [ ] The Tracker's `REQ-DIS-12` and `REQ-DIS-13` go with it; a numbered requirement left standing is an instruction to build the thing. **OPEN — the Tracker half is a separate pull request in `evolith_tracker`**, where the files, the board and the guards are different. Left unticked deliberately: this row is not done until both repositories are.
+  - [x] **FALSIFIABILITY:** no link in either repository resolves to a deleted KDD file, checked after the sweep rather than assumed from the delete list. **MET for the Core** — searching the eight deleted filenames across every markdown file returns nothing outside `ADR-0127` and the redesign doc's correction notice, both of which name them as retired rather than link to them.
+- **Status:** `IN-PROGRESS`
+

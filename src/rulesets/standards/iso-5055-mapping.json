@@ -12,24 +12,24 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 181,
-    "rules": 414,
+    "rulesetFiles": 182,
+    "rules": 415,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 414,
+    "rules": 415,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 377,
-    "adoptedFraction": 0.0894,
+    "noInternationalEquivalent": 378,
+    "adoptedFraction": 0.0892,
     "analyserAdoptable": 46,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1111,
-    "analyserAdoptableFractionIncludingPartial": 0.1667,
+    "analyserAdoptableFraction": 0.1108,
+    "analyserAdoptableFractionIncludingPartial": 0.1663,
     "byClass": {
       "architecture-decision": {
-        "rules": 164,
+        "rules": 165,
         "mapped": 12,
         "adoptable": 6
       },
@@ -146,7 +146,7 @@
         "adoptablePartialRuleIds": []
       },
       "documentation-only": {
-        "rules": 138,
+        "rules": 139,
         "mappedToIso5055": 9,
         "analyserAdoptable": 6,
         "analyserAdoptablePartial": 7,
@@ -3351,6 +3351,25 @@
       "sourceFile": "adr/generated/adr-0126-the-bilingual-mandate-narrows-to-an-entry-surface.rules.json",
       "title": "Conform to ADR-0126: The Bilingual Mandate Narrows to an Entry Surface",
       "severity": "MUST",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0127-01",
+      "sourceFile": "adr/generated/adr-0127-knowledge-first-discovery-is-retired-and-with-it-the-kdd-con.rules.json",
+      "title": "Honor design decision in ADR-0127: Knowledge-First Discovery Is Retired, and With It the KDD Concept",
+      "severity": "SHOULD",
       "ruleClass": "architecture-decision",
       "iso5055": {
         "cwes": [],

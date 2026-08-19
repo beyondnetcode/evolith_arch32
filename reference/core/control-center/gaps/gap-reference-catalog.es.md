@@ -10012,3 +10012,39 @@ Los dos se arreglaron de forma estructural y no como correcciones: el rethrow no
 
 **Medido sobre un binario real:** `--help` código 0, `--version` `1.3.2`, `init --runtime nodejs --monorepo none --arch clean` código 0 escribiendo un satélite. `tsc -b` limpio; 106 suites / 1485 tests en verde.
 
+#### GT-708
+
+**Título:** KDD existía solo en prosa, en dos repositorios, y una compuerta real dependía de él
+
+- **Propósito:** Que el modelo de cinco fases se lea igual en los documentos que en los datos, y que el Gate 1 deje de depender de una subfase que nada puede ejecutar.
+- **Evidencia, medida el 2026-08-18 en todas las superficies ejecutables:**
+
+  | superficie | ¿KDD presente? |
+  |---|---|
+  | Rulesets del Core (`phase-gates.rules.json`, `artifact-registry.json`) | **no** — cinco gates para las fases 1..5; ninguno de los siete artefactos KDD entre los 33 registrados |
+  | Código del Core (TypeScript) | **no** — cero ficheros con `KDD`, `knowledge-first`, `knowledgeBrief`, `discoveryReadiness`, `storySeed`, `epicCandidate` |
+  | CLI | **no** — 31 comandos, cero menciones; `--phase discovery` mapea a la **fase 1 entera** (`phase-id.ts`: `f1: 'discovery'`) |
+  | Servidor MCP | **no** — cero ficheros |
+  | Código y UI del Tracker | **no** — sin pantalla ni entidad; el menú «Discovery» cuelga Strategic intake, Opportunities, Initiatives |
+  | `prd.schema.json` | **sin sección KDD** — la decisión `D-004` nunca llegó a schema |
+
+- **Dos cosas distintas bajo tres letras, y esta fila existe porque se confundieron con una.** La **Fase 1.1 — Knowledge-First Discovery** es una subfase opcional y progresiva con su propia compuerta de preparación y siete plantillas. **KDD — Knowledge-Driven Development** es una lectura posterior y más estrecha, de la sesión guiada por el dueño del 2026-07-04 (`tracker-intake-flow` L-009, `tracker-discovery-flow` D-004): una sección opcional *dentro del PRD*, activable por tenant vía feature-override. El primer análisis de esta fila trató 45 ficheros como un solo concepto; la respuesta del dueño —que KDD se retira de Core y Tracker en cualquier forma— lo resolvió, pero la distinción queda registrada porque el próximo lector chocará con la misma colisión.
+- **Aun así, la prosa tenía dientes.** `phase-1-business-signoff.es.md` convertía *«el nivel de adopción de la Fase 1.1 ha sido declarado»* en **precondición para abrir el Gate 1**, con *«un resultado FAIL bloquea esta compuerta»*, y tres filas de su tabla de evidencia llevaban cláusulas condicionadas a Niveles 1+ y 2+ de KDD. El `ADR-0103` (Aceptado 2026-07-02) situaba el Architecture Planning Gate *antes* de Knowledge-First Discovery y descartaba embeber la planificación en la Fase 1.1 — una decisión aceptada apoyada en un vecino que no existe.
+- **Casos de uso:**
+  - Un satélite lee el playbook de la Fase 1 y no puede satisfacer una precondición que nombra una subfase sin gate, sin schema y sin comando.
+  - Alguien implementa `REQ-DIS-13` (Tracker) o las siete plantillas, construyendo una capacidad que el dueño decidió no tener.
+  - Un auditor pregunta cuántas fases gobierna Evolith y obtiene cinco de los datos y seis de los documentos.
+- **Impacto:** El modelo documentado y el ejecutable discrepaban en cuántas fases existen, y la discrepancia era estructural: vivía en las precondiciones de la única compuerta por la que pasa toda iniciativa.
+- **Resultado esperado:** KDD ausente de todas las superficies de ambos repositorios, con la retirada registrada como decisión y no como borrado silencioso — y `CHANGELOG` y `ADR-0103` intactos a propósito, porque son registros de lo que era cierto cuando se escribieron.
+- **Ficheros afectados:** `reference/core/sdlc/01-playbooks/`, `reference/core/sdlc/04-artifact-templates/`, `reference/core/foundations/agent-skills/`, `reference/core/architecture/adrs/core/0127-retire-knowledge-first-discovery.es.md`
+- **Componente:** `Governance` · **Criticidad:** P2 · **Complejidad:** M
+- **Principal:** `M` · **Interest:** `MED` · **Basis:** `estimate`
+- **Procedencia:** Registrado el 2026-08-18. Encontrado tirando de un hilo: el playbook de auditoría profunda reportaba `0 markdown fases`, que resultó ser un desajuste de cero a la izquierda (`phase-0[1-5]` frente a `phase-1`, `phase-1.1`) — y preguntar si `phase-1.1` debía contar destapó que nada la cuenta porque nada la implementa.
+- **Criterios de aceptación:**
+  - [x] `KDD` y `knowledge-first` devuelven cero coincidencias en ambos repositorios, salvo en `CHANGELOG.md` y el `ADR-0103`, que quedan como registros históricos a propósito. **CUMPLIDO para el Core.** Tras el barrido los tokens sobreviven en exactamente seis ficheros: `CHANGELOG.md`, el `ADR-0103` (EN/ES), el `ADR-0127` (EN/ES) —la propia retirada— más el tablero de gaps y el aviso de corrección del documento de rediseño. La mitad del Tracker es su propio pull request en `evolith_tracker`.
+  - [x] Las precondiciones y la tabla de evidencia del Gate 1 se sostienen solas, sin referencia a ninguna subfase ni a niveles de KDD. **CUMPLIDO** — desapareció la viñeta *«el nivel de adopción de la Fase 1.1 ha sido declarado… un resultado FAIL bloquea esta compuerta»*, y las tres filas de evidencia (Discovery Canvas, Ballpark Estimation, MoSCoW) ya no llevan sus cláusulas `Si se aplicó Fase 1.1 Nivel ≥ n`.
+  - [x] La retirada es un **ADR**, y el `ADR-0103` queda enmendado por él en vez de editado — una decisión aceptada se supersede, no se reescribe. **CUMPLIDO** — el `ADR-0127` lleva la decisión y enuncia la enmienda: el Planning Gate precede ahora directamente a la Fase 1, y la opción que el `ADR-0103` descartó queda sin objeto, no equivocada. El propio `ADR-0103` queda intacto.
+  - [ ] Los `REQ-DIS-12` y `REQ-DIS-13` del Tracker se van con él; un requisito numerado que queda en pie es una instrucción de construir la cosa. **ABIERTO — la mitad del Tracker es un pull request aparte en `evolith_tracker`**, donde los ficheros, el tablero y los guards son otros. Sin marcar a propósito: esta fila no está hecha hasta que lo estén los dos repositorios.
+  - [x] **FALSABILIDAD:** ningún enlace de ninguno de los dos repositorios resuelve a un fichero KDD borrado, comprobado tras el barrido y no supuesto desde la lista de borrados. **CUMPLIDO para el Core** — buscar los ocho nombres borrados en todos los markdown no devuelve nada fuera del `ADR-0127` y del aviso de corrección del documento de rediseño, que los nombran como retirados en vez de enlazarlos.
+- **Estado:** `EN-PROGRESO`
+

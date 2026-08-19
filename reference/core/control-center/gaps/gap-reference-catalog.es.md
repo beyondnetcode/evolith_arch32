@@ -9535,7 +9535,9 @@ La declaración tiene un hueco — un pack que no declara — y el directorio lo
   - [ ] **FALSABILIDAD, y tiene que ser un ARRANQUE y no un build:** cada imagen afectada se levanta y sirve una petición real después, conforme a [`GT-647`](./gap-reference-catalog.es.md#gt-647), cuyo hallazgo entero fue que una lista de copiado mantenida a mano produce una imagen que compila en verde y muere en tiempo de `require`.
   - [ ] El job fallido del consumidor se vuelve a ejecutar contra la nueva imagen y la importación termina; se registran tanto el `no space left on device` literal como la ejecución que pasa.
   - [ ] Un check falla cuando una imagen desplegable crece por encima de un presupuesto declarado, para que la próxima regresión se cace aquí y no en el pipeline de otro.
-- **Estado:** `DIFERIDO`
+- **Estado:** `EN-PROGRESO`
+
+**AVANCE 2026-08-19.** Etapas de runtime arregladas en las cuatro imágenes y medidas antes y después sobre el mismo árbol: `core-api` 1,96 GB → **862 MB**, `agent-runtime-api` 2,49 GB → **1,13 GB**, `mcp-server` 1,89 GB → **825 MB**, `cli` 2,00 GB → **890 MB**; total **8,34 GB → 3,71 GB**. Dos causas, y la segunda no estaba en la evidencia original: además de la poda de dependencias de desarrollo, `RUN … chown -R` era una **capa de 586 MB** en `core-api` —un chown recursivo reescribe cada fichero en una capa nueva— y ahora la propiedad viaja en `COPY --chown`. Cada imagen se **arrancó**, no solo se construyó, y esa comprobación destapó `Cannot find module 'keyv'` en `mcp-server`: una dependencia de runtime de `@nestjs/cache-manager` que nunca se declaró y que sobrevivía porque `eslint` hoisteaba una copia. La poda encontró el defecto, no lo creó. `70-validate-runtime-image-shape.mjs` mantiene ambas causas arregladas y se observó en rojo contra el Dockerfile anterior. **Quedan dos criterios abiertos a propósito:** re-ejecutar el job del consumidor exige una imagen que este pull request aún no publica, y un presupuesto de tamaño real necesita un job que construya con Docker — las líneas base están en `runtime-image-budgets.json`.
 
 #### GT-693
 

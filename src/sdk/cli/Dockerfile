@@ -43,6 +43,13 @@ RUN npx tsc -b tsconfig.json && \
     npm run copy-rulesets --workspace @beyondnet/evolith-cli && \
     npm run copy-assets --workspace @beyondnet/evolith-cli
 
+
+# GT-692 — the runner receives the tree the BUILD needed, compiler included. Pruned
+# here because the runner has no npm context: it gets `node_modules` by COPY, and
+# `--omit=dev` walks the whole workspace so the non-hoisted trees are pruned with it.
+# Build artifacts are already emitted, so removing the compiler cannot affect them.
+RUN npm prune --omit=dev --legacy-peer-deps
+
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
@@ -54,41 +61,44 @@ RUN apk add --no-cache bash git
 
 WORKDIR /repo
 
-COPY --from=builder /repo/node_modules ./node_modules
-COPY --from=builder /repo/package.json ./package.json
+# GT-692 — the user is created BEFORE the copies so `COPY --chown` can name it. A
+# recursive `chown -R` at the end rewrites every file into a NEW layer: measured on
+# `core-api`, that single RUN was 586 MB, a byte-for-byte duplicate of everything
+# above it.
+RUN addgroup -g 1001 -S evolith && \
+    adduser -S evolith -u 1001 -G evolith
+
+COPY --from=builder --chown=evolith:evolith /repo/node_modules ./node_modules
+COPY --from=builder --chown=evolith:evolith /repo/package.json ./package.json
 # `contracts` is a TRANSITIVE dependency, reached through infra-providers, whose
 # index re-exports tracker/evaluation-ingest.client.js and its require of
 # `@beyondnet/evolith-contracts/ingest`. node_modules/@beyondnet/evolith-contracts
 # is a workspace SYMLINK into src/packages/contracts, so omitting the package's own
 # dist leaves a dangling link and MODULE_NOT_FOUND on the first governance command.
 # Guard: 56-validate-docker-workspace-closure.
-COPY --from=builder /repo/src/packages/contracts/dist ./src/packages/contracts/dist
-COPY --from=builder /repo/src/packages/contracts/package.json ./src/packages/contracts/package.json
-COPY --from=builder /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
-COPY --from=builder /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
-COPY --from=builder /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist
-COPY --from=builder /repo/src/packages/infra-providers/package.json ./src/packages/infra-providers/package.json
-COPY --from=builder /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist
-COPY --from=builder /repo/src/packages/agent-runtime/package.json ./src/packages/agent-runtime/package.json
-COPY --from=builder /repo/src/packages/sdk-client/dist ./src/packages/sdk-client/dist
-COPY --from=builder /repo/src/packages/sdk-client/package.json ./src/packages/sdk-client/package.json
-COPY --from=builder /repo/src/sdk/cli/dist ./src/sdk/cli/dist
-COPY --from=builder /repo/src/sdk/cli/package.json ./src/sdk/cli/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/contracts/dist ./src/packages/contracts/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/contracts/package.json ./src/packages/contracts/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/infra-providers/package.json ./src/packages/infra-providers/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/package.json ./src/packages/agent-runtime/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/sdk-client/dist ./src/packages/sdk-client/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/sdk-client/package.json ./src/packages/sdk-client/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/sdk/cli/dist ./src/sdk/cli/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/sdk/cli/package.json ./src/sdk/cli/package.json
 # The asset trees the CLI reads at runtime, produced by copy-rulesets /
 # copy-assets above. `rulesets/` carries the compiled policy.wasm, which is a
 # gitignored build artifact and therefore absent from the host context.
-COPY --from=builder /repo/src/sdk/cli/rulesets ./src/sdk/cli/rulesets
-COPY --from=builder /repo/src/sdk/cli/shell ./src/sdk/cli/shell
-COPY --from=builder /repo/src/sdk/cli/templates ./src/sdk/cli/templates
+COPY --from=builder --chown=evolith:evolith /repo/src/sdk/cli/rulesets ./src/sdk/cli/rulesets
+COPY --from=builder --chown=evolith:evolith /repo/src/sdk/cli/shell ./src/sdk/cli/shell
+COPY --from=builder --chown=evolith:evolith /repo/src/sdk/cli/templates ./src/sdk/cli/templates
 
 # The corpus the governance commands read: rulesets from the BUILDER stage (so
 # the compiled policy.wasm is present) plus the human-readable reference tree.
-COPY --from=builder /repo/src/rulesets /app/corpus/rulesets
+COPY --from=builder --chown=evolith:evolith /repo/src/rulesets /app/corpus/rulesets
 COPY reference /app/corpus/reference
-
-RUN addgroup -g 1001 -S evolith && \
-    adduser -S evolith -u 1001 -G evolith && \
-    chown -R evolith:evolith /repo /app
 
 USER evolith
 

@@ -125,6 +125,21 @@ jobs:
         run: node .harness/scripts/ci/69-validate-audit-transparency-gate.mjs --verbose
 
 
+      # GT-692 — a deployable image must not ship the tree its BUILD needed.
+      #
+      # All four images copied the whole workspace `node_modules` into their runtime
+      # stage and then ran `chown -R` over it, which in Docker rewrites every file
+      # into a new layer: 586 MB of pure duplicate on core-api alone. The cost was
+      # paid in ANOTHER repository — the Tracker's `Deploy (kind + Helm + smoke)`
+      # died importing this image with `no space left on device`.
+      #
+      # This checks the SHAPE, which is the cause, in seconds and without Docker.
+      # The measured sizes live in `runtime-image-budgets.json`; a real size budget
+      # needs a Docker-building job, and the baseline is written down for the day
+      # one exists.
+      - name: Deployable images ship no build tree (GT-692)
+        run: node .harness/scripts/ci/70-validate-runtime-image-shape.mjs --verbose
+
       # CD gate = the evolith-cli unit suite (fast, deterministic). The full e2e
       # (env-sensitive: spawns servers, loads rulesets) is covered by the
       # dedicated sdk-cli-ci.yml e2e job + the per-flow E2E playbooks, not here.

@@ -40,6 +40,28 @@ RUN test -f src/apps/core-api/dist/main.js || { \
       echo "       .dockerignore still excludes **/*.tsbuildinfo."; \
       exit 1; }
 
+# GT-692 — the runner receives the tree the BUILD needed, and the build needs a
+# compiler. Measured on this repository: `node_modules` is 659 MB and the image it
+# produced was 1.96 GB, carrying `typescript`, `eslint`, `jest` and `@types/*` —
+# none of them a production dependency of `core-api`. That is not merely wasteful:
+# it is what made a consumer's CI fail. The Tracker's `Deploy (kind + Helm + smoke)`
+# job died importing this image into a kind node with
+# `ctr: failed to extract layer … no space left on device`, on the paths that name
+# the cause outright — `@types/node/quic.d.ts`, `@sinonjs/commons/…` and
+# `get-intrinsic/CHANGELOG.md`, a test-double library and two declaration trees
+# being unpacked into a production image.
+#
+# Pruned HERE and not in the runner because the runner has no npm context: it
+# receives `node_modules` by COPY. `--omit=dev` walks the whole workspace, so the
+# non-hoisted trees under `src/apps/*/node_modules` are pruned with it.
+#
+# The build artifacts are already emitted at this point, so removing the compiler
+# cannot affect them. What it CAN affect is a runtime dependency mis-declared as a
+# development one — which is a defect this prune exposes rather than causes, and
+# `56-validate-docker-workspace-closure` plus the container's own boot are what
+# catch it.
+RUN npm prune --omit=dev --legacy-peer-deps
+
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
@@ -48,10 +70,18 @@ LABEL org.opencontainers.image.source="https://github.com/beyondnetcode/evolith_
 
 RUN apk add --no-cache curl
 
+# GT-692 — the user is created BEFORE the copies on purpose. The image used to end
+# with `chown -R evolith:evolith /repo /app`, and in Docker a recursive chown rewrites
+# every file it touches into a NEW layer: measured on this image, that single RUN was
+# **586 MB**, a byte-for-byte duplicate of everything copied above it. `COPY --chown`
+# sets the ownership as the layer is written, so the duplicate never exists.
+RUN addgroup -g 1001 -S evolith && \
+    adduser -S evolith -u 1001 -G evolith
+
 WORKDIR /repo
 
-COPY --from=builder /repo/node_modules ./node_modules
-COPY --from=builder /repo/package.json ./package.json
+COPY --from=builder --chown=evolith:evolith /repo/node_modules ./node_modules
+COPY --from=builder --chown=evolith:evolith /repo/package.json ./package.json
 # The workspace closure the entrypoint requires, TRANSITIVELY. `contracts` is
 # here because infra-providers/dist/tracker/evaluation-ingest.client.js requires
 # `@beyondnet/evolith-contracts/ingest`, and that require is re-exported from
@@ -59,16 +89,16 @@ COPY --from=builder /repo/package.json ./package.json
 # node_modules entry is a workspace SYMLINK into src/packages/contracts, so
 # shipping node_modules without the package's own dist yields a dangling link
 # and MODULE_NOT_FOUND at startup. Guard: 56-validate-docker-workspace-closure.
-COPY --from=builder /repo/src/packages/contracts/dist ./src/packages/contracts/dist
-COPY --from=builder /repo/src/packages/contracts/package.json ./src/packages/contracts/package.json
-COPY --from=builder /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
-COPY --from=builder /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
-COPY --from=builder /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist
-COPY --from=builder /repo/src/packages/infra-providers/package.json ./src/packages/infra-providers/package.json
-COPY --from=builder /repo/src/apps/core-api/dist ./src/apps/core-api/dist
-COPY --from=builder /repo/src/apps/core-api/package.json ./src/apps/core-api/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/contracts/dist ./src/packages/contracts/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/contracts/package.json ./src/packages/contracts/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/infra-providers/package.json ./src/packages/infra-providers/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/apps/core-api/dist ./src/apps/core-api/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/apps/core-api/package.json ./src/apps/core-api/package.json
 # Non-hoisted workspace deps (e.g. @nestjs/cache-manager) live here, not at root.
-COPY --from=builder /repo/src/apps/core-api/node_modules ./src/apps/core-api/node_modules
+COPY --from=builder --chown=evolith:evolith /repo/src/apps/core-api/node_modules ./src/apps/core-api/node_modules
 
 # Corpus (rulesets + generated OPA WASM + human reference) the Core reads at
 # runtime. rulesets comes from the builder stage so policy.wasm is present even
@@ -79,12 +109,8 @@ COPY --from=builder /repo/src/apps/core-api/node_modules ./src/apps/core-api/nod
 # WorkspaceReferenceResolverService.corePath()). CORE_PATH=/app/corpus, so the
 # rulesets tree must live at /app/corpus/rulesets (NOT /app/corpus/src/rulesets)
 # or OPA fail-closes on a missing policy.wasm/schema in production.
-COPY --from=builder /repo/src/rulesets /app/corpus/rulesets
-COPY reference /app/corpus/reference
-
-RUN addgroup -g 1001 -S evolith && \
-    adduser -S evolith -u 1001 -G evolith && \
-    chown -R evolith:evolith /repo /app
+COPY --from=builder --chown=evolith:evolith /repo/src/rulesets /app/corpus/rulesets
+COPY --chown=evolith:evolith reference /app/corpus/reference
 
 USER evolith
 

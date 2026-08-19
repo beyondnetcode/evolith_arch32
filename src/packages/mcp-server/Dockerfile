@@ -40,6 +40,13 @@ RUN test -f src/packages/mcp-server/dist/main.js || { \
       echo "       Check that .dockerignore still excludes **/*.tsbuildinfo."; \
       exit 1; }
 
+
+# GT-692 — the runner receives the tree the BUILD needed, compiler included. Pruned
+# here because the runner has no npm context: it gets `node_modules` by COPY, and
+# `--omit=dev` walks the whole workspace so the non-hoisted trees are pruned with it.
+# Build artifacts are already emitted, so removing the compiler cannot affect them.
+RUN npm prune --omit=dev --legacy-peer-deps
+
 # ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
@@ -50,34 +57,41 @@ RUN apk add --no-cache curl
 
 WORKDIR /repo
 
-COPY --from=builder /repo/node_modules ./node_modules
-COPY --from=builder /repo/package.json ./package.json
+# GT-692 — the user is created BEFORE the copies so `COPY --chown` can name it. A
+# recursive `chown -R` at the end rewrites every file into a NEW layer: measured on
+# `core-api`, that single RUN was 586 MB, a byte-for-byte duplicate of everything
+# above it.
+RUN addgroup -g 1001 -S evolith && \
+    adduser -S evolith -u 1001 -G evolith
+
+COPY --from=builder --chown=evolith:evolith /repo/node_modules ./node_modules
+COPY --from=builder --chown=evolith:evolith /repo/package.json ./package.json
 # `contracts` reaches this image through infra-providers, whose index re-exports
 # tracker/evaluation-ingest.client.js and its require of
 # `@beyondnet/evolith-contracts/ingest`. node_modules/@beyondnet/evolith-contracts
 # is a workspace SYMLINK into src/packages/contracts, so without the package's own
 # dist the link dangles and the server dies at startup with MODULE_NOT_FOUND.
 # Guard: 56-validate-docker-workspace-closure.
-COPY --from=builder /repo/src/packages/contracts/dist ./src/packages/contracts/dist
-COPY --from=builder /repo/src/packages/contracts/package.json ./src/packages/contracts/package.json
-COPY --from=builder /repo/src/packages/sdk-client/dist ./src/packages/sdk-client/dist
-COPY --from=builder /repo/src/packages/sdk-client/package.json ./src/packages/sdk-client/package.json
-COPY --from=builder /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist
-COPY --from=builder /repo/src/packages/agent-runtime/package.json ./src/packages/agent-runtime/package.json
-COPY --from=builder /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
-COPY --from=builder /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
-COPY --from=builder /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist
-COPY --from=builder /repo/src/packages/infra-providers/package.json ./src/packages/infra-providers/package.json
-COPY --from=builder /repo/src/packages/core/dist ./src/packages/core/dist
-COPY --from=builder /repo/src/packages/core/package.json ./src/packages/core/package.json
-COPY --from=builder /repo/src/packages/mcp-server/dist ./src/packages/mcp-server/dist
-COPY --from=builder /repo/src/packages/mcp-server/package.json ./src/packages/mcp-server/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/contracts/dist ./src/packages/contracts/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/contracts/package.json ./src/packages/contracts/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/sdk-client/dist ./src/packages/sdk-client/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/sdk-client/package.json ./src/packages/sdk-client/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/dist ./src/packages/agent-runtime/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/package.json ./src/packages/agent-runtime/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core-domain/dist ./src/packages/core-domain/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core-domain/package.json ./src/packages/core-domain/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/infra-providers/dist ./src/packages/infra-providers/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/infra-providers/package.json ./src/packages/infra-providers/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core/dist ./src/packages/core/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/core/package.json ./src/packages/core/package.json
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/mcp-server/dist ./src/packages/mcp-server/dist
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/mcp-server/package.json ./src/packages/mcp-server/package.json
 # Non-hoisted workspace deps (e.g. @nestjs/cache-manager) live here, not at root.
-COPY --from=builder /repo/src/packages/mcp-server/node_modules ./src/packages/mcp-server/node_modules
+COPY --from=builder --chown=evolith:evolith /repo/src/packages/mcp-server/node_modules ./src/packages/mcp-server/node_modules
 
 # Ruleset corpus, copied from the BUILDER stage so the compiled policy.wasm
 # (a gitignored build artifact) is included — the host context does not have it.
-COPY --from=builder /repo/src/rulesets /app/corpus/rulesets
+COPY --from=builder --chown=evolith:evolith /repo/src/rulesets /app/corpus/rulesets
 
 # The MCP ABAC evaluator (abac-evaluator.ts) resolves the wasm at
 # `<corePath>/sdk/cli/rulesets/opa/policy.wasm`, where corePath is derived in
@@ -85,11 +99,7 @@ COPY --from=builder /repo/src/rulesets /app/corpus/rulesets
 # `packages/mcp-server`. The runtime WORKDIR is /repo/src/packages/mcp-server, so
 # corePath = /repo/src and the reader opens /repo/src/sdk/cli/rulesets/opa/policy.wasm.
 # Without this the OPA layer fail-closes in production and denies every tool call.
-COPY --from=builder /repo/src/sdk/cli/rulesets/opa/policy.wasm ./src/sdk/cli/rulesets/opa/policy.wasm
-
-RUN addgroup -g 1001 -S evolith && \
-    adduser -S evolith -u 1001 -G evolith && \
-    chown -R evolith:evolith /repo /app
+COPY --from=builder --chown=evolith:evolith /repo/src/sdk/cli/rulesets/opa/policy.wasm ./src/sdk/cli/rulesets/opa/policy.wasm
 
 USER evolith
 

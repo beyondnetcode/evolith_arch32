@@ -147,10 +147,16 @@ export class AuditCommand extends BaseEvolithCommand {
           // verdict (`GATE_BLOCKED` → exit 2), not malformed input. `VALIDATION_FAILED`
           // maps to exit 3 and would tell an agent harness to fix its invocation
           // rather than to stop the pipeline.
+          // GT-588 criterion 3: the payload travels on the FAILING branch too. It did
+          // not, and that is precisely when it matters — a machine consumer asking
+          // `--format json` got `GATE_BLOCKED` and nothing else: no rule ids, no entry
+          // count, no tree head. The findings were visible only in the human renderer,
+          // so no CI job could act on them, which is half of why this rule was never
+          // wired anywhere.
           : createErrorEnvelope('GATE_BLOCKED', 'transparency ledger does not verify', {
             ...meta,
             durationMs: Date.now() - startedAt,
-          }),
+          }, payload),
         null,
         2,
       ));

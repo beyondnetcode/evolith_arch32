@@ -142,4 +142,42 @@ This action is exercised by [`evolith-validate-dogfood.yml`](../../workflows/evo
 
 ---
 
+## Publishing the Marketplace listing — the owner step (GT-651)
+
+Nothing in this repository can create the listing: GitHub exposes no API for it, and
+the Marketplace Developer Agreement is accepted per ACCOUNT, in the UI, by a person.
+`64-validate-marketplace-action.mjs` therefore asserts that nothing here blocks the
+step — never that it happened. This section exists so the step is one pass and not a
+research task.
+
+**Repository-side state, measured 2026-08-18:**
+
+| prerequisite | state |
+|---|---|
+| single metadata file at the repository root | `action.yml`, 15 592 bytes |
+| `branding` icon + color (Marketplace rejects a listing without them) | `shield` / `blue` |
+| no second manifest claiming the root manifest's `name` | none |
+| a release to publish from | `v1.3.0` (latest) — and the floating `v1` tag — both carry the root `action.yml` at that exact size, checked through the contents API at each ref |
+
+So no new release is needed: the listing can be created from `v1.3.0`.
+
+**The flow, as GitHub documents it** (recorded as documented, not as observed — the UI
+was not driven from here):
+
+1. Open the repository's **Releases**, and edit the release to publish from (`v1.3.0`).
+2. Tick **Publish this Action to the GitHub Marketplace**. The checkbox only appears
+   once the metadata file is at the root — which is what the table above is about.
+3. Accept the **GitHub Marketplace Developer Agreement** when prompted. Once per account.
+4. Choose a primary and a secondary category. The icon and color are read from
+   `branding` in `action.yml`; they are not re-entered here.
+5. Publish. Consumers then reference it by tag — pin `v1.3.0`, or the floating `v1`.
+
+**When it is done**, the last open criterion of `GT-651` in the gap board can be ticked,
+and it is the only thing that can tick it. The row's other open half is the per-tenant
+governance packages, which are Tracker work: `EAG-23`, `DEFERRED` on that board and
+blocked on `EAG-01`/`EAG-05` (a plugin distributed outside still has no way to
+authenticate) — confirmed there on 2026-08-18.
+
+---
+
 [Back to Evolith Core](../../../reference/core/control-center/README.md)

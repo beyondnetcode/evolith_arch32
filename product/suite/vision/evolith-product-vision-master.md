@@ -162,7 +162,7 @@ flowchart TB
   subgraph CORE["repo · evolith_arch32 (Evolith Core · Constitution)"]
     subgraph EXP["Core API Exposure Layer · ADR-0074"]
       API["apps/core-api<br/>REST · 11 controllers"]
-      MCP["mcp-server<br/>MCP · 47 tools · 11 resources"]
+      MCP["mcp-server<br/>MCP · 52 tools · 12 resources"]
       CLI["evolith-cli<br/>CLI · 31 commands"]
     end
     subgraph RT["Agent Runtime · @beyondnet/evolith-agent-runtime"]
@@ -204,7 +204,7 @@ flowchart TB
 | Interface | Consumer | Purpose |
 |---|---|---|
 | **REST API** | Tracker UI, CI/CD, enterprise integrations | 11 controllers: evaluation, gates, phases, architecture, projects, satellites, capabilities, composable-validate, reference, metrics, health |
-| **MCP HTTP/SSE** | LLMs and autonomous agents | 47 tools, 11 resources, 8 prompts: evaluation, validation, agents, ADRs, MoSCoW, drift, configuration |
+| **MCP HTTP/SSE** | LLMs and autonomous agents | 52 tools, 12 resources, 8 prompts: evaluation, validation, agents, ADRs, MoSCoW, drift, configuration |
 | **CLI** | Engineers and product roles | 31 commands: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
 | **Agent Runtime** | AI agents, chatboxes, external triggers | **10 hexagonal ports on the execution hot path** (7 required, 3 optional), governed orchestration with OPA + HITL. The package *declares* 17 ports and 47 adapter modules, including 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External) — see the note below for which of those are wired and which are speculative. |
 | **Webhook / Event Bus** — *not implemented, roadmap* | *(none yet)* | **No webhook or event-bus surface ships today.** Evolith exposes no inbound webhook endpoint and delivers no outbound webhook or event traffic. The only related code is `src/packages/infra-providers/src/webhook.adapter.ts`, an **outbound-only** adapter with no surface wired to it. See [Ecosystem & Communication](../../products/ecosystem-and-communication.md). Propagating commands, evidence, status changes, and gate outcomes reactively remains a roadmap item. |

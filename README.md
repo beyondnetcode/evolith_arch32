@@ -51,7 +51,7 @@ And we apply it to ourselves. Three things this front page could keep quiet and 
 
 - **The two engines do not cover the same ground today.** `--engine opa` evaluates 133 of 159 rules; the default native evaluator evaluates 41 and skips 118, on the same repository. They are held to agreement over facts in CI, not over coverage — that part is by design; that the default command never says so is not ([#628](https://github.com/beyondnetcode/evolith_arch32/issues/628)). This page uses `--engine opa` everywhere.
 - **Two infrastructure rules are in no denominator.** The loader rejects three ruleset files from its own corpus, and as of 1.3.2 it no longer even says so on stderr ([#575](https://github.com/beyondnetcode/evolith_arch32/issues/575)).
-- **What installs is not everything this tree holds.** The tree carries 182 ruleset files; the published CLI loads 177 packs with 412 rules — the loader rejection above is one of the causes. `evolith rulesets` prints what *your* installation loads, pack by pack.
+- **The file count and the rule count answer different questions.** The tree carries 182 `*.rules.json` files, of which four declare a non-ruleset schema and contribute no rules by design — they are named in every report, not dropped. That leaves 178 packs with 413 rules. The published CLI carries its own snapshot: 177 packs, 412 rules. `evolith rulesets` prints what *your* installation loads, pack by pack.
 
 Full audit of our own claims: [pending items, 2026-08-16](./reference/core/control-center/adoption/pending-2026-08-16.md).
 
@@ -135,7 +135,7 @@ Eight **architecture styles** (we call them *topologies*) across five axes. The 
 | Data | `data-mesh` |
 | AI | `agentic-ai` |
 
-On top runs a **free, MIT** library: in this tree, 142 ADRs, 182 ruleset files and 50 phase schemas, plus the five SDLC phases (Discovery → Design → Construction → QA → Delivery) and the gates that block the move from one to the next. Those three counts are measured and verified by CI on every PR. What your installation actually evaluates is printed by `evolith rulesets`: today, 177 packs with 412 rules, 188 of them able to fail a run. The only paid product will be **Evolith Tracker**, not yet launched.
+On top runs a **free, MIT** library: in this tree, 142 ADRs, 178 ruleset packs carrying 413 rules across 182 files, and 50 phase schemas, plus the five SDLC phases (Discovery → Design → Construction → QA → Delivery) and the gates that block the move from one to the next. Those three counts are measured and verified by CI on every PR. What your installation actually evaluates is printed by `evolith rulesets`: today, 177 packs with 412 rules, 188 of them able to fail a run. The only paid product will be **Evolith Tracker**, not yet launched.
 
 <div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Open the interactive diagram"><img src="./reference/core/sdlc/assets/master-view.svg" alt="How the CLI, the Core and the five SDLC phases fit together" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Open the interactive viewer</a></b> — drag to pan, scroll to zoom</sub></div>
 

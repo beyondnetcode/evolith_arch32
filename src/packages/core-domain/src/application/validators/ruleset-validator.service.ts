@@ -3,7 +3,7 @@ import { findCoreFromSatellite } from '../paths/rulesets-location';
 import * as path from 'path';
 import { ILogger, IFileSystem, IConfigParser } from '../../domain/interfaces';
 import { RuleEvaluationEngine, emptyRuleCoverage, summarizeRuleCoverage } from './rule-evaluation-engine';
-import { RulesetsNotFoundError } from '../../domain/ports/ruleset-repository.port';
+import { IRulesetRepository, RulesetsNotFoundError } from '../../domain/ports/ruleset-repository.port';
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { OpaEvaluator } from './evaluators/opa-evaluator';
 import { createCompositeEnforcerStrategy } from './enforcement/enforcer-subsystem';
@@ -43,6 +43,7 @@ export class RulesetValidatorService {
   private readonly topologyCatalog?: TopologyCatalogService;
   /** GT-569 — optional coverage floor; see {@link RulesetValidatorOptions.maxSkippedFraction}. */
   private readonly maxSkippedFraction?: number;
+  private readonly rulesetRepo: IRulesetRepository;
   /** GT-571 — filter the corpus by rule audience / topology / SDLC phase. */
   private readonly applyRuleApplicability: boolean;
   /**
@@ -87,6 +88,7 @@ export class RulesetValidatorService {
     this.applyRuleApplicability = options.applyRuleApplicability !== false;
     this.processRunner = options.processRunner;
     this.metrics = options.metrics;
+    this.rulesetRepo = options.rulesetRepo;
 
     const baseStrategy = options.engineType === 'opa'
       ? new OpaEvaluator(this.fs, this.logger)
@@ -238,6 +240,7 @@ export class RulesetValidatorService {
       if (applicabilityIssue) issues.push(applicabilityIssue);
       const thresholdIssue = this.coverageThresholdIssue(coverage);
       if (thresholdIssue) issues.push(thresholdIssue);
+      issues.push(...this.corpusLoadIssues());
     } catch (err: unknown) {
       // GT-474: an unresolvable/empty ruleset corpus must never be downgraded to
       // a warning here — that is exactly how `validate` came to report
@@ -380,6 +383,70 @@ export class RulesetValidatorService {
    * which is information, not a violation. It is what stops "0 blocking
    * findings" from meaning "we quietly stopped looking".
    */
+  /**
+   * #575 -- the corpus loader reads every `*.rules.json` and some of them become
+   * no rules at all. Until now the only trace was a log line, which does not
+   * survive `--format json` and never reaches an exit code, so a document could
+   * vanish out of every denominator the report published. That is the failure
+   * this project exists to stop, occurring in its own loader.
+   *
+   * Two outcomes, deliberately weighted differently:
+   *
+   * - `classified` -- the document declares a known non-ruleset schema and
+   *   satisfies it. It contributes no rules BY DESIGN (a single rule definition
+   *   enforced by its paired Rego policy and CI guard, the advisory topology
+   *   catalogue, an SDLC phase-gate document). Reported, NOT blocking: it is a
+   *   fact about the corpus, not a violation.
+   * - `rejected` -- the document claims to be a ruleset, or declares nothing,
+   *   and failed the ruleset schema. Blocking. A file that says it carries rules
+   *   and carries none is indistinguishable, in every downstream number, from a
+   *   file that was never there.
+   *
+   * An implementation that cannot describe its load returns nothing here, and
+   * behaviour is exactly as before.
+   */
+  private corpusLoadIssues(): ValidationIssue[] {
+    const outcomes = this.rulesetRepo.describeLastLoad?.() ?? [];
+    if (outcomes.length === 0) return [];
+
+    const issues: ValidationIssue[] = [];
+    const classified = outcomes.filter(o => o.outcome === 'classified');
+    const rejected = outcomes.filter(o => o.outcome === 'rejected');
+
+    if (classified.length > 0) {
+      issues.push({
+        ruleId: 'GOV-CORPUS-NOT-A-RULESET',
+        severity: 'COULD',
+        category: 'governance',
+        title: `${classified.length} corpus file(s) declare a non-ruleset schema and contribute no rules`,
+        description:
+          `${classified.length} \`*.rules.json\` file(s) were read and produced no rules because they are ` +
+          'a different kind of document, each satisfying the schema it declares: ' +
+          classified.map(c => `\`${c.file}\` (${c.detail})`).join('; ') +
+          '. They are counted here rather than in `rulesTotal`, because they were never rules. ' +
+          'Enforcement for these lives in their paired Rego policies and CI guards, not in the rule engine.',
+        blocking: false,
+      });
+    }
+
+    if (rejected.length > 0) {
+      issues.push({
+        ruleId: 'GOV-CORPUS-REJECTED',
+        severity: 'MUST',
+        category: 'governance',
+        title: `${rejected.length} corpus file(s) were rejected at load and evaluated nothing`,
+        description:
+          `${rejected.length} \`*.rules.json\` file(s) failed the standard ruleset schema and were dropped: ` +
+          rejected.map(r => `\`${r.file}\` — ${r.detail}`).join('; ') +
+          '. Every rule they carry is in no denominator: not checked, not skipped, not errored. ' +
+          'Fix the file, or give it a `$schema` that declares what it actually is.',
+        blocking: true,
+      });
+    }
+
+    return issues;
+  }
+
   private applicabilityAdvisory(notApplicable: readonly NotApplicableRule[]): ValidationIssue | undefined {
     if (notApplicable.length === 0) return undefined;
 

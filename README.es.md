@@ -51,7 +51,7 @@ Y lo aplicamos a nosotros. Tres cosas que esta portada podría callar y no calla
 
 - **Los dos motores no cubren lo mismo hoy.** `--engine opa` evalúa 133 de 159 reglas; el evaluador nativo por defecto evalúa 41 y salta 118, sobre el mismo repo. CI exige que coincidan sobre hechos, no sobre cobertura — eso es por diseño; que el comando por defecto no lo diga, no ([#628](https://github.com/beyondnetcode/evolith_arch32/issues/628)). Esta portada usa `--engine opa` en todas partes.
 - **Dos reglas de infraestructura no están en ningún denominador.** El cargador rechaza tres ficheros del propio corpus, y desde 1.3.2 ya ni lo avisa por stderr ([#575](https://github.com/beyondnetcode/evolith_arch32/issues/575)).
-- **Lo que se instala no es todo lo que hay en este árbol.** El árbol lleva 182 ficheros de reglas; el CLI publicado carga 177 packs con 412 reglas — el rechazo del cargador de arriba es una de las causas. `evolith rulesets` imprime lo que carga *tu* instalación, pack por pack.
+- **El conteo de ficheros y el de reglas responden a preguntas distintas.** El árbol lleva 182 ficheros `*.rules.json`, de los cuales cuatro declaran un esquema que no es de ruleset y no aportan reglas por diseño — se nombran en cada informe, no se descartan en silencio. Quedan 178 packs con 413 reglas. El CLI publicado lleva su propia foto: 177 packs, 412 reglas. `evolith rulesets` imprime lo que carga *tu* instalación, pack por pack.
 
 Auditoría completa de nuestras propias afirmaciones: [pendientes 2026-08-16](./reference/core/control-center/adoption/pending-2026-08-16.md).
 
@@ -135,7 +135,7 @@ Ocho **estilos de arquitectura** (aquí los llamamos *topologías*) repartidos e
 | Datos | `data-mesh` |
 | IA | `agentic-ai` |
 
-Encima corre una biblioteca **gratis y MIT**: en este árbol, 142 ADRs, 182 ficheros de reglas y 50 schemas de fase, más las cinco fases del SDLC (Discovery → Design → Construction → QA → Delivery) y los controles que bloquean el paso de una a la siguiente. Esos tres conteos los mide y los verifica CI en cada PR. Lo que evalúa tu instalación lo imprime `evolith rulesets`: hoy, 177 packs con 412 reglas, 188 de ellas capaces de hacer fallar una ejecución. El único producto de pago será **Evolith Tracker**, aún no lanzado.
+Encima corre una biblioteca **gratis y MIT**: en este árbol, 142 ADRs, 178 packs de reglas con 413 reglas repartidas en 182 ficheros, y 50 schemas de fase, más las cinco fases del SDLC (Discovery → Design → Construction → QA → Delivery) y los controles que bloquean el paso de una a la siguiente. Esos tres conteos los mide y los verifica CI en cada PR. Lo que evalúa tu instalación lo imprime `evolith rulesets`: hoy, 177 packs con 412 reglas, 188 de ellas capaces de hacer fallar una ejecución. El único producto de pago será **Evolith Tracker**, aún no lanzado.
 
 <div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Abrir el diagrama interactivo"><img src="./reference/core/sdlc/assets/master-view.svg" alt="Cómo encajan CLI, Core y las cinco fases del SDLC" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Abrir visor interactivo</a></b> — arrastra para desplazar, rueda para zoom</sub></div>
 

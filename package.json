@@ -18,6 +18,9 @@
     "src/apps/*",
     "src/packages/*"
   ],
+  "engines": {
+    "node": ">=20 <21"
+  },
   "devDependencies": {
     "@commitlint/cli": "20.5.3",
     "@commitlint/config-conventional": "20.5.3",

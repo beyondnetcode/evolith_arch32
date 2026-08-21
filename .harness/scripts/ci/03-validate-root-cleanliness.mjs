@@ -31,6 +31,12 @@ const allowedFiles = new Set([
   "LICENSE",
   "CHANGELOG.md",
   ".editorconfig",
+  // #565: nvm, fnm, asdf and volta all read the version from the repository
+  // ROOT and take no flag to relocate it, so this one cannot live under
+  // `.harness/` either. It pins the same Node 20 the workflows use and the
+  // root `engines` range declares, so a contributor finds out from their tools
+  // rather than from a failing job.
+  ".nvmrc",
   ".gitignore",
   ".dockerignore",
   ".gitleaks.toml",

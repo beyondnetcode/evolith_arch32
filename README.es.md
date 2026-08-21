@@ -180,7 +180,7 @@ Divulgación completa —sub-encargados, credencial, límites, redacción, qué 
 | Elegir o migrar de topología | [Hub de Topologías](./reference/core/architecture/topologies/README.es.md) |
 | Usar CLI, MCP o REST | [Hub de Interfaces](./reference/core/interfaces/README.es.md) |
 | Ver el estado real del proyecto | [Tablero de Gaps](./reference/core/control-center/gaps/gap-tracking.es.md) · [Madurez](./reference/core/control-center/README.es.md) |
-| Resolver una duda concreta | [Q&A — 41 preguntas en 12 categorías](./reference/core/sdlc/q-and-a.es.md) · [Glosario](./reference/core/sdlc/glossary/glossary-ecosystem.es.md) |
+| Resolver una duda concreta | [Q&A — 43 preguntas en 12 categorías](./reference/core/sdlc/q-and-a.es.md) · [Glosario](./reference/core/sdlc/glossary/glossary-ecosystem.es.md) |
 | Saber qué va dónde | [Taxonomía del Repositorio](./reference/core/control-center/taxonomy/repository-taxonomy.es.md) |
 | Recorrer todo el corpus | [Índice Maestro](./MASTER_INDEX.es.md) · [Hub de Producto](./product/README.es.md) · [Operaciones](./product/operations/README.es.md) |
 

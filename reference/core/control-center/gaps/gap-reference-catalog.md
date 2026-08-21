@@ -3888,7 +3888,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Done When:** An `apps/agent-sandbox` is created with a dummy MCP server and client connecting to the Evolith Core API.
 
 ---
-[Back to Tracking Board](./gap-tracking.md) · [Back to Vision Index](../README.md)
+[Back to Tracking Board](./gap-tracking.md) · [Back to Control Center](../README.md)
 
 #### GT-55
 

@@ -3871,7 +3871,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Hecho Cuando:** Una aplicación `apps/agent-sandbox` sea creada con un servidor MCP de prueba conectado al Core API.
 
 ---
-[Volver al Tablero de Seguimiento](./gap-tracking.es.md) · [Volver al Índice de Visión](../../README.es.md)
+[Volver al Tablero de Seguimiento](./gap-tracking.es.md) · [Volver al Centro de Control](../README.es.md)
 
 #### GT-55
 

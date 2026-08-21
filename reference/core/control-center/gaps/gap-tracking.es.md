@@ -789,4 +789,4 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes luego completados), luego criticidad (`P0` → `P1` → `P2` → `P3`), luego complejidad (`XS` → `S` → `M` → `L` → `XL`). Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](../audits/multi-topology-reference-corpus-implementation-plan.es.md).
 
 ---
-[Volver al Índice de Visión](../../README.es.md)
+[Volver al Centro de Control](../README.es.md)

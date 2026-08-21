@@ -811,4 +811,4 @@ This board is the single source of truth for technical debt, gaps, opportunities
 **Ordering:** one table, ordered by status (pending then completed), then criticality (`P0` → `P1` → `P2` → `P3`), then complexity (`XS` → `S` → `M` → `L` → `XL`). `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](../audits/multi-topology-reference-corpus-implementation-plan.md).
 
 ---
-[Back to Vision Index](../README.md)
+[Back to Control Center](../README.md)

@@ -102,14 +102,13 @@ This repository owns the architectural baseline and promotion mechanism. A produ
 
 The root should be kept small and navigable. Permitted categories are:
 
-- Public navigation and legal files: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `DOCUMENTATION_VERSIONS.md`, `DOCUMENTATION_VERSIONS.es.md`, `AGENTS.md`, `AGENTS.es.md` and `LICENSE`.
-- Tooling and platform dot-folders: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, `.obsidian/`, and editor or automation configuration (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
+- Public navigation and legal files: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `AGENTS.md`, `AGENTS.es.md`, `CONTRIBUTING`, `SECURITY`, `CODE_OF_CONDUCT` (each bilingual), `CHANGELOG.md` and `LICENSE`.
+- Tooling and platform dot-folders: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, `.obsidian/`, and editor or automation configuration (`.editorconfig`, `.gitignore`, `.markdownlint.json`, `.nvmrc`).
+- **Toolchain pins read from the root:** `.nvmrc` pins the Node version that nvm, fnm, asdf and volta all read from the repository root and cannot be told to look for elsewhere. It states the same Node 20 the workflows use and the root `engines` range declares.
 - **Tool folder convention:** Each AI/IDE/authoring tool gets its own dot-folder at repository root (`.claude/`, `.mimocode/`, `.obsidian/`, `.vscode/`). These cannot be nested inside a parent folder because each tool's runtime expects its configuration at the workspace root. Do NOT create `.setup/` or similar grouping folders — tool contracts require root-level placement.
 - `reference/` for the documentary and architectural corpus.
-- `src/sdk/` for CLI, MCP, and executable access tooling.
-- `rulesets/` for machine-readable governance rules, including `src/rulesets/topologies/` for topology-specific executable rules.
-
-No application `src/` directories are maintained in this repository; executable implementation belongs to UMS or another product repository with explicit scope.
+- `src/` for every executable workspace: `src/sdk/` (CLI and access tooling), `src/packages/`, `src/apps/`, `src/tests/`, and `src/rulesets/` for machine-readable governance rules including `src/rulesets/topologies/`.
+- `product/` for the product corpus, and `docs/` for reader-facing guides and published evidence.
 
 Root-level `/topologies/` is explicitly prohibited. Multi-topology governance does not create a new repository-root content area; it must remain inside the existing authority boundaries established by [ADR-0048](../../architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md), [ADR-0070](../../architecture/adrs/core/0070-lean-root-repository-taxonomy.md), and [ADR-0079](../../architecture/adrs/core/0079-multi-topology-reference-corpus.md). Any future proposal to create `/topologies/` at the repository root requires a superseding accepted ADR that amends the root taxonomy, updates this standard, updates `src/rulesets/cross-cutting/repository-taxonomy.rules.json`, updates `src/rulesets/opa/taxonomy.rego`, and updates `.harness/scripts/ci/03-validate-root-cleanliness.mjs` in the same change.
 

@@ -7855,14 +7855,14 @@
         ".github/ISSUE_TEMPLATE/config.yml",
         ".github/ISSUE_TEMPLATE/bug-report.yml",
         ".github/ISSUE_TEMPLATE/feature-request.yml",
-        ".github/FUNDING.yml",
         ".github/workflows/sdk-cli-release.yml"
       ],
       "validationCommands": [
         "Added `.github/CODEOWNERS`, `.github/ISSUE_TEMPLATE/config.yml` (blank issues off; contact links to Discussions, the private security advisory and CONTRIBUTING), and bug-report and feature-request templates written in plain language. `FUNDING.yml` moved from `src/sdk/cli/` to `.github/` so GitHub renders it.",
         "Near-miss recorded: CODEOWNERS first shipped naming `@beyondnetcode/evolith-team`, copied from the release workflow's failure notifier. That team DOES NOT EXIST -- `gh api orgs/beyondnetcode/teams` returns only `evolith-core-s-development`.",
         "Why that mattered: GitHub silently ignores an unresolvable owner, so every CODEOWNERS line would have routed nothing while the file looked correct.",
-        "Corrected to the verified team, which was also confirmed to have repository access. The same bad handle in `.github/workflows/sdk-cli-release.yml` was fixed, which means that failure notification had been at-mentioning nobody."
+        "Corrected to the verified team, which was also confirmed to have repository access. The same bad handle in `.github/workflows/sdk-cli-release.yml` was fixed, which means that failure notification had been at-mentioning nobody.",
+        "2026-08-21 (#563): `.github/FUNDING.yml` removed from this evidence list because the file was deleted. It rendered, which is what this gap asked for; what it rendered was four keys that led nowhere -- `beyondnetcode` has no GitHub Sponsors listing (`hasSponsorsListing: false`), `sponsor:` is not a key GitHub's schema defines, and `patreon:`/`open_collective:` were empty. The remaining five artifacts are untouched and still carry this closure."
       ],
       "dependencyDisposition": "none",
       "dependencyRationale": "The gap has no dependencies: the files are self-contained GitHub community-health files. It feeds the GitHub bridge deliverable of UP-003, but nothing had to land first for these to take effect."

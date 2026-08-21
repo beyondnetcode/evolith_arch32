@@ -25,7 +25,7 @@ Evolith es un **monorepo de npm workspaces** (`src/sdk/*`, `src/apps/*`, `src/pa
 
 ### A. Prerrequisitos
 
-- **Node.js 20** es lo que ejecuta CI. El CLI declara `engines.node >= 18.0.0`, pero fija Node 20 localmente para coincidir con el pipeline.
+- **Node.js 20** es lo que ejecuta CI, y `.nvmrc` lo fija — `nvm use` (o fnm/asdf/volta, que leen el mismo fichero) te deja en esa versión. El `package.json` de la raíz declara `engines.node >= 20 <21`, así que npm avisa si estás en otra en vez de que lo descubras por un job en rojo. Avisa, no bloquea: `engine-strict` está desactivado, así que otra versión de Node instala igual. El CLI publicado conserva `engines.node >= 18.0.0` — eso es lo que necesitan los *consumidores*, no lo que hace falta para construir este repositorio.
 - **npm** (compatible con workspaces; viene con Node).
 - **Git** con el modelo de ramificación GitFlow (ver [ADR-0050](./reference/core/architecture/adrs/core/0050-gitflow-branching-strategy.es.md)).
 

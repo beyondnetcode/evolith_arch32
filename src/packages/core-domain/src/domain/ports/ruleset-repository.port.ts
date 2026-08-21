@@ -37,7 +37,40 @@ export class RulesetCorpusNotResolvedError extends RulesetsNotFoundError {
   }
 }
 
+/**
+ * What the corpus loader did with a `*.rules.json` that produced no rules.
+ *
+ * #575: the loader globs `*.rules.json` and four shipped files are not rule
+ * SETS. Three declare a different schema on purpose and one is a phase-gate
+ * document; all four contributed nothing, and the only trace was a log line.
+ * A log line is not accounting -- it does not survive `--format json`, it does
+ * not reach an exit code, and it is exactly the silent drop this project exists
+ * to stop, happening inside its own loader.
+ */
+export interface CorpusDocumentOutcome {
+  /** Path relative to the corpus root, so the report is stable across machines. */
+  readonly file: string;
+  /**
+   * `classified` -- declares a known non-ruleset schema and satisfies it, so it
+   * contributes no rules BY DESIGN. `rejected` -- claims to be a ruleset, or
+   * declares nothing, and failed the ruleset schema. The second is a defect;
+   * the first is a fact about the corpus.
+   */
+  readonly outcome: 'classified' | 'rejected';
+  /** Basename of the declared `$schema`, when the document declares one. */
+  readonly declaredSchema?: string;
+  /** The kind, for `classified`. The validation failure, for `rejected`. */
+  readonly detail: string;
+}
+
 export interface IRulesetRepository {
   /** @throws {RulesetsNotFoundError} when no rulesets resolve at `corePath`. */
   loadAllRulesets(corePath: string): Promise<NormalizedRule[]>;
+  /**
+   * Every document the most recent {@link loadAllRulesets} read and did not turn
+   * into rules. Optional so an implementation that cannot know stays valid --
+   * but an implementation that DOES drop documents and does not report them
+   * reintroduces #575.
+   */
+  describeLastLoad?(): readonly CorpusDocumentOutcome[];
 }

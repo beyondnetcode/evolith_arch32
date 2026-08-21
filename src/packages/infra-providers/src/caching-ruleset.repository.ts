@@ -1,6 +1,6 @@
 import { ILogger } from "@beyondnet/evolith-core-domain/domain/interfaces";
 import { NormalizedRule } from "@beyondnet/evolith-core-domain/domain/models/normalized-rule";
-import { IRulesetRepository } from "@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port";
+import { CorpusDocumentOutcome, IRulesetRepository } from "@beyondnet/evolith-core-domain/domain/ports/ruleset-repository.port";
 
 /**
  * GT-648 — the ruleset corpus is deployment state, not request state.
@@ -75,6 +75,16 @@ export class CachingRulesetRepository implements IRulesetRepository {
 
     const rules = await load;
     return [...rules];
+  }
+
+  /**
+   * #575: the diagnostics belong to whichever load actually read disk, so this
+   * delegates rather than caching. A caller asking what the last load dropped
+   * must get the inner repository's answer, not a memoised one from a different
+   * corpus path.
+   */
+  describeLastLoad(): readonly CorpusDocumentOutcome[] {
+    return this.inner.describeLastLoad?.() ?? [];
   }
 
   /**

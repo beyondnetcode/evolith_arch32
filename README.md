@@ -5,28 +5,22 @@
 > **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
 [![npm](https://img.shields.io/npm/v/@beyondnet/evolith-cli?label=%40beyondnet%2Fevolith-cli)](https://www.npmjs.com/package/@beyondnet/evolith-cli)
+[![node](https://img.shields.io/node/v/@beyondnet/evolith-cli)](https://www.npmjs.com/package/@beyondnet/evolith-cli)
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/ci-cd.yml?branch=main&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions/workflows/ci-cd.yml)
 [![License](https://img.shields.io/badge/license-MIT-informational)](./LICENSE)
 
-**Executable architecture governance. A rule that was not evaluated is not a rule that passed.**
+**Your architecture rules, running on every PR. A rule that was not evaluated is not a rule that passed.**
 
 </div>
 
+Evolith runs architecture rules — layering, dependencies, security, CI/CD, ADRs — against your repository from CI, and fails the PR. Unlike the rest, it tells you how many rules it **could not evaluate**, and if any of them was blocking, it fails anyway.
+
 ```bash
-npm install -g @beyondnet/evolith-cli
-evolith init --name my-sat --yes
-evolith validate --engine opa
+npx -y @beyondnet/evolith-cli init --name my-sat --yes   # writes evolith.yaml right here
+npx -y @beyondnet/evolith-cli validate --engine opa      # expect findings: this is a baseline
 ```
 
-[Quick Start](#quick-start) · [Interactive architecture atlas](https://beyondnetcode.github.io/evolith_arch32/) · [How we audit our own claims](./reference/core/control-center/adoption/pending-2026-08-16.md)
-
----
-
-## What just happened
-
-That third command evaluated this repository's own rule corpus against a freshly initialized
-satellite, using the compiled Rego bundle. This is what `@beyondnet/evolith-cli@1.3.0` printed
-in a container with nothing but Node installed:
+This is what it prints, with nothing rounded up:
 
 ```
 **Status:** failed
@@ -34,49 +28,64 @@ in a container with nothing but Node installed:
 **Rules Skipped:** 26
 **Rules Errored:** 0
 **Rules Total:** 159
-
-### Issues
-| Rule Id | Severity | Category | Title | Blocking |
-| --- | --- | --- | --- | --- |
-| ACL-01 | MUST | anti-corruption | Schema Validation Before Ingestion | YES |
 ...
 | SEC-INJ-01 | MUST | security | Blocking rule did not run: No shell exec with user input | YES |
-| SEC-INJ-02 | MUST | security | Blocking rule did not run: Parameter allowlists for scaffold tools | YES |
-| SEC-PATH-01 | MUST | security | Blocking rule did not run: Path input sanitization | YES |
 ...
-└  ❌ Validation failed. See the errors above.
-
+| GOV-RULE-NOT-APPLICABLE | COULD | governance | 253 corpus rules do not apply to this repository | no |
+**Selection:** {"source":"core-default","rulesSelected":412,"corpusTotal":412}
 $ echo $?
 2
 ```
 
-Every line above is the tool's own, character for character. The `...` marks issue rows cut for
-length and nothing else -- there are 72 in all, 37 of them blocking. The run also opens with
-three `[Nest] WARN Skipping non-standard ruleset` lines: three ruleset files ship in the tarball
-that the shipped validator's own schema rejects. That is a real defect, and a README arguing
-that unevaluated is not the same as passing does not get to quietly drop it from the capture.
+72 issue rows, 37 blocking, **nine of them rules the engine could not decide** — reported as failures because an undecided blocking rule is not a rule that passed. Measured on 2026-08-21 with `@beyondnet/evolith-cli@1.3.2`; it takes ~2 s. [Full capture, all 72 rows and both denominators](./docs/evidence/first-run-capture.md).
 
-The Core carries **412 rules**; the 159 above is what this one satellite's run selected from
-them. Two different denominators, and a report that blurred them would be the exact defect
-this project exists to stop.
+[Quick Start](#quick-start) · [PR gate](#use-it-as-a-pr-gate) · [What it governs](#what-it-governs) · [Documentation](#documentation) · [Contribute](#contributing) · [Interactive atlas](https://beyondnetcode.github.io/evolith_arch32/)
 
-**Nine of those 37 blocking issues are rules that were skipped.** Not rules that failed --
-rules the engine could not decide, reported as failures because an undecided blocking rule
-is not a passing one. Among them are `SEC-INJ-01`, `SEC-INJ-02` and `SEC-PATH-01`.
+---
 
-This is the whole idea. Every architecture and policy linter silently passes the rules it
-never evaluated, so *coverage* and *compliance* produce the same green. Evolith publishes the
-denominator and refuses to round it up:
+## The idea, in one line
 
-- The compiled bundle declares which rule ids it can decide, and `skipped` is a first-class
-  outcome rather than the absence of a violation.
-- A blocking rule that ends `skipped` fails the run. That invariant has its own test, written
-  against the code that did not have it: [`blocking-skipped-invariant.spec.ts`](./src/packages/core-domain/src/application/validators/blocking-skipped-invariant.spec.ts).
-- Two engines -- a native TypeScript evaluator and Rego/WASM -- must agree on fixtures, or CI
-  fails.
+Every architecture linter paints the rules it never ran green: *coverage* and *compliance* end up the same colour. Evolith publishes the denominator and refuses to round it up. `skipped` is a first-class outcome; a blocking rule that ends `skipped` **fails the run** ([invariant with its own test](./src/packages/core-domain/src/application/validators/blocking-skipped-invariant.spec.ts)); and exit codes are a taxonomy: `0` pass · `1` the tool failed · `2` the gate blocked · `3` you invoked it wrong.
 
-Exit codes are a taxonomy, not a boolean: `0` pass, `1` the tool failed, `2` the gate blocked,
-`3` you invoked it wrong. A run that could not produce a verdict never reports one.
+And we apply it to ourselves. Three things this front page could keep quiet and does not:
+
+- **The two engines do not cover the same ground today.** `--engine opa` evaluates 133 of 159 rules; the default native evaluator evaluates 41 and skips 118, on the same repository. They are held to agreement over fixtures in CI, not over real coverage — which is why this page uses `--engine opa` everywhere.
+- **Two infrastructure rules are in no denominator.** The loader rejects three ruleset files from its own corpus, and as of 1.3.2 it no longer even says so on stderr ([#575](https://github.com/beyondnetcode/evolith_arch32/issues/575)).
+- **What installs is not everything this tree holds.** The tree carries 182 ruleset files; the published CLI loads 177 packs with 412 rules — the loader rejection above is one of the causes. `evolith rulesets` prints what *your* installation loads, pack by pack.
+
+Full audit of our own claims: [pending items, 2026-08-16](./reference/core/control-center/adoption/pending-2026-08-16.md).
+
+---
+
+## Quick Start
+
+**Requirements:** Node ≥ 18 for the CLI, ≥ 20 for the MCP server · no database, no server, no Docker. Installation is verified in CI on Linux; macOS and Windows are not covered by that gate.
+
+```bash
+npm install -g @beyondnet/evolith-cli   # or use `npx -y @beyondnet/evolith-cli` and install nothing
+
+evolith init --name my-sat --yes        # configures the CURRENT directory; --name only names the project
+evolith validate --engine opa           # same directory, no `cd` needed
+
+evolith rulesets                        # what YOUR installation loads, pack by pack
+evolith validate --engine opa --select rulesets/acl/anti-corruption-layer.rules.json
+evolith validate --engine opa --phase qa
+evolith adr create                      # manage Architecture Decision Records
+```
+
+`--engine opa` evaluates with the compiled Rego bundle; without the flag it runs the native evaluator, which covers less today. To create a new directory instead, pass it positionally: `evolith init my-sat --yes`. With `--format json` it never prompts and prints exactly one JSON object on stdout; `--dry-run` writes nothing.
+
+> **Expect findings on the first run.** A freshly configured repository is a baseline, not a pass: many rules assume a fuller layout. To start from what you have actually adopted, use `--select` with the refs `evolith rulesets` prints; bringing the default to zero is tracked as GT-571 on the [gap board](./reference/core/control-center/gaps/gap-tracking.md).
+
+Configuration lives in **`evolith.yaml`**, which `init` writes for you:
+
+```yaml
+coreRef: { version: "1.0.0", path: "../evolith" }
+product: { name: my-sat, type: enterprise-application, phase: phase-0 }
+tools:   { runtime: nodejs, architecture: clean, ci: github-actions }
+```
+
+**What it inspects:** repository structure, CI workflows, manifests and governance artifacts — not your code's AST. That makes it largely language-agnostic; the subset that looks at dependencies and linters assumes a Node/TypeScript repository. Reference: [Evolith CLI hub](./product/products/smart-cli/README.md) · [Quickstart guide](./docs/guides/evolith-quickstart.md)
 
 ---
 
@@ -88,9 +97,7 @@ Exit codes are a taxonomy, not a boolean: `0` pass, `1` the tool failed, `2` the
     fail-on-violation: true
 ```
 
-Outputs `compliance-status`, `violations-count`, `issues-count`, `exit-code` and
-`report-path`. `error` and `invalid-input` mean the repository was **not evaluated** -- they
-are not weaker forms of non-compliant, and the job summary says so in words.
+Outputs `compliance-status`, `violations-count`, `issues-count`, `exit-code` and `report-path`. `error` and `invalid-input` mean the repository was **not evaluated** — they are not weaker forms of non-compliant, and the job summary says so in words.
 
 As live context for an AI agent, over stdio:
 
@@ -100,151 +107,25 @@ As live context for an AI agent, over stdio:
 
 ---
 
-## Why not ArchUnit, Conftest or dependency-cruiser?
+## Why not ArchUnit, Conftest or dependency-cruiser
 
-Use them. They are good, and Evolith is not a replacement for any of them.
+Use them. They are good, and Evolith replaces none of them.
 
 | Tool | What it does well | Where Evolith differs |
 |---|---|---|
-| **ArchUnit / ts-arch** | Layer and dependency rules as unit tests, in your language | Rules live outside the codebase as data, so the same corpus governs many repositories and an agent can read it |
-| **Conftest / OPA** | Rego against any structured input | Evolith *is* OPA underneath. What it adds is the corpus, the ADR-to-rule derivation, and the coverage accounting |
-| **dependency-cruiser** | Dependency graph rules, fast and focused | Broader corpus (SDLC gates, topologies, security standards), and an evidence trail per verdict |
+| **ArchUnit / ts-arch** | Layer and dependency rules as unit tests, in your language | Rules live outside the codebase as data: one library governs many repositories and an agent can read it |
+| **Conftest / OPA** | Rego against any structured input | Evolith *is* OPA underneath. It adds the rule library, the ADR-to-rule derivation and the coverage accounting |
 | **Backstage Scorecards** | Catalog-wide health checks with a UI | Runs offline in CI with no catalog to maintain, and blocks a PR rather than colouring a dashboard |
 
-**Where it is genuinely different:** it reports what it could not evaluate. None of the tools
-above distinguishes "this rule passed" from "this rule never ran" in their exit status.
+Against **dependency-cruiser**, the scope is broader (phase gates, architecture styles, security standards) and it keeps why each rule failed.
 
-**What is not built yet, so you do not have to discover it:** the "LLM proposes, a
-deterministic verifier disposes" half is a documented direction, not shipped behaviour. No
-command in the installed CLI reaches an LLM. See [Network Egress and Data Handling](#network-egress-and-data-handling).
+**What is NOT built yet, so you do not have to find out:** the "LLM proposes, a deterministic verifier disposes" half is a documented direction, not shipped behaviour. No command in the installed CLI reaches an LLM.
 
 ---
 
-## Menu
+## What it governs
 
-- [What is Evolith?](#what-is-evolith)
-- [Why Evolith?](#why-evolith)
-- [Core Concepts](#core-concepts)
-- [Product Ecosystem](#product-ecosystem)
-- [How It Works](#how-it-works)
-- [Architecture Overview](#architecture-overview)
-- [Main Components](#main-components)
-- [Quick Start](#quick-start)
-- [Questions & Answers](#questions--answers)
-- [Network Egress and Data Handling](#network-egress-and-data-handling)
-- [Documentation](#documentation)
-- [Use Cases](#use-cases)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
-## What is Evolith?
-
-Evolith is an **executable architectural governance framework**. It encodes how software is built — across multiple architecture styles — as verifiable rules, ADRs, and phase gates that teams, platforms, and AI agents can actually run.
-
-Governance in Evolith is not a document. It is an operational capability exposed through a CLI, an MCP server, and a REST API.
-
----
-
-## Why Evolith?
-
-Most projects accumulate ADRs and architecture docs that nobody reads and nobody enforces. Systems drift. Decisions are forgotten. Consistency breaks silently.
-
-Evolith makes governance **executable**:
-
-- Rules are validated automatically, not reviewed manually.
-- Phase gates block progression until quality criteria are met.
-- AI agents and CI pipelines consume the same governance artifacts as humans.
-- Architecture decisions are traceable from ADR to production code.
-
----
-
-## Core Concepts
-
-| Concept | What it is |
-|---|---|
-| **SDLC Phases** | The five stages from idea to production: Discovery → Design → Construction → QA → Delivery |
-| **Gates** | Automated checkpoints that close each phase before the next begins |
-| **Topologies** | Architecture styles (e.g., modular monolith, microservices, event-driven, agentic-AI) |
-| **ADRs** | Architecture Decision Records — the authoritative log of architectural choices |
-| **Blueprints** | Canonical design templates for each topology |
-| **Rulesets** | Machine-readable rules enforced by the CLI and Core API |
-| **OPA Policies** | Open Policy Agent policies for fine-grained governance checks |
-| **Artifacts** | Structured outputs at each phase: specs, schemas, manifests, contracts |
-| **AI Agents** | Specialized agents (Winston and others) that participate in the SDLC as first-class contributors |
-
-Full details: [Core Concepts](./reference/core/README.md) · [Topologies](./reference/core/architecture/topologies/README.md)
-
----
-
-## Product Ecosystem
-
-Evolith ships as a suite of coordinated products built on a common foundation.
-
-| Product | Role |
-|---|---|
-| **[Evolith Core](reference/README.md)** | Provider-neutral constitution: principles, ADRs, rulesets, topologies, and contracts |
-| **[Evolith CLI](product/products/smart-cli/README.md)** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
-| **[Core API](product/products/core-api/README.md)** | REST service for remote governance queries and evaluation |
-| **[MCP Services](product/products/mcp-services/README.md)** | Governance as live context for LLMs and AI agents (52 tools, 12 resources, 8 prompts) |
-| **[Agent Runtime](reference/core/architecture/foundations/README.md)** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
-| **[Evolith Tracker](product/products/evolith-tracker/README.md)** | Business lifecycle governance — phases, owners, funding, and ROI |
-| **[Commercial Vision](product/suite/vision/evolith-commercial-brochure.md)** | Product strategy and enterprise monetization narrative (Hub & Spoke deployment) |
-| **[Rulesets](src/rulesets/README.md)** | Machine-readable enforcement rules per topology |
-| **[OPA Policies](src/rulesets/opa/README.md)** | Fine-grained policy checks integrated into the pipeline |
-| **[Schemas & Manifests](src/rulesets/schema/README.md)** | Structured contracts for artifacts and topology definitions |
-
----
-
-## How It Works
-
-```
-Developer / AI Agent / External Trigger
-        │
-        ▼
-  Evolith CLI  ──────────────────────────────► MCP Server
-  (local enforcement)                        (AI agent context)
-        │
-        ▼
-   Core API  ────────────────────────────►  Evolith Tracker
-  (remote governance)                        (business lifecycle)
-        │
-        ▼
-  Agent Runtime ───────────────────────────► Hermes (adapter)
-  (agentic mediation, Ports & Adapters)       (.harness · OPA · Tracker · Memory)
-        │
-        ▼
-  Rulesets · OPA Policies · ADRs · Blueprints
-  (the shared governance artifacts)
-```
-
-1. **Evolith CLI** validates code locally against rulesets and runs phase gates.
-2. **Core API** exposes the same governance remotely for CI pipelines and orchestrators.
-3. **MCP Server** feeds governance context to LLMs and AI agents in real time.
-4. **Agent Runtime** orchestrates Core capabilities through a Ports & Adapters model — Hermes is one replaceable adapter.
-5. **Evolith Tracker** coordinates the business side — who owns what, what's funded, what ships when.
-
-All products share the same artifacts defined in **Evolith Core**.
-
----
-
-<div align="center">
-
-<a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Open the interactive diagram - pan and zoom">
-  <img src="./reference/core/sdlc/assets/master-view.svg"
-       alt="Evolith E2E Product Vision - Governed Composition, stateless evaluation Core, federated five-phase SDLC"
-       width="880" />
-</a>
-
-<sub>Evolith E2E Product Vision - <b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Open interactive viewer</a></b> - drag to pan, scroll to zoom, fullscreen</sub>
-
-</div>
-
-## Architecture Overview
-
-Evolith governs **8 topologies** across four axes:
+Eight **architecture styles** (we call them *topologies*) across five axes. The same rules follow you when the monolith splits into services.
 
 | Axis | Topologies |
 |---|---|
@@ -254,242 +135,67 @@ Evolith governs **8 topologies** across four axes:
 | Data | `data-mesh` |
 | AI | `agentic-ai` |
 
-Each topology has its own ADRs, OPA policies, AI rulesets, and UMS contracts. Systems migrate between topologies as the business scales — this is **Progressive Architecture**.
+On top runs a **free, MIT** library: in this tree, 142 ADRs, 182 ruleset files and 50 phase schemas, plus the five SDLC phases (Discovery → Design → Construction → QA → Delivery) and the gates that block the move from one to the next. Those three counts are measured and verified by CI on every PR. What your installation actually evaluates is printed by `evolith rulesets`: today, 177 packs with 412 rules, 188 of them able to fail a run. The only paid product will be **Evolith Tracker**, not yet launched.
 
-Full reference: [Architecture hub](./reference/core/architecture/README.md) · [C4 Master Architecture](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.md)
-
----
-
-## Main Components
-
-```
-evolith/
-├── src/packages/agent-runtime/  # @beyondnet/evolith-agent-runtime — Ports & Adapters agentic layer
-├── src/apps/agent-runtime-api/  # NestJS HTTP service wrapping the runtime (POST /v1/agent/handle)
-├── reference/core/          # Engineering constitution and principles
-├── reference/core/architecture/  # Topologies, blueprints, ADRs, and agent-runtime docs
-├── reference/core/sdlc/    # SDLC phases, gates, standards, and glossary
-├── product/products/      # Evolith CLI, Core API, MCP, Tracker, UMS
-└── product/operations/    # SRE, infra, quality gates
-```
-
-Entry point for each area: [Global Master Index](./reference/core/control-center/taxonomy/MASTER_INDEX.md)
+<div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Open the interactive diagram"><img src="./reference/core/sdlc/assets/master-view.svg" alt="How the CLI, the Core and the five SDLC phases fit together" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Open the interactive viewer</a></b> — drag to pan, scroll to zoom</sub></div>
 
 ---
 
-## Quick Start
+## Product ecosystem
 
-The npm package is `@beyondnet/evolith-cli`; it installs two equivalent bins, **`evolith`** (the documented name) and `evolith-cli` (compatibility). Both self-identify as `evolith` in `--help`.
-
-```bash
-# 1. Install the CLI
-npm install -g @beyondnet/evolith-cli
-
-# 2. Initialize the CURRENT directory as an Evolith satellite.
-#    --name sets the project name written into evolith.yaml.
-#    --yes runs without prompts (also implied by a non-TTY stdin or --format json).
-evolith init --name my-sat --yes
-
-# 3. Validate the satellite you just created — same directory, no `cd` needed
-evolith validate
-
-# Validate a specific SDLC phase
-evolith validate --phase qa
-
-# Manage Architecture Decision Records
-evolith adr create
-evolith adr list
-
-# Serve governance as live context for AI agents — the MCP server ships as a
-# separate package (@beyondnet/evolith-mcp) with its own bin:
-evolith-mcp serve
-```
-
-To scaffold into a **new** directory instead of the current one, pass it as the positional argument (or via `--dir`); `--name` only ever names the project, it never creates a directory:
-
-```bash
-evolith init my-sat --yes && cd my-sat && evolith validate
-```
-
-Machine-readable runs (`--format json`) never prompt and print exactly one envelope on stdout; a failed `init` exits non-zero. `evolith init --dry-run` writes nothing.
-
-> **Expect findings on the first `validate`.** A freshly initialized satellite is a baseline, not a pass: some rules still assume a fuller repository layout and report blocking findings on a phase-0 project. Reducing that to zero is tracked on the [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md) (GT-571).
-
-Evolith CLI is configured via **`evolith.yaml`**; run `evolith --help` for the current command list. Full reference: [Evolith CLI hub](./product/products/smart-cli/README.md)
-
----
-
-## Questions & Answers
-
-<details>
-<summary><b>What is Evolith in one sentence?</b></summary>
-<br/>
-Evolith is an <b>executable architectural governance framework</b> — it makes sure architecture decisions actually get followed, automatically, whether the code is written by a human or an AI agent.
-</details>
-
-<details>
-<summary><b>What would I use it for?</b></summary>
-<br/>
-<ol>
-<li><b>Instant feedback</b> on architecture decisions — run <code>evolith validate</code> and know in seconds if your code follows your team's rules.</li>
-<li><b>No more surprise refactors</b> — architecture drift is caught at the gate, not six months later.</li>
-<li><b>AI-proof governance</b> — when an AI agent writes code, Evolith ensures it follows the same rules a senior architect would enforce.</li>
-</ol>
-</details>
-
-<details>
-<summary><b>How much does it cost?</b></summary>
-<br/>
-The core platform is <b>completely free</b> (MIT license): CLI, MCP server, Core API, Agent Runtime, 142 ADRs, 181 ruleset files carrying 412 rules, 50 phase-gate schemas. The only paid product is <b>Evolith Tracker</b> (enterprise multi-tenant governance — not yet released).
-</details>
-
-<details>
-<summary><b>How do I get started?</b></summary>
-<br/>
-
-```bash
-npm install -g @beyondnet/evolith-cli
-evolith init --name my-sat --yes   # initializes the CURRENT directory
-evolith validate                   # same directory, no `cd`
-```
-
-No database, no server, no Docker required.
-</details>
-
-<details>
-<summary><b>What topologies does it cover?</b></summary>
-<br/>
-Evolith governs <b>8 topologies</b> across 5 dimensions: Modular Monolith, Distributed Modules, Microservices (progressive-axis), Serverless, Edge Computing (execution), Event-Driven (integration), Data Mesh (data), and Agentic AI. All are composable.
-</details>
-
-<details>
-<summary><b>How does it work with AI tools like Cursor or Claude?</b></summary>
-<br/>
-Evolith ships an MCP server inside the CLI. Add it to your AI tool's config and your agent can query architecture rules, validate code, and evaluate gate readiness — all without bypassing governance.
-</details>
-
-**[Full Q&A: 64 questions across 12 categories →](./reference/core/sdlc/q-and-a.md)**
-
----
-
-## Network Egress and Data Handling
-
-Evolith is local-first: the CLI, the rulesets, the OPA policies and the stateless evaluation Core all run on your machine, and your source files are never uploaded — evaluation happens where the code is. There is exactly **one** outbound integration in the corpus, it is **off by default**, and this is its complete disclosure.
-
-| Item | Disclosure |
+| Product | Role |
 |---|---|
-| **Component** | `GeminiProvider`, a public export of `@beyondnet/evolith-agent-runtime` |
-| **Endpoint** | one HTTPS `POST` to `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`, default model `gemini-2.5-flash`. No other host is contacted by the package. |
-| **Sub-processor** | **Google LLC (Gemini API)**. Prompt content sent through this path is processed by Google under its terms for that API. No other sub-processor is involved. |
-| **Default state** | **DISABLED.** With no configuration the provider opens no socket: it records the refused attempt and throws `LlmEgressDisabledError`. Out of the box the package makes zero network calls. |
-| **Opt-in** | `EVOLITH_LLM_EGRESS=true` (or `1`), or an explicit `new GeminiProvider({ enabled: true })`. There is no implicit way to arm it. |
-| **Credential** | `EVOLITH_LLM_API_KEY`, falling back to `GEMINI_API_KEY`. It travels in the `x-goog-api-key` request header and never in the URL. Without a key the call is refused before a socket opens. |
-| **Limits** | 30,000 ms `AbortController` timeout; 60,000 bytes / ~15,000 estimated tokens. Over budget the request **fails closed** — nothing is truncated and sent anyway. |
+| **Evolith Core** | The rules themselves: files you can read, edit and version |
+| **Evolith CLI** | Local application — validates the repo, runs phase gates, manages ADRs |
+| **Core API** | REST service to query and evaluate governance remotely |
+| **MCP Services** | Governance as live context for agents (52 tools, 12 resources, 8 prompts) |
+| **Agent Runtime** | Drives the Core from an agent, through Ports and Adapters. Experimental |
+| **Evolith Tracker** | Commercial lifecycle-governance product. Not yet launched |
 
-**What leaves the machine**
+**Who it is for:**
 
-- Through the governed `IAssistantTransport` seam: the request intent, the optional tool id, the request parameters, the `dryRun` flag, and the governed skill catalog (id and description only).
-- Through the deprecated `ILLMProvider` seam (`generateStructuredJson`): the caller's system prompt and user prompt, verbatim.
-- Both are secret-redacted before serialization, over 8 pattern classes: PEM private keys, JWTs, AWS access key ids, Google API keys, GitHub PATs, Slack tokens, `Bearer` tokens, and generic `KEY`/`SECRET`/`TOKEN`/`PASSWORD` assignments.
+- Engineering teams that want their ADRs enforced in CI, not reviewed by hand.
+- Platform teams blocking non-conformant artifacts before production.
+- AI-assisted development that needs the agent to validate its output against the same rules.
 
-**What does not leave the machine**
+**Adoption, unvarnished:** 1,109 npm downloads last month (2026-07-21 → 2026-08-19), no confirmed external adoption. The repository governs itself, and that is all the evidence there is.
 
-Tenant id, product id, initiative id, workspace reference and requester identity are excluded from the transport payload by construction (data minimization), as are repository contents.
+---
 
-**Observability**
+## Network egress
 
-Every attempt — including refusals — emits one content-free JSON line prefixed `[evolith:llm-egress]` with provider, endpoint, purpose, outcome, byte and token counts, redaction count, HTTP status, duration and correlation id. Prompt and response content are never logged.
+Local-first: the CLI, the rules, the OPA policies and the evaluation Core run on your machine, and your code is never uploaded. There is exactly **one** outbound integration (`GeminiProvider`, Google Gemini API), it is **off by default**, and no command in the published CLI reaches it today. The tarballs on the registry predate that hardening: **treat the published `GeminiProvider` as ungoverned and do not wire it up.**
 
-**Human-in-the-loop**
-
-The intended wiring injects `GeminiProvider` as the `IAssistantTransport` of `SupervisedAssistantClient`, which is itself off by default and requires an explicit human approval before the transport is reached.
-
-**Other outbound traffic**
-
-- **OpenTelemetry export** from the CLI is off unless `OTEL_ENABLED=true`, and then it goes only to the collector you configure.
-- **Core API / MCP HTTP transport** are servers you host; the CLI contacts a remote Core only when you configure one.
-- No telemetry, analytics or licence check is phoned home by any surface.
-
-**Honest current state**
-
-- Redaction is pattern-based, not a DLP control: it materially reduces accidental credential egress, it does not guarantee absence.
-- The header, timeout, budget, redaction and schema-validation controls are covered by unit tests with an injected `fetch`; they have **not** been exercised against the live Google endpoint.
-- The timeout and budget values are inherited from the repository's own CI reviewer and are not tuned for large interactive prompts, which fail closed rather than degrade.
-- No command registered in the shipped CLI reaches this provider today, so a default CLI install performs no LLM egress at all.
-- The npm tarballs currently published predate this hardening; the controls above are on `develop` and reach the registry with the next release, tracked as GT-570 on the [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md).
-
-Report a suspected egress or disclosure defect through the [Security Policy](./SECURITY.md), never in a public issue.
+Full disclosure — sub-processors, credential, limits, redaction, what leaves and what does not, and the known limitations of these controls: [Network Egress and Data Handling](./SECURITY.md#network-egress-and-data-handling). Report an egress defect there, never in a public issue.
 
 ---
 
 ## Documentation
 
-| Area | Link |
+| To… | Go to |
 |---|---|
-| Core constitution | [Evolith Core hub](./reference/core/README.md) |
-| Product corpus | [Product hub](./product/README.md) |
-| Interface how-to (CLI / MCP / REST) | [Interface guides](./reference/core/interfaces/README.md) |
-| Master Architecture | [C4 Master Architecture](./reference/core/architecture/demos/C4-MASTER-ARCHITECTURE.md) |
-| SDLC governance | [SDLC Governance Center](./reference/core/sdlc/README.md) |
-| Topologies | [Topologies hub](./reference/core/architecture/topologies/README.md) |
-| Evolith CLI | [Evolith CLI hub](./product/products/smart-cli/README.md) |
-| Core API | [Core API hub](./product/products/core-api/README.md) |
-| MCP Services | [MCP Services hub](./product/products/mcp-services/README.md) |
-| Agent Runtime | [Agent Runtime hub](./reference/core/architecture/foundations/README.md) |
-| Evolith Tracker | [Tracker hub](./product/products/evolith-tracker/README.md) |
-| Operations & SRE | [Operations hub](./product/operations/README.md) |
-| Onboarding by role | [Getting Started by Role](./reference/core/foundations/inheritance-model/product-quick-start.md) |
-| Ecosystem glossary | [Glossary](./reference/core/sdlc/glossary/glossary-ecosystem.md) |
-| Questions & Answers | [Q&A](./reference/core/sdlc/q-and-a.md) |
-| Gap tracking | [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md) |
-| Opportunities | [Opportunities Board](./reference/core/control-center/opportunities/README.md) |
-| All artifacts | [Global Master Index](./reference/core/control-center/taxonomy/MASTER_INDEX.md) |
-
----
-
-## Use Cases
-
-**For engineering teams**
-Enforce architecture decisions automatically. Run phase gates in CI. Keep ADRs alive and traceable.
-
-**For platform teams**
-Query governance remotely via Core API. Integrate rulesets into deployment pipelines. Block non-compliant artifacts before they reach production.
-
-**For AI-assisted development**
-Feed governance context to LLMs through MCP. Let AI agents validate their own outputs against architecture rulesets before committing.
-
-**For growing products**
-Start with a modular monolith. Migrate to distributed modules or microservices when the business demands it — Evolith tracks the transition and enforces consistency at every step.
-
----
-
-## Roadmap
-
-See the active gap tracking board for current priorities and open items:
-
-- [Gap Tracking Board](./reference/core/control-center/gaps/gap-tracking.md)
-- [Opportunities Board](./reference/core/control-center/opportunities/README.md)
-- [Maturity & Gaps hub](./reference/core/control-center/README.md)
+| Start from your role | [Start by Role](./reference/core/foundations/inheritance-model/product-quick-start.md) |
+| Understand the rules and ADRs | [Evolith Core hub](./reference/core/README.md) |
+| See the executable corpus | [Rulesets](./src/rulesets/README.md) · [OPA policies](./src/rulesets/opa/README.md) · [Schemas](./src/rulesets/schema/README.md) |
+| Choose or migrate a topology | [Topologies hub](./reference/core/architecture/topologies/README.md) |
+| Use the CLI, MCP or REST | [Interfaces hub](./reference/core/interfaces/README.md) |
+| See the project's real state | [Gap board](./reference/core/control-center/gaps/gap-tracking.md) · [Maturity](./reference/core/control-center/README.md) |
+| Answer a specific question | [Q&A — 43 questions in 12 categories](./reference/core/sdlc/q-and-a.md) · [Glossary](./reference/core/sdlc/glossary/glossary-ecosystem.md) |
+| Know what goes where | [Repository Taxonomy](./reference/core/control-center/taxonomy/repository-taxonomy.md) |
+| Walk the whole corpus | [Master Index](./MASTER_INDEX.md) · [Product hub](./product/README.md) · [Operations](./product/operations/README.md) |
 
 ---
 
 ## Contributing
 
-Read these before opening a PR:
+**Start here:** [issues that are good for a first contribution](https://github.com/beyondnetcode/evolith_arch32/issues?q=is%3Aopen+label%3A%22good+first+issue%22) — most touch a single file. Unsure before opening a PR? [Discussions](https://github.com/beyondnetcode/evolith_arch32/discussions).
 
-- [Contributing Guide](./CONTRIBUTING.md)
-- [Security Policy](./SECURITY.md)
-- [AGENTS.md](./AGENTS.md) — conventions for AI agent contributors
-- [Repository Taxonomy](./reference/core/control-center/taxonomy/repository-taxonomy.md) — what goes where
+**Three ways to contribute without writing TypeScript:** correct a count that disagrees between docs and code · translate a hub into Spanish · add a rule to `src/rulesets/`.
+
+Before the PR: [Contribution Guide](./CONTRIBUTING.md) · [Security Policy](./SECURITY.md) · [AGENTS.md](./AGENTS.md) · [CHANGELOG](./CHANGELOG.md)
 
 ---
 
 ## License
 
-Published under the [MIT License](./LICENSE).
-
----
-
-<div align="center">
-  <sub>Evolith — Executable Architectural Governance Framework | Multi-Topology Reference Corpus | Spec-driven AI-DD</sub>
-</div>
+Released under the [MIT License](./LICENSE).

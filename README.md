@@ -49,7 +49,7 @@ Every architecture linter paints the rules it never ran green: *coverage* and *c
 
 And we apply it to ourselves. Three things this front page could keep quiet and does not:
 
-- **The two engines do not cover the same ground today.** `--engine opa` evaluates 133 of 159 rules; the default native evaluator evaluates 41 and skips 118, on the same repository. They are held to agreement over fixtures in CI, not over real coverage — which is why this page uses `--engine opa` everywhere.
+- **The two engines do not cover the same ground today.** `--engine opa` evaluates 133 of 159 rules; the default native evaluator evaluates 41 and skips 118, on the same repository. They are held to agreement over facts in CI, not over coverage — that part is by design; that the default command never says so is not ([#628](https://github.com/beyondnetcode/evolith_arch32/issues/628)). This page uses `--engine opa` everywhere.
 - **Two infrastructure rules are in no denominator.** The loader rejects three ruleset files from its own corpus, and as of 1.3.2 it no longer even says so on stderr ([#575](https://github.com/beyondnetcode/evolith_arch32/issues/575)).
 - **What installs is not everything this tree holds.** The tree carries 182 ruleset files; the published CLI loads 177 packs with 412 rules — the loader rejection above is one of the causes. `evolith rulesets` prints what *your* installation loads, pack by pack.
 

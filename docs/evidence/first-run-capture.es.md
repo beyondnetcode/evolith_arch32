@@ -281,7 +281,7 @@ usa `--engine opa` en todas partes.
 
 ## Qué de todo esto es un defecto
 
-- **La brecha de cobertura entre motores de arriba.** Seguida como P0.
+- **La brecha de cobertura entre motores de arriba** es aceptada por diseño: `68-validate-engine-verdict-parity.mjs` exige que los dos motores coincidan sobre hechos, no sobre cobertura. Lo que *no* se acepta es que el comando por defecto nunca diga qué motor corrió ni qué pudo decidir: [#628](https://github.com/beyondnetcode/evolith_arch32/issues/628).
 - **Dos reglas de infraestructura no están en ningún denominador.** `INFRA-001` e
   `INFRA-OPA-001` no aparecen en ninguna salida. El cargador rechaza tres ficheros
   de reglas que viajan dentro del tarball, y desde 1.3.2 ya no lo dice por stderr

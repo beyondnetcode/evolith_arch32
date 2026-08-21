@@ -281,7 +281,7 @@ the front page uses `--engine opa` everywhere.
 
 ## What in here is a defect
 
-- **The engine coverage gap above.** Tracked as a P0.
+- **The engine coverage gap above** is accepted by design — `68-validate-engine-verdict-parity.mjs` holds the two engines to agreement about facts, not about coverage. What is *not* accepted is that the default command never says which engine ran or what it could decide: [#628](https://github.com/beyondnetcode/evolith_arch32/issues/628).
 - **Two infrastructure rules are in no denominator.** `INFRA-001` and
   `INFRA-OPA-001` appear in no output. The loader rejects three ruleset files that
   ship inside the tarball, and as of 1.3.2 it no longer says so on stderr — the

@@ -1,6 +1,6 @@
 # Evolith Core — How-To de Interfaces
 
-> Navegación bilingüe: [English](./README.md)
+> **Navegación Bilingüe:** [English](./README.md)
 
 Cómo operar Evolith Core desde sus tres superficies — **CLI** (`evolith …`), **MCP**
 (tools `evolith-*`) y **REST** (`/api/v1/…`).

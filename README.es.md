@@ -49,7 +49,7 @@ Todo linter de arquitectura pinta de verde las reglas que nunca llegó a ejecuta
 
 Y lo aplicamos a nosotros. Tres cosas que esta portada podría callar y no calla:
 
-- **Los dos motores no cubren lo mismo hoy.** `--engine opa` evalúa 133 de 159 reglas; el evaluador nativo por defecto evalúa 41 y salta 118, sobre el mismo repo. Coinciden sobre fixtures en CI, no sobre cobertura real — por eso esta portada usa `--engine opa` en todas partes.
+- **Los dos motores no cubren lo mismo hoy.** `--engine opa` evalúa 133 de 159 reglas; el evaluador nativo por defecto evalúa 41 y salta 118, sobre el mismo repo. CI exige que coincidan sobre hechos, no sobre cobertura — eso es por diseño; que el comando por defecto no lo diga, no ([#628](https://github.com/beyondnetcode/evolith_arch32/issues/628)). Esta portada usa `--engine opa` en todas partes.
 - **Dos reglas de infraestructura no están en ningún denominador.** El cargador rechaza tres ficheros del propio corpus, y desde 1.3.2 ya ni lo avisa por stderr ([#575](https://github.com/beyondnetcode/evolith_arch32/issues/575)).
 - **Lo que se instala no es todo lo que hay en este árbol.** El árbol lleva 182 ficheros de reglas; el CLI publicado carga 177 packs con 412 reglas — el rechazo del cargador de arriba es una de las causas. `evolith rulesets` imprime lo que carga *tu* instalación, pack por pack.
 

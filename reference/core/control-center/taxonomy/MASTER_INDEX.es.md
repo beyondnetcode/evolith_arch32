@@ -1,17 +1,20 @@
 # Índice Maestro Global Evolith
 
-Este documento de navegación de nivel repositorio fue movido al hub de navegación:
+Esta página es una redirección. El índice maestro canónico es el de la raíz del repositorio:
 
-**[Abrir el Índice Maestro Global Evolith](../../README.es.md)**
+**[Abrir el Índice Maestro](../../../../MASTER_INDEX.es.md)**
 
 ## Por qué este archivo permanece aquí
 
-Esta página ligera se conserva en la raíz para mantener compatibilidad con enlaces, bookmarks y referencias existentes.
+Se conserva para que sigan resolviendo los enlaces, bookmarks y referencias de documentación
+antigua. No lleva contenido propio: cualquier cosa que se añadiera aquí sería un segundo índice
+compitiendo con el canónico, que es justo el defecto que existe para evitar.
 
 ## Navegación relacionada
 
 | Necesidad | Ir a |
 |---|---|
-| Portal principal | [README.es.md](../../README.es.md) |
-| Índice maestro en inglés | [MASTER_INDEX.md](./MASTER_INDEX.md) |
-| Hub de navegación | [Centro de Control](../../README.es.md) |
+| Índice maestro canónico | [MASTER_INDEX.es.md](../../../../MASTER_INDEX.es.md) |
+| Portal principal | [README.es.md](../../../../README.es.md) |
+| Redirección en inglés | [MASTER_INDEX.md](./MASTER_INDEX.md) |
+| Hub de navegación | [Centro de Control](../README.es.md) |

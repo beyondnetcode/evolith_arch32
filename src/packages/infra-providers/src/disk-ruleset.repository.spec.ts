@@ -165,18 +165,95 @@ describe('DiskRulesetRepository', () => {
     });
   });
 
-  it('skips schema validation for phase-gates rulesets', async () => {
+  // #575: this used to assert that a file NAMED `phase-gates.rules.json` bypassed
+  // schema validation. Dispatch now reads the document's declared `$schema`, like
+  // every other non-corpus kind, so the filename carries no meaning and a rename
+  // cannot silently defeat it. A document that declares the SDLC schema is
+  // classified and contributes no rules; one that merely has the old name is an
+  // ordinary ruleset and is validated as such.
+  it('classifies an SDLC phase-gate document by its declared schema, not its filename', async () => {
     const fs = makeFs({
-      dirs: new Set(['/core/rulesets']),
+      dirs: new Set(['/core/rulesets', '/core/rulesets/schema']),
       files: {
-        '/core/rulesets/phase-gates.rules.json': JSON.stringify({
-          rules: [{ id: 'GATE-1', severity: 'MUST', title: 'Gate' }],
+        '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/core/rulesets/renamed-gates.rules.json': JSON.stringify({
+          $schema: '../schema/ruleset-sdlc.schema.json',
+          title: 'Phase gates',
+          gates: [{ id: 'GATE-1' }],
+        }),
+        '/core/rulesets/good.rules.json': JSON.stringify({
+          rules: [{ id: 'OK-1', severity: 'MUST', title: 'Good' }],
         }),
       },
     });
     const repo = new DiskRulesetRepository(fs, makeLogger());
+
     const rules = await repo.loadAllRulesets('/core');
-    expect(rules.map((r) => r.id)).toEqual(['GATE-1']);
+
+    expect(rules.map((r) => r.id)).toEqual(['OK-1']);
+    expect(repo.describeLastLoad()).toEqual([
+      expect.objectContaining({
+        file: 'renamed-gates.rules.json',
+        outcome: 'classified',
+        declaredSchema: 'ruleset-sdlc.schema.json',
+      }),
+    ]);
+  });
+
+  // #575: the load-bearing half. A document the loader drops must reach the
+  // caller as data, not only as a log line -- a log line does not survive
+  // `--format json` and never reaches an exit code.
+  it('reports a rejected ruleset as data, not only as a warning (#575)', async () => {
+    const fs = makeFs({
+      dirs: new Set(['/core/rulesets', '/core/rulesets/schema']),
+      files: {
+        '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/core/rulesets/broken.rules.json': JSON.stringify({ notRules: [] }),
+        '/core/rulesets/good.rules.json': JSON.stringify({
+          rules: [{ id: 'OK-1', severity: 'MUST', title: 'Good' }],
+        }),
+      },
+    });
+    const repo = new DiskRulesetRepository(fs, makeLogger());
+
+    await repo.loadAllRulesets('/core');
+    const dropped = repo.describeLastLoad();
+
+    expect(dropped).toHaveLength(1);
+    expect(dropped[0].file).toBe('broken.rules.json');
+    expect(dropped[0].outcome).toBe('rejected');
+    expect(dropped[0].detail).toContain('Schema validation failed');
+  });
+
+  // A corpus where nothing was dropped must say so with an empty list rather
+  // than with the previous load's answer.
+  it('describes a clean load as empty, and does not carry outcomes across loads', async () => {
+    const fs = makeFs({
+      dirs: new Set(['/core/rulesets', '/core/rulesets/schema']),
+      files: {
+        '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/core/rulesets/broken.rules.json': JSON.stringify({ notRules: [] }),
+        '/core/rulesets/good.rules.json': JSON.stringify({
+          rules: [{ id: 'OK-1', severity: 'MUST', title: 'Good' }],
+        }),
+      },
+    });
+    const repo = new DiskRulesetRepository(fs, makeLogger());
+    await repo.loadAllRulesets('/core');
+    expect(repo.describeLastLoad()).toHaveLength(1);
+
+    const cleanFs = makeFs({
+      dirs: new Set(['/core/rulesets', '/core/rulesets/schema']),
+      files: {
+        '/core/rulesets/schema/ruleset-standard.schema.json': SCHEMA,
+        '/core/rulesets/good.rules.json': JSON.stringify({
+          rules: [{ id: 'OK-1', severity: 'MUST', title: 'Good' }],
+        }),
+      },
+    });
+    const cleanRepo = new DiskRulesetRepository(cleanFs, makeLogger());
+    await cleanRepo.loadAllRulesets('/core');
+    expect(cleanRepo.describeLastLoad()).toEqual([]);
   });
 
   it('skips (does not abort on) a ruleset that fails schema validation and still loads the valid ones (GT-456)', async () => {

@@ -2,6 +2,7 @@ import * as path from "path";
 import { IFileSystem, ILogger } from "@beyondnet/evolith-core-domain/domain/interfaces";
 import { NormalizedRule } from "@beyondnet/evolith-core-domain/domain/models/normalized-rule";
 import {
+  CorpusDocumentOutcome,
   IRulesetRepository,
   RulesetCorpusNotResolvedError,
   RulesetsNotFoundError,
@@ -42,7 +43,32 @@ const NON_CORPUS_DOCUMENT_KINDS: ReadonlyMap<string, string> = new Map([
     "topology-recommendation.schema.json",
     "the ADR-0104 advisory topology recommendation catalogue, read by TopologyRecommendationService",
   ],
+  // #575: this one used to be recognised by FILENAME -- `filePath.endsWith(
+  // "phase-gates.rules.json")` skipped standard validation and then normalised
+  // to zero rules, so the document was neither validated nor reported. It
+  // declares its own schema like the others; dispatching on that declaration
+  // puts it in the same accounting as its neighbours and removes a path literal
+  // that a rename would have silently defeated.
+  [
+    "ruleset-sdlc.schema.json",
+    "an SDLC phase-gate document, evaluated by PhaseGateValidator rather than by the rule engine",
+  ],
 ]);
+
+/**
+ * Corpus-root-relative path, so a reported file reads the same on every machine
+ * and in every container. Falls back to the basename if the path is not under
+ * the root, which should not happen but must not produce an absolute path in a
+ * published report.
+ */
+function relativeToCorpus(filePath: string, rulesetsDir: string): string {
+  const prefix = rulesetsDir.endsWith(path.sep)
+    ? rulesetsDir
+    : rulesetsDir + path.sep;
+  return filePath.startsWith(prefix)
+    ? filePath.slice(prefix.length).split(path.sep).join("/")
+    : (filePath.split(path.sep).pop() ?? filePath);
+}
 
 /** Basename of a declared `$schema`, or `undefined` when none is declared. */
 function declaredSchemaName(parsed: Record<string, unknown>): string | undefined {
@@ -115,6 +141,17 @@ export class DiskRulesetRepository implements IRulesetRepository {
     return rulesetsRoot;
   }
 
+  /**
+   * #575: what the last load did with every document that produced no rules.
+   * Replaced (not appended to) on each load, so it always describes the corpus
+   * the caller just read rather than accumulating across calls.
+   */
+  private lastLoad: CorpusDocumentOutcome[] = [];
+
+  describeLastLoad(): readonly CorpusDocumentOutcome[] {
+    return this.lastLoad;
+  }
+
   async loadAllRulesets(corePath: string): Promise<NormalizedRule[]> {
     // GT-474: a missing rulesets root is a HARD error. Returning [] here made
     // `validate` check zero rules and still report a (non-blocking) `warning` —
@@ -124,6 +161,7 @@ export class DiskRulesetRepository implements IRulesetRepository {
 
     const files = await this.findRulesetFiles(rulesetsDir);
     const rules: NormalizedRule[] = [];
+    const outcomes: CorpusDocumentOutcome[] = [];
 
     for (const filePath of files) {
       const content = await this.fs.readFile(filePath);
@@ -148,28 +186,31 @@ export class DiskRulesetRepository implements IRulesetRepository {
         declaredSchemaName(parsed) ?? "",
       );
       if (kind) {
+        outcomes.push({
+          file: relativeToCorpus(filePath, rulesetsDir),
+          outcome: "classified",
+          declaredSchema: declaredSchemaName(parsed),
+          detail: kind,
+        });
         await this.checkNonCorpusDocument(parsed, filePath, rulesetsDir, kind);
         continue;
       }
 
       try {
-        // Exclude SDLC gate rulesets from standard validation here since PhaseGateValidator handles them
-        if (!filePath.endsWith("phase-gates.rules.json")) {
-          if (!this.validateSchema) {
-            const schemaPath = path.join(
-              rulesetsDir,
-              "schema",
-              "ruleset-standard.schema.json",
-            );
-            const schemaContent = await this.fs.readFile(schemaPath);
-            this.validateSchema = this.ajv.compile(JSON.parse(schemaContent));
-          }
-          const valid = this.validateSchema(parsed);
-          if (!valid) {
-            throw new Error(
-              `Schema validation failed: ${this.ajv.errorsText(this.validateSchema.errors)}`,
-            );
-          }
+        if (!this.validateSchema) {
+          const schemaPath = path.join(
+            rulesetsDir,
+            "schema",
+            "ruleset-standard.schema.json",
+          );
+          const schemaContent = await this.fs.readFile(schemaPath);
+          this.validateSchema = this.ajv.compile(JSON.parse(schemaContent));
+        }
+        const valid = this.validateSchema(parsed);
+        if (!valid) {
+          throw new Error(
+            `Schema validation failed: ${this.ajv.errorsText(this.validateSchema.errors)}`,
+          );
         }
 
         const relative = filePath.replace(corePath + path.sep, "");
@@ -182,9 +223,18 @@ export class DiskRulesetRepository implements IRulesetRepository {
         // `validate` silently check nothing. Skip it with a warning and keep
         // evaluating the remaining rulesets. (Malformed JSON is a hard error,
         // handled above.)
+        // #575: the warning stays, but it is no longer the ONLY trace. A
+        // rejected document now reaches the report, where a reader looking at
+        // `--format json` or an exit code can see it.
         this.logger.warn(
           `Skipping non-standard ruleset ${filePath}: ${message}`,
         );
+        outcomes.push({
+          file: relativeToCorpus(filePath, rulesetsDir),
+          outcome: "rejected",
+          declaredSchema: declaredSchemaName(parsed),
+          detail: message,
+        });
         continue;
       }
     }
@@ -199,6 +249,7 @@ export class DiskRulesetRepository implements IRulesetRepository {
       );
     }
 
+    this.lastLoad = outcomes;
     return rules;
   }
 

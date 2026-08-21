@@ -7,36 +7,52 @@ Este documento establece la taxonomia oficial y los limites de autoridad de este
 ## 1. Estructura Estandar de Directorios
 
 ```text
-/ (raiz del repositorio)
-  README.md                     # Portal publico y navegacion inicial
-  MASTER_INDEX.md               # Ruteo exhaustivo por rol e intencion
-  .bmad-core/                   # Implementacion opcional del metodo spec-driven AI-DD
-  .claude/                      # Configuracion de Claude Code (requiere raiz)
-  .github/                      # Workflows CI y plantillas de colaboracion
-  .harness/                     # Reglas de validacion documental y de agentes
-  .husky/                       # Git hooks (requiere raiz)
-  .mimocode/                    # Configuracion de MiMoCode (requiere raiz)
-  .obsidian/                    # Lente opcional de autoria/navegacion Obsidian
-  .vscode/                      # Configuracion de VS Code (requiere raiz)
-  sdk/                          # Tooling de acceso ejecutable, CLI y MCP
-  rulesets/                     # Reglas arquitectonicas legibles por maquina
-    topologies/                 # Rulesets ejecutables especificos por topologia
-  reference/                    # Corpus de referencia arquitectonica
-    getting-started/            # Rutas cortas de lectura
-    architecture/               # Autoridad arquitectonica y guia de implementacion
-      README.es.md              # Hub de arquitectura y orden de lectura
-      blueprints/            # Baselines, topologia y perfiles de stack
-      adrs/                  # Registros de decision y matriz de decisiones
-      canonical-patterns/    # Patrones por runtime mapeados a ADRs
-      topologies/            # Corpus multi-topologia legible por humanos
-    governance/                 # Politicas, SDLC, terminologia y onboarding
-    knowledge/                  # Evidencia aplicada, investigacion y aprendizaje
-      demo/                     # Limite de referencia UMS, registro de migracion y ejemplos
-    operations/                 # Guia operativa y activos de observabilidad
-    infrastructure/             # Activos de referencia de plataforma e infraestructura
-  apps/                         # Workspaces de aplicaciones (core-api, agent-sandbox)
-  packages/                     # Workspaces de paquetes compartidos (core-domain, mcp-server)
-  tests/                        # Tests de contrato e integracion
+/ (raíz del repositorio)
+  README.md                     # Portal público y navegación inicial
+  MASTER_INDEX.md               # Enrutamiento exhaustivo por rol e intención
+  action.yml                    # La GitHub Action publicada (puerta de PR)
+  evolith.yaml                  # La configuración de satélite de este mismo repositorio
+  .bmad-core/                   # Implementación opcional del método spec-driven AI-DD
+  .claude-plugin/               # Manifiesto del plugin de Claude Code
+  .github/                      # Workflows de CI y plantillas de colaboración
+  .harness/                     # Reglas de validación de documentos y agentes, y los guards de CI
+  .husky/                       # Git hooks (requerido en la raíz)
+  .mimocode/                    # Configuración de MiMoCode (requerido en la raíz)
+  .obsidian/                    # Lente opcional de autoría/navegación de Obsidian
+  .vscode/                      # Configuración de VS Code (requerido en la raíz)
+  docs/                         # Guías para el lector y evidencia publicada
+    guides/                     # Guía rápida y guías por tarea
+    evidence/                   # Ejecuciones capturadas que la portada cita
+  src/                          # Todos los workspaces ejecutables
+    rulesets/                   # Reglas de arquitectura legibles por máquina
+      topologies/               # Rulesets ejecutables por topología
+      opa/                      # Políticas Rego y el bundle compilado
+      schema/                   # Schemas de phase-gate y de artefactos
+    sdk/                        # CLI y herramientas de acceso ejecutables
+    packages/                   # Workspaces compartidos (core-domain, mcp-server,
+                                #   agent-runtime, contracts, infra-providers,
+                                #   repo-facts, sdk-client, core)
+    apps/                       # Workspaces de aplicación (core-api, agent-runtime-api)
+    tests/                      # Tests de contrato e integración
+  reference/                    # Corpus de referencia arquitectónica
+    core/                       # La constitución del Core
+      architecture/             # Autoridad arquitectónica y guía de implementación
+        adrs/                   # Decision records y matriz de decisiones
+        blueprints/             # Líneas base, topología y perfiles de stack
+        topologies/             # Corpus de referencia multi-topología legible
+        foundations/            # Documentación del Agent Runtime y Puertos y Adaptadores
+      sdlc/                     # Fases, compuertas, estándares, glosario y Q&A
+      foundations/              # Principios, reglas comunes y modelo de herencia
+      control-center/           # Seguimiento de gaps, madurez, auditorías y taxonomía
+      interfaces/               # Hub de how-to de CLI, MCP y REST
+    knowledge/                  # Evidencia aplicada, investigación y aprendizaje
+    governance/                 # Propuestas upstream y registro de decisiones
+  product/                      # Corpus de producto
+    products/                   # Evolith CLI, Core API, MCP Services, Tracker
+    operations/                 # SRE, infraestructura y compuertas de calidad
+    suite/                      # Visión y narrativa comercial
+    research/                   # Referencias de demo e investigación aplicada
+    infra/                      # Ficheros de compose y activos de despliegue
 ```
 
 El repositorio contiene artefactos arquitectonicos, no una aplicacion local de producto. La evidencia ejecutable de producto se mantiene externamente en [UMS](https://github.com/beyondnetcode/ums).

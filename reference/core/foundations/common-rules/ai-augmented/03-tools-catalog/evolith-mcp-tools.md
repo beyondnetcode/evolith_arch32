@@ -46,6 +46,7 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-moscow-report` | Planning | Generate a markdown report of a MoSCoW analysis | No |
 | `evolith-moscow-update` | Planning | Update a specific item in a MoSCoW analysis | Yes |
 | `evolith-moscow-validate` | Planning | Validate a MoSCoW analysis rules (e.g. 60/20/20 split) | No |
+| `evolith-ruleset-list` | Ruleset-catalog.tool | List the ruleset packs this Core can evaluate. Returns the canonica… | No |
 | `evolith-satellite-adopt` | Satellite-adopt.tool | Adopt an existing GitHub repository as an Evolith satellite. Return… | Yes |
 | `evolith-satellite-create` | Satellite-create.tool | Create a new satellite repository on GitHub and register it with Ev… | Yes |
 | `evolith-satellite-list` | Satellite-list.tool | List all registered Evolith satellites from the local satellite-reg… | No |
@@ -58,13 +59,13 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-sdlc-generate` | Sdlc-generate.tool | Generate a Hexagonal Architecture scaffold from a Mermaid classDiag… | Yes |
 | `evolith-validate` | Validate.tool | Validate a satellite repository against Evolith rules. Supports end… | No |
 
-> **Derived from source (GT-445).** The inventory above is the complete set of **51** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
+> **Derived from source (GT-445).** The inventory above is the complete set of **52** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
 
 ---
 
 ## Tool Specifications
 
-> **Legacy curated subset — being superseded.** The detailed specs below predate the current 47-tool surface: several document **obsolete tool names that no longer exist** (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`). The authoritative, complete list is the **Tool Inventory** table above. Full per-tool spec regeneration from source is a follow-on (GT-445).
+> **Legacy curated subset — being superseded.** The detailed specs below predate the current 52-tool surface: several document **obsolete tool names that no longer exist** (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`). The authoritative, complete list is the **Tool Inventory** table above. Full per-tool spec regeneration from source is a follow-on (GT-445).
 
 ### evolith-agent-handoff
 

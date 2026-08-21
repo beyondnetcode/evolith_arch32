@@ -4,7 +4,7 @@ Este documento cataloga todas las herramientas MCP proporcionadas por Evolith CL
 
 ## Inventario de Herramientas
 
-> **Tabla obsoleta retirada (GT-445).** Esta página listaba 11 herramientas; siete de ellas (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`) **no existen en el código**. La superficie real son **51** herramientas MCP de gobernanza. El inventario autoritativo, derivado de la fuente (`src/packages/mcp-server/src/tools/`), se mantiene en la tabla **Tool Inventory** de la [versión en inglés](./evolith-mcp-tools.md#tool-inventory); no se mantiene aquí una segunda copia traducida porque derivaría de la fuente. Regenerar la tabla en español es un follow-on de GT-445.
+> **Tabla obsoleta retirada (GT-445).** Esta página listaba 11 herramientas; siete de ellas (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`) **no existen en el código**. La superficie real son **52** herramientas MCP de gobernanza. El inventario autoritativo, derivado de la fuente (`src/packages/mcp-server/src/tools/`), se mantiene en la tabla **Tool Inventory** de la [versión en inglés](./evolith-mcp-tools.md#tool-inventory); no se mantiene aquí una segunda copia traducida porque derivaría de la fuente. Regenerar la tabla en español es un follow-on de GT-445.
 
 ---
 

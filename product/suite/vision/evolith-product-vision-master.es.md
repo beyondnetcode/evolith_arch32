@@ -162,7 +162,7 @@ flowchart TB
   subgraph CORE["repo · evolith_arch32 (Evolith Core · Constitución)"]
     subgraph EXP["Capa de Exposición del Core · ADR-0074"]
       API["apps/core-api<br/>REST · 11 controllers"]
-      MCP["mcp-server<br/>MCP · 47 tools · 11 resources"]
+      MCP["mcp-server<br/>MCP · 52 tools · 12 resources"]
       CLI["evolith-cli<br/>CLI · 31 commands"]
     end
     subgraph RT["Agent Runtime · @beyondnet/evolith-agent-runtime"]
@@ -204,7 +204,7 @@ flowchart TB
 | Interfaz | Consumidor | Propósito |
 |---|---|---|
 | **API REST** | UI del Tracker, CI/CD e integraciones empresariales | 11 controllers: evaluación, gates, fases, arquitectura, proyectos, satélites, capabilities, composable-validate, reference, metrics, salud |
-| **MCP HTTP/SSE** | LLMs y agentes autónomos | 47 tools, 11 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
+| **MCP HTTP/SSE** | LLMs y agentes autónomos | 52 tools, 12 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
 | **CLI** | Roles de ingeniería y producto | 31 comandos: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
 | **Agent Runtime** | Agentes IA, chatboxes, triggers externos | **10 puertos hexagonales en la ruta caliente de ejecución** (7 obligatorios, 3 opcionales), orquestación gobernada con OPA + HITL. El paquete *declara* 17 puertos y 47 módulos adaptadores, incluidos 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External) — ver la nota siguiente para saber cuáles están conectados y cuáles son especulativos. |
 | **Webhook / Bus de Eventos** — *no implementado, roadmap* | *(ninguno todavía)* | **Hoy no se entrega ninguna superficie de webhook ni de bus de eventos.** Evolith no expone endpoint de webhook entrante ni emite tráfico saliente de webhooks o eventos. El único código relacionado es `src/packages/infra-providers/src/webhook.adapter.ts`, un adaptador **solo-saliente** sin ninguna superficie conectada. Ver [Ecosistema y Comunicación](../../products/ecosystem-and-communication.es.md). Propagar comandos, evidencias, cambios de estado y resultados de gates de forma reactiva sigue siendo un ítem de roadmap. |

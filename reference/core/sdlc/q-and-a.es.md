@@ -31,7 +31,7 @@ Piensa en él como una "constitución" para tu software: define las reglas y lue
 
 **Respuesta:**
 1. **Feedback instantáneo** en decisiones arquitectónicas — ejecuta `evolith validate` y sabe en segundos si tu código cumple.
-2. **Sin refactors sorpresa** — el drift se detecta en el gate, no六个月 después.
+2. **Sin refactors sorpresa** — el drift se detecta en el gate, no seis meses después.
 3. **Gobernanza a prueba de AI** — cuando un agente AI escribe código, Evolith asegura que siga las mismas reglas que un arquitecto senior.
 
 **Evidencia:** [Gap Tracking Board](../control-center/gaps/gap-tracking.md), [ADR-0002](../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md)
@@ -254,7 +254,15 @@ Los productos reales no caben en una caja. Evolith permite composición libre en
 </details>
 
 <details>
-<summary><b>T04-P04: ¿Por qué empezar con monolito modular?</b></summary>
+<summary><b>T04-P04: ¿Qué es la composición de topologías?</b></summary>
+
+Puedes combinar topologías de dimensiones distintas. Dos topologías hub componen con todo: **Event-Driven** y **Agentic AI**. Ejemplo: `modular-monolith + event-driven` es válido. `modular-monolith + microservices` NO lo es (misma dimensión).
+
+**Evidencia:** [Schema de Composición](../../../src/rulesets/schema/topology-composition.schema.json)
+</details>
+
+<details>
+<summary><b>T04-P05: ¿Por qué empezar con monolito modular?</b></summary>
 
 Distribución prematura es el error #1. Empezar simple (F1), extraer cuando justificado (ADR-0045), microservicios solo cuando la madurez operacional lo justifique.
 
@@ -345,6 +353,14 @@ Sí. Agrega reglas a `evolith.yaml`, crea `.rules.json`, escribe `.rego`, o usa 
 Servicios tan acoplados que no puedes desplegar independientemente. Evolith previene con bus async (ADR-0015) y aislamiento hexagonal (ADR-0002).
 
 **Evidencia:** [ADR-0015](../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)
+</details>
+
+<details>
+<summary><b>T07-P03: ¿Qué es el "Strangler Fig"?</b></summary>
+
+Patrón de migración incremental: reemplazar partes del legacy con componentes nuevos sin una reescritura big-bang. En Evolith los módulos están aislados desde el día uno, así que la extracción es incremental.
+
+**Evidencia:** [Matriz de Madurez de Patrones](../control-center/maturity-reports/maturity-assessment.es.md)
 </details>
 
 </details>

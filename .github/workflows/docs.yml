@@ -126,6 +126,24 @@ jobs:
       - name: Reconcile maturity evidence
         run: node .harness/scripts/ci/09-reconcile-maturity.mjs --check
 
+      # The inventory summaries are the source every doc quotes when it says how many
+      # ADRs, rulesets and schemas the corpus carries -- and until now nothing checked
+      # them. `07-generate-inventories.mjs` appears in exactly one other place in the
+      # repository: its own unit test in ci-cd.yml. The generator ran in no workflow,
+      # and in the local hook it hung off `infraChanged` (compose files, helm, the
+      # workflow directory) -- never off `src/rulesets/` or the ADR directory, which
+      # are the only two things that can change the numbers.
+      #
+      # The result was a published tally that had been stale since 2026-08-16: 141/181
+      # against a measured 142/182, quoted onward by the README as "412 rules". This
+      # step runs the generator in --check mode, so a ruleset or ADR added without
+      # regenerating the summaries fails here instead of aging into the front page.
+      - name: Check inventory summaries match the corpus
+        run: node .harness/scripts/ci/07-generate-inventories.mjs --check
+
+      - name: Self-test for the inventory generator
+        run: node --test .harness/scripts/ci/07-generate-inventories.test.mjs
+
       # 21 cases over `09-reconcile-maturity.mjs`, including the GT-576 rule that a
       # capability may not be marked Validated on an ADR citation alone and the GT-596
       # ISO/IEC 33020 threshold rule. Both were closed with "ships with a negative

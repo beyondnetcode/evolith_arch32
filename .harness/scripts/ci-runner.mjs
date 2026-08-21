@@ -100,6 +100,7 @@ function getAutoScripts() {
   const trackingChanged = changed.some(f => f.includes("gap-tracking") || f.includes("gap-reference") || f.includes("gap-closure"));
   const topologyChanged = changed.some(f => f.includes("topologies/"));
   const governanceChanged = changed.some(f => f.includes("src/rulesets/") || f.includes("reference/core/sdlc/"));
+  const adrChanged = changed.some(f => f.includes("reference/core/architecture/adrs/"));
   const knowledgeChanged = changed.some(f => f.includes("reference/knowledge/"));
   const codeChanged = changed.some(f => f.endsWith(".ts") || f.endsWith(".js") || f.endsWith(".mjs"));
   const infraChanged = changed.some(f => f.includes("docker-compose") || f.includes("helm/") || f.includes(".github/workflows"));
@@ -129,8 +130,14 @@ function getAutoScripts() {
     scripts.push("agentic/13-agentic-code-review.mjs");
   }
   if (infraChanged) {
-    scripts.push("07-generate-inventories.mjs");
     scripts.push("29-validate-opa-sidecar-bundles.mjs");
+  }
+  // The inventory tally counts ADRs, rulesets and schemas, so `infraChanged`
+  // (compose, helm, workflows) could never trigger it on a change that moves the
+  // numbers. It sat on the wrong condition long enough for the published summary
+  // to fall a full week behind the corpus it claims to measure.
+  if (governanceChanged || adrChanged) {
+    scripts.push("07-generate-inventories.mjs");
   }
   if (codeChanged || infraChanged) {
     // GT-578: workflows, harness scripts and compose files are exactly where a

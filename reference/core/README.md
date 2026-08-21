@@ -139,7 +139,28 @@ The Suite vision, market positioning, roadmaps, UX, product APIs, and commercial
 
 ---
 
-## 8. Related Navigation
+## 8. Core Concepts
+
+The vocabulary the rest of this corpus assumes. Each term links to where it is defined in full.
+
+| Concept | What it is |
+|---|---|
+| **SDLC phases** | The five stages from idea to production: Discovery → Design → Construction → QA → Delivery |
+| **Gates** | Automated checkpoints that close each phase before the next one starts |
+| **Topologies** | Architecture styles (modular monolith, microservices, event-driven, agentic AI, and four more) |
+| **ADRs** | Architecture Decision Records — the authoritative log of architectural decisions |
+| **Blueprints** | Canonical design templates for each topology |
+| **Rulesets** | Machine-readable rules enforced by the CLI and the Core API |
+| **OPA policies** | Open Policy Agent policies for fine-grained governance controls |
+| **Artifacts** | Structured outputs at each phase: specs, schemas, manifests, contracts |
+| **Satellite** | A repository governed by this Core, declared by its own `evolith.yaml` |
+| **AI agents** | Specialised agents that take part in the SDLC as first-class collaborators |
+
+Full detail: [Topologies](./architecture/topologies/README.md) · [SDLC Governance Center](./sdlc/README.md) · [Ecosystem Glossary](./sdlc/glossary/glossary-ecosystem.md)
+
+---
+
+## 9. Related Navigation
 
 Documents outside of Core that complete the picture (Core's own domains are listed in Section 3):
 

@@ -118,7 +118,7 @@
     "@types/node": "26.0.0",
     "@typescript-eslint/parser": "^8.64.0",
     "eslint": "*",
-    "eslint-plugin-boundaries": "*",
+    "eslint-plugin-boundaries": "^7.2.0",
     "typescript": "6.0.3"
   },
   "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",

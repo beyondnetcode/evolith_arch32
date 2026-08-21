@@ -10,33 +10,49 @@ This document establishes the official taxonomy and authority limits for this ar
 / (repository root)
   README.md                     # Public portal and initial navigation
   MASTER_INDEX.md               # Exhaustive routing by role and intent
+  action.yml                    # The published GitHub Action (PR gate)
+  evolith.yaml                  # This repository's own satellite configuration
   .bmad-core/                   # Optional spec-driven AI-DD method implementation
-  .claude/                      # Claude Code configuration (root required)
+  .claude-plugin/               # Claude Code plugin manifest
   .github/                      # CI workflows and collaboration templates
-  .harness/                     # Document and agent validation rules
+  .harness/                     # Document and agent validation rules, and the CI guards
   .husky/                       # Git hooks (root required)
   .mimocode/                    # MiMoCode configuration (root required)
   .obsidian/                    # Optional Obsidian authoring/navigation lens
   .vscode/                      # VS Code configuration (root required)
-  sdk/                          # CLI, MCP, and executable access tooling
-  rulesets/                     # Machine-readable architecture rules
-    topologies/                 # Executable topology-specific rulesets
+  docs/                         # Reader-facing guides and published evidence
+    guides/                     # Quickstart and task guides
+    evidence/                   # Captured runs the front page quotes
+  src/                          # All executable workspaces
+    rulesets/                   # Machine-readable architecture rules
+      topologies/               # Executable topology-specific rulesets
+      opa/                      # Rego policies and the compiled bundle
+      schema/                   # Phase-gate and artifact schemas
+    sdk/                        # CLI and executable access tooling
+    packages/                   # Shared workspaces (core-domain, mcp-server,
+                                #   agent-runtime, contracts, infra-providers,
+                                #   repo-facts, sdk-client, core)
+    apps/                       # Application workspaces (core-api, agent-runtime-api)
+    tests/                      # Contract and integration tests
   reference/                    # Architectural reference corpus
-    getting-started/            # Short reading paths
-    architecture/               # Architectural authority and implementation guide
-      README.md              # Architecture hub and reading order
-      blueprints/           # Baselines, topology, and stack profiles
-      adrs/                 # Decision records and decision matrix
-      canonical-patterns/   # Patterns by runtime mapped to ADRs
-      topologies/           # Human-readable multi-topology reference corpus
-    governance/                 # Policies, SDLC, terminology, and onboarding
+    core/                       # The Core constitution
+      architecture/             # Architectural authority and implementation guide
+        adrs/                   # Decision records and decision matrix
+        blueprints/             # Baselines, topology, and stack profiles
+        topologies/             # Human-readable multi-topology reference corpus
+        foundations/            # Agent Runtime and Ports & Adapters documentation
+      sdlc/                     # Phases, gates, standards, glossary, and Q&A
+      foundations/              # Principles, common rules, and the inheritance model
+      control-center/           # Gap tracking, maturity, audits, and taxonomy
+      interfaces/               # CLI, MCP and REST how-to hub
     knowledge/                  # Applied evidence, research, and learning
-      demo/                     # UMS reference boundary, migration record, and examples
-    operations/                 # Operational guide and observability assets
-    infrastructure/             # Platform and infrastructure reference assets
-  apps/                         # Application workspaces (core-api, agent-sandbox)
-  packages/                     # Shared package workspaces (core-domain, mcp-server)
-  tests/                        # Contract and integration tests
+    governance/                 # Upstream proposals and decision log
+  product/                      # Product corpus
+    products/                   # Evolith CLI, Core API, MCP Services, Tracker
+    operations/                 # SRE, infrastructure, and quality gates
+    suite/                      # Vision and commercial narrative
+    research/                   # Demo references and applied research
+    infra/                      # Compose files and deployment assets
 ```
 
 The repository contains architectural artifacts, not a local product application. Product executable evidence is maintained externally in [UMS](https://github.com/beyondnetcode/ums).

@@ -1,5 +1,7 @@
 # Evolith Core — Interface How-To
 
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
+
 How to drive Evolith Core across its three surfaces — **CLI** (`evolith …`), **MCP**
 (`evolith-*` tools), and **REST** (`/api/v1/…`).
 

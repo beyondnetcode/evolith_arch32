@@ -13,7 +13,7 @@
     "closureRecords": 659,
     "cliPackage": "@beyondnet/evolith-cli@1.3.2",
     "adrCount": 143,
-    "rulesetCount": 182,
+    "rulesetCount": 183,
     "schemaCount": 50
   },
   "readiness": [

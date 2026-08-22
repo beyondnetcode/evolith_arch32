@@ -976,23 +976,52 @@ jobs:
           COOLIFY_URL: ${{ vars.COOLIFY_URL }}
           RESOURCE_UUID: ${{ vars.COOLIFY_UAT_RESOURCE_UUID }}
         run: |
-          # --fail matters: without it curl exits 0 on a 4xx and a REJECTED request
-          # reads as a successful deploy.
+          # POST, not GET. Coolify routes GET /applications/{uuid}/start to
+          # `OtherController::post_required` — it answers 200 with "a POST is required"
+          # and deploys NOTHING. Only POST reaches `action_deploy`. A GET here is the
+          # worst kind of wrong: --fail sees a 2xx, the step goes green, and the
+          # environment never updates.
+          #
+          # --fail matters for the same family of reason: without it curl exits 0 on a
+          # 4xx and a REJECTED request reads as a successful deploy.
           body=$(curl --fail --silent --show-error \
-            -X GET "${COOLIFY_URL}/api/v1/applications/${RESOURCE_UUID}/start" \
+            -X POST "${COOLIFY_URL}/api/v1/applications/${RESOURCE_UUID}/start" \
             -H "Authorization: Bearer ${TOKEN}")
           echo "$body"
           echo "requested=true" >> "$GITHUB_OUTPUT"
 
       # Coolify queues the work, so the request returning is not the deployment
-      # finishing. Poll until this resource has nothing in flight.
-      - name: Wait for the deployment to leave the queue
+      # finishing.
+      #
+      # Watching the queue needs `read`, and deploying needs `deploy` — two DIFFERENT
+      # abilities on the routes (`api.ability:read` on /deployments,
+      # `api.ability:deploy` on /applications/{uuid}/start). Coolify makes `deploy`
+      # EXCLUSIVE: selecting it clears every other permission, so one token cannot hold
+      # both and only `root` would. Requiring root here would mean handing CI a token
+      # that can reconfigure the whole instance in order to watch a queue.
+      #
+      # So the watch is OPTIONAL and degrades honestly: with a read-capable token it
+      # waits for the queue to drain; with a deploy-only token it says so and falls back
+      # to a fixed settle. What it never does is claim to have watched something it
+      # could not see.
+      - name: Wait for the deployment to settle
+        id: settle
         if: steps.trigger.outputs.requested == 'true'
         env:
           TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
           COOLIFY_URL: ${{ vars.COOLIFY_URL }}
           RESOURCE_UUID: ${{ vars.COOLIFY_UAT_RESOURCE_UUID }}
         run: |
+          probe=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+            "${COOLIFY_URL}/api/v1/deployments" -H "Authorization: Bearer ${TOKEN}")
+
+          if [ "$probe" = "401" ] || [ "$probe" = "403" ]; then
+            echo "::notice::The token cannot read /deployments (deploy-only, as intended). Falling back to a fixed 120s settle; the smoke test below is what actually verifies the result."
+            echo "watched=false" >> "$GITHUB_OUTPUT"
+            sleep 120
+            exit 0
+          fi
+
           for i in $(seq 1 60); do
             running=$(curl --silent --show-error \
               "${COOLIFY_URL}/api/v1/deployments" \
@@ -1000,6 +1029,7 @@ jobs:
               | grep -c "${RESOURCE_UUID}" || true)
             if [ "$running" = "0" ]; then
               echo "deployment queue is clear after $((i*10))s"
+              echo "watched=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             sleep 10
@@ -1015,12 +1045,20 @@ jobs:
         env:
           URLS: ${{ vars.UAT_SMOKE_URLS }}
         run: |
+          # Retried, not single-shot: containers are recreated during a compose deploy,
+          # so the first request after one can legitimately hit a service that is still
+          # coming up. A surface still failing after ~2 minutes is a real failure.
           failed=0
           for url in $URLS; do
-            code=$(curl --silent --show-error --location --max-time 30 -o /dev/null -w '%{http_code}' "$url" || echo 000)
+            code=000
+            for attempt in $(seq 1 12); do
+              code=$(curl --silent --show-error --location --max-time 30 -o /dev/null -w '%{http_code}' "$url" || echo 000)
+              case "$code" in 2*) break ;; esac
+              sleep 10
+            done
             case "$code" in
               2*) echo "  OK   $code  $url" ;;
-              *)  echo "::error::UAT surface did not answer 2xx: $code $url"; failed=1 ;;
+              *)  echo "::error::UAT surface did not answer 2xx after retries: $code $url"; failed=1 ;;
             esac
           done
           exit $failed
@@ -1033,6 +1071,11 @@ jobs:
             echo ''
             echo 'Coolify deployed `${{ github.sha }}` and the queue drained.'
             echo ''
+            if [ "${{ steps.settle.outputs.watched }}" != "true" ]; then
+              echo '> The token could not read the deployment queue, so the wait was a'
+              echo '> fixed settle rather than an observation.'
+              echo ''
+            fi
             if [ -n "${{ vars.UAT_SMOKE_URLS }}" ]; then
               echo 'The live surfaces answered 2xx after the deploy.'
             else

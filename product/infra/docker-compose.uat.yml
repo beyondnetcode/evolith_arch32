@@ -246,6 +246,21 @@ services:
       CoreApi__MockFallback: "false"
       CoreApi__LocalWorkspaceRef: rulesets
       Cors__Origins__0: ${TRACKER_WEB_ORIGIN:?set TRACKER_WEB_ORIGIN (e.g. https://tracker.example.com)}
+      # The in-app assistant. WITHOUT these three the Tracker falls back to
+      # `AgentRuntimeOptions.BaseUrl`, whose default is `http://localhost:3003/v1` —
+      # documented in that file as a development-only convenience, because 3003 is the
+      # host port the agent-runtime publishes on a developer's machine. Deployed, that
+      # default resolves in the CLIENT's browser-side call path to a port on the
+      # Tracker's own container, and the assistant answers
+      # `Connection refused (localhost:3003)`. Measured in UAT before this was wired.
+      #
+      # agent-runtime is on this network and needs no domain of its own; it is reached
+      # service-to-service. MockFallback stays off for the same reason as CoreApi's: a
+      # fabricated answer from an unreachable assistant is worse than an error, because
+      # the client cannot tell it apart from a real one.
+      AgentRuntime__BaseUrl: http://agent-runtime:3000/v1
+      AgentRuntime__ApiKey: *api_key
+      AgentRuntime__MockFallback: "false"
       CoreMachine__Keys__0__TenantId: ${HITL_TENANT_ID:-11111111-1111-1111-1111-111111111111}
       CoreMachine__Keys__0__Key: ${HITL_CORE_MACHINE_KEY:?set HITL_CORE_MACHINE_KEY (>=32 chars)}
       CoreMachine__Keys__0__Status: active

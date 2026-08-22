@@ -102,14 +102,13 @@ Este repositorio es propietario de la linea base arquitectonica y el mecanismo d
 
 La raiz debe mantenerse pequena y navegable. Las categorias permitidas son:
 
-- Archivos publicos de navegacion y legales: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `DOCUMENTATION_VERSIONS.md`, `DOCUMENTATION_VERSIONS.es.md`, `AGENTS.md`, `AGENTS.es.md` y `LICENSE`.
-- Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, `.obsidian/`, y configuracion de editores o automatizacion (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
+- Archivos publicos de navegacion y legales: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `AGENTS.md`, `AGENTS.es.md`, `CONTRIBUTING`, `SECURITY`, `CODE_OF_CONDUCT` (cada uno bilingue), `CHANGELOG.md` y `LICENSE`.
+- Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, `.obsidian/`, y configuracion de editores o automatizacion (`.editorconfig`, `.gitignore`, `.markdownlint.json`, `.nvmrc`).
+- **Pines de toolchain que se leen desde la raiz:** `.nvmrc` fija la version de Node que nvm, fnm, asdf y volta leen de la raiz del repositorio y a las que no se les puede indicar otra ubicacion. Declara el mismo Node 20 que usan los workflows y que declara el rango `engines` de la raiz.
 - **Convencion de carpetas de herramientas:** Cada herramienta de IA/IDE/autoria obtiene su propia carpeta con punto en la raiz del repositorio (`.claude/`, `.mimocode/`, `.obsidian/`, `.vscode/`). No se pueden anidar dentro de una carpeta padre porque cada runtime espera su configuracion en la raiz del workspace. NO crear carpetas de agrupacion como `.setup/` o similares — los contratos de las herramientas requieren ubicacion en la raiz.
 - `reference/` para el corpus documental y arquitectonico.
-- `src/sdk/` para tooling de acceso ejecutable, CLI y MCP.
-- `rulesets/` para reglas de gobernanza legibles por maquina, incluyendo `src/rulesets/topologies/` para reglas ejecutables especificas por topologia.
-
-No se mantienen directorios `src/` de aplicaciones en este repositorio; la implementacion ejecutable pertenece a UMS o a otro repositorio de producto con alcance explicito.
+- `src/` para todos los workspaces ejecutables: `src/sdk/` (CLI y tooling de acceso), `src/packages/`, `src/apps/`, `src/tests/`, y `src/rulesets/` para reglas de gobernanza legibles por maquina incluyendo `src/rulesets/topologies/`.
+- `product/` para el corpus de producto, y `docs/` para guias de lectura y evidencia publicada.
 
 El directorio `/topologies/` en la raiz queda explicitamente prohibido. La gobernanza multi-topologia no crea una nueva area de contenido en la raiz del repositorio; debe permanecer dentro de los limites de autoridad existentes establecidos por [ADR-0048](../../architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.es.md), [ADR-0070](../../architecture/adrs/core/0070-lean-root-repository-taxonomy.es.md) y [ADR-0079](../../architecture/adrs/core/0079-multi-topology-reference-corpus.es.md). Cualquier propuesta futura para crear `/topologies/` en la raiz del repositorio requiere un ADR reemplazante aceptado que modifique la taxonomia de raiz, actualice este estandar, actualice `src/rulesets/cross-cutting/repository-taxonomy.rules.json`, actualice `src/rulesets/opa/taxonomy.rego` y actualice `.harness/scripts/ci/03-validate-root-cleanliness.mjs` en el mismo cambio.
 

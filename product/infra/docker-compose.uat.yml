@@ -1,0 +1,334 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Evolith — UAT bring-up on the VPS (Coolify, single host).
+#
+# HOW THIS DIFFERS FROM `docker-compose.fullstack.yml`, WHICH IS THE POINT.
+# That file BUILDS every service, and it builds the Tracker from a sibling
+# checkout (`../../../evolith_tracker/src`). Both properties are correct on a
+# developer machine and wrong on this host:
+#
+#   1. Coolify clones ONE repository, so the sibling path does not exist there.
+#      The fullstack file cannot resolve it and never could.
+#   2. The host has 2 vCPU. Building here means compiling and serving on the
+#      same two cores — the environment degrades for the very people it exists
+#      for, precisely while it is being updated.
+#
+# So this file BUILDS NOTHING. Every service names an image that CI already
+# published to GHCR (`ci-cd.yml` here, `images.yml` in the Tracker, both on
+# merge to main). The consequence worth stating: what a client exercises in UAT
+# is byte-for-byte the artifact CI verified, not a rebuild of the same source
+# that may or may not resolve to the same bytes.
+#
+# IMAGE_TAG selects what runs. It defaults to `latest`, which follows main. Pin
+# it to a commit SHA to freeze a demo, or to roll back — the SHA tags are
+# published alongside `latest` for exactly this, and rolling back is then a pull
+# rather than a rebuild.
+#
+# REQUIRED environment (set as Coolify secrets — the `:?` makes a missing value
+# fail the bring-up instead of silently shipping a development credential):
+#   EVOLITH_API_KEY          shared key for core-api / mcp / gateway
+#   POSTGRES_PASSWORD        Tracker database
+#   HITL_CORE_MACHINE_KEY    agent-runtime → Tracker approvals; MUST be ≥32 chars
+#                            (a shorter key CrashLoops the Tracker's CoreMachine)
+#
+# MEMORY LIMITS are declared per service and are not decoration. Node sizes its
+# heap from the HOST's RAM unless told otherwise, so four Node services on a
+# 7.8 GB box each believe they may grow to several GB — four processes promising
+# the same memory. `mem_limit` caps the container and `--max-old-space-size`
+# tells the runtime about the cap; without the second, the process still plans
+# for memory it cannot have and meets the OOM killer instead of a GC.
+# ──────────────────────────────────────────────────────────────────────────
+name: evolith-uat
+
+x-api-key: &api_key ${EVOLITH_API_KEY:?set EVOLITH_API_KEY}
+
+# WHY `pull_policy: always` SITS ON EVERY GHCR SERVICE BELOW.
+#
+# Compose does not re-fetch an image it already holds under the same tag, and
+# `latest` is the same tag forever. So a redeploy after a merge recreated the
+# containers from the image already on disk and reported success — the tag moved
+# in the registry and the host never noticed.
+#
+# Measured here on 2026-08-22: a CSP fix was merged, CI published a new
+# `evolith-tracker-web:latest`, the environment was redeployed, the container was
+# recreated at 14:44 — and `docker images` still showed the image from SEVEN DAYS
+# earlier, serving the old header. Two redeploys, no change, no error anywhere.
+#
+# This is the line that makes "updating is a pull, not a rebuild" true rather than
+# merely intended. With a SHA-pinned IMAGE_TAG it costs one digest check and
+# re-downloads nothing.
+
+
+services:
+  # ─── Engine: shared cache ────────────────────────────────────────────────
+  redis:
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    mem_limit: 256m
+    command: ["redis-server", "--maxmemory", "192mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks: [evolith]
+
+  # ─── Engine: Core API (stateless evaluation engine, ADR-0101) ────────────
+  core-api:
+    image: ghcr.io/beyondnetcode/evolith-core-api:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    mem_limit: 768m
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=576
+      PORT: "3000"
+      EVOLITH_API_KEY: *api_key
+      # Baked into the image at /app/corpus — the rulesets and the compiled
+      # policy.wasm ship WITH the artifact, so a rule change is a new image and
+      # never an edit on the server.
+      CORE_PATH: /app/corpus
+      WORKSPACE_ROOT: /app/corpus
+      REDIS_URL: redis://redis:6379
+      # Coolify magic variable: declaring it gives this service a domain field and
+      # routes that domain to port 3000.
+      #
+      # The name is NOT free-form. `normalizeComposeServiceName` (Coolify's
+      # domains.php) derives the key from the compose service name with `-`
+      # replaced by `_`, so `core-api` yields CORE_API. `COREAPI` was here first
+      # and matched nothing: Coolify created the variable but never a domain
+      # field, so the service had no route and the proxy answered 503. `mcp`
+      # worked by luck — a name with no hyphen normalises to itself.
+      SERVICE_FQDN_CORE_API_3000: ""
+    expose: ["3000"]
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      # 40s was MEASURED to be too short here. On 2 vCPU this service boots
+      # NestJS and loads the compiled policy bundle before it answers; compose
+      # gave up and aborted every dependent service, and core-api then reported
+      # healthy on its own. The boot was never the defect — the deadline was.
+      start_period: 180s
+    networks: [evolith]
+
+  # ─── Engine: MCP server (agent-facing surface) ───────────────────────────
+  mcp:
+    image: ghcr.io/beyondnetcode/evolith-mcp:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=384
+      PORT: "3000"
+      # StreamableHTTP. `sse` is the wrong transport for this deployment.
+      TRANSPORT: http
+      EVOLITH_API_KEY: *api_key
+      # Redundant with NODE_ENV=production (validateAuth() ignores this flag in
+      # production) and set anyway, so the intent survives an environment change.
+      EVOLITH_MCP_ALLOW_NO_AUTH: "false"
+      CORE_PATH: /app/corpus
+      WORKSPACE_ROOT: /app/corpus
+      SERVICE_FQDN_MCP_3000: ""
+    expose: ["3000"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks: [evolith]
+
+  # ─── Engine: Agent Runtime ───────────────────────────────────────────────
+  # Deliberately NOT given a domain: nothing outside reaches it in UAT, and the
+  # SPA's request path does not pass through it. Add a SERVICE_FQDN_ line if that
+  # changes — an unreachable service is a smaller problem than an exposed one.
+  agent-runtime:
+    image: ghcr.io/beyondnetcode/evolith-agent-runtime:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=384
+      PORT: "3000"
+      AGENT_RUNTIME_API_KEY: *api_key
+      AGENT_RUNTIME_CORE_ENDPOINT: http://core-api:3000/api/v1/evaluate
+      AGENT_RUNTIME_CORE_TOKEN: *api_key
+      # Sensitive-capability approvals go to a human in the Tracker (GT-441).
+      AGENT_RUNTIME_APPROVAL_TRACKER_URL: http://tracker-api:8080/api/v1
+      AGENT_RUNTIME_APPROVAL_TRACKER_KEY: ${HITL_CORE_MACHINE_KEY:?set HITL_CORE_MACHINE_KEY (>=32 chars)}
+    expose: ["3000"]
+    depends_on:
+      core-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks: [evolith]
+
+  # ─── Tracker: Postgres store ─────────────────────────────────────────────
+  tracker-postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    mem_limit: 768m
+    environment:
+      POSTGRES_USER: evolith
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: evolith_tracker
+    volumes:
+      - tracker_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evolith -d evolith_tracker"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks: [evolith]
+
+  # ─── Tracker: EF Core migrations (one-shot, before tracker-api) ──────────
+  # Same image as tracker-api, different entrypoint. DS-08: migrations run
+  # out-of-band, never at app startup, so replicas cannot race each other.
+  tracker-migrate:
+    image: ghcr.io/beyondnetcode/evolith-tracker-api:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: "no"
+    environment:
+      # The EF bundle self-extracts and uid 1001 has no home directory.
+      DOTNET_BUNDLE_EXTRACT_BASE_DIR: /tmp/efbundle
+      PGCONN: Host=tracker-postgres;Port=5432;Database=evolith_tracker;Username=evolith;Password=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - '/app/efbundle/efbundle --connection "$$PGCONN" && /app/efbundle-projection/efbundle-projection --connection "$$PGCONN"'
+    depends_on:
+      tracker-postgres:
+        condition: service_healthy
+    networks: [evolith]
+
+  # ─── Tracker: API (.NET BFF) ─────────────────────────────────────────────
+  tracker-api:
+    image: ghcr.io/beyondnetcode/evolith-tracker-api:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    mem_limit: 768m
+    environment:
+      # Development, and not out of laziness — it is what the Tracker leaves
+      # available. `AuthenticationExtensions.cs:66` REFUSES to register the DevBypass
+      # scheme outside Development and demands a UMS authority instead; with no
+      # identity provider deployed, Staging means every data endpoint answers 401
+      # while /health stays green — an environment that looks up and cannot be used.
+      # Measured in UAT: /api/v1/health 200, /api/v1/initiatives 401.
+      #
+      # READ THIS BEFORE COPYING THIS FILE ANYWHERE. Development authenticates EVERY
+      # request as a full-permission administrator, and this deployment is reachable
+      # at a public domain with NOTHING in front of it. A basic-auth middleware was
+      # added for exactly that reason and REMOVED on 2026-08-22 at the owner's
+      # explicit request, after the trade-off was stated: the browser prompt was
+      # costing more than the exposure was judged to be worth for a demo environment.
+      # That is a deliberate decision about a temporary environment, not an oversight
+      # — but it is the whole of the access control, so it is written down here.
+      #
+      # Returns to Staging when UMS lands (Tracker ADR T-053), which is what makes
+      # this stop being a trade-off at all.
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=tracker-postgres;Port=5432;Database=evolith_tracker;Username=evolith;Password=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      CoreApi__BaseUrl: http://core-api:3000/api/v1
+      CoreApi__ApiKey: *api_key
+      # A mock fallback would answer with fabricated evaluations when core-api is
+      # unreachable — in UAT that is a client believing they saw the product work.
+      CoreApi__MockFallback: "false"
+      CoreApi__LocalWorkspaceRef: rulesets
+      Cors__Origins__0: ${TRACKER_WEB_ORIGIN:?set TRACKER_WEB_ORIGIN (e.g. https://tracker.example.com)}
+      # The in-app assistant. WITHOUT these three the Tracker falls back to
+      # `AgentRuntimeOptions.BaseUrl`, whose default is `http://localhost:3003/v1` —
+      # documented in that file as a development-only convenience, because 3003 is the
+      # host port the agent-runtime publishes on a developer's machine. Deployed, that
+      # default resolves in the CLIENT's browser-side call path to a port on the
+      # Tracker's own container, and the assistant answers
+      # `Connection refused (localhost:3003)`. Measured in UAT before this was wired.
+      #
+      # agent-runtime is on this network and needs no domain of its own; it is reached
+      # service-to-service. MockFallback stays off for the same reason as CoreApi's: a
+      # fabricated answer from an unreachable assistant is worse than an error, because
+      # the client cannot tell it apart from a real one.
+      AgentRuntime__BaseUrl: http://agent-runtime:3000/v1
+      AgentRuntime__ApiKey: *api_key
+      AgentRuntime__MockFallback: "false"
+      CoreMachine__Keys__0__TenantId: ${HITL_TENANT_ID:-11111111-1111-1111-1111-111111111111}
+      CoreMachine__Keys__0__Key: ${HITL_CORE_MACHINE_KEY:?set HITL_CORE_MACHINE_KEY (>=32 chars)}
+      CoreMachine__Keys__0__Status: active
+      CoreMachine__Keys__0__Description: agent-runtime UAT HITL
+    expose: ["8080"]
+    depends_on:
+      tracker-migrate:
+        condition: service_completed_successfully
+      core-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      # Same host, same reasoning as core-api above.
+      start_period: 180s
+    networks: [evolith]
+
+  # ─── Tracker: Gateway (NestJS aggregation BFF, ADR T-052) ────────────────
+  tracker-gateway:
+    image: ghcr.io/beyondnetcode/evolith-tracker-gateway:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      NODE_OPTIONS: --max-old-space-size=384
+      PORT: "4000"
+      CORE_API_BASE_URL: http://core-api:3000/api/v1
+      CORE_API_KEY: *api_key
+      CORE_MCP_URL: http://mcp:3000
+      CORE_MCP_KEY: *api_key
+      TRACKER_API_BASE_URL: http://tracker-api:8080
+    expose: ["4000"]
+    depends_on:
+      core-api:
+        condition: service_healthy
+    networks: [evolith]
+
+  # ─── Tracker: Web SPA (React, served by nginx) ───────────────────────────
+  tracker-web:
+    image: ghcr.io/beyondnetcode/evolith-tracker-web:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    mem_limit: 128m
+    environment:
+      # The image's own default points at a Kubernetes service name
+      # (`evolith-tracker-api:80`), which does not resolve on this network.
+      # nginx proxies /api/ here, which is also what keeps the SPA same-origin.
+      TRACKER_API_UPSTREAM: http://tracker-api:8080
+      # The surface a UAT client actually opens in a browser. TRACKER_WEB, not
+      # TRACKERWEB — see the note on core-api above.
+      SERVICE_FQDN_TRACKER_WEB_8080: ""
+    expose: ["8080"]
+    depends_on:
+      tracker-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [evolith]
+
+networks:
+  evolith:
+    driver: bridge
+
+volumes:
+  tracker_pg_data:

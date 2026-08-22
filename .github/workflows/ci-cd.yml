@@ -910,104 +910,176 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
 
-  # GT-324: deploy the freshly-pushed images to the Coolify runtime.
+  # GT-324 — deploy the freshly-pushed images to the Coolify runtime.
   #
-  # El fail-soft cubre UN solo modo de fallo: secrets ausentes. Sin
-  # COOLIFY_API_TOKEN o sin el deploy-hook del servicio, el step avisa y sale 0,
-  # asi que el workflow es seguro de mergear antes de configurar CD.
+  # REWRITTEN 2026-08-22. The previous version fanned out to THREE per-service deploy
+  # hooks, one each for core-api, mcp and agent-runtime. That topology no longer
+  # exists: the VPS was reinstalled, those applications are gone, and UAT is now a
+  # single Docker-Compose resource holding all nine services. The three secrets it
+  # read still exist and point at nothing — and because the job failed hard on a
+  # PARTIALLY configured deploy, and one of its four values was never set, turning
+  # `VPS_DEPLOY_ENABLED` on would have failed on the classification step before
+  # reaching a single request.
   #
-  # Con los secrets PUESTOS, este job falla duro y debe hacerlo: `curl --fail`
-  # sale distinto de cero si el hook no responde, y eso significa que el
-  # despliegue no ocurrio. El comentario anterior decia "never fails CD", que era
-  # falso y ademas indeseable -- un step de despliegue que no puede fallar no
-  # informa de nada. Si esto esta rojo, mira el runtime antes que el workflow.
+  # It also asked for the wrong thing. Coolify is asynchronous, so an accepted webhook
+  # says the REQUEST landed, never that the new image is serving. The old job said so
+  # in its own summary and left it there. This one waits for the deployment to leave
+  # the queue and then exercises the live surfaces over HTTPS, which is the difference
+  # between "we asked" and "it works" — and the specific failure that motivates it was
+  # measured here: two redeploys reported success while the host kept serving an image
+  # seven days old.
   #
-  # GT-567: APAGADO A PROPOSITO via `vars.VPS_DEPLOY_ENABLED`. El entorno
-  # objetivo es hoy Docker + kind local (cluster `evolith-cluster`); el VPS se
-  # retoma mas adelante. Sin este flag el job fallaba en CADA push a `main`
-  # desde 2026-07-19 contra un host fuera de alcance, y como no es check
-  # requerido nadie leia el rojo.
-  #
-  # Se apaga con una VARIABLE y no borrando los secrets a proposito: borrarlos
-  # deja el apagado invisible --dentro de un mes el job simplemente saltaria y
-  # nadie sabria si fue deliberado-- y sus valores solo se pueden reponer desde
-  # el panel de Coolify, o sea con el VPS levantado. Aqui queda escrito el
-  # porque, y reactivar es UN paso: `gh variable set VPS_DEPLOY_ENABLED --body true`.
+  # Configuration (all three, or the job skips):
+  #   secrets.COOLIFY_API_TOKEN            API token from Coolify → Keys & Tokens
+  #   vars.COOLIFY_URL                     e.g. http://203.0.113.10:8000 (no trailing slash)
+  #   vars.COOLIFY_UAT_RESOURCE_UUID       the compose resource's uuid
+  # Optional:
+  #   vars.UAT_SMOKE_URLS                  space-separated URLs expected to answer 2xx
+  # Enable with: gh variable set VPS_DEPLOY_ENABLED --body true
   deploy:
-    name: Deploy services (Coolify)
+    name: Deploy UAT (Coolify)
     needs: [docker-services]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && vars.VPS_DEPLOY_ENABLED == 'true'
     steps:
-      # GT-324 — HARDENED 2026-08-02. Each service used to check its own hook and, when unset,
-      # warn and `exit 0`. That is right for "not configured yet" and WRONG for "half configured":
-      # set the token, typo one hook, and CD reports success while that service never deploys —
-      # and the only symptom is an old image serving traffic nobody is looking at.
-      #
-      # The two states are now separated. Nothing configured is a skip; PARTIALLY configured is a
-      # failure that names how many of the four values are present. Same contract as the Tracker's
-      # `images.yml`, so both repositories fail the same way.
+      # Nothing configured is a SKIP; partially configured is a FAILURE. A half-wired
+      # deploy that reports success is the worst of the three states: the environment
+      # silently stops tracking main and the only symptom is an old image serving.
       - name: Classify the deploy configuration
         id: cfg
         env:
           TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-          HOOK_CORE: ${{ secrets.COOLIFY_COREAPI_DEPLOY_HOOK }}
-          HOOK_MCP: ${{ secrets.COOLIFY_MCP_DEPLOY_HOOK }}
-          HOOK_AGENT: ${{ secrets.COOLIFY_AGENTRUNTIME_DEPLOY_HOOK }}
+          COOLIFY_URL: ${{ vars.COOLIFY_URL }}
+          RESOURCE_UUID: ${{ vars.COOLIFY_UAT_RESOURCE_UUID }}
         run: |
           set=0; unset=0
-          for v in "$TOKEN" "$HOOK_CORE" "$HOOK_MCP" "$HOOK_AGENT"; do
+          for v in "$TOKEN" "$COOLIFY_URL" "$RESOURCE_UUID"; do
             if [ -n "$v" ]; then set=$((set+1)); else unset=$((unset+1)); fi
           done
 
           if [ "$set" -eq 0 ]; then
-            echo "::warning::Coolify is not configured (no token, no hooks). Skipping the deploy. Set COOLIFY_API_TOKEN and the three hooks to enable CD (GT-324)."
+            echo "::warning::Coolify CD is not configured. Set COOLIFY_API_TOKEN, COOLIFY_URL and COOLIFY_UAT_RESOURCE_UUID to enable it."
             echo "state=absent" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           if [ "$unset" -gt 0 ]; then
-            echo "::error::Coolify is PARTIALLY configured: $set of 4 values present. A half-wired deploy reports success while some services never ship, so this fails instead of warning. Set all of COOLIFY_API_TOKEN, COOLIFY_COREAPI_DEPLOY_HOOK, COOLIFY_MCP_DEPLOY_HOOK and COOLIFY_AGENTRUNTIME_DEPLOY_HOOK, or unset them all."
+            echo "::error::Coolify CD is PARTIALLY configured: $set of 3 values present. A half-wired deploy reports success while the environment never updates, so this fails instead of warning."
             exit 1
           fi
           echo "state=complete" >> "$GITHUB_OUTPUT"
 
-      - name: Trigger the deploys
+      - name: Trigger the deployment
         if: steps.cfg.outputs.state == 'complete'
+        id: trigger
         env:
           TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-          HOOK_CORE: ${{ secrets.COOLIFY_COREAPI_DEPLOY_HOOK }}
-          HOOK_MCP: ${{ secrets.COOLIFY_MCP_DEPLOY_HOOK }}
-          HOOK_AGENT: ${{ secrets.COOLIFY_AGENTRUNTIME_DEPLOY_HOOK }}
+          COOLIFY_URL: ${{ vars.COOLIFY_URL }}
+          RESOURCE_UUID: ${{ vars.COOLIFY_UAT_RESOURCE_UUID }}
         run: |
-          failed=0
-          trigger() {
-            # `--fail` matters: without it curl exits 0 on a 4xx and a REJECTED hook reads as a
-            # successful deploy.
-            if curl --fail --silent --show-error -X GET "$2" -H "Authorization: Bearer $TOKEN" -o /dev/null; then
-              echo "$1 deploy triggered"
-            else
-              echo "::error::$1 deploy hook did not accept the request"
-              failed=1
+          # POST, not GET. Coolify routes GET /applications/{uuid}/start to
+          # `OtherController::post_required` — it answers 200 with "a POST is required"
+          # and deploys NOTHING. Only POST reaches `action_deploy`. A GET here is the
+          # worst kind of wrong: --fail sees a 2xx, the step goes green, and the
+          # environment never updates.
+          #
+          # --fail matters for the same family of reason: without it curl exits 0 on a
+          # 4xx and a REJECTED request reads as a successful deploy.
+          body=$(curl --fail --silent --show-error \
+            -X POST "${COOLIFY_URL}/api/v1/applications/${RESOURCE_UUID}/start" \
+            -H "Authorization: Bearer ${TOKEN}")
+          echo "$body"
+          echo "requested=true" >> "$GITHUB_OUTPUT"
+
+      # Coolify queues the work, so the request returning is not the deployment
+      # finishing.
+      #
+      # Watching the queue needs `read`, and deploying needs `deploy` — two DIFFERENT
+      # abilities on the routes (`api.ability:read` on /deployments,
+      # `api.ability:deploy` on /applications/{uuid}/start). Coolify makes `deploy`
+      # EXCLUSIVE: selecting it clears every other permission, so one token cannot hold
+      # both and only `root` would. Requiring root here would mean handing CI a token
+      # that can reconfigure the whole instance in order to watch a queue.
+      #
+      # So the watch is OPTIONAL and degrades honestly: with a read-capable token it
+      # waits for the queue to drain; with a deploy-only token it says so and falls back
+      # to a fixed settle. What it never does is claim to have watched something it
+      # could not see.
+      - name: Wait for the deployment to settle
+        id: settle
+        if: steps.trigger.outputs.requested == 'true'
+        env:
+          TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          COOLIFY_URL: ${{ vars.COOLIFY_URL }}
+          RESOURCE_UUID: ${{ vars.COOLIFY_UAT_RESOURCE_UUID }}
+        run: |
+          probe=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+            "${COOLIFY_URL}/api/v1/deployments" -H "Authorization: Bearer ${TOKEN}")
+
+          if [ "$probe" = "401" ] || [ "$probe" = "403" ]; then
+            echo "::notice::The token cannot read /deployments (deploy-only, as intended). Falling back to a fixed 120s settle; the smoke test below is what actually verifies the result."
+            echo "watched=false" >> "$GITHUB_OUTPUT"
+            sleep 120
+            exit 0
+          fi
+
+          for i in $(seq 1 60); do
+            running=$(curl --silent --show-error \
+              "${COOLIFY_URL}/api/v1/deployments" \
+              -H "Authorization: Bearer ${TOKEN}" \
+              | grep -c "${RESOURCE_UUID}" || true)
+            if [ "$running" = "0" ]; then
+              echo "deployment queue is clear after $((i*10))s"
+              echo "watched=true" >> "$GITHUB_OUTPUT"
+              exit 0
             fi
-          }
-          # All three are attempted before failing, so one bad hook does not hide the state of the
-          # other two.
-          trigger core-api "$HOOK_CORE"
-          trigger mcp-server "$HOOK_MCP"
-          trigger agent-runtime "$HOOK_AGENT"
+            sleep 10
+          done
+          echo "::error::The deployment was still in flight after 10 minutes."
+          exit 1
+
+      # The step that makes this job worth having. Everything above can be green while
+      # the environment serves the previous image; only a request to the live surface
+      # can tell the difference.
+      - name: Smoke-test the live surfaces
+        if: steps.trigger.outputs.requested == 'true' && vars.UAT_SMOKE_URLS != ''
+        env:
+          URLS: ${{ vars.UAT_SMOKE_URLS }}
+        run: |
+          # Retried, not single-shot: containers are recreated during a compose deploy,
+          # so the first request after one can legitimately hit a service that is still
+          # coming up. A surface still failing after ~2 minutes is a real failure.
+          failed=0
+          for url in $URLS; do
+            code=000
+            for attempt in $(seq 1 12); do
+              code=$(curl --silent --show-error --location --max-time 30 -o /dev/null -w '%{http_code}' "$url" || echo 000)
+              case "$code" in 2*) break ;; esac
+              sleep 10
+            done
+            case "$code" in
+              2*) echo "  OK   $code  $url" ;;
+              *)  echo "::error::UAT surface did not answer 2xx after retries: $code $url"; failed=1 ;;
+            esac
+          done
           exit $failed
 
-      # Triggering is not deploying: Coolify works asynchronously, so a green step means the
-      # REQUEST was accepted, never that the new image is serving. GT-448 asks for a deploy
-      # evidenced by a recorded run against the live service, and this job cannot provide it.
-      - name: What this job did and did not prove
-        if: steps.cfg.outputs.state == 'complete'
+      - name: What this job proved
+        if: steps.trigger.outputs.requested == 'true'
         run: |
           {
-            echo '### Deploy triggered'
+            echo '### UAT deployed'
             echo ''
-            echo 'Coolify accepted the webhook for all three services at `${{ github.sha }}`.'
+            echo 'Coolify deployed `${{ github.sha }}` and the queue drained.'
             echo ''
-            echo '> This proves the REQUEST was accepted. It does not prove the new image is'
-            echo '> serving traffic. GT-448 asks for a recorded run against the live service.'
+            if [ "${{ steps.settle.outputs.watched }}" != "true" ]; then
+              echo '> The token could not read the deployment queue, so the wait was a'
+              echo '> fixed settle rather than an observation.'
+              echo ''
+            fi
+            if [ -n "${{ vars.UAT_SMOKE_URLS }}" ]; then
+              echo 'The live surfaces answered 2xx after the deploy.'
+            else
+              echo '> `UAT_SMOKE_URLS` is unset, so nothing checked the live surfaces.'
+              echo '> The deployment finished; whether it SERVES the new image is unverified.'
+            fi
           } >> "$GITHUB_STEP_SUMMARY"

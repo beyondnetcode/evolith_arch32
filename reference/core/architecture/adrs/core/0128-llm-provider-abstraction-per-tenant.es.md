@@ -4,7 +4,7 @@
 
 | Campo | Valor |
 |---|---|
-| **Estado** | Propuesto |
+| **Estado** | Aceptado |
 | **Fecha** | 2026-08-22 |
 | **Decisores** | Product Owner (decisión del propietario) · Comité de Arquitectura |
 | **Historia técnica** | El asistente funciona con un stub determinista porque no hay ningún proveedor de razonamiento conectado, y conectarlo sin más metería una dependencia de pago dentro de un motor de código abierto |
@@ -14,7 +14,7 @@
 
 ## Estado
 
-Propuesto — 2026-08-22.
+Aceptado — 2026-08-22. En vigor.
 
 ## Contexto
 

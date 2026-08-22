@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| **Status** | Proposed |
+| **Status** | Accepted |
 | **Date** | 2026-08-22 |
 | **Deciders** | Product Owner (owner decision) · Architecture Board |
 | **Technical story** | The assistant runs on a deterministic stub because no reasoning provider is wired, and wiring one naively would put a metered, paid dependency inside an open-source engine |
@@ -14,7 +14,7 @@
 
 ## Status
 
-Proposed — 2026-08-22.
+Accepted — 2026-08-22. In force.
 
 ## Context
 

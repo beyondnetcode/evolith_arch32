@@ -45,6 +45,7 @@ import {
   SupervisedAssistantClient,
   createAssistantTransport,
   listAssistantProviders,
+  TenantSelectableAssistantTransport,
   InMemoryKnowledgeAdapter,
   PgVectorKnowledgeAdapter,
   PGVECTOR_KNOWLEDGE_DIM,
@@ -436,8 +437,17 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
   // requires an IApprovalPort, and that port is built above; wiring the provider
   // inside the engine switch (which runs earlier) would silently produce an
   // assistant with no human gate in front of it.
+  //
+  // PHASE 2 (ADR-0128 §2): the provider is resolved PER REQUEST, so each tenant can
+  // use its own. `EVOLITH_LLM_PROVIDER` is now a FALLBACK for requests that carry no
+  // selection — a single-tenant install keeps working unchanged by setting it.
+  //
+  // The assistant is therefore wired whenever egress is armed, even with no provider
+  // named here: otherwise an operator would have to pick a provider on behalf of every
+  // tenant just to let tenants pick their own, which is the opposite of the decision.
   const assistantProvider = (env.EVOLITH_LLM_PROVIDER ?? '').trim().toLowerCase();
-  if (assistantProvider) {
+  const egressArmed = env.EVOLITH_LLM_EGRESS === 'true' || env.EVOLITH_LLM_EGRESS === '1';
+  if (assistantProvider || egressArmed) {
     const approvalPort = (overrides as { approval?: IApprovalPort }).approval;
     if (!approvalPort) {
       throw new Error(
@@ -446,13 +456,18 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
           'external model is a governed action and is refused without a gate in front of it.',
       );
     }
-    const transport = createAssistantTransport(assistantProvider, { approval: approvalPort });
-    if (!transport) {
+    // A named fallback must exist in the catalog; failing here beats failing on the
+    // first tenant request that happens to carry no selection.
+    if (assistantProvider && !createAssistantTransport(assistantProvider, {})) {
       const known = listAssistantProviders().map((provider: { id: string }) => provider.id).join(', ');
       throw new Error(
         `[agent-runtime] Unknown assistant provider '${assistantProvider}'. This build serves: ${known}.`,
       );
     }
+    const transport = new TenantSelectableAssistantTransport(
+      { approval: approvalPort },
+      assistantProvider || undefined,
+    );
     overrides = {
       ...overrides,
       engine: new CoworkAgentEngineAdapter({

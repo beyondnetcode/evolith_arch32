@@ -35,6 +35,7 @@ import type {
   IAssistantTransport,
   AssistantInvocationRequest,
   AssistantProposal,
+  AssistantUsage,
 } from '../domain/ports/assistant-invocation.port';
 import {
   redactSecrets,
@@ -193,11 +194,19 @@ export class ClaudeProvider implements IAssistantTransport {
     //    ran; without one this transport does not self-grant, it refuses.
     const supervisedBy = await this.resolveSupervision(request, emit);
 
-    // 3. Credential present? A missing key is configuration, not a transport fault.
-    if (!this.apiKey) {
+    // 3. Whose credential, and which model. A tenant's selection wins over the
+    //    installation's, per call and only for this call (ADR-0128 §2) — the Core
+    //    is stateless, so nothing here is retained afterwards.
+    const selection = request.providerSelection;
+    const apiKey = selection?.apiKey ?? this.apiKey;
+    const model = selection?.model ?? this.model;
+
+    if (!apiKey) {
       emit('refused', { reason: 'missing-credential', supervisedBy });
       throw new LlmEgressConfigurationError(
-        `No Claude credential. Set one of: ${CLAUDE_API_KEY_ENV_VARS.join(', ')}.`,
+        selection
+          ? `The tenant selected Claude but supplied no credential, and this installation has none configured. Set one of: ${CLAUDE_API_KEY_ENV_VARS.join(', ')}, or send it with the selection.`
+          : `No Claude credential. Set one of: ${CLAUDE_API_KEY_ENV_VARS.join(', ')}.`,
       );
     }
 
@@ -217,9 +226,9 @@ export class ClaudeProvider implements IAssistantTransport {
     const usage = enforceEgressBudget(payload, this.budget); // throws LlmEgressBudgetError
 
     try {
-      const text = await this.callClaude(redactedSystem.text, redactedUser.text);
+      const answer = await this.callClaude(redactedSystem.text, redactedUser.text, apiKey, model);
       // 6. Validate against the declared schema instead of casting a JSON.parse.
-      const proposal = parseAndValidateJson<AssistantProposal>(text, CLAUDE_PROPOSAL_SCHEMA);
+      const proposal = parseAndValidateJson<AssistantProposal>(answer.text, CLAUDE_PROPOSAL_SCHEMA);
       emit('sent', {
         requestBytes: usage.bytes,
         estTokens: usage.estTokens,
@@ -227,7 +236,10 @@ export class ClaudeProvider implements IAssistantTransport {
         httpStatus: 200,
         supervisedBy,
       });
-      return proposal;
+      // The tokens the PROVIDER counted, not our pre-flight estimate: the estimate
+      // bounds what we may send, the report says what was actually spent, and only
+      // the second one may reach an invoice.
+      return { ...proposal, usage: answer.usage };
     } catch (err) {
       const status = (err as { status?: number }).status;
       emit('error', {
@@ -282,7 +294,12 @@ export class ClaudeProvider implements IAssistantTransport {
    * builds and boots without it; a missing SDK reports what to install rather
    * than failing as an unresolved module.
    */
-  private async callClaude(systemPrompt: string, userPrompt: string): Promise<string> {
+  private async callClaude(
+    systemPrompt: string,
+    userPrompt: string,
+    apiKey: string,
+    model: string,
+  ): Promise<{ text: string; usage?: AssistantUsage }> {
     let Anthropic: new (opts: Record<string, unknown>) => {
       messages: { create: (body: Record<string, unknown>) => Promise<unknown> };
     };
@@ -300,9 +317,9 @@ export class ClaudeProvider implements IAssistantTransport {
       );
     }
 
-    const client = new Anthropic({ apiKey: this.apiKey, timeout: this.timeoutMs });
+    const client = new Anthropic({ apiKey, timeout: this.timeoutMs });
     const response = (await client.messages.create({
-      model: this.model,
+      model,
       max_tokens: this.maxTokens,
       // Adaptive thinking: planning which governed skill answers an intent is
       // exactly the kind of decision worth thinking about, and the model paces it.
@@ -312,6 +329,8 @@ export class ClaudeProvider implements IAssistantTransport {
     })) as {
       content?: Array<{ type: string; text?: string }>;
       stop_reason?: string;
+      model?: string;
+      usage?: { input_tokens?: number; output_tokens?: number };
     };
 
     // A refusal is a 200 with `stop_reason: "refusal"` — check it before reading content.
@@ -326,6 +345,16 @@ export class ClaudeProvider implements IAssistantTransport {
     if (!text) {
       throw new LlmEgressError('Claude returned no text block to parse a proposal from.');
     }
-    return text;
+    return {
+      text,
+      usage: {
+        provider: 'claude',
+        // The model that ANSWERED. It can differ from the one requested (an alias,
+        // or a server-side fallback), and an invoice is settled against what ran.
+        model: response.model ?? model,
+        inputTokens: response.usage?.input_tokens,
+        outputTokens: response.usage?.output_tokens,
+      },
+    };
   }
 }

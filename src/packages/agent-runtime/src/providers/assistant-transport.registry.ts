@@ -16,9 +16,14 @@
  * which is what keeps Evolith Core free to run (ADR-0128 §3).
  */
 
-import type { IAssistantTransport } from '../domain/ports/assistant-invocation.port';
+import type {
+  IAssistantTransport,
+  AssistantInvocationRequest,
+  AssistantProposal,
+} from '../domain/ports/assistant-invocation.port';
 import type { IApprovalPort } from '../domain/ports/approval.port';
 import type { ILlmEgressAudit } from './llm-egress';
+import { LlmEgressConfigurationError } from './llm-egress';
 import { GeminiProvider } from './GeminiProvider';
 import { ClaudeProvider } from './ClaudeProvider';
 
@@ -84,4 +89,61 @@ export function createAssistantTransport(
 ): IAssistantTransport | undefined {
   const descriptor = ASSISTANT_PROVIDERS.find((p) => p.id === id.trim().toLowerCase());
   return descriptor?.create(options);
+}
+
+/**
+ * A transport that resolves WHICH provider to use from the request itself
+ * (ADR-0128 §2, phase 2).
+ *
+ * This is what makes the choice per-tenant rather than per-installation. It
+ * implements `IAssistantTransport`, so it drops into `SupervisedAssistantClient`
+ * where a concrete provider used to go: the HITL gate, the egress controls and
+ * the engine are all unchanged and unaware. What changes is only that the
+ * provider is now late-bound.
+ *
+ * Transports are memoised per provider id. Not for speed — for identity: a fresh
+ * transport per call would re-read environment credentials on every request and
+ * make the audit trail describe objects that no longer exist. The tenant's own
+ * credential is NOT part of the key, and must not be: it travels in the request
+ * and is used per call, never captured in a cached instance.
+ */
+export class TenantSelectableAssistantTransport implements IAssistantTransport {
+  private readonly cache = new Map<string, IAssistantTransport>();
+
+  constructor(
+    private readonly options: AssistantTransportOptions = {},
+    /**
+     * Used when a request carries no selection — a single-tenant install keeps
+     * working exactly as it did in phase 1. Absent means an unselecting request
+     * is refused, which is the correct answer when nothing was configured.
+     */
+    private readonly fallbackProvider?: string,
+  ) {}
+
+  async invoke(request: AssistantInvocationRequest): Promise<AssistantProposal> {
+    const requested = request.providerSelection?.provider ?? this.fallbackProvider;
+    if (!requested) {
+      throw new LlmEgressConfigurationError(
+        'No assistant provider selected for this request and none configured for this installation. ' +
+          `This build serves: ${ASSISTANT_PROVIDERS.map((p) => p.id).join(', ')}.`,
+      );
+    }
+    const id = requested.trim().toLowerCase();
+    let transport = this.cache.get(id);
+    if (!transport) {
+      transport = createAssistantTransport(id, this.options);
+      if (!transport) {
+        // A tenant naming a provider this build cannot serve is a CONFIGURATION
+        // answer, and must read as one. "Your provider is not supported here" is
+        // actionable; "the assistant is broken" is what the user would otherwise
+        // conclude, and it would be false.
+        throw new LlmEgressConfigurationError(
+          `Provider '${id}' is not supported by this Evolith Core build. Available: ` +
+            `${ASSISTANT_PROVIDERS.map((p) => p.id).join(', ')}.`,
+        );
+      }
+      this.cache.set(id, transport);
+    }
+    return transport.invoke(request);
+  }
 }

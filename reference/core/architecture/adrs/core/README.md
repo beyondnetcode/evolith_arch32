@@ -94,6 +94,7 @@
 * [0116-canonical-finding-and-authority-boundary](./0116-canonical-finding-and-authority-boundary.md) — **Canonical `Finding` contract (mandatory provenance/determinism, `advisory: true`) and an executable advisory-authority boundary (`evaluateAuthority`, AP-R01..R06)**
 * [0117-bilingual-parity-scope-authored-sources](./0117-bilingual-parity-scope-authored-sources.md) — **Bilingual parity applies to AUTHORED sources, never to generated projections; generated trees inherit their sources' parity, exclusions declared in source with generator + reason**
 * [0118-core-hub-repository-taxonomy](./0118-core-hub-repository-taxonomy.md) — **The Core hub root has its own taxonomy, distinct from satellites: reference/ + product/ + src/ + .harness/; ADR-0070 governs satellites only; enforcement is 03-validate-root-cleanliness.mjs + TAX-05**
+* [0128-llm-provider-abstraction-per-tenant](./0128-llm-provider-abstraction-per-tenant.md)
 
 ---
 [Back to Upper Level](../README.md)

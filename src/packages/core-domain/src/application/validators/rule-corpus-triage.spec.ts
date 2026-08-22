@@ -115,7 +115,7 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // 138 -> 139 on 2026-08-18: ADR-0127's, by the same mechanism. Worth noting what the
   // count is measuring here — the ADR retires Knowledge-First Discovery, so the corpus
   // grows by one rule in order to record the removal of a concept that never had one.
-  'documentation-only': 139,
+  'documentation-only': 140,
   'unimplemented-native': 52,
   'needs-external-system': 20,
   'needs-runtime': 17,
@@ -251,9 +251,9 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // 152 -> 153 on 2026-08-18: ADR-0127's, by the same mechanism — the ADR that retires
     // Knowledge-First Discovery. The corpus grows by one rule nothing can run in order to
     // record the removal of a concept nothing could run either.
-    expect(SUMMARY.nonExecutable).toBe(153);
-    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 153);
-    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(153);
+    expect(SUMMARY.nonExecutable).toBe(154);
+    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 154);
+    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(154);
   });
 
   it('names the blocking rules that can never produce a verdict', () => {
@@ -315,7 +315,7 @@ describe('GT-595 · the handler slice that landed', () => {
     // conformance placeholder, claimed by the conformance handler.
     // 135 -> 136 on 2026-08-18: ADR-0127 (Knowledge-First Discovery is retired). Same shape.
     const adrConformance = CORPUS.filter(r => r.category === 'adr-conformance');
-    expect(adrConformance).toHaveLength(136);
+    expect(adrConformance).toHaveLength(137);
     expect(adrConformance.every(claims)).toBe(true);
   });
 

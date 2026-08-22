@@ -225,13 +225,17 @@ services:
       # while /health stays green — an environment that looks up and cannot be used.
       # Measured in UAT: /api/v1/health 200, /api/v1/initiatives 401.
       #
-      # So the choice the Tracker actually offers here is Development or nothing, and
-      # Development authenticates EVERY request as a full-permission administrator.
-      # That is defensible ONLY because the protection moved to the perimeter: the
-      # tracker-web router carries an HTTP basic-auth middleware, so an
-      # unauthenticated request never reaches this service at all. Remove one and the
-      # other stops being sufficient. When UMS lands (Tracker ADR T-053) this returns
-      # to Staging and the middleware can go.
+      # READ THIS BEFORE COPYING THIS FILE ANYWHERE. Development authenticates EVERY
+      # request as a full-permission administrator, and this deployment is reachable
+      # at a public domain with NOTHING in front of it. A basic-auth middleware was
+      # added for exactly that reason and REMOVED on 2026-08-22 at the owner's
+      # explicit request, after the trade-off was stated: the browser prompt was
+      # costing more than the exposure was judged to be worth for a demo environment.
+      # That is a deliberate decision about a temporary environment, not an oversight
+      # — but it is the whole of the access control, so it is written down here.
+      #
+      # Returns to Staging when UMS lands (Tracker ADR T-053), which is what makes
+      # this stop being a trade-off at all.
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: Host=tracker-postgres;Port=5432;Database=evolith_tracker;Username=evolith;Password=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
@@ -295,14 +299,6 @@ services:
       # The surface a UAT client actually opens in a browser. TRACKER_WEB, not
       # TRACKERWEB — see the note on core-api above.
       SERVICE_FQDN_TRACKER_WEB_8080: ""
-    # The perimeter door. This is what makes running the Tracker in Development
-    # defensible on a host reachable from the internet: the credential is checked by
-    # the proxy, so a request without it never reaches a service that would treat it
-    # as an administrator. The middleware itself — and therefore the password hash —
-    # lives in the proxy's dynamic configuration, NOT here: a bcrypt hash in a
-    # versioned file is a hash handed to everyone who can read the repository.
-    labels:
-      - "coolify.traefik.middlewares=uat-basicauth@file"
     expose: ["8080"]
     depends_on:
       tracker-api:

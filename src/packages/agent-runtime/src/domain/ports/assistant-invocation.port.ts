@@ -44,6 +44,28 @@ export interface AssistantSupervision {
 }
 
 /** What the runtime hands the assistant so it can reason about the request. */
+/**
+ * The provider a TENANT chose, travelling with the request (ADR-0128 §2).
+ *
+ * The Core cannot hold this: it is stateless, and a tenant's credential is not
+ * its to keep. So the choice and the key arrive per invocation, are used, and are
+ * not retained. Absent means "use whatever the installation configured", which is
+ * how a single-tenant install keeps working unchanged.
+ *
+ * `apiKey` is a secret in a contract, and that is deliberate rather than
+ * accidental: statelessness leaves nowhere else for it to be. It must never be
+ * logged, echoed into a result, or written to a trace — the egress audit record
+ * is content-free precisely so this stays true.
+ */
+export interface AssistantProviderSelection {
+  /** Registry id, e.g. `claude` or `gemini`. */
+  readonly provider: string;
+  /** The tenant's own credential. Used for this call only, never stored. */
+  readonly apiKey?: string;
+  /** Optional model override within that provider. */
+  readonly model?: string;
+}
+
 export interface AssistantInvocationRequest {
   /** The governed request the assistant is asked to help satisfy. */
   readonly request: AgentRuntimeRequest;
@@ -55,6 +77,11 @@ export interface AssistantInvocationRequest {
    * transport directly, which a governed transport treats as fail-closed.
    */
   readonly supervision?: AssistantSupervision;
+  /**
+   * The tenant's provider choice for THIS call. Absent falls back to the
+   * installation's configured transport (ADR-0128 §2).
+   */
+  readonly providerSelection?: AssistantProviderSelection;
 }
 
 /**
@@ -69,6 +96,33 @@ export interface AssistantProposal {
   readonly arguments?: Readonly<Record<string, unknown>>;
   /** Natural-language rationale (recorded in the trace). */
   readonly rationale?: string;
+  /**
+   * What the call cost, when the transport can report it (ADR-0128 §4).
+   *
+   * The Core is stateless and accounts for nothing: it REPORTS, and the Tracker
+   * accumulates per tenant. Optional because a transport that cannot measure its
+   * own spend must say so by omission rather than by reporting a zero — a zero is
+   * a measurement, and an unmeasured call is not free, it is unknown.
+   */
+  readonly usage?: AssistantUsage;
+}
+
+/**
+ * Consumption of a single assistant call, as the provider reported it.
+ *
+ * Deliberately NOT a cost in currency. Prices change, differ per model and per
+ * contract, and belong to whoever holds the billing relationship — which under
+ * ADR-0128 is the tenant, not Evolith. Reporting tokens keeps this true for
+ * every provider and every price list; turning tokens into money is the
+ * Tracker's job, against rates the tenant configures.
+ */
+export interface AssistantUsage {
+  /** Registry id of the provider that served the call, e.g. `claude`. */
+  readonly provider: string;
+  /** Exact model that answered — not the one requested, the one that ran. */
+  readonly model: string;
+  readonly inputTokens?: number;
+  readonly outputTokens?: number;
 }
 
 export interface IAssistantTransport {

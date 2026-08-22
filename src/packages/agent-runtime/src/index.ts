@@ -59,6 +59,7 @@ export {
   ASSISTANT_PROVIDERS,
   listAssistantProviders,
   createAssistantTransport,
+  TenantSelectableAssistantTransport,
 } from './providers/assistant-transport.registry';
 export type {
   AssistantProviderDescriptor,

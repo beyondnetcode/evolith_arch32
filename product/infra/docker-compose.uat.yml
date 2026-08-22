@@ -80,10 +80,14 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 40s
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      # 40s was MEASURED to be too short here. On 2 vCPU this service boots
+      # NestJS and loads the compiled policy bundle before it answers; compose
+      # gave up and aborted every dependent service, and core-api then reported
+      # healthy on its own. The boot was never the defect — the deadline was.
+      start_period: 180s
     networks: [evolith]
 
   # ─── Engine: MCP server (agent-facing surface) ───────────────────────────
@@ -209,10 +213,11 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 5s
+      interval: 15s
+      timeout: 10s
       retries: 5
-      start_period: 40s
+      # Same host, same reasoning as core-api above.
+      start_period: 180s
     networks: [evolith]
 
   # ─── Tracker: Gateway (NestJS aggregation BFF, ADR T-052) ────────────────

@@ -77,7 +77,7 @@
     "@clack/prompts": "1.5.1",
     "@hono/node-server": "1.19.15",
     "@modelcontextprotocol/sdk": "1.29.0",
-    "@nestjs/common": "11.1.27",
+    "@nestjs/common": "11.2.1",
     "@nestjs/core": "11.1.27",
     "@nestjs/platform-express": "11.1.28",
     "@open-policy-agent/opa-wasm": "1.10.0",

@@ -41,6 +41,23 @@ name: evolith-uat
 
 x-api-key: &api_key ${EVOLITH_API_KEY:?set EVOLITH_API_KEY}
 
+# WHY `pull_policy: always` SITS ON EVERY GHCR SERVICE BELOW.
+#
+# Compose does not re-fetch an image it already holds under the same tag, and
+# `latest` is the same tag forever. So a redeploy after a merge recreated the
+# containers from the image already on disk and reported success — the tag moved
+# in the registry and the host never noticed.
+#
+# Measured here on 2026-08-22: a CSP fix was merged, CI published a new
+# `evolith-tracker-web:latest`, the environment was redeployed, the container was
+# recreated at 14:44 — and `docker images` still showed the image from SEVEN DAYS
+# earlier, serving the old header. Two redeploys, no change, no error anywhere.
+#
+# This is the line that makes "updating is a pull, not a rebuild" true rather than
+# merely intended. With a SHA-pinned IMAGE_TAG it costs one digest check and
+# re-downloads nothing.
+
+
 services:
   # ─── Engine: shared cache ────────────────────────────────────────────────
   redis:
@@ -58,6 +75,7 @@ services:
   # ─── Engine: Core API (stateless evaluation engine, ADR-0101) ────────────
   core-api:
     image: ghcr.io/beyondnetcode/evolith-core-api:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     mem_limit: 768m
     environment:
@@ -100,6 +118,7 @@ services:
   # ─── Engine: MCP server (agent-facing surface) ───────────────────────────
   mcp:
     image: ghcr.io/beyondnetcode/evolith-mcp:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     mem_limit: 512m
     environment:
@@ -130,6 +149,7 @@ services:
   # changes — an unreachable service is a smaller problem than an exposed one.
   agent-runtime:
     image: ghcr.io/beyondnetcode/evolith-agent-runtime:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     mem_limit: 512m
     environment:
@@ -177,6 +197,7 @@ services:
   # out-of-band, never at app startup, so replicas cannot race each other.
   tracker-migrate:
     image: ghcr.io/beyondnetcode/evolith-tracker-api:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: "no"
     environment:
       # The EF bundle self-extracts and uid 1001 has no home directory.
@@ -193,6 +214,7 @@ services:
   # ─── Tracker: API (.NET BFF) ─────────────────────────────────────────────
   tracker-api:
     image: ghcr.io/beyondnetcode/evolith-tracker-api:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     mem_limit: 768m
     environment:
@@ -242,6 +264,7 @@ services:
   # ─── Tracker: Gateway (NestJS aggregation BFF, ADR T-052) ────────────────
   tracker-gateway:
     image: ghcr.io/beyondnetcode/evolith-tracker-gateway:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     mem_limit: 512m
     environment:
@@ -261,6 +284,7 @@ services:
   # ─── Tracker: Web SPA (React, served by nginx) ───────────────────────────
   tracker-web:
     image: ghcr.io/beyondnetcode/evolith-tracker-web:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
     mem_limit: 128m
     environment:

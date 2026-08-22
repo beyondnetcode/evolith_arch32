@@ -156,6 +156,7 @@ CORE-0124-01,adr/generated/adr-0124-credential-and-secret-management-standard.ru
 CORE-0125-01,adr/generated/adr-0125-a-single-artifact-registry-keyed-by-slug.rules.json,architecture-decision,,,none,no,documentation-only
 CORE-0126-01,adr/generated/adr-0126-the-bilingual-mandate-narrows-to-an-entry-surface.rules.json,architecture-decision,,,none,no,documentation-only
 CORE-0127-01,adr/generated/adr-0127-knowledge-first-discovery-is-retired-and-with-it-the-kdd-con.rules.json,architecture-decision,,,none,no,documentation-only
+CORE-0128-01,adr/generated/adr-0128-llm-providers-are-a-catalog-the-core-publishes-and-a-choice-.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0001-01,adr/generated/adr-ai-augmented-0001-harness-engineering-for-ai-augmented-development.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0002-01,adr/generated/adr-ai-augmented-0002-mcp-integration-protocol-for-agent-tool-invocation.rules.json,architecture-decision,,,none,no,documentation-only
 AI-0003-01,adr/generated/adr-ai-augmented-0003-model-selection-governance-for-ai-augmented-workflows.rules.json,architecture-decision,,,none,no,documentation-only

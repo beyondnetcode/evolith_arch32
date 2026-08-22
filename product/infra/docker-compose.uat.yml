@@ -71,9 +71,16 @@ services:
       CORE_PATH: /app/corpus
       WORKSPACE_ROOT: /app/corpus
       REDIS_URL: redis://redis:6379
-      # Coolify magic variable: declaring it assigns this service a domain and
-      # routes it to port 3000. The value is filled in by Coolify at deploy time.
-      SERVICE_FQDN_COREAPI_3000: ""
+      # Coolify magic variable: declaring it gives this service a domain field and
+      # routes that domain to port 3000.
+      #
+      # The name is NOT free-form. `normalizeComposeServiceName` (Coolify's
+      # domains.php) derives the key from the compose service name with `-`
+      # replaced by `_`, so `core-api` yields CORE_API. `COREAPI` was here first
+      # and matched nothing: Coolify created the variable but never a domain
+      # field, so the service had no route and the proxy answered 503. `mcp`
+      # worked by luck — a name with no hyphen normalises to itself.
+      SERVICE_FQDN_CORE_API_3000: ""
     expose: ["3000"]
     depends_on:
       redis:
@@ -249,8 +256,9 @@ services:
       # (`evolith-tracker-api:80`), which does not resolve on this network.
       # nginx proxies /api/ here, which is also what keeps the SPA same-origin.
       TRACKER_API_UPSTREAM: http://tracker-api:8080
-      # The surface a UAT client actually opens in a browser.
-      SERVICE_FQDN_TRACKERWEB_8080: ""
+      # The surface a UAT client actually opens in a browser. TRACKER_WEB, not
+      # TRACKERWEB — see the note on core-api above.
+      SERVICE_FQDN_TRACKER_WEB_8080: ""
     expose: ["8080"]
     depends_on:
       tracker-api:

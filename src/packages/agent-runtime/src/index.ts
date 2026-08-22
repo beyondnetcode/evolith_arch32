@@ -41,6 +41,29 @@ export {
   LLM_STRUCTURED_JSON_SKILL_ID,
 } from './providers/GeminiProvider';
 export type { GeminiProviderOptions, FetchLike } from './providers/GeminiProvider';
+
+// ADR-0128 — the provider catalog. `ClaudeProvider` is a second `IAssistantTransport`
+// under the SAME governance (off by default, supervised, redacted, budgeted, audited);
+// the registry is what makes the set of providers ANSWERABLE instead of a switch buried
+// in wiring code. There is deliberately no default provider.
+export { ClaudeProvider, CLAUDE_DEFAULT_MODEL, CLAUDE_API_KEY_ENV_VARS } from './providers/ClaudeProvider';
+export type { ClaudeProviderOptions } from './providers/ClaudeProvider';
+// The supervised client and the approval port travel with the registry: a caller
+// that can build a transport must also be able to put the HITL gate in front of it,
+// and both are needed to wire a provider from outside this package.
+export { SupervisedAssistantClient } from './adapters/engine/supervised-assistant.client';
+export type { SupervisedAssistantOptions } from './adapters/engine/supervised-assistant.client';
+export type { IApprovalPort } from './domain/ports/approval.port';
+
+export {
+  ASSISTANT_PROVIDERS,
+  listAssistantProviders,
+  createAssistantTransport,
+} from './providers/assistant-transport.registry';
+export type {
+  AssistantProviderDescriptor,
+  AssistantTransportOptions,
+} from './providers/assistant-transport.registry';
 export {
   redactSecrets,
   estimateTokens,

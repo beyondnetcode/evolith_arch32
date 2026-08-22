@@ -42,6 +42,9 @@ import {
   HermesAgentAdapter,
   SwarmsAgentAdapter,
   CoworkAgentEngineAdapter,
+  SupervisedAssistantClient,
+  createAssistantTransport,
+  listAssistantProviders,
   InMemoryKnowledgeAdapter,
   PgVectorKnowledgeAdapter,
   PGVECTOR_KNOWLEDGE_DIM,
@@ -54,6 +57,7 @@ import {
   type EngineRouterConfig,
   type IKnowledgePort,
 } from '@beyondnet/evolith-agent-runtime';
+import type { IApprovalPort } from '@beyondnet/evolith-agent-runtime';
 
 import * as path from 'node:path';
 import { trace } from '@opentelemetry/api';
@@ -417,6 +421,46 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
           timeoutMs: approvalTimeoutMs,
         }),
         timeoutMs: approvalTimeoutMs,
+      }),
+    };
+  }
+
+  // ── Assistant provider (ADR-0128) ─────────────────────────────────────────
+  //
+  // The Core publishes a catalog of providers; the install (later: the tenant)
+  // picks one by name. Unset means unset: the deterministic stub keeps running,
+  // no socket opens and nothing is billed — which is what keeps Evolith Core
+  // free to run.
+  //
+  // This block sits AFTER the approval wiring on purpose. SupervisedAssistantClient
+  // requires an IApprovalPort, and that port is built above; wiring the provider
+  // inside the engine switch (which runs earlier) would silently produce an
+  // assistant with no human gate in front of it.
+  const assistantProvider = (env.EVOLITH_LLM_PROVIDER ?? '').trim().toLowerCase();
+  if (assistantProvider) {
+    const approvalPort = (overrides as { approval?: IApprovalPort }).approval;
+    if (!approvalPort) {
+      throw new Error(
+        `[agent-runtime] EVOLITH_LLM_PROVIDER=${assistantProvider} requires a HITL approval port. ` +
+          'Set AGENT_RUNTIME_APPROVAL_TRACKER_URL so approvals route to the Tracker: contacting an ' +
+          'external model is a governed action and is refused without a gate in front of it.',
+      );
+    }
+    const transport = createAssistantTransport(assistantProvider, { approval: approvalPort });
+    if (!transport) {
+      const known = listAssistantProviders().map((provider: { id: string }) => provider.id).join(', ');
+      throw new Error(
+        `[agent-runtime] Unknown assistant provider '${assistantProvider}'. This build serves: ${known}.`,
+      );
+    }
+    overrides = {
+      ...overrides,
+      engine: new CoworkAgentEngineAdapter({
+        client: new SupervisedAssistantClient({
+          approval: approvalPort,
+          transport,
+          enabled: true,
+        }),
       }),
     };
   }

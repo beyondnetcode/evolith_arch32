@@ -11,6 +11,7 @@
  * no engine installed at all (design rule #5).
  */
 
+import type { AssistantUsage } from './assistant-invocation.port';
 import type { AgentRuntimeRequest } from '../contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../contracts/capability';
 
@@ -25,6 +26,13 @@ export interface AgentEnginePlan {
   readonly recommendations?: readonly string[];
   /** Engine identity for provenance (e.g. 'hermes', 'stub'). */
   readonly engine: string;
+  /**
+   * Lo que costo la llamada, cuando el motor hablo con un proveedor externo y este lo
+   * informo (ADR-0128 §4). Ausente cuando no hubo llamada externa —el stub no gasta— o
+   * cuando el proveedor no lo reporta: un cero seria una medicion, y una llamada sin
+   * medir no es gratis, es desconocida.
+   */
+  readonly usage?: AssistantUsage;
 }
 
 /** One prior entry of the conversation log, most-recent-last. */

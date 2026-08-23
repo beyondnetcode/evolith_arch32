@@ -12,6 +12,7 @@
  * client wired the adapter is deterministic (no external call), like the stub engine.
  */
 
+import type { AssistantUsage } from '../../domain/ports/assistant-invocation.port';
 import type { AgentRuntimeRequest } from '../../domain/contracts/agent-runtime-request';
 import type { SkillDescriptor } from '../../domain/contracts/capability';
 import type {
@@ -25,6 +26,8 @@ export const COWORK_ENGINE = 'cowork';
 /** A raw proposal from Cowork before governance is applied. */
 export interface CoworkProposal {
   readonly tool?: string;
+  /** Consumo del proveedor, cuando el cliente hablo con uno externo (ADR-0128 §4). */
+  readonly usage?: AssistantUsage;
   readonly arguments?: Readonly<Record<string, unknown>>;
   readonly rationale?: string;
 }
@@ -60,6 +63,7 @@ export class CoworkAgentEngineAdapter implements IAgentEnginePort {
       // Bounded executor: never surface a tool outside the governed catalog.
       return {
         engine: COWORK_ENGINE,
+        usage: proposal?.usage,
         rationale: proposal?.tool
           ? `Cowork proposed '${proposal.tool}', which is not in the governed skill catalog — rejected (bounded executor).`
           : `Cowork proposed no in-catalog tool for intent '${request.intent}'.`,
@@ -69,6 +73,9 @@ export class CoworkAgentEngineAdapter implements IAgentEnginePort {
 
     return {
       engine: COWORK_ENGINE,
+      // Viaja aunque la propuesta se rechace mas abajo: el proveedor ya cobro, y una
+      // factura no depende de si la respuesta nos servia.
+      usage: proposal?.usage,
       proposedTool: proposal!.tool,
       proposedArguments: proposal!.arguments,
       rationale: proposal!.rationale ?? `Cowork selected '${proposal!.tool}' from the governed catalog.`,

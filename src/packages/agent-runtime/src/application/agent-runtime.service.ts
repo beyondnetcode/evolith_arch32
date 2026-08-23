@@ -16,6 +16,7 @@
  * (Hermes) type leaks in here — the engine is an optional injected port.
  */
 
+import type { AssistantUsage } from '../domain/ports/assistant-invocation.port';
 import type { IAgentRuntime } from '../domain/ports/agent-runtime.port';
 import type { ISkillRegistryPort } from '../domain/ports/skill-registry.port';
 import type { IHarnessPort } from '../domain/ports/harness.port';
@@ -209,6 +210,7 @@ export class AgentRuntimeService implements IAgentRuntime {
       steps.push('select-capability');
       let skill = await this.deps.skillRegistry.resolve(request.intent, request.tool);
       let enginePlanRationale: string | undefined;
+      let assistantUsage: AssistantUsage | undefined;
       let enginePlan: AgentEnginePlan | undefined;
 
       if (!skill && this.deps.engine) {
@@ -236,6 +238,8 @@ export class AgentRuntimeService implements IAgentRuntime {
           )
         ).value;
         enginePlanRationale = `${enginePlan.engine}: ${enginePlan.rationale}`;
+        // Se captura ANTES de decidir si la propuesta sirve: el proveedor ya cobro.
+        assistantUsage = enginePlan.usage;
         if (enginePlan.proposedTool) {
           skill = await this.deps.skillRegistry.resolve(request.intent, enginePlan.proposedTool);
         }
@@ -513,6 +517,7 @@ export class AgentRuntimeService implements IAgentRuntime {
         : parts.recommendations;
 
       const result = assembleResult({
+        assistantUsage,
         parts: { ...parts, recommendations },
         trace,
         evaluatedAt: finishedAt,

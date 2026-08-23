@@ -9,8 +9,13 @@
 | **Decisores** | Product Owner (decisión del propietario) · Comité de Arquitectura |
 | **Historia técnica** | El asistente funciona con un stub determinista porque no hay ningún proveedor de razonamiento conectado, y conectarlo sin más metería una dependencia de pago dentro de un motor de código abierto |
 
-> **Estado de implementación en este repositorio: ninguna** (2026-08-22). Este ADR registra una
-> decisión; las costuras sobre las que se apoya ya existen y se nombran más abajo.
+<!-- implementation-status: src/packages/agent-runtime/src/providers/assistant-transport.registry.ts, src/packages/agent-runtime/src/providers/ClaudeProvider.ts, src/packages/agent-runtime/src/domain/ports/assistant-invocation.port.ts, src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts -->
+> **Estado de implementación en este repositorio: parcial** (2026-08-22). Esta línea decía
+> «ninguna» cuando el ADR se fusionó como decisión; el código llegó justo detrás. El registro de
+> proveedores y su primer proveedor entraron en #647, y #648 llevó la resolución del proveedor a
+> la petición e hizo que cada llamada reportara lo que gastó. Los ficheros nombrados en la
+> directiva de arriba son lo que sostiene eso hoy. La mitad contable que este ADR asigna al
+> Tracker vive en aquel repositorio, no aquí.
 
 ## Estado
 

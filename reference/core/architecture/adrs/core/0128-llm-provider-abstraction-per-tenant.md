@@ -9,8 +9,12 @@
 | **Deciders** | Product Owner (owner decision) · Architecture Board |
 | **Technical story** | The assistant runs on a deterministic stub because no reasoning provider is wired, and wiring one naively would put a metered, paid dependency inside an open-source engine |
 
-> **Implementation status in this repository: none** (2026-08-22). This ADR records a decision;
-> the seams it builds on already exist and are named below.
+<!-- implementation-status: src/packages/agent-runtime/src/providers/assistant-transport.registry.ts, src/packages/agent-runtime/src/providers/ClaudeProvider.ts, src/packages/agent-runtime/src/domain/ports/assistant-invocation.port.ts, src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts -->
+> **Implementation status in this repository: partial** (2026-08-22). This line read "none" when
+> the ADR merged as a decision; the code landed right behind it. The provider registry and its
+> first provider shipped in #647, and #648 moved provider resolution into the request and made
+> each call report what it spent. The files named in the directive above are what carries that
+> today. The accounting half this ADR assigns to the Tracker lives in that repository, not here.
 
 ## Status
 

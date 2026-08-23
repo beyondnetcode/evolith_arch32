@@ -1,3 +1,4 @@
+import type { AssistantUsage } from '../ports/assistant-invocation.port';
 /**
  * AgentRuntimeResult — the outbound contract returned by the Evolith Agent
  * Runtime, matching the JSON shape in the design brief.
@@ -115,6 +116,12 @@ export interface AgentRuntimeResult {
   readonly evaluatedAt: string;
   /** Optional raw passthrough of adapter outputs for debugging/audit. */
   readonly raw?: Readonly<Record<string, unknown>>;
+  /**
+   * Consumo del proveedor de LLM en esta ejecucion (ADR-0128 §4). El runtime REPORTA;
+   * no acumula ni convierte a dinero. Quien tiene el tenant —el Tracker— es quien suma,
+   * contra las tarifas que ese tenant configure.
+   */
+  readonly assistantUsage?: AssistantUsage;
 }
 
 /** Serialize the internal result to the snake_case wire shape from the brief. */

@@ -158,6 +158,7 @@ export class SupervisedAssistantClient implements CoworkClient {
     return {
       tool: proposal.tool,
       arguments: proposal.arguments,
+      usage: proposal.usage,
       rationale: proposal.rationale
         ? `${proposal.rationale}${approver}`
         : `Assistant proposed '${proposal.tool ?? 'nothing'}'${approver}.`,

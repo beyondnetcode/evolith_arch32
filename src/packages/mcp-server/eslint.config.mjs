@@ -13,10 +13,28 @@
  *   - MUST NOT import from apps/ (core-api)
  *
  * Internal layer hierarchy (imports may only flow inward):
- *   domain  (local MCP domain models)
- *     └─ application (MCP use cases)
- *         └─ mcp / tools / resources / watcher (MCP adapters)
- *   core    (local cross-cutting helpers)
+ *   domain     (local MCP domain models)
+ *     └─ mcp / tools / resources / watcher (MCP adapters)
+ *         └─ bootstrap (composition root: main.ts, app.module.ts, tracing.ts)
+ *   core       (local cross-cutting helpers, importable by any layer above)
+ *
+ * There is no `application` layer in this package — MCP use cases live directly
+ * in the adapter layers. Descriptors for `src/application` and `src/core` were
+ * declared here for a long time, but NEITHER FOLDER HAS EVER EXISTED, so both
+ * policies were dead. Worse, the three folders that do exist (`src/common`,
+ * `src/utils`, `src/test-doubles`) had no descriptor at all, so their files were
+ * unclassified and `boundaries/dependencies` governed neither imports out of
+ * them nor imports into them — silently, because a boundaries misconfiguration
+ * fails OPEN (reports nothing, exits 0). Fixed by pointing `core` at the folders
+ * that actually hold the cross-cutting helpers, dropping the `application`
+ * descriptor rather than backing it with an invented empty folder, classifying
+ * the `src/*.ts` composition root as `bootstrap`, and ignoring `src/test-doubles`
+ * (test scaffolding, like the *.spec.ts files it exists to serve).
+ *
+ * Requires eslint-plugin-boundaries v7 (declared as ^7.2.0 in package.json).
+ * The v7-native settings/selectors below (`boundaries/files`, `policies`, entity
+ * selectors) are rejected outright by v6 with a schema error, so a stale v6
+ * install fails LOUD (exit 2) rather than silently disabling the guard.
  *
  * Boundary-focused on purpose: this is the `lint:boundaries` config, so it loads
  * only the TypeScript parser (to read import graphs) + eslint-plugin-boundaries,
@@ -39,6 +57,9 @@ export default [
       // reference plugins not loaded by this boundary-only config.
       '**/*.spec.ts',
       '**/*.test.ts',
+      // Test doubles are scaffolding for the specs above (a stub
+      // @nestjs/cache-manager), not a production layer — ignore, don't classify.
+      'src/test-doubles/**',
       '**/*.js',
       '**/*.cjs',
       '**/*.mjs',
@@ -63,53 +84,99 @@ export default [
       'import/resolver': {
         node: { extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'] },
       },
-      // mode: 'file' — each .ts file is an element instance of its layer. The
-      // default 'folder' mode treats every *sub-folder* as a separate element and
-      // leaves files sitting directly in `src/<layer>/` unclassified (type: null),
-      // which silently makes `boundaries/element-types` a no-op. 'file' is the
-      // correct mode for layer-based boundaries and makes the guard actually fire.
+      // Elements are FOLDERS in v7: a descriptor names the layer folder and every
+      // file beneath it belongs to that layer. (v6 needed `mode: 'file'` to stop
+      // the old default from treating each sub-folder as its own element; v7
+      // deprecated `mode`, and plain folder patterns give the layer semantics we
+      // want directly.)
       'boundaries/elements': [
-        { type: 'domain', mode: 'file', pattern: 'src/domain/**/*' },
-        { type: 'application', mode: 'file', pattern: 'src/application/**/*' },
-        { type: 'mcp', mode: 'file', pattern: 'src/mcp/**/*' },
-        { type: 'tools', mode: 'file', pattern: 'src/tools/**/*' },
-        { type: 'resources', mode: 'file', pattern: 'src/resources/**/*' },
-        { type: 'watcher', mode: 'file', pattern: 'src/watcher/**/*' },
-        { type: 'core', mode: 'file', pattern: 'src/core/**/*' },
+        { type: 'domain', pattern: 'src/domain' },
+        { type: 'mcp', pattern: 'src/mcp' },
+        { type: 'tools', pattern: 'src/tools' },
+        { type: 'resources', pattern: 'src/resources' },
+        { type: 'watcher', pattern: 'src/watcher' },
+        // Cross-cutting helpers. Two folders, one layer: `common` holds the
+        // envelope/error/logging primitives and `utils` the path-security
+        // helpers; both depend only on node builtins and npm packages.
+        { type: 'core', pattern: 'src/common' },
+        { type: 'core', pattern: 'src/utils' },
       ],
-      'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts'],
+      // Composition root: main.ts, app.module.ts, tracing.ts sit directly in
+      // `src/` and so belong to no layer folder. They are classified with a FILE
+      // descriptor rather than an element one — element patterns are folder
+      // patterns, and a file-extension pattern like `src/*.ts` in
+      // `boundaries/elements` is exactly what v7 warns about.
+      'boundaries/files': [{ pattern: 'src/*.ts', category: 'bootstrap' }],
+      'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts', 'src/test-doubles/**'],
     },
     rules: {
       'boundaries/dependencies': [
         'error',
         {
           default: 'disallow',
-          rules: [
-            // domain: innermost local models
-            { from: { type: 'domain' }, allow: { to: { type: ['domain'] } } },
+          // v7: `policies` (was `rules`), and every selector is an ENTITY
+          // selector — `{ element: { type } }` / `{ file: { category } }` —
+          // rather than the bare `{ type }` shorthand v6 accepted.
+          policies: [
+            // domain: innermost local models. Deliberately NOT allowed to reach
+            // `core`: keeping the `core -> domain` edge one-way avoids declaring
+            // a cycle. (Neither direction is exercised today.)
+            { from: { element: { type: 'domain' } }, allow: { to: { element: { type: ['domain'] } } } },
 
-            // application: may use local domain
-            { from: { type: 'application' }, allow: { to: { type: ['application', 'domain'] } } },
+            // mcp/tools/resources/watcher: adapters — may use all inner layers
+            // plus the cross-cutting `core` helpers.
+            // `mcp` is also the module composition point: `mcp.module.ts` wires
+            // the adapter NestJS modules (e.g. `imports: [ToolsModule]`), so
+            // `mcp` is allowed to import `tools` for that module composition.
+            {
+              from: { element: { type: 'mcp' } },
+              allow: { to: { element: { type: ['mcp', 'domain', 'tools', 'core'] } } },
+            },
+            {
+              from: { element: { type: 'tools' } },
+              allow: { to: { element: { type: ['tools', 'domain', 'mcp', 'core'] } } },
+            },
+            {
+              from: { element: { type: 'resources' } },
+              allow: { to: { element: { type: ['resources', 'domain', 'mcp', 'core'] } } },
+            },
+            {
+              from: { element: { type: 'watcher' } },
+              allow: { to: { element: { type: ['watcher', 'domain', 'core'] } } },
+            },
 
-            // mcp/tools/resources/watcher: adapters — may use all inner layers.
-            // `mcp` is also the composition root: `mcp.module.ts` wires the
-            // adapter NestJS modules (e.g. `imports: [ToolsModule]`), so `mcp`
-            // is allowed to import `tools` for that module composition.
-            { from: { type: 'mcp' }, allow: { to: { type: ['mcp', 'application', 'domain', 'tools'] } } },
-            { from: { type: 'tools' }, allow: { to: { type: ['tools', 'application', 'domain', 'mcp'] } } },
-            { from: { type: 'resources' }, allow: { to: { type: ['resources', 'application', 'domain', 'mcp'] } } },
-            { from: { type: 'watcher' }, allow: { to: { type: ['watcher', 'application', 'domain'] } } },
-            { from: { type: 'core' }, allow: { to: { type: ['core', 'domain'] } } },
+            // core: cross-cutting helpers. May not reach any adapter layer —
+            // that is the edge the missing descriptor used to let through.
+            { from: { element: { type: 'core' } }, allow: { to: { element: { type: ['core', 'domain'] } } } },
+
+            // bootstrap: the composition root wires everything, so it may reach
+            // every layer. Selected by file CATEGORY (it has no element type),
+            // and nothing may import it back (default: disallow).
+            {
+              from: { file: { categories: ['bootstrap'] } },
+              allow: {
+                to: {
+                  element: { type: ['mcp', 'tools', 'resources', 'watcher', 'domain', 'core'] },
+                },
+              },
+            },
+            { from: { file: { categories: ['bootstrap'] } }, allow: { to: { file: { categories: ['bootstrap'] } } } },
 
             // Type-only imports are permitted across all layers: they are erased
             // at compile time and create NO runtime coupling, so they don't
             // breach the architecture's dependency direction. The guard still
-            // enforces VALUE (runtime) imports strictly via the rules above.
-            // (v6: selector-level dependency.kind replaces the legacy rule-level importKind.)
+            // enforces VALUE (runtime) imports strictly via the policies above.
             {
-              from: { type: ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'] },
+              from: { element: { type: ['domain', 'mcp', 'tools', 'resources', 'watcher', 'core'] } },
               dependency: { kind: 'type' },
-              allow: { to: { type: ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'] } },
+              allow: {
+                to: { element: { type: ['domain', 'mcp', 'tools', 'resources', 'watcher', 'core'] } },
+              },
+            },
+            {
+              from: { element: { type: ['domain', 'mcp', 'tools', 'resources', 'watcher', 'core'] } },
+              dependency: { kind: 'type' },
+              allow: { to: { file: { categories: ['bootstrap'] } } },
             },
           ],
         },

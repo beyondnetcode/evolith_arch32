@@ -115,7 +115,11 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // 138 -> 139 on 2026-08-18: ADR-0127's, by the same mechanism. Worth noting what the
   // count is measuring here — the ADR retires Knowledge-First Discovery, so the corpus
   // grows by one rule in order to record the removal of a concept that never had one.
-  'documentation-only': 140,
+  // 140 -> 141 on 2026-08-22: ADR-0129's (the tenant master is UMS; ADR-0106's MMS was
+  // never built). Same mechanism again, and the same reading: superseding a decision
+  // costs one more rule nothing can run, because the superseding ADR owes a conformance
+  // placeholder of its own while the superseded one keeps the placeholder it already had.
+  'documentation-only': 141,
   'unimplemented-native': 52,
   'needs-external-system': 20,
   'needs-runtime': 17,
@@ -251,9 +255,12 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // 152 -> 153 on 2026-08-18: ADR-0127's, by the same mechanism — the ADR that retires
     // Knowledge-First Discovery. The corpus grows by one rule nothing can run in order to
     // record the removal of a concept nothing could run either.
-    expect(SUMMARY.nonExecutable).toBe(154);
-    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 154);
-    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(154);
+    // 154 -> 155 on 2026-08-22: ADR-0129's. Superseding ADR-0106 does not retire 0106's
+    // placeholder — a superseded decision keeps its record — so the denominator grows by
+    // one rather than trading one for another.
+    expect(SUMMARY.nonExecutable).toBe(155);
+    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 155);
+    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(155);
   });
 
   it('names the blocking rules that can never produce a verdict', () => {
@@ -314,8 +321,11 @@ describe('GT-595 · the handler slice that landed', () => {
     // surface). Same shape as the ADR-0125 bump above — one accepted ADR, one generated
     // conformance placeholder, claimed by the conformance handler.
     // 135 -> 136 on 2026-08-18: ADR-0127 (Knowledge-First Discovery is retired). Same shape.
+    // 137 -> 138 on 2026-08-22: ADR-0129 (the tenant master is UMS). Same shape once more,
+    // and the `every(claims)` below is again the assertion that matters: the new decision
+    // arrives CLAIMED by the conformance handler rather than in the unclaimed pile.
     const adrConformance = CORPUS.filter(r => r.category === 'adr-conformance');
-    expect(adrConformance).toHaveLength(137);
+    expect(adrConformance).toHaveLength(138);
     expect(adrConformance.every(claims)).toBe(true);
   });
 

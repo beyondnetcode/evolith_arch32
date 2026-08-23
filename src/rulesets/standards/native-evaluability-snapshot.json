@@ -3,7 +3,7 @@
   "title": "Native-engine evaluability class per rule (snapshot)",
   "description": "Per-rule evaluability class as computed by the Core native evaluator triage. This is a GENERATED CAPTURE, not the source of truth: the authority is src/packages/core-domain/src/application/validators/rule-evaluability.ts and the handler set registered in native-evaluator.ts. It is recorded here so the ISO/IEC 5055 mapping can be scoped to the real handler backlog without src/rulesets depending on a package it does not own. Do not hand-edit — regenerate.",
   "version": "1.1.0",
-  "capturedOn": "2026-08-22",
+  "capturedOn": "2026-08-23",
   "capturedFrom": [
     "src/packages/core-domain/src/application/validators/rule-evaluability.ts (RULE_TRIAGE, classifyRule, ADR_CONFORMANCE_CATEGORY)",
     "src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts (registered handler set)",
@@ -11,12 +11,12 @@
     "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, classification and this renderer)"
   ],
   "regenerateWith": "node src/rulesets/standards/capture-native-evaluability-snapshot.mjs",
-  "validation": "Rendered by test/rule-corpus-triage.ts from the live triage, written by capture-native-evaluability-snapshot.mjs and pinned byte-for-byte by rule-corpus-triage.spec.ts, so a divergence between this file and Core is a failing test rather than silent drift (corpus 414; native-handler 171, documentation-only 140, unimplemented-native 52, needs-external-system 20, needs-runtime 17, underspecified 14).",
-  "corpusSize": 414,
-  "distinctRuleIds": 414,
+  "validation": "Rendered by test/rule-corpus-triage.ts from the live triage, written by capture-native-evaluability-snapshot.mjs and pinned byte-for-byte by rule-corpus-triage.spec.ts, so a divergence between this file and Core is a failing test rather than silent drift (corpus 415; native-handler 171, documentation-only 141, unimplemented-native 52, needs-external-system 20, needs-runtime 17, underspecified 14).",
+  "corpusSize": 415,
+  "distinctRuleIds": 415,
   "counts": {
     "native-handler": 171,
-    "documentation-only": 140,
+    "documentation-only": 141,
     "unimplemented-native": 52,
     "needs-external-system": 20,
     "needs-runtime": 17,
@@ -181,6 +181,7 @@
     "CORE-0126-01": "documentation-only",
     "CORE-0127-01": "documentation-only",
     "CORE-0128-01": "documentation-only",
+    "CORE-0129-01": "documentation-only",
     "AI-0001-01": "documentation-only",
     "AI-0002-01": "documentation-only",
     "AI-0003-01": "documentation-only",

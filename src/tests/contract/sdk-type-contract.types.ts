@@ -323,6 +323,11 @@ export const WIRE_VALIDATION_RESULT: WireCheck<SdkValidationResult> = {
     accepts: oneOf('passed', 'failed', 'warning'),
   },
   rulesChecked: { required: true, declaredAs: 'number', accepts: isNumber },
+  // #628: WHICH evaluator produced the counts. Two engines ship and they do not
+  // cover the same ground, so a consumer comparing two captures cannot read a
+  // coverage figure without this. Optional for the same additive reason as the
+  // GT-569 fields below: an envelope from a producer that predates it is valid.
+  engine: { required: false, declaredAs: "'native'|'opa'", accepts: oneOf('native', 'opa') },
   // GT-569: `rulesChecked` alone counts only what was evaluated, so it silently
   // redefined its own denominator — a corpus of 380 rules could report 111
   // "checked" with 269 never executed and nothing on the wire said so. These five

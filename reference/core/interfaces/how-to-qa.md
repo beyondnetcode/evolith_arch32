@@ -59,6 +59,7 @@ Response shape (captured live):
       "version": null
     },
     "corpusTotal": "<number>",
+    "engine": "<string>",
     "erroredRuleIds": [],
     "issues": [
       {
@@ -157,6 +158,7 @@ Response shape (captured live):
       "version": null
     },
     "corpusTotal": "<number>",
+    "engine": "<string>",
     "erroredRuleIds": [],
     "issues": [
       {
@@ -249,6 +251,7 @@ Response shape (captured live):
       "version": null
     },
     "corpusTotal": "<number>",
+    "engine": "<string>",
     "erroredRuleIds": [],
     "issues": [
       {

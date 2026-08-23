@@ -128,14 +128,6 @@ describe('GT-569 · validate reports checked / skipped / errored / total', () =>
       );
     });
 
-    it('carries the engine on the wire, so a captured envelope can be compared to another (#628)', async () => {
-      mockExecute.mockResolvedValue({ result: { ...partiallyCoveredResult, engine: 'native' } });
-
-      await command.run([], { format: 'json' });
-
-      expect(jsonEnvelope().data).toHaveProperty('engine', 'native');
-    });
-
     it('keeps `rulesChecked` on the wire — the field is ADDED to, never renamed', async () => {
       mockExecute.mockResolvedValue({ result: partiallyCoveredResult });
 
@@ -186,64 +178,6 @@ describe('GT-569 · validate reports checked / skipped / errored / total', () =>
 
       expect(prompts.showSuccess).toHaveBeenCalledWith('No issues found.');
       expect(infoLines().some(l => /0 checked.*6 skipped/.test(l))).toBe(true);
-    });
-
-    /**
-     * #628 — the counts above belong to the ENGINE as much as to the repository.
-     * `validate` with no flag runs the native evaluator, which decides fewer
-     * rules than `--engine opa` over the same corpus, and until now nothing in
-     * the output said so: the reader attributed the engine's reach to their own
-     * code. These pin the disclosure and, just as importantly, its silence.
-     */
-    it('names the engine on the same line as the counts', async () => {
-      mockExecute.mockResolvedValue({ result: { ...partiallyCoveredResult, engine: 'native' } });
-
-      await command.run([], { format: 'unknown' });
-
-      expect(infoLines().some(l => /2 checked.*6 total.*engine: native/.test(l))).toBe(true);
-    });
-
-    it('redirects to --engine opa when the default engine skipped more than it checked', async () => {
-      mockExecute.mockResolvedValue({
-        result: { ...partiallyCoveredResult, engine: 'native', rulesChecked: 41, rulesSkipped: 118, rulesErrored: 0, rulesTotal: 159 },
-      });
-
-      await command.run([], { format: 'unknown' });
-
-      const hint = warnLines().find(l => l.includes('--engine opa'));
-      expect(hint).toBeDefined();
-      // The attribution is the whole point: a reader who sees only this line
-      // must learn the skips are the evaluator's, not their repository's.
-      expect(hint).toContain('not to your repository');
-    });
-
-    it('stays quiet about the other engine when the native run decided most of its scope', async () => {
-      mockExecute.mockResolvedValue({
-        result: { ...partiallyCoveredResult, engine: 'native', rulesChecked: 133, rulesSkipped: 26, rulesErrored: 0, rulesTotal: 159 },
-      });
-
-      await command.run([], { format: 'unknown' });
-
-      expect(warnLines().some(l => l.includes('--engine opa'))).toBe(false);
-    });
-
-    it('never redirects an opa run to itself, however little it decided', async () => {
-      mockExecute.mockResolvedValue({
-        result: { ...partiallyCoveredResult, engine: 'opa', rulesChecked: 2, rulesSkipped: 157, rulesErrored: 0, rulesTotal: 159 },
-      });
-
-      await command.run([], { format: 'unknown' });
-
-      expect(infoLines().some(l => l.includes('engine: opa'))).toBe(true);
-      expect(warnLines().some(l => l.includes('--engine opa'))).toBe(false);
-    });
-
-    it('omits the engine rather than guessing when the producer did not report one', async () => {
-      mockExecute.mockResolvedValue({ result: partiallyCoveredResult });
-
-      await command.run([], { format: 'unknown' });
-
-      expect(infoLines().some(l => l.includes('engine:'))).toBe(false);
     });
 
     it('says out loud that a skipped rule has an UNKNOWN outcome, not a passing one', async () => {

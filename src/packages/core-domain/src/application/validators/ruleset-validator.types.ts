@@ -101,6 +101,13 @@ export interface RuleApplicabilitySummary {
 
 export interface ValidationResult {
   status: 'passed' | 'failed' | 'warning';
+  /**
+   * #628 — which evaluator produced these numbers. Two ship and they do not
+   * cover the same ground, so a coverage figure without an engine beside it
+   * cannot be read. Optional for the same additive reason as the counters
+   * below; `RulesetValidatorService.validate` always populates it.
+   */
+  engine?: 'native' | 'opa';
   rulesChecked: number;
   /**
    * GT-569 coverage denominator. Declared OPTIONAL only so the wire envelope

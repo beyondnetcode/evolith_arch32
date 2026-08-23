@@ -44,6 +44,7 @@ export class RulesetValidatorService {
   /** GT-569 — optional coverage floor; see {@link RulesetValidatorOptions.maxSkippedFraction}. */
   private readonly maxSkippedFraction?: number;
   private readonly rulesetRepo: IRulesetRepository;
+  private readonly engineType: 'native' | 'opa';
   /** GT-571 — filter the corpus by rule audience / topology / SDLC phase. */
   private readonly applyRuleApplicability: boolean;
   /**
@@ -89,6 +90,9 @@ export class RulesetValidatorService {
     this.processRunner = options.processRunner;
     this.metrics = options.metrics;
     this.rulesetRepo = options.rulesetRepo;
+    // #628: the report has to be able to say WHICH engine produced it. The two
+    // do not cover the same ground, and the default is the one that covers less.
+    this.engineType = options.engineType === 'opa' ? 'opa' : 'native';
 
     const baseStrategy = options.engineType === 'opa'
       ? new OpaEvaluator(this.fs, this.logger)
@@ -241,6 +245,8 @@ export class RulesetValidatorService {
       const thresholdIssue = this.coverageThresholdIssue(coverage);
       if (thresholdIssue) issues.push(thresholdIssue);
       issues.push(...this.corpusLoadIssues());
+      const engineIssue = this.engineCoverageAdvisory(coverage);
+      if (engineIssue) issues.push(engineIssue);
     } catch (err: unknown) {
       // GT-474: an unresolvable/empty ruleset corpus must never be downgraded to
       // a warning here — that is exactly how `validate` came to report
@@ -274,6 +280,10 @@ export class RulesetValidatorService {
       // without parsing issue text.
       blockingSkippedRuleIds: coverage.blockingSkippedRuleIds,
       perRuleset: coverage.perRuleset,
+      // #628 — WHICH engine produced these numbers. Two engines ship and they do
+      // not cover the same ground, so a coverage figure without an engine beside
+      // it is not readable.
+      engine: this.engineType,
       // GT-661 — WHY this scope, not just how much of it.
       selection: selectionReport,
       issues,
@@ -445,6 +455,49 @@ export class RulesetValidatorService {
     }
 
     return issues;
+  }
+
+  /**
+   * #628 -- `evolith validate` with no flag runs the native evaluator, which
+   * decides materially fewer rules than `--engine opa` over the same corpus.
+   * Both totals were honest and the skips were all published; what was missing
+   * was the sentence telling the reader that the missing coverage belongs to the
+   * ENGINE THEY DID NOT CHOOSE rather than to their repository.
+   *
+   * Deliberately narrow. It fires only on the native engine and only when skips
+   * outnumber checks, because that is the shape a reader misreads. A run where
+   * the engine decided most of what it was handed needs no explanation, and a
+   * row on every run is noise that teaches people to skim past it.
+   *
+   * Non-blocking. The engines are ALLOWED to differ on coverage --
+   * `68-validate-engine-verdict-parity.mjs` holds them to agreement on facts,
+   * not on reach -- so this reports a fact about the run, it does not fail it.
+   */
+  private engineCoverageAdvisory(coverage: RuleCoverage): ValidationIssue | undefined {
+    if (this.engineType !== 'native') return undefined;
+    if (coverage.rulesSkipped <= coverage.rulesChecked) return undefined;
+
+    const share = coverage.rulesTotal > 0
+      ? Math.round((coverage.rulesSkipped / coverage.rulesTotal) * 100)
+      : 0;
+
+    return {
+      ruleId: 'GOV-ENGINE-COVERAGE',
+      severity: 'COULD',
+      category: 'governance',
+      title:
+        `The native engine skipped more rules than it checked ` +
+        `(${coverage.rulesSkipped} of ${coverage.rulesTotal}) — this is the engine, not your repository`,
+      description:
+        `This run used the native evaluator, the default when no \`--engine\` is given. It decided ` +
+        `${coverage.rulesChecked} of the ${coverage.rulesTotal} rules in scope and skipped ` +
+        `${coverage.rulesSkipped} (${share}%). A skip here usually means the native evaluator has no ` +
+        'handler for that rule, not that your repository failed to satisfy it. ' +
+        'Re-run with `--engine opa` to evaluate against the compiled Rego bundle, which decides more of ' +
+        'the same corpus. The two engines are held to agreement on the verdicts they both reach; they ' +
+        'are not held to equal reach, and this run got the shorter one.',
+      blocking: false,
+    };
   }
 
   private applicabilityAdvisory(notApplicable: readonly NotApplicableRule[]): ValidationIssue | undefined {

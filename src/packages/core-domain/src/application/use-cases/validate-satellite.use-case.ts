@@ -195,6 +195,10 @@ export class ValidateSatelliteUseCase {
       '',
       `**Status:** ${result.status.toUpperCase()}`,
       `**Rules Checked:** ${result.rulesChecked}`,
+      // #628 — the markdown report is the surface people paste into a PR, so it
+      // is the one where a coverage figure with no engine beside it does the
+      // most damage: the reader attributes the engine's reach to the repository.
+      ...(result.engine ? [`**Engine:** ${result.engine}`] : []),
       `**Timestamp:** ${result.timestamp}`,
       '',
     ];

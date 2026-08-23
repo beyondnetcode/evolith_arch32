@@ -1,4 +1,9 @@
 import * as path from 'path';
+import {
+  deriveArtifactFields,
+  schemaFileNameFromId,
+  type ArtifactField,
+} from './artifact-field-derivation';
 import { Injectable, Inject } from '@nestjs/common';
 import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
@@ -40,6 +45,20 @@ export interface RegistryArtifact {
   schemaId?: string;
   templateRef?: string;
   producedBy?: { format: string; note?: string };
+
+  /**
+   * The artifact's fields, derived from the schema its `schemaId` names.
+   *
+   * Absent when the artifact publishes no schema — a tool's own output declares `producedBy`
+   * instead, and restating what the tool already publishes would rot the day the tool changes.
+   */
+  fields?: ArtifactField[];
+
+  /**
+   * Paths the derivation deliberately left out, with the reason. Reported so a consumer counting
+   * sections against fields can see the difference is collections, not a truncated schema.
+   */
+  omittedFields?: { fieldPath: string; reason: string }[];
 }
 
 export interface ArtifactRegistry {
@@ -118,14 +137,57 @@ export class CoreReferenceQueryService {
     if (!(await this.fs.exists(file))) return undefined;
 
     const registry = JSON.parse(await this.fs.readFile(file)) as ArtifactRegistry;
-    if (!phase) return registry;
 
-    // An unknown phase yields an EMPTY artifact list, never the whole registry. Falling back to
-    // everything would answer a question nobody asked and read as "this phase requires all of it".
-    return {
-      ...registry,
-      artifacts: registry.artifacts.filter((a) => a.phases.includes(phase)),
-    };
+    const scoped = phase
+      // An unknown phase yields an EMPTY artifact list, never the whole registry. Falling back to
+      // everything would answer a question nobody asked and read as "this phase requires all of it".
+      ? { ...registry, artifacts: registry.artifacts.filter((a) => a.phases.includes(phase)) }
+      : registry;
+
+    return { ...scoped, artifacts: await this.withFields(rulesetsRoot, scoped.artifacts) };
+  }
+
+  /**
+   * Attaches each artifact's FIELDS, derived from the schema its `schemaId` names.
+   *
+   * This closes the half of the contract a satellite could not use. Publishing the `$id` told a
+   * consumer that a PRD has a canonical shape somewhere; it did not tell it what a PRD contains,
+   * and nothing dereferences an identity. Gate criteria resolve a field path, so without this the
+   * tenant can configure a rule over a document that nothing will ever read — the gate checks that
+   * a file exists and never what it says.
+   *
+   * A schema that cannot be read leaves the artifact WITHOUT fields rather than failing the whole
+   * registry: one unreadable file must not take down the catalogue every other artifact needs.
+   */
+  private async withFields(
+    rulesetsRoot: string,
+    artifacts: RegistryArtifact[],
+  ): Promise<RegistryArtifact[]> {
+    return Promise.all(
+      artifacts.map(async (artifact) => {
+        if (!artifact.schemaId) return artifact;
+
+        const fileName = schemaFileNameFromId(artifact.schemaId);
+        if (!fileName) return artifact;
+
+        const schemaFile = path.join(rulesetsRoot, 'schema', fileName);
+        if (!(await this.fs.exists(schemaFile))) return artifact;
+
+        try {
+          const schema = JSON.parse(await this.fs.readFile(schemaFile));
+          const { fields, omitted } = deriveArtifactFields(schema);
+          return {
+            ...artifact,
+            fields,
+            ...(omitted.length > 0 ? { omittedFields: omitted } : {}),
+          };
+        } catch {
+          // Malformed schema: the artifact still exists and is still demanded, it just cannot say
+          // what it contains yet.
+          return artifact;
+        }
+      }),
+    );
   }
 
   /**

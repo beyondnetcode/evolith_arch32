@@ -20,7 +20,7 @@ El modelo central de responsabilidades es:
 
 El modelo de responsabilidades de tenant a nivel suite es:
 
-> **MMS gobierna la identidad maestra del Tenant. UMS gobierna la identidad y autorización de usuarios dentro del Tenant. Evolith Tracker gobierna la operación SDLC del Tenant.**
+> **UMS gobierna la identidad maestra del Tenant, y la identidad y autorización de usuarios dentro de él. Evolith Tracker gobierna la operación SDLC del Tenant.**
 
 El diseño reemplaza la interpretación anterior en la que CLI, CI o agentes autónomos podían parecer propietarios del veredicto final de un Phase Gate.
 
@@ -29,10 +29,10 @@ El diseño reemplaza la interpretación anterior en la que CLI, CI o agentes aut
 ## 2. Invariantes del Sistema
 
 1. **Evolith Core es constitucional y de solo lectura en runtime.** Define rulesets, schemas, estándares, taxonomías, gates y contratos de proveedores.
-2. **MMS posee el dato maestro canónico del Tenant.** El Tenant se registra primero en MMS y recibe la clave global usada por todos los productos de la suite.
+2. **UMS posee el dato maestro canónico del Tenant.** El Tenant se registra en UMS y recibe la clave global usada por todos los productos de la suite ([ADR-0129](../../../reference/core/architecture/adrs/core/0129-ums-is-the-tenant-master.es.md)).
 3. **UMS posee la identidad y autorización de usuarios dentro del Tenant.** Autentica usuarios, mantiene membresías, perfiles, roles y permisos, y devuelve grafos de autorización limitados por la clave global del Tenant.
 4. **Evolith Tracker posee el estado canónico de gobernanza en runtime.** Controla proyecciones SDLC del tenant, procesos, fases, decisiones, aprobaciones, excepciones y auditoría.
-5. **Los registros de Tenant en UMS y Tracker son proyecciones, no identidades maestras.** Deben referenciar la clave global de MMS y pueden estar inactivos, desactualizados o rechazados de forma independiente por cada dominio consumidor.
+5. **El registro de Tenant en el Tracker es una proyección, no una identidad maestra.** Debe referenciar la clave global que publica UMS y puede estar inactivo, desactualizado o rechazado de forma independiente por cada dominio consumidor.
 6. **CLI, MCP, CI y agentes son evaluadores sin estado o productores de evidencia.** Nunca modifican directamente el estado canónico de una fase.
 7. **Los sistemas externos conservan autoridad sobre sus hechos operativos.** SCM posee commits, CI posee ejecuciones, observabilidad posee traces y los sistemas de trabajo poseen sus work items nativos.
 8. **Tracker es autoritativo para interpretar la gobernanza.** Decide si la evidencia recolectada satisface las políticas del Core y del tenant.
@@ -59,8 +59,7 @@ flowchart TB
     AGENTS["Agentes Autónomos y LLMs"]:::actor
 
     CORE["Evolith Core\nConstitución · Reglas · Schemas · Contratos"]:::core
-    MMS["MMS\nDato Maestro de Tenant"]:::product
-    UMS["UMS\nIdentidad · Membresía · Autorización"]:::product
+    UMS["UMS\nMaestro de Tenant · Identidad · Membresía · Autorización"]:::product
     TRACKER["Evolith Tracker\nPlano de Control de Gobernanza"]:::tracker
 
     WORK["Sistemas de Trabajo\nJira · Azure DevOps · GitHub Issues · Alternativas"]:::provider
@@ -69,12 +68,11 @@ flowchart TB
     BI["Analítica y Visualización\nSuperset · Grafana · Alternativas"]:::provider
     TEST["Proveedores de Testing, Seguridad y Despliegue"]:::provider
 
-    PRODUCTS["Productos Satélite\nMMS · UMS · Evolith Tracker · Productos Futuros"]:::product
+    PRODUCTS["Productos Satélite\nUMS · Evolith Tracker · Productos Futuros"]:::product
 
     BOARD -->|aprueba evolución constitucional| CORE
     CORE -->|reglas, schemas y contratos| TRACKER
-    MMS -->|TenantProjection con clave global| UMS
-    MMS -->|TenantProjection con clave global| TRACKER
+    UMS -->|TenantSnapshot con clave global| TRACKER
     TRACKER -->|solicitud delegada de autorizacion| UMS
     UMS -->|grafo de autorización por Tenant| TRACKER
     HUMANS -->|solicitudes, aprobaciones y excepciones| TRACKER
@@ -117,8 +115,7 @@ flowchart TB
 
     CORE["Evolith Core\nRulesets · Schemas · Taxonomía · ADRs"]:::core
     CLI["Evolith SDK / CLI / MCP\nRuntime de Evaluación sin Estado"]:::core
-    MMS["MMS\nDato Maestro de Tenant"]:::adapter
-    UMS["UMS\nIdentidad y Autorización"]:::adapter
+    UMS["UMS\nMaestro de Tenant · Identidad y Autorización"]:::adapter
 
     subgraph EXTERNAL["Proveedores Externos"]
         WP["Adaptador de Gestión de Trabajo"]:::adapter
@@ -133,7 +130,7 @@ flowchart TB
     UX --> API
     API --> TENANT
     API --> ORCH
-    MMS -->|TenantProjection| TENANT
+    UMS -->|TenantSnapshot| TENANT
     API -->|autenticación y autorización delegada| UMS
     UMS -->|grafo de autorización| API
     TENANT --> ORCH
@@ -170,7 +167,7 @@ flowchart TB
 |---|---|---|
 | **Experiencia Web Unificada** | Navegación, vistas de evidencia, acciones gobernadas, aprobaciones y deep links | La verdad operativa del proveedor |
 | **API de Gobernanza** | Contrato externo estable y frontera de autorización | Reglas de negocio duplicadas desde Core |
-| **Servicio de Proyección de Tenant** | Vista local activa/inactiva del Tracker sobre la identidad del Tenant en MMS y frescura de proyección | Identidad maestra del Tenant, identidad legal, membresía de usuarios o grafo de autorización |
+| **Servicio de Proyección de Tenant** | Vista local activa/inactiva del Tracker sobre la identidad del Tenant en UMS y frescura de proyección | Identidad maestra del Tenant, identidad legal, membresía de usuarios o grafo de autorización |
 | **Orquestador de Procesos y Fases** | Ciclo de vida y solicitudes de transición | La implementación técnica de evaluación |
 | **Motor de Decisiones de Gate** | Decisión canónica, combinación de políticas, aprobaciones y excepciones | Ejecución de herramientas fuente |
 | **Servicio Evidence Graph** | Identidad, linaje, relaciones, integridad y consulta de evidencia | Almacenes crudos de proveedores |
@@ -183,19 +180,17 @@ flowchart TB
 
 ## 5. Dato Maestro de Tenant y Proyecciones por Contexto
 
-El Tenant se crea una sola vez en MMS como dato maestro. UMS y Evolith Tracker consumen proyecciones del Tenant para que cada bounded context conserve autonomía y, al mismo tiempo, comparta la misma clave global del Tenant.
+El Tenant se crea una sola vez en UMS como dato maestro. Evolith Tracker consume el retrato versionado que UMS publica, así cada bounded context conserva su autonomía y comparte la misma clave global del Tenant.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant M as MMS
     participant U as UMS
     participant T as Evolith Tracker
     participant A as Usuario
 
-    M->>M: Registrar identidad maestra del Tenant
-    M-->>U: Publicar TenantProjection
-    M-->>T: Publicar TenantProjection
+    U->>U: Registrar identidad maestra del Tenant
+    U-->>T: Publicar TenantSnapshot (versionado)
     U->>U: Habilitar membresías, roles, perfiles y permisos
     T->>T: Habilitar frontera de gobernanza SDLC
     A->>T: Abrir workspace SDLC gobernado
@@ -209,13 +204,12 @@ sequenceDiagram
 
 | Sistema | Responsabilidad sobre Tenant | Usa la Clave Global del Tenant Para | No Debe Poseer |
 |---|---|---|---|
-| **MMS** | Identidad maestra, ciclo de vida, metadata canónica y publicación de proyecciones | Correlación cross-suite | Autorización de usuarios o estado de procesos SDLC |
-| **UMS** | Identidad de usuarios, membresías, perfiles, roles y permisos dentro del Tenant | Scoping del grafo de autorización | Identidad maestra del Tenant o decisiones de gate SDLC |
+| **UMS** | Identidad maestra del Tenant y su ciclo de vida, publicación del retrato, y la identidad de usuarios, membresías, perfiles, roles y permisos dentro del Tenant | Correlación cross-suite y scoping del grafo de autorización | Estado de procesos SDLC o decisiones de gate |
 | **Evolith Tracker** | Proceso SDLC, gates, evidencias, aprobadores, excepciones, auditoría y configuración operacional del tenant | Frontera de gobernanza y partición de evidencias | Identidad maestra del Tenant o autoridad de credenciales de usuario |
 
 Tracker debe rechazar acciones gobernadas cuando el grafo de autorización de UMS referencia un Tenant ausente, inactivo, vencido según política o inconsistente con la proyección local del Tenant en Tracker.
 
-Los datos de proyección del Tenant son locales al dominio por diseño. Una proyección puede incluir la clave global del Tenant, nombre visible, estado de ciclo de vida, perfil de clasificación de datos, referencia de perfil de gobernanza, versión de proyección y metadata de sincronización. No debe convertirse en una copia de todos los campos de MMS o UMS.
+Los datos de proyección del Tenant son locales al dominio por diseño. Una proyección puede incluir la clave global del Tenant, nombre visible, estado de ciclo de vida, perfil de clasificación de datos, referencia de perfil de gobernanza, versión de proyección y metadata de sincronización. No debe convertirse en una copia de todos los campos de UMS.
 
 ---
 
@@ -431,8 +425,7 @@ La experiencia muestra primero el estado canónico Evolith y luego los detalles 
 
 ```text
 Un tenant
-  -> una identidad maestra de Tenant en MMS
-  -> una proyección activa del Tenant en UMS
+  -> una identidad maestra de Tenant en UMS
   -> una proyección activa del Tenant en Tracker
   -> un producto
   -> un proceso SDLC de cinco fases
@@ -448,8 +441,7 @@ Un tenant
 El diseño se acepta únicamente si:
 
 - Tracker sigue siendo autoritativo;
-- MMS sigue siendo autoritativo para la identidad maestra del Tenant;
-- UMS sigue siendo autoritativo para identidad y autorización de usuarios;
+- UMS sigue siendo autoritativo para la identidad maestra del Tenant y para la identidad y autorización de usuarios;
 - Tracker valida una proyección local activa del Tenant antes de cualquier acción gobernada;
 - toda evidencia conserva linaje del proveedor;
 - los adaptadores son reemplazables;
@@ -482,7 +474,7 @@ Rulesets, schemas y código quedan fuera de este primer conjunto de cambios de d
 - límites de agregados del Evidence Graph;
 - taxonomía inicial de provider ports;
 - niveles de certificación de adaptadores;
-- contrato de proyección de Tenant desde MMS hacia UMS y Tracker;
+- contrato del retrato de tenant de UMS hacia Tracker (`Evolith.Contracts.Tenancy.TenantSnapshotIntegrationEvent`);
 - contrato de grafo de autorización de UMS consumido por Tracker;
 - corte vertical mínimo;
 - terminología de `compliant`, `approved` y `passed`;

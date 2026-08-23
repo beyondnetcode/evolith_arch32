@@ -20,7 +20,7 @@ The central responsibility model is:
 
 The suite-level tenant responsibility model is:
 
-> **MMS governs the Tenant master identity. UMS governs user identity and authorization inside the Tenant. Evolith Tracker governs the Tenant's SDLC operation.**
+> **UMS governs the Tenant master identity, and the user identity and authorization inside it. Evolith Tracker governs the Tenant's SDLC operation.**
 
 The design replaces the previous interpretation in which CLI, CI, or autonomous agents could appear to own the final Phase Gate verdict.
 
@@ -29,10 +29,10 @@ The design replaces the previous interpretation in which CLI, CI, or autonomous 
 ## 2. System Invariants
 
 1. **Evolith Core is constitutional and read-only at runtime.** It defines rulesets, schemas, standards, taxonomies, gate definitions, and provider contracts.
-2. **MMS owns canonical Tenant master data.** A Tenant is registered first in MMS and receives the global Tenant key used by all suite products.
+2. **UMS owns canonical Tenant master data.** A Tenant is registered in UMS and receives the global Tenant key used by all suite products ([ADR-0129](../../../reference/core/architecture/adrs/core/0129-ums-is-the-tenant-master.md)).
 3. **UMS owns user identity and authorization inside the Tenant.** It authenticates users, maintains memberships, profiles, roles, and permissions, and returns authorization graphs scoped to the global Tenant key.
 4. **Evolith Tracker owns canonical runtime governance state.** It owns tenant SDLC projections, processes, phase state, decisions, approvals, exceptions, and audit history.
-5. **Tenant records in UMS and Tracker are projections, not master identities.** They must reference the MMS global Tenant key and may be inactive, stale, or rejected independently by each consuming domain.
+5. **Tenant records in the Tracker are a projection, not a master identity.** They must reference the global Tenant key UMS publishes and may be inactive, stale, or rejected independently by each consuming domain.
 6. **CLI, MCP, CI, and agents are stateless evaluators or evidence producers.** They never mutate canonical phase state directly.
 7. **External systems remain authoritative for their operational facts.** SCM owns commits, CI owns runs, observability owns traces, and work systems own their native work items.
 8. **Tracker is authoritative for governance interpretation.** It decides whether collected evidence satisfies Core and tenant policy.
@@ -59,8 +59,7 @@ flowchart TB
     AGENTS["Autonomous Agents and LLMs"]:::actor
 
     CORE["Evolith Core\nConstitution · Rules · Schemas · Contracts"]:::core
-    MMS["MMS\nTenant Master Data"]:::product
-    UMS["UMS\nIdentity · Membership · Authorization"]:::product
+    UMS["UMS\nTenant Master · Identity · Membership · Authorization"]:::product
     TRACKER["Evolith Tracker\nGovernance Control Plane"]:::tracker
 
     WORK["Work Systems\nJira · Azure DevOps · GitHub Issues · Alternatives"]:::provider
@@ -69,12 +68,11 @@ flowchart TB
     BI["Analytics and Visualization\nSuperset · Grafana · Alternatives"]:::provider
     TEST["Testing, Security and Deployment Providers"]:::provider
 
-    PRODUCTS["Satellite Products\nMMS · UMS · Evolith Tracker · Future Products"]:::product
+    PRODUCTS["Satellite Products\nUMS · Evolith Tracker · Future Products"]:::product
 
     BOARD -->|approves constitutional evolution| CORE
     CORE -->|rules, schemas and contracts| TRACKER
-    MMS -->|TenantProjection with global Tenant key| UMS
-    MMS -->|TenantProjection with global Tenant key| TRACKER
+    UMS -->|TenantSnapshot with global Tenant key| TRACKER
     TRACKER -->|delegated auth request| UMS
     UMS -->|Tenant-scoped authorization graph| TRACKER
     HUMANS -->|requests, approvals and exceptions| TRACKER
@@ -118,8 +116,7 @@ flowchart TB
 
     CORE["Evolith Core\nRulesets · Schemas · Taxonomy · ADRs"]:::core
     CLI["Evolith SDK / CLI / MCP\nStateless Evaluation Runtime"]:::core
-    MMS["MMS\nTenant Master Data"]:::adapter
-    UMS["UMS\nIdentity and Authorization"]:::adapter
+    UMS["UMS\nTenant Master · Identity and Authorization"]:::adapter
 
     subgraph EXTERNAL["External Providers"]
         WP["Work Management Adapter"]:::adapter
@@ -134,7 +131,7 @@ flowchart TB
     UX --> API
     API --> TENANT
     API --> ORCH
-    MMS -->|TenantProjection| TENANT
+    UMS -->|TenantSnapshot| TENANT
     API -->|delegated authentication and authorization| UMS
     UMS -->|authorization graph| API
     TENANT --> ORCH
@@ -171,7 +168,7 @@ flowchart TB
 |---|---|---|
 | **Unified Web Experience** | Navigation, evidence views, governed actions, approvals and deep links | Provider operational truth |
 | **Governance API** | Stable external contract and authorization boundary | Business rules duplicated from Core |
-| **Tenant Projection Service** | Local active/inactive Tracker view of MMS Tenant identity and projection freshness | Tenant master identity, legal identity, user membership, or authorization graph |
+| **Tenant Projection Service** | Local active/inactive Tracker view of the UMS Tenant identity and projection freshness | Tenant master identity, legal identity, user membership, or authorization graph |
 | **Process and Phase Orchestrator** | Process lifecycle and transition requests | Final technical evaluation implementation |
 | **Gate Decision Engine** | Canonical decision, policy combination, approval and exception handling | Source-tool execution |
 | **Evidence Graph Service** | Evidence identity, lineage, relationships, integrity and retrieval | Raw provider data stores |
@@ -184,19 +181,17 @@ flowchart TB
 
 ## 5. Tenant Master Data and Context Projections
 
-The Tenant is created once in MMS as master data. UMS and Evolith Tracker consume Tenant projections so each bounded context can stay autonomous while still sharing the same global Tenant key.
+The Tenant is created once in UMS as master data. Evolith Tracker consumes the versioned snapshot UMS publishes, so each bounded context stays autonomous while sharing the same global Tenant key.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant M as MMS
     participant U as UMS
     participant T as Evolith Tracker
     participant A as User
 
-    M->>M: Register Tenant master identity
-    M-->>U: Publish TenantProjection
-    M-->>T: Publish TenantProjection
+    U->>U: Register Tenant master identity
+    U-->>T: Publish TenantSnapshot (versioned)
     U->>U: Enable memberships, roles, profiles and permissions
     T->>T: Enable SDLC governance boundary
     A->>T: Open governed SDLC workspace
@@ -210,13 +205,12 @@ sequenceDiagram
 
 | System | Tenant Responsibility | Uses Global Tenant Key For | Must Not Own |
 |---|---|---|---|
-| **MMS** | Tenant master identity, lifecycle, canonical metadata and projection publication | Cross-suite identity correlation | User authorization or SDLC process state |
-| **UMS** | User identity, memberships, profiles, roles and permissions inside the Tenant | Authorization graph scoping | Tenant master identity or SDLC gate decisions |
+| **UMS** | Tenant master identity and lifecycle, snapshot publication, and the user identity, memberships, profiles, roles and permissions inside the Tenant | Cross-suite identity correlation and authorization graph scoping | SDLC process state or gate decisions |
 | **Evolith Tracker** | SDLC process, gates, evidence, approvers, exceptions, audit and tenant operational configuration | Governance boundary and evidence partitioning | Tenant master identity or user credential authority |
 
 Tracker must reject governed actions when the UMS authorization graph references a Tenant that is missing, inactive, stale beyond policy, or mismatched against the local Tracker Tenant projection.
 
-Tenant projection data is domain-local by design. A projection may carry the global Tenant key, display name, lifecycle status, data-classification profile, governance profile reference, projection version, and synchronization metadata. It must not become a copy of every MMS or UMS field.
+Tenant projection data is domain-local by design. A projection may carry the global Tenant key, display name, lifecycle status, data-classification profile, governance profile reference, projection version, and synchronization metadata. It must not become a copy of every UMS field.
 
 ---
 
@@ -434,8 +428,7 @@ The first implementation following this design will prove one vertical slice:
 
 ```text
 One tenant
-  -> one MMS Tenant master identity
-  -> one active UMS Tenant projection
+  -> one UMS Tenant master identity
   -> one active Tracker Tenant projection
   -> one product
   -> one five-phase SDLC process
@@ -451,8 +444,7 @@ One tenant
 The design is accepted only if:
 
 - Tracker remains authoritative for every decision;
-- MMS remains authoritative for Tenant master identity;
-- UMS remains authoritative for user identity and authorization;
+- UMS remains authoritative for Tenant master identity, user identity and authorization;
 - Tracker validates an active local Tenant projection before any governed action;
 - every evidence item preserves provider lineage;
 - adapters can be replaced without changing canonical entities;
@@ -487,7 +479,7 @@ The Architecture Board must approve:
 - the Evidence Graph aggregate boundaries;
 - the initial provider-port taxonomy;
 - adapter certification levels;
-- MMS-to-UMS and MMS-to-Tracker Tenant projection contract;
+- the UMS-to-Tracker tenant snapshot contract (`Evolith.Contracts.Tenancy.TenantSnapshotIntegrationEvent`);
 - UMS authorization graph contract consumed by Tracker;
 - the minimum vertical slice;
 - terminology for `compliant`, `approved`, and `passed`;

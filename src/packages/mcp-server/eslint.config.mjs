@@ -27,6 +27,9 @@
 import boundaries from 'eslint-plugin-boundaries';
 import tsParser from '@typescript-eslint/parser';
 
+/** Every layer this package classifies — the domain of the type-only exception below. */
+const ALL_LAYERS = ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'];
+
 export default [
   {
     ignores: [
@@ -63,19 +66,28 @@ export default [
       'import/resolver': {
         node: { extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'] },
       },
-      // mode: 'file' — each .ts file is an element instance of its layer. The
-      // default 'folder' mode treats every *sub-folder* as a separate element and
-      // leaves files sitting directly in `src/<layer>/` unclassified (type: null),
-      // which silently makes `boundaries/element-types` a no-op. 'file' is the
-      // correct mode for layer-based boundaries and makes the guard actually fire.
+      // Each pattern names the layer FOLDER, never a recursive file glob. Element
+      // descriptors match folders, so a recursive glob would make every
+      // *sub-folder* its own element and leave the files sitting directly in
+      // `src/<layer>/` unclassified (type: null) — silently turning
+      // `boundaries/dependencies` into a no-op. eslint-plugin-boundaries v6
+      // papered over that with `mode: 'file'`; v7 deprecates `mode` (elements are
+      // always folder-based) and a future major removes it, so the workaround is
+      // gone from this config rather than left to expire underneath us. These
+      // folder patterns were verified to classify the same file set the old
+      // `mode: 'file'` descriptors did.
+      //
+      // Because a broken config fails OPEN, changes here must be re-verified with
+      // a deliberate violation (a value import across a forbidden layer must exit
+      // 1) and with its `import type` twin (which must still exit 0).
       'boundaries/elements': [
-        { type: 'domain', mode: 'file', pattern: 'src/domain/**/*' },
-        { type: 'application', mode: 'file', pattern: 'src/application/**/*' },
-        { type: 'mcp', mode: 'file', pattern: 'src/mcp/**/*' },
-        { type: 'tools', mode: 'file', pattern: 'src/tools/**/*' },
-        { type: 'resources', mode: 'file', pattern: 'src/resources/**/*' },
-        { type: 'watcher', mode: 'file', pattern: 'src/watcher/**/*' },
-        { type: 'core', mode: 'file', pattern: 'src/core/**/*' },
+        { type: 'domain', pattern: 'src/domain' },
+        { type: 'application', pattern: 'src/application' },
+        { type: 'mcp', pattern: 'src/mcp' },
+        { type: 'tools', pattern: 'src/tools' },
+        { type: 'resources', pattern: 'src/resources' },
+        { type: 'watcher', pattern: 'src/watcher' },
+        { type: 'core', pattern: 'src/core' },
       ],
       'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts'],
     },
@@ -84,32 +96,58 @@ export default [
         'error',
         {
           default: 'disallow',
-          rules: [
+          // Folder-based elements make every intra-layer import "internal", and
+          // internal dependencies are NOT checked by default. Under the previous
+          // file-based elements each file was its own element, so intra-layer
+          // imports WERE checked — `checkInternals: true` keeps it that way, so
+          // the policies below stay the complete description of what is allowed.
+          checkInternals: true,
+          policies: [
             // domain: innermost local models
-            { from: { type: 'domain' }, allow: { to: { type: ['domain'] } } },
+            { from: { element: { type: 'domain' } }, allow: { to: { element: { type: ['domain'] } } } },
 
             // application: may use local domain
-            { from: { type: 'application' }, allow: { to: { type: ['application', 'domain'] } } },
+            {
+              from: { element: { type: 'application' } },
+              allow: { to: { element: { type: ['application', 'domain'] } } },
+            },
 
             // mcp/tools/resources/watcher: adapters — may use all inner layers.
             // `mcp` is also the composition root: `mcp.module.ts` wires the
             // adapter NestJS modules (e.g. `imports: [ToolsModule]`), so `mcp`
             // is allowed to import `tools` for that module composition.
-            { from: { type: 'mcp' }, allow: { to: { type: ['mcp', 'application', 'domain', 'tools'] } } },
-            { from: { type: 'tools' }, allow: { to: { type: ['tools', 'application', 'domain', 'mcp'] } } },
-            { from: { type: 'resources' }, allow: { to: { type: ['resources', 'application', 'domain', 'mcp'] } } },
-            { from: { type: 'watcher' }, allow: { to: { type: ['watcher', 'application', 'domain'] } } },
-            { from: { type: 'core' }, allow: { to: { type: ['core', 'domain'] } } },
+            {
+              from: { element: { type: 'mcp' } },
+              allow: { to: { element: { type: ['mcp', 'application', 'domain', 'tools'] } } },
+            },
+            {
+              from: { element: { type: 'tools' } },
+              allow: { to: { element: { type: ['tools', 'application', 'domain', 'mcp'] } } },
+            },
+            {
+              from: { element: { type: 'resources' } },
+              allow: { to: { element: { type: ['resources', 'application', 'domain', 'mcp'] } } },
+            },
+            {
+              from: { element: { type: 'watcher' } },
+              allow: { to: { element: { type: ['watcher', 'application', 'domain'] } } },
+            },
+            {
+              from: { element: { type: 'core' } },
+              allow: { to: { element: { type: ['core', 'domain'] } } },
+            },
 
             // Type-only imports are permitted across all layers: they are erased
             // at compile time and create NO runtime coupling, so they don't
             // breach the architecture's dependency direction. The guard still
-            // enforces VALUE (runtime) imports strictly via the rules above.
-            // (v6: selector-level dependency.kind replaces the legacy rule-level importKind.)
+            // enforces VALUE (runtime) imports strictly via the policies above.
+            // `dependency.kind` is the supported selector for this (it replaced
+            // the legacy rule-level `importKind`, which v7 deprecates). Policies
+            // are last-match-wins, so this blanket allowance must stay LAST.
             {
-              from: { type: ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'] },
+              from: { element: { type: ALL_LAYERS } },
               dependency: { kind: 'type' },
-              allow: { to: { type: ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'] } },
+              allow: { to: { element: { type: ALL_LAYERS } } },
             },
           ],
         },

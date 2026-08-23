@@ -62,6 +62,18 @@ test('runWatch --accept reconoce el nuevo hash y baja a exit 0', async () => {
   assert.equal(r.exitCode, 0); // aceptado
   assert.equal(r.nextLock.sha256, sha256(SPEC + '\n## New section\n'));
   assert.equal(r.nextLock.reviewedAt, '2026-07-07');
+  // `accepted` distingue "el upstream cambió" de "esta corrida lo reconoció":
+  // sin él, --accept imprimía el aviso de "NO ha sido reconocido" tras reconocerlo.
+  assert.equal(r.accepted, true);
+});
+
+test('runWatch sin --accept deja accepted=false sobre un cambio upstream', async () => {
+  const lock = { sha256: sha256(SPEC), checkedAt: '2026-06-01', reviewedAt: '2026-06-01' };
+  const r = await runWatch({ lock, fetchText: fetchChanged, now: '2026-07-07' });
+  assert.equal(r.status, 'changed');
+  assert.equal(r.accepted, false);
+  assert.equal(r.exitCode, 10);
+  assert.equal(r.nextLock.sha256, sha256(SPEC)); // el hash NO se mueve sin reconocer
 });
 
 test('runWatch falla cerrado en error de red sin tocar el lock', async () => {

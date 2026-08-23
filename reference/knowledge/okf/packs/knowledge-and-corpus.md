@@ -8,6 +8,8 @@ tags:
   - ctx.knowledge
   - draft
 timestamp: '2026-07-28'
+generated:
+  by: human:@winston
 owner: '@winston'
 reviewBy: '2026-10-06'
 version: 0.2.0

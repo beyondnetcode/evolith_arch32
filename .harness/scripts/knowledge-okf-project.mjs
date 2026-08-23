@@ -26,6 +26,13 @@
  *   - Reservados: index.md (listado, sin frontmatter), log.md (historial, fechas ISO 8601).
  *   - Todo otro .md es un "concepto": frontmatter YAML parseable con `type` NO vacío (único obligatorio).
  *   - Recomendados: title, description, resource, tags, timestamp. Claves extra permitidas.
+ *
+ * Extensión hacia OKF v0.2 (revisada en el ADR-0105, ver okf-spec.lock.json):
+ *   v0.2 supersede `timestamp` por `generated: { by, at }` (§5.2). Emitimos AMBOS: el
+ *   bundle sigue siendo v0.1-conforme (v0.1 tolera claves extra) y un consumidor v0.2
+ *   obtiene la procedencia real en vez de caer al `timestamp` legado, que no dice quién
+ *   autoró. `generated.by` usa el prefijo `human:` a propósito — ver GENERATED_BY;
+ *   `generated.at` se omite a propósito y está razonado junto a esa constante.
  *   - Cross-links: absolutos desde la raíz del bundle (empiezan con '/') por estabilidad.
  */
 import fs from 'node:fs';
@@ -44,6 +51,37 @@ const DEFAULT_OUT = path.join(KDIR, 'okf');
 
 // Tipo OKF por bucket autoral (spec: "short string identifying the kind of concept").
 const AUTHORED_TYPE = { domain: 'Domain Model', glossary: 'Glossary', prompts: 'Prompt' };
+
+/**
+ * Actor OKF (§7) que firma `generated.by` en todo concepto proyectado.
+ *
+ * Por qué `human:` y no `process:`: el corpus se AUTORA a mano en canonical/*.yaml y
+ * este proyector solo lo transcribe — no lo escribe. §7 avisa de que los consumidores
+ * que clasifican confianza (§5.3) se apoyan en el prefijo `human:`, y obliga a los
+ * productores a usarlo para contenido autorado o confirmado por humanos. Firmar con el
+ * script degradaría nuestro corpus a "generado por máquina" ante cualquier consumidor
+ * v0.2, que es justo lo contrario de lo que es.
+ */
+const GENERATED_BY = 'human:@winston';
+
+/**
+ * `at` se OMITE a propósito, y conviene que siga omitido.
+ *
+ * §5.2 define `generated.at` como "the content's last meaningful change", y solo marca
+ * `by` como REQUIRED dentro de `generated` — así que omitirlo es conforme. Las dos
+ * fuentes posibles no sirven:
+ *
+ *   - `asOf` es la fecha de PROYECCIÓN. Emitirla haría que cada re-proyección afirme
+ *     que todo el corpus acaba de cambiar, que es exactamente lo contrario del uso que
+ *     §5.2 le da al campo ("tell a recent edit from a stale fact").
+ *   - La fecha del commit del fichero canónico sería la correcta, pero es inalcanzable:
+ *     el bundle se commitea EN EL MISMO commit que el cambio canónico y lo gatea
+ *     `--verify`, de modo que `at` necesitaría la fecha de un commit que todavía no
+ *     existe al generar. Cualquier edición canónica dejaría el gate en rojo.
+ *
+ * Un dato ausente es conforme; uno inventado engaña al consumidor. Si algún día el
+ * corpus canónico lleva su propia fecha de último cambio autoral, esa es la fuente.
+ */
 
 /**
  * Sello de procedencia estampado en TODO documento que escribe este proyector.
@@ -135,6 +173,19 @@ export function okfConformance(files) {
     if (!data) violations.push({ path: f.path, error: 'sin bloque de frontmatter' });
     else if (!data.type || String(data.type).trim() === '')
       violations.push({ path: f.path, error: 'campo `type` ausente o vacío' });
+    // `generated` es opcional, pero si está, `generated.by` es REQUERIDO (§5.2) y debe
+    // ser un actor (§7). Sin esta comprobación el campo podría emitirse a medias y un
+    // consumidor v0.2 lo clasificaría mal en silencio, que es peor que no emitirlo.
+    else if (data.generated !== undefined) {
+      const by = data.generated?.by;
+      if (!by || String(by).trim() === '')
+        violations.push({ path: f.path, error: '`generated` presente sin `generated.by` (OKF §5.2)' });
+      else if (!/^(human:|process:)|\//.test(String(by)))
+        violations.push({
+          path: f.path,
+          error: `\`generated.by\` no sigue la convención de actor (OKF §7): ${by}`,
+        });
+    }
   }
   return violations;
 }
@@ -206,6 +257,7 @@ export function buildBundle({ index, loadYaml, readText, asOf }) {
         resource: resourceOf(index.spec.product),
         tags: ['product', p.role].filter(Boolean),
         timestamp: asOf,
+        generated: { by: GENERATED_BY },
         owner: product.metadata?.owner,
         reviewBy: product.metadata?.reviewBy,
       },
@@ -245,6 +297,7 @@ export function buildBundle({ index, loadYaml, readText, asOf }) {
               resource: resourceOf(srcRel),
               tags: [bucket, ps.boundedContext].filter(Boolean),
               timestamp: asOf,
+              generated: { by: GENERATED_BY },
               owner: src.data?.owner,
               reviewBy: src.data?.reviewBy,
               partOf: `/packs/${packSlug}.md`,
@@ -314,6 +367,7 @@ export function buildBundle({ index, loadYaml, readText, asOf }) {
           resource: resourceOf(entry.manifest),
           tags: [entry.layer, ps.boundedContext, pack.metadata?.status].filter(Boolean),
           timestamp: asOf,
+          generated: { by: GENERATED_BY },
           owner: pack.metadata?.owner,
           reviewBy: pack.metadata?.reviewBy,
           version: pack.metadata?.version,
@@ -344,7 +398,14 @@ export function buildBundle({ index, loadYaml, readText, asOf }) {
       return {
         path: `refs/${rSlug}.md`,
         content: renderConcept(
-          { type: n.type, title: n.title, resource: n.resource, tags: ['reference'], timestamp: asOf },
+          {
+            type: n.type,
+            title: n.title,
+            resource: n.resource,
+            tags: ['reference'],
+            timestamp: asOf,
+            generated: { by: GENERATED_BY },
+          },
           body,
         ),
       };

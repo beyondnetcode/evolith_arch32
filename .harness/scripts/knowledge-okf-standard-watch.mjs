@@ -53,6 +53,7 @@ export function staleness(lock, now, staleDays = STALE_DAYS) {
 /**
  * Núcleo del vigía (puro: fetch inyectado). Devuelve { status, nextLock, exitCode, ... }.
  * status: 'initialized' | 'ok' | 'changed' | 'error'.
+ * accepted: true cuando ESTA ejecución reconoció un cambio upstream (--accept sobre 'changed').
  */
 export async function runWatch({ lock, fetchText, url = SPEC_URL, now, accept = false, init = false }) {
   let text;
@@ -87,6 +88,12 @@ export async function runWatch({ lock, fetchText, url = SPEC_URL, now, accept = 
     upstream,
     lockedHash: lock.sha256,
     nextLock,
+    // `status` describe el ESTADO DEL UPSTREAM (cambió o no) y se mantiene
+    // 'changed' aunque se acepte, porque es lo que ocurrió. `accepted` describe
+    // lo que hizo ESTA ejecución. Sin distinguirlos, `--accept` reconocía el hash
+    // y acto seguido imprimía "NO ha sido reconocido... confirma con --accept",
+    // que se lee como que el reconocimiento falló.
+    accepted: changed && accept,
     // 'changed' sin --accept es advisory (10); aceptado o al día = 0.
     exitCode: changed && !accept ? 10 : 0,
   };
@@ -122,11 +129,15 @@ function report(result, lock, now) {
     console.error(`error:      ${result.message} — lock intacto, frescura sin cambio.`);
     return;
   }
-  console.log(`locked:     ${short(result.lockedHash ?? result.upstream)}`);
+  console.log(`locked:     ${short(result.nextLock?.sha256 ?? result.lockedHash ?? result.upstream)}`);
   console.log(`upstream:   ${short(result.upstream)}`);
   console.log(`checkedAt:  ${result.nextLock.checkedAt}  reviewedAt: ${result.nextLock.reviewedAt}`);
   console.log(`freshness:  ${s.stale ? 'STALE' : 'fresh'} (${s.daysSinceChecked ?? 'never'} d; umbral ${s.staleDays} d)`);
-  if (result.status === 'changed') {
+  if (result.accepted) {
+    console.log('');
+    console.log('✅ Cambio upstream RECONOCIDO: sha256 y reviewedAt actualizados.');
+    console.log('    Commitea el lockfile (es metadato canónico, no derivado).');
+  } else if (result.status === 'changed') {
     console.log('');
     console.log('⚠️  El estándar OKF cambió upstream y NO ha sido reconocido.');
     console.log('    Acción de Winston: revisa el SPEC + [ADR-0105], ajusta knowledge-okf-project.mjs');

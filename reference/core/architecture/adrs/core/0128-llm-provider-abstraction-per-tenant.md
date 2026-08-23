@@ -9,8 +9,12 @@
 | **Deciders** | Product Owner (owner decision) · Architecture Board |
 | **Technical story** | The assistant runs on a deterministic stub because no reasoning provider is wired, and wiring one naively would put a metered, paid dependency inside an open-source engine |
 
-> **Implementation status in this repository: none** (2026-08-22). This ADR records a decision;
-> the seams it builds on already exist and are named below.
+<!-- implementation-status: src/packages/agent-runtime/src/domain/ports/assistant-invocation.port.ts, src/packages/agent-runtime/src/providers/assistant-transport.registry.ts, src/packages/agent-runtime/src/providers/ClaudeProvider.ts, src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts -->
+> **Implementation status in this repository: partial** (2026-08-23). When this ADR was
+> accepted on 2026-08-22 nothing implemented it. Phases 1 and 2 have since landed: the
+> invocation port, the provider registry with Claude as its first entry, and the per-request
+> resolution wired in the runtime factory. What the decision still describes and the code does
+> not yet cover — the published catalog surface and per-tenant billing — is not implemented.
 
 ## Status
 

@@ -9,8 +9,13 @@
 | **Decisores** | Product Owner (decisión del propietario) · Comité de Arquitectura |
 | **Historia técnica** | El asistente funciona con un stub determinista porque no hay ningún proveedor de razonamiento conectado, y conectarlo sin más metería una dependencia de pago dentro de un motor de código abierto |
 
-> **Estado de implementación en este repositorio: ninguna** (2026-08-22). Este ADR registra una
-> decisión; las costuras sobre las que se apoya ya existen y se nombran más abajo.
+<!-- implementation-status: src/packages/agent-runtime/src/domain/ports/assistant-invocation.port.ts, src/packages/agent-runtime/src/providers/assistant-transport.registry.ts, src/packages/agent-runtime/src/providers/ClaudeProvider.ts, src/apps/agent-runtime-api/src/agent-runtime/runtime.factory.ts -->
+> **Estado de implementación en este repositorio: parcial** (2026-08-23). Cuando este ADR se
+> aceptó, el 2026-08-22, no lo implementaba nada. Desde entonces han aterrizado las fases 1 y 2:
+> el puerto de invocación, el registro de proveedores con Claude como primera entrada y la
+> resolución por petición cableada en la factoría del runtime. Lo que la decisión describe y el
+> código todavía no cubre — la superficie de catálogo publicada y la facturación por tenant — no
+> está implementado.
 
 ## Estado
 

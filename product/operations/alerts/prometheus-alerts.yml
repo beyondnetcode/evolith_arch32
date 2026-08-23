@@ -143,7 +143,7 @@ groups:
           summary: "Error budget burning too fast (6h window)"
           description: "6h burn rate {{ $value | humanizePercentage }} exceeds 6x threshold"
 
-  # Master-data projection messaging (ADR-0108 / deployment strategy §5.3, GT-463).
+  # Tenant-snapshot projection messaging (ADR-0108 / ADR-0129 / deployment strategy §5.3, GT-463).
   # MassTransit moves a message that exhausts its retries into `<queue>_error` — it never
   # nacks, so the broker DLX never fires. ANY message in an `_error` queue is a poison
   # message that needs a human: alert on depth > 0 (not a backlog threshold).
@@ -166,7 +166,7 @@ groups:
       # on a series nobody emits never fires, and a rule that cannot fire is worse than no rule
       # because it reads as coverage.
       #
-      # The bus going away is LOSSLESS, not incorrect: MMS's transactional outbox commits and
+      # The bus going away is LOSSLESS, not incorrect: UMS's transactional outbox commits and
       # drains on reconnect, consumers idle and catch up, and readiness never gates on the broker
       # (deployment strategy §5.4). So these are freshness alerts, and their severity says so.
       - alert: MessageBusDisconnected
@@ -181,39 +181,41 @@ groups:
           service: messaging
         annotations:
           summary: "The message bus is unreachable"
-          description: "No `rabbitmq_queue_messages` series is being reported: the broker or its exporter is unreachable. Master-data projection is FROZEN, not lost — the producer's outbox commits and drains on reconnect. Correctness is unaffected; freshness is not."
+          description: "No `rabbitmq_queue_messages` series is being reported: the broker or its exporter is unreachable. Tenant-snapshot projection is FROZEN, not lost — the producer's outbox commits and drains on reconnect. Correctness is unaffected; freshness is not."
           runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/product/operations/incident-response-poison-message-reprocess.md"
 
       - alert: TenantProjectionLag
-        # A projection queue in steady state is near-empty: the consumer drains it as fast as MMS
+        # A projection queue in steady state is near-empty: the consumer drains it as fast as UMS
         # publishes. Sustained depth means the consumer is not keeping up, which is the freshness
         # symptom this row exists for.
         #
         # The threshold is SEMANTIC, not measured: `> 0 for 10m` means "not draining", which is a
         # property of the queue's purpose rather than a percentile nobody has taken. The generic
-        # `RabbitMQQueueDepth` above only fires at 1000, and on a tenant-projection queue that
+        # `RabbitMQQueueDepth` above only fires at 1000, and on a tenant-snapshot queue that
         # number means freshness has been broken for a long time already. Re-tune this from real
         # traffic once there is any — and until then, an honest semantic bound beats a fabricated
         # numeric one.
-        expr: rabbitmq_queue_messages{queue=~".*\\.tenant-projection"} > 0
+        # One consumer, one queue: UMS publishes the snapshot and consumes nothing of it
+        # (ADR-0129), so this names `tracker.tenant-snapshot` rather than matching a family.
+        expr: rabbitmq_queue_messages{queue="tracker.tenant-snapshot"} > 0
         for: 10m
         labels:
           severity: warning
           service: messaging
         annotations:
-          summary: "Tenant projection is lagging on {{ $labels.queue }}"
-          description: "{{ $labels.queue }} has held {{ $value }} undelivered message(s) for 10 minutes. A projection queue in steady state is near-empty, so this means the consumer is not draining. Tenant master data served by this product is STALE, not wrong."
+          summary: "The tenant snapshot is lagging on {{ $labels.queue }}"
+          description: "{{ $labels.queue }} has held {{ $value }} undelivered message(s) for 10 minutes. A projection queue in steady state is near-empty, so this means the consumer is not draining. The tenant data this product serves is STALE, not wrong."
           runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/product/operations/incident-response-poison-message-reprocess.md"
 
       # A projection consumer endpoint that never binds its queue means the pod is Ready but
       # the consumer is dead (the 406 redeclare failure ADR-0108 retired the CRDs to prevent).
       - alert: TenantProjectionQueueMissing
-        expr: absent(rabbitmq_queue_messages{queue="ums.tenant-projection"}) or absent(rabbitmq_queue_messages{queue="tracker.tenant-projection"})
+        expr: absent(rabbitmq_queue_messages{queue="tracker.tenant-snapshot"})
         for: 5m
         labels:
           severity: critical
           service: messaging
         annotations:
-          summary: "A tenant-projection consumer endpoint queue is absent"
-          description: "ums.tenant-projection and/or tracker.tenant-projection is not declared on the broker — a consumer endpoint failed to start (dead consumer behind a Ready pod)."
+          summary: "The tenant-snapshot consumer endpoint queue is absent"
+          description: "tracker.tenant-snapshot is not declared on the broker — the consumer endpoint failed to start (dead consumer behind a Ready pod)."
           runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/product/operations/incident-response-poison-message-reprocess.md"

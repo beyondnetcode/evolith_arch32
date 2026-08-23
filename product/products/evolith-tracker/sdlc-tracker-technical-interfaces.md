@@ -20,7 +20,7 @@ The responsibility model is:
 
 The tenant responsibility model is:
 
-> **MMS governs the Tenant master identity. UMS governs user identity and authorization inside the Tenant. Tracker governs SDLC operation for the projected Tenant.**
+> **UMS governs the Tenant master identity, and the user identity and authorization inside it. Tracker governs SDLC operation for the projected Tenant.**
 
 Tracker is not an extension of the CLI. It is the canonical runtime governance system.
 
@@ -29,7 +29,7 @@ Tracker is not an extension of the CLI. It is the canonical runtime governance s
 ## 2. Architectural Invariants
 
 1. Tracker owns process, phase, gate, decision, approval, exception, and audit state.
-2. Tracker stores a Tenant projection, not the Tenant master record. The projection must reference the MMS global Tenant key.
+2. Tracker stores a Tenant projection, not the Tenant master record. The projection must reference the global Tenant key UMS publishes ([ADR-0129](../../../reference/core/architecture/adrs/core/0129-ums-is-the-tenant-master.md)).
 3. Tracker delegates authentication and authorization to UMS and consumes a tenant-scoped authorization graph before enabling governed actions.
 4. Evolith Core is read-only at runtime and supplies versioned rules, schemas, standards, and contracts.
 5. CLI, MCP, CI, and external evaluators return technical results; they never mutate canonical phase state.
@@ -52,8 +52,7 @@ flowchart TB
 
     HUMAN["Humans and Enterprise Clients"]:::actor
     AGENT["Autonomous Agents and LLMs"]:::actor
-    MMS["MMS\nTenant Master Data"]:::provider
-    UMS["UMS\nAuthN/AuthZ"]:::provider
+    UMS["UMS\nTenant Master · AuthN/AuthZ"]:::provider
 
     subgraph TRACKER["Evolith Tracker"]
         API["Governance REST API"]:::tracker
@@ -78,7 +77,7 @@ flowchart TB
 
     HUMAN --> API
     AGENT --> MCPGW
-    MMS -->|TenantProjection| TENANT
+    UMS -->|TenantSnapshot| TENANT
     API -->|delegated auth request| UMS
     UMS -->|authorization graph| API
     API --> ORCH
@@ -108,7 +107,7 @@ flowchart TB
 
 ### 4.1 Tenant Projection
 
-Tracker receives Tenant projections from MMS. The projection is the local governance boundary and must not become a second Tenant master.
+Tracker receives the Tenant snapshot UMS publishes. The projection is the local governance boundary and must not become a second Tenant master.
 
 ```typescript
 interface TenantProjection {
@@ -280,9 +279,8 @@ sequenceDiagram
     participant T as Tracker API
     participant S as Tenant Projection Service
     participant U as UMS
-    participant M as MMS
 
-    M-->>S: Publish TenantProjection
+    U-->>S: Publish TenantSnapshot
     C->>T: Open Tracker or request governed action
     T->>U: Validate token and request authorization graph
     U-->>T: Tenant-scoped permissions
@@ -341,17 +339,16 @@ sequenceDiagram
 ## 6. Tracker REST API
 
 **Base URL:** `https://tracker.evolith.io/api/v1`  
-**Authorization:** UMS-delegated bearer token and tenant-scoped authorization graph. Every command also resolves an active Tracker `TenantProjection` for the same MMS global Tenant key.
+**Authorization:** UMS-delegated bearer token and tenant-scoped authorization graph. Every command also resolves an active Tracker `TenantProjection` for the same global Tenant key UMS published.
 
 ### 6.1 Tenant Projection Intake
 
 ```text
-PUT  /tenants/projections/:globalTenantKey
 GET  /tenants/projections/:globalTenantKey
 POST /tenants/projections/:globalTenantKey/verify
 ```
 
-Projection intake is system-to-system. It is authorized for MMS integration credentials only and does not create users, memberships, or permissions in Tracker.
+Projection intake is system-to-system and does not create users, memberships, or permissions in Tracker. Since T-059 it arrives over the bus rather than over HTTP: the Tracker consumes `Evolith.Contracts.Tenancy.TenantSnapshotIntegrationEvent` on `tracker.tenant-snapshot` and upserts by version. The read endpoints above remain the local way to inspect what was applied.
 
 ### 6.2 Products and Processes
 
@@ -498,7 +495,7 @@ interface ProviderPort<TCapability, TRequest, TResult> {
 
 ```mermaid
 erDiagram
-    TENANT_MASTER ||--o{ TENANT_PROJECTION : projects
+    TENANT_MASTER_IN_UMS ||--o{ TENANT_PROJECTION : projects
     TENANT_PROJECTION ||--o{ PRODUCT : owns
     PRODUCT ||--o{ SDLC_PROCESS : runs
     SDLC_PROCESS ||--o{ PHASE_EXECUTION : contains
@@ -518,7 +515,7 @@ erDiagram
 
 | Aggregate | Primary Responsibility |
 |---|---|
-| **Tenant Projection** | Local Tracker boundary referencing the MMS Tenant master identity |
+| **Tenant Projection** | Local Tracker boundary referencing the UMS Tenant master identity |
 | **SDLC Process** | Current phase and lifecycle |
 | **Phase Execution** | Entry, activity, completion and transition history |
 | **Evidence Graph** | Evidence identity, lineage, relationships and integrity |
@@ -569,7 +566,7 @@ Agents return outputs and execution evidence only.
 | CI receives gate verdict directly from evaluator | CI submits evidence; Tracker returns canonical decision status |
 | One evidence payload embedded in gate record | Evidence Graph snapshot referenced by Gate Decision |
 | ACL only for Jira-style systems | Provider ports and ACLs across all external capabilities |
-| Tracker creates Tenant directly | MMS creates Tenant master; Tracker consumes `TenantProjection` |
+| Tracker creates Tenant directly | UMS creates the Tenant master; Tracker consumes the published snapshot |
 
 Existing ADR 0073 remains valid for the unified output envelope but requires a companion decision clarifying evaluation-versus-decision semantics before implementation.
 
@@ -582,7 +579,7 @@ Existing ADR 0073 remains valid for the unified output envelope but requires a c
 - [ ] Evidence Graph aggregate boundaries approved.
 - [ ] Provider-port taxonomy approved.
 - [ ] REST and MCP contracts reviewed.
-- [ ] MMS Tenant projection contract reviewed.
+- [ ] UMS Tenant snapshot contract reviewed.
 - [ ] UMS authorization flow reviewed.
 - [ ] Tenant isolation and data-classification rules reviewed.
 - [ ] Required ADRs identified.

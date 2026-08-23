@@ -18,7 +18,7 @@ Este documento define las interfaces técnicas mediante las cuales Evolith Track
 
 El modelo de responsabilidades de tenant es:
 
-> **MMS gobierna la identidad maestra del Tenant. UMS gobierna la identidad y autorización de usuarios dentro del Tenant. Tracker gobierna la operación SDLC del Tenant proyectado.**
+> **UMS gobierna la identidad maestra del Tenant, y la identidad y autorización de usuarios dentro de él. Tracker gobierna la operación SDLC del Tenant proyectado.**
 
 Tracker no es una extensión del CLI. Es el sistema canónico de gobernanza en runtime.
 
@@ -27,7 +27,7 @@ Tracker no es una extensión del CLI. Es el sistema canónico de gobernanza en r
 ## 2. Invariantes Arquitectónicos
 
 1. Tracker posee procesos, fases, gates, decisiones, aprobaciones, excepciones y auditoría.
-2. Tracker almacena una proyección de Tenant, no el registro maestro del Tenant. La proyección debe referenciar la clave global del Tenant en MMS.
+2. Tracker almacena una proyección de Tenant, no el registro maestro del Tenant. La proyección debe referenciar la clave global del Tenant que publica UMS ([ADR-0129](../../../reference/core/architecture/adrs/core/0129-ums-is-the-tenant-master.es.md)).
 3. Tracker delega autenticación y autorización en UMS y consume un grafo de autorización por tenant antes de habilitar acciones gobernadas.
 4. Evolith Core es read-only en runtime y suministra reglas, schemas, estándares y contratos versionados.
 5. CLI, MCP, CI y evaluadores externos retornan resultados técnicos; nunca mutan el estado canónico.
@@ -51,8 +51,7 @@ flowchart TB
 
     HUMAN["Humanos y Clientes Empresariales"]:::actor
     AGENT["Agentes Autónomos y LLMs"]:::actor
-    MMS["MMS\nDato Maestro de Tenant"]:::provider
-    UMS["UMS\nAuthN/AuthZ"]:::provider
+    UMS["UMS\nMaestro de Tenant · AuthN/AuthZ"]:::provider
 
     subgraph TRACKER["Evolith Tracker"]
         API["REST API de Gobernanza"]:::tracker
@@ -77,7 +76,7 @@ flowchart TB
 
     HUMAN --> API
     AGENT --> MCPGW
-    MMS -->|TenantProjection| TENANT
+    UMS -->|TenantSnapshot| TENANT
     API -->|solicitud delegada de autorizacion| UMS
     UMS -->|grafo de autorización| API
     API --> ORCH
@@ -107,7 +106,7 @@ flowchart TB
 
 ### 4.1 Tenant Projection
 
-Tracker recibe proyecciones de Tenant desde MMS. La proyección es la frontera local de gobernanza y no debe convertirse en un segundo maestro de Tenant.
+Tracker recibe el retrato de Tenant que publica UMS. La proyección es la frontera local de gobernanza y no debe convertirse en un segundo maestro de Tenant.
 
 ```typescript
 interface TenantProjection {
@@ -279,9 +278,8 @@ sequenceDiagram
     participant T as API Tracker
     participant S as Servicio de Proyección de Tenant
     participant U as UMS
-    participant M as MMS
 
-    M-->>S: Publicar TenantProjection
+    U-->>S: Publicar TenantSnapshot
     C->>T: Abrir Tracker o solicitar acción gobernada
     T->>U: Validar token y solicitar grafo de autorización
     U-->>T: Permisos por Tenant
@@ -340,17 +338,16 @@ sequenceDiagram
 ## 6. API REST del Tracker
 
 **Base URL:** `https://tracker.evolith.io/api/v1`  
-**Autorización:** Bearer token delegado a UMS y grafo de autorización por tenant. Cada comando también resuelve una `TenantProjection` activa del Tracker para la misma clave global del Tenant en MMS.
+**Autorización:** Bearer token delegado a UMS y grafo de autorización por tenant. Cada comando también resuelve una `TenantProjection` activa del Tracker para la misma clave global del Tenant que publicó UMS.
 
 ### 6.1 Ingesta de Proyección de Tenant
 
 ```text
-PUT  /tenants/projections/:globalTenantKey
 GET  /tenants/projections/:globalTenantKey
 POST /tenants/projections/:globalTenantKey/verify
 ```
 
-La ingesta de proyecciones es system-to-system. Se autoriza solo para credenciales de integración de MMS y no crea usuarios, membresías ni permisos en Tracker.
+La ingesta de proyecciones es system-to-system y no crea usuarios, membresías ni permisos en Tracker. Desde T-059 llega por el bus y no por HTTP: el Tracker consume `Evolith.Contracts.Tenancy.TenantSnapshotIntegrationEvent` en `tracker.tenant-snapshot` y hace upsert por versión. Los endpoints de lectura de arriba siguen siendo la forma local de inspeccionar lo aplicado.
 
 ### 6.2 Productos y Procesos
 
@@ -498,7 +495,7 @@ Todo puerto admite múltiples plugins y defaults configurables por tenant.
 
 ```mermaid
 erDiagram
-    TENANT_MASTER ||--o{ TENANT_PROJECTION : proyecta
+    TENANT_MASTER_EN_UMS ||--o{ TENANT_PROJECTION : proyecta
     TENANT_PROJECTION ||--o{ PRODUCT : posee
     PRODUCT ||--o{ SDLC_PROCESS : ejecuta
     SDLC_PROCESS ||--o{ PHASE_EXECUTION : contiene
@@ -518,7 +515,7 @@ erDiagram
 
 | Agregado | Responsabilidad |
 |---|---|
-| **Tenant Projection** | Frontera local del Tracker que referencia la identidad maestra del Tenant en MMS |
+| **Tenant Projection** | Frontera local del Tracker que referencia la identidad maestra del Tenant en UMS |
 | **SDLC Process** | Fase actual y ciclo de vida |
 | **Phase Execution** | Entrada, actividad, finalización e historial |
 | **Evidence Graph** | Identidad, linaje, relaciones e integridad |
@@ -558,7 +555,7 @@ Los agentes reciben contrato de actividad, contexto aprobado, herramientas permi
 | Evidencia embebida en gate | Gate Decision referencia snapshot del Evidence Graph |
 | ACL solo para Jira-like | Provider ports y plugins para toda capacidad externa |
 | Default fijo | Default configurable y reemplazable por scope |
-| Tracker crea Tenant directamente | MMS crea el Tenant maestro; Tracker consume `TenantProjection` |
+| Tracker crea Tenant directamente | UMS crea el Tenant maestro; Tracker consume el retrato publicado |
 
 ADR 0073 continúa válido para el envelope unificado, pero requiere una decisión complementaria sobre semántica de evaluación versus decisión.
 
@@ -572,7 +569,7 @@ ADR 0073 continúa válido para el envelope unificado, pero requiere una decisi�
 - [ ] Taxonomía de provider ports aprobada.
 - [ ] Modelo de plugins y defaults aprobado.
 - [ ] Contratos REST y MCP revisados.
-- [ ] Contrato de proyección de Tenant desde MMS revisado.
+- [ ] Contrato del retrato de Tenant de UMS revisado.
 - [ ] Flujo UMS revisado.
 - [ ] Aislamiento y clasificación de datos revisados.
 - [ ] ADRs requeridos identificados.

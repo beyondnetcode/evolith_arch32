@@ -5,7 +5,10 @@
 > **Firma del Agente:** Agente Arquitecto (Winston)
 
 ## Estado
-Accepted
+Superseded by [ADR-0129](./0129-ums-is-the-tenant-master.es.md) — 2026-08-22.
+MMS, nombrado más abajo como único propietario del Tenant maestro, nunca se construyó. UMS posee el
+tenant y lo publica; ver la decisión que lo supersede. El texto de abajo se conserva tal cual se
+escribió, sin enmendar.
 
 ## Fecha
 2026-07-08

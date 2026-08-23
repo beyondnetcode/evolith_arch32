@@ -7,7 +7,7 @@
   "audience": "core",
   "adrId": "ADR-0106",
   "adrTitle": "Master Tenant and Context Projections",
-  "status": "Accepted",
+  "status": "Superseded by [ADR-0129](./0129-ums-is-the-tenant-master.md) — 2026-08-22.",
   "date": "2026-07-08",
   "rules": [
     {

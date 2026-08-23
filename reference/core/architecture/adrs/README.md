@@ -77,7 +77,8 @@ Decisions applicable to any product built on top of the framework, regardless of
 | [ADR 0103: Architecture Planning Gate](./core/0103-architecture-planning-gate-intake.md) | Architecture Planning Gate as Pre-Discovery Intake | Establish early governance intake | Core ADR | Yes |
 | [ADR 0104: Advisory Design-Phase Governance](./core/0104-topology-driven-advisory-design-governance.md) | Topology-Driven Advisory Design-Phase Governance | Govern composition via blueprints | Core ADR | Yes |
 | [ADR 0105: OKF Knowledge Projection](./core/0105-okf-knowledge-projection.md) | OKF as the Portable Projection of the Knowledge OS | Standardize knowledge interchange | Core ADR | Yes |
-| [ADR 0106: Master Tenant and Context Projections](./core/0106-master-tenant-context-projections.md) | Master Tenant Registry in MMS and Context Projections | Isolate tenant contexts safely | Core ADR | Yes |
+| [ADR 0106: Master Tenant and Context Projections](./core/0106-master-tenant-context-projections.md) | Master Tenant Registry in MMS and Context Projections — **superseded by ADR-0129**; MMS was never built | Isolate tenant contexts safely | Core ADR | No |
+| [ADR 0129: The Tenant Master Is UMS](./core/0129-ums-is-the-tenant-master.md) | UMS owns the tenant and publishes a versioned snapshot the suite projects | Put the tenant boundary where the code is | Core ADR | Yes |
 
 ---
 

@@ -133,8 +133,6 @@
     "reference/core/architecture/adrs/core/0102-evolith-agent-runtime.md",
     "reference/core/architecture/adrs/core/0103-architecture-planning-gate-intake.es.md",
     "reference/core/architecture/adrs/core/0103-architecture-planning-gate-intake.md",
-    "reference/core/architecture/adrs/core/0106-master-tenant-context-projections.es.md",
-    "reference/core/architecture/adrs/core/0106-master-tenant-context-projections.md",
     "reference/core/architecture/adrs/core/0107-single-cluster-kubernetes-deployment-topology.es.md",
     "reference/core/architecture/adrs/core/0107-single-cluster-kubernetes-deployment-topology.md",
     "reference/core/architecture/adrs/core/0108-masstransit-owned-message-topology.es.md",

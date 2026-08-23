@@ -5,7 +5,9 @@
 > **Agent Signature:** Architect Agent (Winston)
 
 ## Status
-Accepted
+Superseded by [ADR-0129](./0129-ums-is-the-tenant-master.md) — 2026-08-22.
+MMS, named below as the sole owner of the Master Tenant, was never built. UMS owns the tenant and
+publishes it; see the superseding decision. The text below is kept as written, unamended.
 
 ## Date
 2026-07-08

@@ -82,7 +82,7 @@
 * [0103-architecture-planning-gate-intake](./0103-architecture-planning-gate-intake.es.md) — **Architecture Planning Gate como intake pre-Discovery**
 * [0104-topology-driven-advisory-design-governance](./0104-topology-driven-advisory-design-governance.es.md) — **Gobernanza advisory de Design dirigida por topología; blueprint como guía de desarrollo componible (extiende ADR-0079/0101)**
 * [0105-okf-knowledge-projection](./0105-okf-knowledge-projection.es.md) — **Proyección de conocimiento OKF**
-* [0106-master-tenant-context-projections](./0106-master-tenant-context-projections.es.md) — **Proyecciones de contexto del Tenant maestro (MMS → UMS/Tracker)**
+* [0106-master-tenant-context-projections](./0106-master-tenant-context-projections.es.md) — **Proyecciones de contexto del Tenant maestro (MMS → UMS/Tracker) — superseded por ADR-0129; MMS nunca se construyó**
 * [0107-single-cluster-kubernetes-deployment-topology](./0107-single-cluster-kubernetes-deployment-topology.es.md) — **Topología de despliegue Kubernetes de cluster único para la suite Evolith**
 * [0108-masstransit-owned-message-topology](./0108-masstransit-owned-message-topology.es.md) — **MassTransit es dueño de la topología de mensajes; los CRDs del broker son solo RBAC**
 * [0109-multi-project-satellite-governance](./0109-multi-project-satellite-governance.es.md) — **Gobernanza de satélites multi-proyecto (satélites monorepo); Core permanece soberano**
@@ -95,6 +95,7 @@
 * [0117-bilingual-parity-scope-authored-sources](./0117-bilingual-parity-scope-authored-sources.es.md) — **La paridad bilingüe aplica a fuentes AUTORADAS, nunca a proyecciones generadas; los árboles generados heredan la paridad de sus fuentes, exclusiones declaradas en código con generador + razón**
 * [0118-core-hub-repository-taxonomy](./0118-core-hub-repository-taxonomy.es.md) — **La raíz del hub Core tiene taxonomía propia, distinta de la de satélites: reference/ + product/ + src/ + .harness/; ADR-0070 gobierna solo satélites; la imposición es 03-validate-root-cleanliness.mjs + TAX-05**
 * [0128-llm-provider-abstraction-per-tenant](./0128-llm-provider-abstraction-per-tenant.es.md)
+* [0129-ums-is-the-tenant-master](./0129-ums-is-the-tenant-master.es.md) — **El maestro de Tenant es UMS, que publica un retrato versionado que la suite proyecta; supersede a ADR-0106, cuyo MMS nunca se construyó**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

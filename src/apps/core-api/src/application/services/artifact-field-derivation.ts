@@ -58,14 +58,51 @@ interface JsonSchemaNode {
   items?: JsonSchemaNode;
 }
 
-/** A humane label when the schema gives none: `executiveSummary` → `Executive Summary`. */
+/**
+ * Words that are ALWAYS shouted, because lowercasing them makes a label look misspelt:
+ * `technicalFeasibilityId` should end in «ID», not «Id» and not «id».
+ *
+ * A list rather than a rule, because there is no rule: `id` is an acronym and `is` is not, and
+ * nothing in the spelling separates them. It is short on purpose — a term that is not here comes
+ * out as an ordinary word, which is merely plain, whereas a term wrongly here comes out shouting.
+ */
+const ACRONYMS = new Set([
+  'id', 'api', 'url', 'uri', 'cpu', 'gpu', 'ram', 'gb', 'mb', 'tb', 'ms',
+  'qa', 'ci', 'cd', 'ui', 'ux', 'db', 'sql', 'http', 'https', 'json', 'xml', 'yaml',
+  'sla', 'slo', 'sli', 'kpi', 'okr', 'roi', 'tco', 'rto', 'rpo', 'mttr', 'cfr',
+  'prd', 'adr', 'sdlc', 'pii', 'dns', 'tls', 'sso', 'rbac', 'abac', 'vpc',
+]);
+
+/**
+ * A humane label when the schema gives none: `executiveSummary` → `Executive summary`.
+ *
+ * SENTENCE case, not Title Case. A form whose labels are Title Cased reads like a menu of
+ * commands rather than a set of questions, and it is the house style of the surfaces that render
+ * these — mixing the two would look like two systems sharing one screen.
+ *
+ * This is the fallback. A schema that publishes a `title` has already been given words by whoever
+ * owns the shape, and no amount of string-splitting here can improve on them.
+ */
 function labelFor(key: string, node: JsonSchemaNode): string {
   if (node.title) return node.title;
-  const spaced = key
+
+  const words = key
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/[-_.]/g, ' ')
-    .trim();
-  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .replace(/[-_.]+/g, ' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => (ACRONYMS.has(word.toLowerCase()) ? word.toUpperCase() : word.toLowerCase()));
+
+  if (words.length === 0) return '';
+
+  const [first, ...rest] = words;
+  const head = ACRONYMS.has(first.toLowerCase())
+    ? first
+    : first.charAt(0).toUpperCase() + first.slice(1);
+
+  return [head, ...rest].join(' ');
 }
 
 /**

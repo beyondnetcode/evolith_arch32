@@ -101,8 +101,35 @@ describe('artifact field derivation', () => {
       },
     });
 
-    expect(fields.find((f) => f.fieldPath === 'executiveSummary')?.label).toBe('Executive Summary');
+    // Sentence case: these become the labels of a FORM, and Title Case makes a form read like a
+    // menu of commands rather than a set of questions.
+    expect(fields.find((f) => f.fieldPath === 'executiveSummary')?.label).toBe('Executive summary');
     expect(fields.find((f) => f.fieldPath === 'titled')?.label).toBe('A proper title');
+  });
+
+  /**
+   * `technicalFeasibilityId` ending in «Id» looks like a typo, and «id» like a mistake. There is
+   * no rule that separates an acronym from a short word — `id` is one and `is` is not — so the
+   * list is explicit and short.
+   */
+  it('shouts an acronym instead of lowercasing it into a typo', () => {
+    const { fields } = deriveArtifactFields({
+      type: 'object',
+      properties: {
+        technicalFeasibilityId: { type: 'string' },
+        cpuCoreLimit: { type: 'integer' },
+        apiBaseUrl: { type: 'string', format: 'uri' },
+        'is-approved': { type: 'boolean' },
+      },
+    });
+
+    const label = (path: string) => fields.find((f) => f.fieldPath === path)?.label;
+
+    expect(label('technicalFeasibilityId')).toBe('Technical feasibility ID');
+    expect(label('cpuCoreLimit')).toBe('CPU core limit');
+    expect(label('apiBaseUrl')).toBe('API base URL');
+    // A word that merely looks like one is left alone.
+    expect(label('is-approved')).toBe('Is approved');
   });
 
   it('survives a schema with nothing in it', () => {

@@ -13,10 +13,22 @@
  *   - MUST NOT import from apps/ (core-api)
  *
  * Internal layer hierarchy (imports may only flow inward):
- *   domain  (local MCP domain models)
- *     └─ application (MCP use cases)
- *         └─ mcp / tools / resources / watcher (MCP adapters)
- *   core    (local cross-cutting helpers)
+ *   domain            (local MCP domain models)
+ *     └─ mcp / tools / resources / watcher (MCP adapters)
+ *   common, utils     (cross-cutting helpers — depend on nothing local)
+ *
+ * This list is the FOLDERS THAT EXIST, deliberately. It previously described an
+ * `application` use-case layer and a `core` helper layer, neither of which is on
+ * disk; their descriptors matched nothing, so their policies were dead letters.
+ * Meanwhile `src/common` and `src/utils` — which do exist and are imported by
+ * `mcp` and `tools` — had no descriptor at all, so their files were unclassified
+ * (type: null) and `boundaries/dependencies` did not govern a single import into
+ * or out of them. A layer named here that is not a folder is not a harmless
+ * aspiration: it is a rule that cannot fire.
+ *
+ * `src/test-doubles` is NOT a layer. It is excluded from tsconfig and wired only
+ * through jest's `moduleNameMapper`, so it never enters the compiled graph; it is
+ * ignored below rather than classified.
  *
  * Boundary-focused on purpose: this is the `lint:boundaries` config, so it loads
  * only the TypeScript parser (to read import graphs) + eslint-plugin-boundaries,
@@ -28,7 +40,7 @@ import boundaries from 'eslint-plugin-boundaries';
 import tsParser from '@typescript-eslint/parser';
 
 /** Every layer this package classifies — the domain of the type-only exception below. */
-const ALL_LAYERS = ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'];
+const ALL_LAYERS = ['domain', 'mcp', 'tools', 'resources', 'watcher', 'common', 'utils'];
 
 export default [
   {
@@ -42,6 +54,8 @@ export default [
       // reference plugins not loaded by this boundary-only config.
       '**/*.spec.ts',
       '**/*.test.ts',
+      // Test-only doubles: excluded from tsconfig, wired via jest moduleNameMapper.
+      'src/test-doubles/**',
       '**/*.js',
       '**/*.cjs',
       '**/*.mjs',
@@ -82,14 +96,14 @@ export default [
       // 1) and with its `import type` twin (which must still exit 0).
       'boundaries/elements': [
         { type: 'domain', pattern: 'src/domain' },
-        { type: 'application', pattern: 'src/application' },
         { type: 'mcp', pattern: 'src/mcp' },
         { type: 'tools', pattern: 'src/tools' },
         { type: 'resources', pattern: 'src/resources' },
         { type: 'watcher', pattern: 'src/watcher' },
-        { type: 'core', pattern: 'src/core' },
+        { type: 'common', pattern: 'src/common' },
+        { type: 'utils', pattern: 'src/utils' },
       ],
-      'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts'],
+      'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts', 'src/test-doubles/**'],
     },
     rules: {
       'boundaries/dependencies': [
@@ -106,10 +120,16 @@ export default [
             // domain: innermost local models
             { from: { element: { type: 'domain' } }, allow: { to: { element: { type: ['domain'] } } } },
 
-            // application: may use local domain
+            // common / utils: cross-cutting helpers. Verified to import nothing
+            // local outside themselves (only intra-folder relatives plus external
+            // packages), so this is a description, not an aspiration.
             {
-              from: { element: { type: 'application' } },
-              allow: { to: { element: { type: ['application', 'domain'] } } },
+              from: { element: { type: 'common' } },
+              allow: { to: { element: { type: ['common'] } } },
+            },
+            {
+              from: { element: { type: 'utils' } },
+              allow: { to: { element: { type: ['utils'] } } },
             },
 
             // mcp/tools/resources/watcher: adapters — may use all inner layers.
@@ -118,23 +138,19 @@ export default [
             // is allowed to import `tools` for that module composition.
             {
               from: { element: { type: 'mcp' } },
-              allow: { to: { element: { type: ['mcp', 'application', 'domain', 'tools'] } } },
+              allow: { to: { element: { type: ['mcp', 'domain', 'tools', 'common'] } } },
             },
             {
               from: { element: { type: 'tools' } },
-              allow: { to: { element: { type: ['tools', 'application', 'domain', 'mcp'] } } },
+              allow: { to: { element: { type: ['tools', 'domain', 'mcp', 'common', 'utils'] } } },
             },
             {
               from: { element: { type: 'resources' } },
-              allow: { to: { element: { type: ['resources', 'application', 'domain', 'mcp'] } } },
+              allow: { to: { element: { type: ['resources', 'domain', 'mcp'] } } },
             },
             {
               from: { element: { type: 'watcher' } },
-              allow: { to: { element: { type: ['watcher', 'application', 'domain'] } } },
-            },
-            {
-              from: { element: { type: 'core' } },
-              allow: { to: { element: { type: ['core', 'domain'] } } },
+              allow: { to: { element: { type: ['watcher', 'domain'] } } },
             },
 
             // Type-only imports are permitted across all layers: they are erased

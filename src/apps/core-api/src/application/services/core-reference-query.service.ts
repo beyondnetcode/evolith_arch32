@@ -159,10 +159,31 @@ export class CoreReferenceQueryService {
    * A schema that cannot be read leaves the artifact WITHOUT fields rather than failing the whole
    * registry: one unreadable file must not take down the catalogue every other artifact needs.
    */
+  /**
+   * The corpus's Spanish field names, read once per call.
+   *
+   * A missing or unreadable glossary costs the Spanish labels and nothing else — the catalogue is
+   * what every gate depends on, and no translation is worth taking it down for. An untranslated
+   * field reaches a reader with its English name, which is plain rather than broken.
+   */
+  private async labelsEs(rulesetsRoot: string): Promise<Record<string, string>> {
+    const file = path.join(rulesetsRoot, 'i18n', 'field-labels.es.json');
+    if (!(await this.fs.exists(file))) return {};
+
+    try {
+      const parsed = JSON.parse(await this.fs.readFile(file)) as unknown;
+      return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : {};
+    } catch {
+      return {};
+    }
+  }
+
   private async withFields(
     rulesetsRoot: string,
     artifacts: RegistryArtifact[],
   ): Promise<RegistryArtifact[]> {
+    const labelsEs = await this.labelsEs(rulesetsRoot);
+
     return Promise.all(
       artifacts.map(async (artifact) => {
         if (!artifact.schemaId) return artifact;
@@ -175,7 +196,7 @@ export class CoreReferenceQueryService {
 
         try {
           const schema = JSON.parse(await this.fs.readFile(schemaFile));
-          const { fields, omitted } = deriveArtifactFields(schema);
+          const { fields, omitted } = deriveArtifactFields(schema, { labelsEs });
           return {
             ...artifact,
             fields,

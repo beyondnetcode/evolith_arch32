@@ -28,9 +28,31 @@ export interface ArtifactField {
   fieldPath: string;
   type: ArtifactFieldType;
   label: string;
+  /**
+   * The same field named in Spanish, when the corpus knows the word.
+   *
+   * It travels ALONGSIDE the English rather than replacing it, because a consumer serves many
+   * readers from one sync: the Tracker fetches this catalogue every fifteen minutes, tenant-
+   * agnostic and cached, and then renders it for whoever is looking. Publishing one language per
+   * request would mean either a fetch per reader or a document in the wrong language.
+   */
+  labelEs?: string;
   required: boolean;
   enumValues?: string[];
   description?: string;
+}
+
+/**
+ * What the derivation is given beyond the schema.
+ *
+ * Only the Spanish. English needs nothing: these keys ARE English, so a label derived from
+ * `cpuCoreLimit` is right by construction. Spanish cannot be derived from an English identifier by
+ * any amount of string-splitting — the words have to come from somewhere, and that asymmetry is
+ * why one language is computed and the other is written down.
+ */
+export interface ArtifactFieldDerivationOptions {
+  /** Field name → Spanish label. Keyed by the LEAF name, so `status` is «Estado» everywhere. */
+  labelsEs?: Record<string, string>;
 }
 
 export interface ArtifactFieldDerivation {
@@ -49,6 +71,8 @@ export interface ArtifactFieldDerivation {
 interface JsonSchemaNode {
   type?: string | string[];
   title?: string;
+  /** Per-field Spanish label, for a name the shared glossary would get wrong in this context. */
+  'x-title-es'?: string;
   description?: string;
   properties?: Record<string, JsonSchemaNode>;
   required?: string[];
@@ -83,6 +107,20 @@ const ACRONYMS = new Set([
  * This is the fallback. A schema that publishes a `title` has already been given words by whoever
  * owns the shape, and no amount of string-splitting here can improve on them.
  */
+function labelEsFor(
+  key: string,
+  node: JsonSchemaNode,
+  labelsEs: Record<string, string> | undefined,
+): string | undefined {
+  // A schema that names the field itself wins: the glossary is keyed by leaf name, so it says one
+  // thing for every `status` in the corpus, and a field whose context makes that wrong needs a way
+  // to say so without arguing with the other fifty.
+  const own = node['x-title-es'];
+  if (own) return own;
+
+  return labelsEs?.[key];
+}
+
 function labelFor(key: string, node: JsonSchemaNode): string {
   if (node.title) return node.title;
 
@@ -141,7 +179,10 @@ function typeFor(node: JsonSchemaNode): ArtifactFieldType | null {
  * Nested objects are flattened with dotted paths because that is how a criterion addresses them.
  * Arrays are omitted and reported — see {@link ArtifactFieldDerivation.omitted}.
  */
-export function deriveArtifactFields(schema: unknown): ArtifactFieldDerivation {
+export function deriveArtifactFields(
+  schema: unknown,
+  options: ArtifactFieldDerivationOptions = {},
+): ArtifactFieldDerivation {
   const fields: ArtifactField[] = [];
   const omitted: { fieldPath: string; reason: string }[] = [];
 
@@ -177,10 +218,13 @@ export function deriveArtifactFields(schema: unknown): ArtifactFieldDerivation {
         continue;
       }
 
+      const labelEs = labelEsFor(key, child, options.labelsEs);
+
       fields.push({
         fieldPath,
         type,
         label: labelFor(key, child),
+        ...(labelEs ? { labelEs } : {}),
         required,
         ...(type === 'enum' && Array.isArray(child.enum)
           ? { enumValues: child.enum.map((v) => String(v)) }

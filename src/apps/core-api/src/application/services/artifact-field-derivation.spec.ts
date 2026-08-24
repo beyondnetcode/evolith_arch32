@@ -132,6 +132,66 @@ describe('artifact field derivation', () => {
     expect(label('is-approved')).toBe('Is approved');
   });
 
+  describe('Spanish labels', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        status: { type: 'string' },
+        cpuCoreLimit: { type: 'integer' },
+        untranslated: { type: 'string' },
+        overridden: { type: 'string', 'x-title-es': 'En este contexto significa otra cosa' },
+      },
+    };
+
+    const glossary = { status: 'Estado', cpuCoreLimit: 'Límite de núcleos de CPU', overridden: 'Genérico' };
+    const labelEs = (path: string) =>
+      deriveArtifactFields(schema, { labelsEs: glossary }).fields.find((f) => f.fieldPath === path)
+        ?.labelEs;
+
+    /**
+     * Both languages travel together because ONE sync serves MANY readers: the consumer fetches
+     * this catalogue on a timer, tenant-agnostic and cached, then renders it for whoever is
+     * looking. One language per request would mean a fetch per reader, or documents in the wrong
+     * language.
+     */
+    it('carries the Spanish alongside the English, not instead of it', () => {
+      const field = deriveArtifactFields(schema, { labelsEs: glossary }).fields.find(
+        (f) => f.fieldPath === 'cpuCoreLimit',
+      );
+
+      expect(field?.label).toBe('CPU core limit');
+      expect(field?.labelEs).toBe('Límite de núcleos de CPU');
+    });
+
+    it('lets a schema override a glossary word that is wrong in its context', () => {
+      expect(labelEs('overridden')).toBe('En este contexto significa otra cosa');
+    });
+
+    /** Plain, not broken: the reader gets the English name rather than an empty label. */
+    it('leaves an untranslated field without a Spanish label', () => {
+      expect(labelEs('untranslated')).toBeUndefined();
+      expect(
+        deriveArtifactFields(schema, { labelsEs: glossary }).fields.find(
+          (f) => f.fieldPath === 'untranslated',
+        )?.label,
+      ).toBe('Untranslated');
+    });
+
+    /**
+     * Without a glossary the corpus still speaks for itself: a schema that wrote its own Spanish
+     * keeps it. Only the shared words go away, which is what makes the glossary an addition to the
+     * schemas rather than a replacement for what they say.
+     */
+    it('keeps what a schema wrote itself when no glossary is given', () => {
+      const fields = deriveArtifactFields(schema).fields;
+
+      expect(fields.find((f) => f.fieldPath === 'overridden')?.labelEs).toBe(
+        'En este contexto significa otra cosa',
+      );
+      expect(fields.find((f) => f.fieldPath === 'status')?.labelEs).toBeUndefined();
+    });
+  });
+
   it('survives a schema with nothing in it', () => {
     expect(deriveArtifactFields({}).fields).toEqual([]);
     expect(deriveArtifactFields(null).fields).toEqual([]);

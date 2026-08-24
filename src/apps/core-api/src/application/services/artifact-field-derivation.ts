@@ -37,6 +37,17 @@ export interface ArtifactField {
    * request would mean either a fetch per reader or a document in the wrong language.
    */
   labelEs?: string;
+  /**
+   * The SECTION this field sits in — the enclosing object, named — or absent at the root.
+   *
+   * It is published rather than left for the consumer to split off the path, because the section
+   * is part of the shape and the shape is this repository's to describe. A consumer deriving it
+   * would be re-deriving what is already known here, in a language it cannot get to: `technical
+   * constraints` is available by splitting `technicalConstraints.cpuCoreLimit`, «Restricciones
+   * técnicas» is not.
+   */
+  group?: string;
+  groupEs?: string;
   required: boolean;
   enumValues?: string[];
   description?: string;
@@ -51,7 +62,11 @@ export interface ArtifactField {
  * why one language is computed and the other is written down.
  */
 export interface ArtifactFieldDerivationOptions {
-  /** Field name → Spanish label. Keyed by the LEAF name, so `status` is «Estado» everywhere. */
+  /**
+   * Name → Spanish label. Keyed by the property NAME, so `status` is «Estado» everywhere, and the
+   * same table names sections: an object is a property too, and `metadata` is «Metadatos» wherever
+   * it encloses something.
+   */
   labelsEs?: Record<string, string>;
 }
 
@@ -186,7 +201,12 @@ export function deriveArtifactFields(
   const fields: ArtifactField[] = [];
   const omitted: { fieldPath: string; reason: string }[] = [];
 
-  const walk = (node: JsonSchemaNode, prefix: string, requiredHere: Set<string>): void => {
+  const walk = (
+    node: JsonSchemaNode,
+    prefix: string,
+    requiredHere: Set<string>,
+    group?: { label: string; labelEs?: string },
+  ): void => {
     const properties = node.properties;
     if (!properties) return;
 
@@ -207,8 +227,12 @@ export function deriveArtifactFields(
 
       if (childType === 'object' && child.properties) {
         // An object is not a field: its LEAVES are. Publishing the container as well would offer
-        // a path whose value is a document, which no operator can compare.
-        walk(child, fieldPath, new Set(child.required ?? []));
+        // a path whose value is a document, which no operator can compare. It IS the section those
+        // leaves belong to, though, so its name travels down with them.
+        walk(child, fieldPath, new Set(child.required ?? []), {
+          label: labelFor(key, child),
+          labelEs: labelEsFor(key, child, options.labelsEs),
+        });
         continue;
       }
 
@@ -225,6 +249,8 @@ export function deriveArtifactFields(
         type,
         label: labelFor(key, child),
         ...(labelEs ? { labelEs } : {}),
+        ...(group ? { group: group.label } : {}),
+        ...(group?.labelEs ? { groupEs: group.labelEs } : {}),
         required,
         ...(type === 'enum' && Array.isArray(child.enum)
           ? { enumValues: child.enum.map((v) => String(v)) }

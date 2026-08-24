@@ -22,7 +22,7 @@ const corpus = {
 };
 
 test('it asks for a name for every field that is published', () => {
-  assert.deepEqual([...fieldNamesIn(corpus).keys()].sort(), ['identifier', 'status']);
+  assert.deepEqual([...fieldNamesIn(corpus).keys()].sort(), ['identifier', 'metadata', 'status']);
 });
 
 test('it does not ask for words nobody will read', () => {
@@ -33,13 +33,18 @@ test('it does not ask for words nobody will read', () => {
   assert.equal(names.has('$schema'), false);
 });
 
-test('a nested field is asked for by its own name, not its parent', () => {
-  assert.equal(fieldNamesIn(corpus).has('metadata'), false);
+test('a section is asked for as well as the fields inside it', () => {
+  // An object is not a field, but it IS the heading its leaves print under. A Spanish form under
+  // an English section heading is the same half-translation, one line higher up.
+  assert.equal(fieldNamesIn(corpus).has('metadata'), true);
   assert.equal(fieldNamesIn(corpus).has('identifier'), true);
 });
 
 test('a field with no entry is reported', () => {
-  const { untranslated } = coverageProblems(fieldNamesIn(corpus), { status: 'Estado' });
+  const { untranslated } = coverageProblems(fieldNamesIn(corpus), {
+    status: 'Estado',
+    metadata: 'Metadatos',
+  });
   assert.deepEqual(untranslated, ['identifier']);
 });
 
@@ -48,6 +53,7 @@ test('AN ENTRY LEFT BEHIND BY A RENAME IS REPORTED', () => {
   const { orphans } = coverageProblems(fieldNamesIn(corpus), {
     status: 'Estado',
     identifier: 'Identificador',
+    metadata: 'Metadatos',
     oldNameNobodyPublishes: 'Fantasma',
   });
   assert.deepEqual(orphans, ['oldNameNobodyPublishes']);
@@ -56,6 +62,7 @@ test('AN ENTRY LEFT BEHIND BY A RENAME IS REPORTED', () => {
 test('an empty translation is a missing label, not a word', () => {
   const { blank } = coverageProblems(fieldNamesIn(corpus), {
     status: 'Estado',
+    metadata: 'Metadatos',
     identifier: '   ',
   });
   assert.deepEqual(blank, ['identifier']);
@@ -64,6 +71,7 @@ test('an empty translation is a missing label, not a word', () => {
 test('a full glossary reports nothing', () => {
   const problems = coverageProblems(fieldNamesIn(corpus), {
     status: 'Estado',
+    metadata: 'Metadatos',
     identifier: 'Identificador',
   });
   assert.deepEqual(problems, { untranslated: [], orphans: [], blank: [] });

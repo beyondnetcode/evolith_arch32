@@ -23,7 +23,7 @@ const SCHEMA_DIR = path.join(ROOT, 'src', 'rulesets', 'schema');
 const GLOSSARY = path.join(ROOT, 'src', 'rulesets', 'i18n', 'field-labels.es.json');
 
 /**
- * The leaf field names the corpus publishes.
+ * Every name the corpus puts in front of a person: fields, and the sections that hold them.
  *
  * It mirrors the derivation deliberately — arrays and `$`-prefixed plumbing are not published, so
  * demanding a translation for them would be demanding words nobody will ever read.
@@ -36,12 +36,14 @@ export function fieldNamesIn(schemas) {
     for (const [key, child] of Object.entries(node.properties)) {
       const type = Array.isArray(child.type) ? child.type.find((t) => t !== 'null') : child.type;
       if (type === 'array' || key.startsWith('$')) continue;
-      if (type === 'object' && child.properties) {
-        walk(child, file);
-        continue;
-      }
+
+      // An object is not a field, but it IS the section its leaves are printed under, so its name
+      // is read by a person too — and a section heading left in English under Spanish field names
+      // is exactly the half-translation this guard exists to prevent.
       if (!names.has(key)) names.set(key, new Set());
       names.get(key).add(file);
+
+      if (type === 'object' && child.properties) walk(child, file);
     }
   };
 
@@ -69,12 +71,9 @@ function publishedFieldNames() {
     for (const [key, child] of Object.entries(node.properties)) {
       const type = Array.isArray(child.type) ? child.type.find((t) => t !== 'null') : child.type;
       if (type === 'array' || key.startsWith('$')) continue;
-      if (type === 'object' && child.properties) {
-        walk(child, file);
-        continue;
-      }
       if (!names.has(key)) names.set(key, new Set());
       names.get(key).add(file);
+      if (type === 'object' && child.properties) walk(child, file);
     }
   };
 

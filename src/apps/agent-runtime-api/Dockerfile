@@ -36,10 +36,18 @@ COPY .harness ./.harness
 #
 # `_static` is not optional: this is Alpine/musl, and the non-static Linux asset
 # links against glibc.
+#
+# `curl -fsSL`, y no `wget`: la URL de descarga REDIRIGE a otro host, y el wget de
+# BusyBox que trae Alpine sale con codigo 0 sin escribir el fichero. El `set -eu` no
+# lo cazaba —no habia error que cazar— y el fallo aparecia tres ordenes despues, en
+# un `mv` que no encontraba nada. `-f` convierte un HTTP de error en salida no nula,
+# `-L` sigue la redireccion, y el `test -s` asegura que lo descargado no esta vacio.
 ARG TARGETARCH
-RUN set -eu; \
+RUN apk add --no-cache curl && \
+    set -eu; \
     OPA_VERSION="$(node --input-type=module -e "import { OPA_VERSION } from 'file:///repo/.harness/scripts/opa-runtime.mjs'; process.stdout.write(OPA_VERSION);")"; \
-    wget -qO /tmp/opa "https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_${TARGETARCH:-amd64}_static"; \
+    curl -fsSL -o /tmp/opa "https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_${TARGETARCH:-amd64}_static"; \
+    test -s /tmp/opa; \
     chmod 0755 /tmp/opa; \
     mv /tmp/opa .harness/bin/opa; \
     .harness/bin/opa version | grep -q "Version: ${OPA_VERSION}"

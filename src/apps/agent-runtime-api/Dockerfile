@@ -19,6 +19,31 @@ COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
 COPY src ./src
 COPY .harness ./.harness
 
+# ── OPA binary for THIS platform ────────────────────────────────────────────
+# Every binary committed under .harness/bin is Mach-O arm64 — a developer's macOS
+# host. Copying that tree into a Linux image ships something the container cannot
+# execute, and OpaCliPolicyValidationAdapter fails CLOSED on it
+# (`opa.execution_error`, severity error). The effect is the opposite of the one
+# the file comment below promises: every capability carrying `requiresPolicy:
+# true` would be DENIED rather than governed. So fetch the platform's own binary
+# and overwrite the default path the adapter resolves,
+# `<AGENT_RUNTIME_WORKSPACE_ROOT>/.harness/bin/opa`.
+#
+# The version is IMPORTED from `.harness/scripts/opa-runtime.mjs`, never spelled
+# again here: that module is the single owner of the pin (GT-591), and
+# `53-validate-opa-pin.mjs` reds the build on any second spelling — a Dockerfile
+# comment included.
+#
+# `_static` is not optional: this is Alpine/musl, and the non-static Linux asset
+# links against glibc.
+ARG TARGETARCH
+RUN set -eu; \
+    OPA_VERSION="$(node --input-type=module -e "import { OPA_VERSION } from 'file:///repo/.harness/scripts/opa-runtime.mjs'; process.stdout.write(OPA_VERSION);")"; \
+    wget -qO /tmp/opa "https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_${TARGETARCH:-amd64}_static"; \
+    chmod 0755 /tmp/opa; \
+    mv /tmp/opa .harness/bin/opa; \
+    .harness/bin/opa version | grep -q "Version: ${OPA_VERSION}"
+
 RUN npm ci --legacy-peer-deps
 
 # Build the app and its project references (agent-runtime -> core-domain).
@@ -71,10 +96,11 @@ COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/pac
 COPY --from=builder --chown=evolith:evolith /repo/src/apps/agent-runtime-api/dist ./src/apps/agent-runtime-api/dist
 COPY --from=builder --chown=evolith:evolith /repo/src/apps/agent-runtime-api/package.json ./src/apps/agent-runtime-api/package.json
 
-# Optional corpus so the real .harness / OPA adapters can be enabled by env
-# (AGENT_RUNTIME_HARNESS_ROOT / AGENT_RUNTIME_OPA_*) without rebuilding. Copied
-# from the builder stage so the bundled OPA binary and policy.wasm match the
-# container platform, not the developer host.
+# The corpus the real .harness / OPA adapters run against. Copied from the
+# builder stage, which is where the platform's OPA binary replaced the committed
+# macOS one — copying `.harness` straight from the build context would ship a
+# Mach-O binary into a Linux image, which is the bug this build step exists to
+# prevent.
 COPY --from=builder --chown=evolith:evolith /repo/.harness ./corpus/.harness
 COPY --from=builder --chown=evolith:evolith /repo/src/rulesets ./corpus/rulesets
 

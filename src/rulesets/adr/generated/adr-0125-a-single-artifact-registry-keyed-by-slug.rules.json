@@ -7,7 +7,7 @@
   "audience": "core",
   "adrId": "ADR-0125",
   "adrTitle": "A Single Artifact Registry, Keyed by Slug",
-  "status": "Accepted — 2026-08-02.",
+  "status": "Accepted — 2026-08-02. Implemented — 2026-08-03.",
   "date": "| 2026-08-02 |",
   "rules": [
     {

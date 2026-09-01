@@ -59,3 +59,8 @@ function safeKeyEqual(presented: string, configured: string): boolean {
 
 - ADR-0075 (Core API Auth Strategy)
 - ADR-0026 (Adaptive MFA)
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

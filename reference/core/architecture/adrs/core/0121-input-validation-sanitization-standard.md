@@ -45,3 +45,8 @@ MCP tools accept filesystem paths, user-controlled parameters, and dynamic input
 
 - ADR-0073 (Unified CLI Output Contract — no arbitrary command execution)
 - ADR-0082 (Trust Boundary — untrusted content = data, not instructions)
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

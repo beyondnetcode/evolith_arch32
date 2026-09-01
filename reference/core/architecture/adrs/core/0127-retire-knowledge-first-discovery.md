@@ -93,3 +93,8 @@ precondition by a real gate, and was never once executed.
   now precedes Phase 1 directly.
 - [ADR-0101](./0101-core-stateless-evaluation-engine.md) — the Core is a stateless evaluation
   engine; artifacts it cannot evaluate are not Core concerns.
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

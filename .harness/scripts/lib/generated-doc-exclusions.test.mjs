@@ -110,7 +110,7 @@ test('the live guard prints its exclusion ledger on every run', () => {
 // ADR-0126 REPOINTED THIS PROBE, AND THE REASON MATTERS.
 //
 // It used to write `reference/core/architecture/zz-parity-probe-<pid>.md` and assert the
-// suite failed on it. After the mandate narrowed to the sixteen-document entry surface,
+// suite failed on it. After the mandate narrowed to the seventeen-document entry surface,
 // that path is deliberately released — so the probe stopped being caught, and the test
 // failed for the right reason: it was pinning the OLD contract.
 //
@@ -122,7 +122,7 @@ test('an entry-surface document that loses its Spanish half FAILS the guard', ()
   const english = path.join(REPO_ROOT, 'reference/core/architecture/README.md');
   const spanish = path.join(REPO_ROOT, 'reference/core/architecture/README.es.md');
   assert.ok(fs.existsSync(english) && fs.existsSync(spanish),
-    'fixture pair must exist — it is one of the sixteen entry-surface documents');
+    'fixture pair must exist — it is one of the seventeen entry-surface documents');
 
   const stashed = `${spanish}.stashed-by-test-${process.pid}`;
   fs.renameSync(spanish, stashed);
@@ -186,7 +186,7 @@ test('the OKF bundle exclusion is marker-verified, not count-pinned', () => {
 // still reported as kept in scope rather than inheriting a path-based exemption. That is the
 // property this test was written for and it still holds.
 //
-// What no longer holds is the exit code. The orphan GATE now covers only the sixteen
+// What no longer holds is the exit code. The orphan GATE now covers only the seventeen
 // entry-surface documents, so an unpaired intruder in a generated tree is reported and does
 // not fail the build. That is a real reduction in enforcement, accepted by ADR-0126 and
 // written down here so the next reader does not mistake a green run for an empty report.

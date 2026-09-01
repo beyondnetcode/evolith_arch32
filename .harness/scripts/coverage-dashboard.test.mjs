@@ -63,7 +63,7 @@ test("exits 0 for root-level paired files (Pattern A)", () => {
 
 // ADR-0126 narrowed the GATE to the entry surface, so the unpaired file has to BE on it
 // for this test to prove anything. `reference/core/architecture/README.md` is one of the
-// sixteen; `reference/architecture/README.md`, which this fixture used before, is not —
+// seventeen; `reference/architecture/README.md`, which this fixture used before, is not —
 // and the test would have passed vacuously against a gate that had stopped looking.
 test("exits 1 when an ENTRY-SURFACE EN file lacks its ES counterpart", () => {
   const root = setupFixture({

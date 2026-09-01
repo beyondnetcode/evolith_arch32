@@ -51,14 +51,12 @@ Establecer una **línea base unificada de configuración de seguridad** para tod
 
 - Todos los servicios nuevos deben implementar rate limiting y límites de body desde el día uno.
 - Los servicios existentes deben ser auditados contra esta línea base trimestralmente.
-- El test de security-headers **no** valida el cumplimiento de esta línea base. Solo comprueba que
-  `X-Frame-Options`, `X-Content-Type-Options` y `X-DNS-Prefetch-Control` estén *definidas*
-  (`toBeDefined()`, `src/apps/core-api/src/presentation/controllers/security-headers.spec.ts:46-61`)
-  — no comprueba ningún valor exigido por §5, y nunca mira `Content-Security-Policy`,
-  `Strict-Transport-Security`, `Referrer-Policy` ni `X-XSS-Protection`. Peor aún: el test monta su
-  propia aplicación con `origin: ['*'], credentials: true` (líneas 34-37), lo que contradice el
-  `credentials: false` de §6, de modo que ni siquiera ejercita la configuración CORS desplegada. §5
-  y §6 quedan por tanto sin cobertura; falta escribir un test conforme.
+- El test de security-headers valida ahora el cumplimiento **por valor**, no por presencia. Antes
+  solo comprobaba que tres cabeceras estuvieran *definidas* —lo cual pasa con `default-src 'self'` y
+  `SAMEORIGIN`, justo los valores que §5 prohíbe— y montaba su propia aplicación con
+  `origin: ['*'], credentials: true`, contradiciendo el `credentials: false` de §6, así que nunca
+  ejercitaba la configuración desplegada. El arnés monta ahora lo mismo que `main.ts`, y cada
+  cabecera de §5 se afirma contra el valor que manda.
 - `CORE_API_AUTH_REQUIRED=false` debe configurarse explícitamente en ambientes de test.
 
 ## Brechas Pendientes
@@ -67,14 +65,18 @@ Las cláusulas anteriores son la decisión y se mantienen tal como están escrit
 dónde este repositorio **no** las cumple hoy. Cada entrada es un defecto del código, no un motivo
 para rebajar la cláusula.
 
-1. **§4 — `NODE_ENV` sigue predeterminando a `development` en los tres servicios.** El fail-closed
-   exige `'production'` cuando la variable no está configurada:
-   - `src/apps/core-api/src/infrastructure/config/env.validation.ts:5` —
-     `z.enum(['development', 'production', 'test']).default('development')`.
-   - `src/apps/agent-runtime-api/src/main.ts:41` — `process.env.NODE_ENV ?? "development"`, cuyo
-     valor selecciona pocas líneas más abajo `origin: "*"` para CORS.
-   - `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:223` — `process.env.NODE_ENV ||
-     'development'` en el contexto de usuario que se entrega a la autorización de herramientas.
+1. **§4 — `NODE_ENV` predeterminaba a `development` en los tres servicios. CERRADA.** El
+   fail-closed exige `'production'` cuando la variable no está configurada, y sin configurar es el
+   estado en el que llega un contenedor recién hecho, un fichero de entorno olvidado y un
+   `node dist/main` a secas. Cada sitio lee ahora sin configurar o en blanco como producción:
+   - `src/apps/core-api/src/infrastructure/config/env.validation.ts` — el valor por defecto del
+     esquema es `'production'`. Alimentaba a `main.ts`, donde `development` elegía `origin: '*'`.
+   - `src/apps/agent-runtime-api/src/main.ts` — desaparece el `?? "development"`; sin configurar o
+     en blanco resuelve a producción, que deniega cross-origin salvo `CORS_ORIGINS` explícito (§6).
+   - `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts` — el `environment` del contexto anónimo
+     resuelve a producción. Este no era cosmético: el evaluador ABAC concede herramientas de
+     **escritura** a los roles de desarrollo cuando `environment !== 'production'`, así que bastaba
+     con no configurar la variable para abrir la escritura.
 
 2. **§4 — el guard de autenticación del agent-runtime fallaba ABIERTO fuera de producción. CERRADA.**
    En `src/apps/agent-runtime-api/src/auth/api-key.guard.ts`, cuando no había configurado ni
@@ -92,11 +94,14 @@ para rebajar la cláusula.
    La brecha 1 ya no agrava esta: el guard deriva su propia postura en vez de fiarse del valor por
    defecto del servicio. La brecha 1 sigue abierta por su cuenta.
 
-3. **§5 — `helmet()` sin configurar no emite los valores de cabecera exigidos.** `helmet()` se
-   invoca sin opciones en `src/apps/core-api/src/main.ts:53` y
-   `src/apps/agent-runtime-api/src/main.ts:12`. Los valores por defecto de helmet 8.2.0 producen
-   `Content-Security-Policy: default-src 'self'` y `X-Frame-Options: SAMEORIGIN`, donde §5 manda
-   `default-src 'none'` y `DENY`. Ninguno de los dos puntos de invocación los sobrescribe.
+3. **§5 — `helmet()` sin configurar no emitía los valores exigidos. CERRADA.** helmet 8.2.0
+   predetermina a `Content-Security-Policy: default-src 'self'` y `X-Frame-Options: SAMEORIGIN`,
+   donde §5 exige `'none'` y `DENY` — una llamada sin opciones parece endurecimiento y entrega otra
+   cosa. Los dos servicios lo configuran ahora de forma explícita (`default-src 'none'`,
+   `frameguard: deny`, `Referrer-Policy: no-referrer`), y la interfaz de Swagger conserva un CSP
+   relajado **acotado a su propia ruta de documentación**, y solo cuando alguien la habilitó con
+   `SWAGGER_ENABLED=true`, en vez de relajar la política de toda la API. La prueba afirma ahora esos
+   valores en vez de su mera presencia.
 
 ## ADRs Relacionados
 

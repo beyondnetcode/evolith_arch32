@@ -51,14 +51,12 @@ Establish a **unified security configuration baseline** for all HTTP services (c
 
 - All new services must implement rate limiting and body size limits from day one.
 - Existing services must be audited against this baseline quarterly.
-- The security-headers spec test does **not** validate compliance with this baseline. It asserts
-  only that `X-Frame-Options`, `X-Content-Type-Options` and `X-DNS-Prefetch-Control` are *defined*
-  (`toBeDefined()`, `src/apps/core-api/src/presentation/controllers/security-headers.spec.ts:46-61`)
-  — it checks no value required by §5, and never looks at `Content-Security-Policy`,
-  `Strict-Transport-Security`, `Referrer-Policy` or `X-XSS-Protection`. Worse, the test builds its
-  own application with `origin: ['*'], credentials: true` (lines 34-37), contradicting the
-  `credentials: false` of §6, so it does not even exercise the deployed CORS configuration. §5 and
-  §6 are therefore untested; a conforming test is still to be written.
+- The security-headers spec now validates compliance **by value**, not by presence. It used to
+  assert only that three headers were *defined* — which passes with `default-src 'self'` and
+  `SAMEORIGIN`, the very values §5 forbids — and it built its own application with
+  `origin: ['*'], credentials: true`, contradicting the `credentials: false` of §6, so it never
+  exercised the deployed configuration at all. The harness now mounts what `main.ts` mounts, and
+  each header of §5 is asserted against its mandated value.
 - `CORE_API_AUTH_REQUIRED=false` must be explicitly set in test environments.
 
 ## Outstanding Gaps
@@ -67,14 +65,18 @@ The clauses above are the decision and stand as written. What follows is where t
 **not** comply with them today. Each entry is a defect in the code, not grounds for relaxing the
 clause.
 
-1. **§4 — `NODE_ENV` still defaults to `development` in all three services.** Fail-closed requires
-   `'production'` when the variable is unset:
-   - `src/apps/core-api/src/infrastructure/config/env.validation.ts:5` —
-     `z.enum(['development', 'production', 'test']).default('development')`.
-   - `src/apps/agent-runtime-api/src/main.ts:41` — `process.env.NODE_ENV ?? "development"`, whose
-     value then selects `origin: "*"` for CORS a few lines below.
-   - `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:223` — `process.env.NODE_ENV ||
-     'development'` in the user context handed to tool authorization.
+1. **§4 — `NODE_ENV` defaulted to `development` in all three services. CLOSED.** Fail-closed
+   requires `'production'` when the variable is unset, and unset is the state a fresh container, a
+   forgotten env file and a bare `node dist/main` all arrive in. Each site now reads unset or blank
+   as production:
+   - `src/apps/core-api/src/infrastructure/config/env.validation.ts` — the schema default is
+     `'production'`. It fed `main.ts`, where `development` selected `origin: '*'` for CORS.
+   - `src/apps/agent-runtime-api/src/main.ts` — the `?? "development"` fallback is gone; unset or
+     blank resolves to production, which denies cross-origin unless `CORS_ORIGINS` is explicit (§6).
+   - `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts` — the anonymous context's `environment`
+     resolves to production. This one was not cosmetic: the ABAC evaluator grants **write** tools to
+     development roles when `environment !== 'production'`, so leaving the variable unset was enough
+     to open writes.
 
 2. **§4 — the agent-runtime authentication guard used to fail OPEN outside production. CLOSED.**
    At `src/apps/agent-runtime-api/src/auth/api-key.guard.ts`, when neither `AGENT_RUNTIME_API_KEY`
@@ -90,11 +92,13 @@ clause.
    Gap 1 no longer compounds this one: the guard derives its own posture instead of trusting the
    service default. Gap 1 itself stands.
 
-3. **§5 — bare `helmet()` does not emit the mandated header values.** `helmet()` is called with no
-   options at `src/apps/core-api/src/main.ts:53` and `src/apps/agent-runtime-api/src/main.ts:12`.
-   The defaults of helmet 8.2.0 produce `Content-Security-Policy: default-src 'self'` and
-   `X-Frame-Options: SAMEORIGIN`, where §5 mandates `default-src 'none'` and `DENY`. Neither call
-   site overrides them.
+3. **§5 — bare `helmet()` did not emit the mandated header values. CLOSED.** helmet 8.2.0 defaults
+   to `Content-Security-Policy: default-src 'self'` and `X-Frame-Options: SAMEORIGIN`, where §5
+   mandates `'none'` and `DENY` — a call with no options looks like hardening and delivers something
+   else. Both services now configure it explicitly (`default-src 'none'`, `frameguard: deny`,
+   `Referrer-Policy: no-referrer`), and the Swagger UI keeps a relaxed CSP scoped to its own docs
+   path, only when somebody enabled it with `SWAGGER_ENABLED=true`, rather than relaxing the whole
+   API's policy. The spec now asserts these values instead of their mere presence.
 
 ## Related ADRs
 

@@ -2,7 +2,10 @@ import { z } from 'zod';
 
 export const envSchema = z.object({
   PORT: z.string().default('3000').transform(Number),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  // ADR-0119 §4: sin configurar, la postura es producción. Con `development` por
+  // defecto, no poner la variable abría el CORS a `*` (main.ts) — el modo abierto
+  // se obtenía por omisión, que es justo lo que un valor por defecto no debe hacer.
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
   CORS_ORIGINS: z.string().optional(),
   CORE_PATH: z.string().default(process.cwd()),
   WORKSPACE_ROOT: z.string().default('/tmp/evolith-workspaces'),

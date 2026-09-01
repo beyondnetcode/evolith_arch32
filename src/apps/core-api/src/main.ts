@@ -4,7 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
-import { setupOpenApi } from './openapi';
+import { setupOpenApi, OPENAPI_CONFIG } from './openapi';
 import helmet from 'helmet';
 import { EnvConfig } from './infrastructure/config/env.validation';
 import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
@@ -50,7 +50,39 @@ async function bootstrap() {
     new EnvelopeInterceptor(),
   );
 
-  app.use(helmet());
+  // ADR-0119 §5. `helmet()` a secas NO cumple: sus valores por omisión son
+  // `default-src 'self'` y `X-Frame-Options: SAMEORIGIN`, donde §5 exige `'none'` y
+  // `DENY`. Una llamada sin opciones parece endurecimiento y entrega otra cosa.
+  app.use(
+    helmet({
+      contentSecurityPolicy: { useDefaults: false, directives: { 'default-src': ["'none'"] } },
+      frameguard: { action: 'deny' },
+      referrerPolicy: { policy: 'no-referrer' },
+    }),
+  );
+
+  // Swagger UI carga sus propios scripts, estilos e imágenes: bajo
+  // `default-src 'none'` la página se sirve en blanco. La excepción se acota a la
+  // ruta de la documentación y solo existe cuando alguien la habilitó de forma
+  // explícita (`SWAGGER_ENABLED=true`), en vez de relajar el CSP de toda la API.
+  if (swaggerEnabled) {
+    app.use(
+      `/${OPENAPI_CONFIG.docsPath}`,
+      helmet({
+        contentSecurityPolicy: {
+          useDefaults: false,
+          directives: {
+            'default-src': ["'self'"],
+            'script-src': ["'self'", "'unsafe-inline'"],
+            'style-src': ["'self'", "'unsafe-inline'"],
+            'img-src': ["'self'", 'data:'],
+          },
+        },
+        frameguard: { action: 'deny' },
+        referrerPolicy: { policy: 'no-referrer' },
+      }),
+    );
+  }
 
   const nodeEnv = config.get('NODE_ENV');
   const rawOrigins = config.get('CORS_ORIGINS');

@@ -47,3 +47,8 @@ Multiple components executed shell commands: the MCP scaffold tool used `exec()`
 - ADR-0073 (Unified CLI Output Contract)
 - GT-346 (Shell injection surface closed)
 - GT-251 (Command injection in update command fixed)
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

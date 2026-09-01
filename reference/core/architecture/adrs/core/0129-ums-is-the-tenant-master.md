@@ -145,3 +145,8 @@ time in either repository and breaks everything at runtime. This ADR records the
 - [ADR-0106](./0106-master-tenant-context-projections.md) — superseded by this ADR.
 - [ADR-0108](./0108-masstransit-owned-message-topology.md) — MassTransit owns the message topology; the URN routing this decision relies on is described there.
 - [ADR-0109](./0109-multi-project-satellite-governance.md) — how satellite decisions relate to Core's corpus.
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

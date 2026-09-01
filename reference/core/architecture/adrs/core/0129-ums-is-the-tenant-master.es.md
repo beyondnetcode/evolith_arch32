@@ -149,3 +149,8 @@ repositorios, no al scope npm del Core.
 - [ADR-0106](./0106-master-tenant-context-projections.es.md) — superseded por este ADR.
 - [ADR-0108](./0108-masstransit-owned-message-topology.es.md) — MassTransit posee la topología de mensajes; el enrutado por URN del que depende esta decisión se describe allí.
 - [ADR-0109](./0109-multi-project-satellite-governance.es.md) — cómo se relacionan las decisiones de los satélites con el corpus del Core.
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

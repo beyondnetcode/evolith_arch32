@@ -50,11 +50,20 @@ extraEnv:
   # catalogue: with it set, capabilities and their `requiresApproval` posture come
   # from <root>/manifest.yaml; unset, the runtime falls back to the hardcoded
   # 7-skill table and nothing it can route requires human approval.
-  # AGENT_RUNTIME_HARNESS_ROOT: /repo/corpus/.harness
-  # AGENT_RUNTIME_OPA_ENABLED: "true"
-  # AGENT_RUNTIME_OPA_PATH: /repo/corpus/.harness/bin/opa
-  # AGENT_RUNTIME_OPA_POLICY_DIR: /repo/corpus/rulesets/opa
-  # AGENT_RUNTIME_TRACKER_ENDPOINT: https://tracker.beyondnet.cloud/api/v1/traces
+  AGENT_RUNTIME_HARNESS_ROOT: /repo/corpus/.harness
+  # OPA needs no variables here: the adapter resolves
+  # <AGENT_RUNTIME_WORKSPACE_ROOT>/.harness/bin/opa on its own, and the image now
+  # carries the platform's own binary there (see the Dockerfile's OPA build step).
+  # Policy mode already defaults to real OPA — stub is opt-in, never silent.
+  #
+  # Still deliberately unset, each waiting on something this chart cannot supply:
+  #   AGENT_RUNTIME_TRACKER_ENDPOINT — needs a reachable Tracker and its token.
+  #   AGENT_RUNTIME_STATE_DIR        — needs a mounted volume; without one the
+  #                                    working memory stays volatile.
+  #   AGENT_RUNTIME_PROFILE=production — refuses to boot unless BOTH of the above
+  #                                    and AGENT_RUNTIME_CORE_ENDPOINT/_TOKEN are
+  #                                    set (GT-438). Turn it on last, as the check
+  #                                    that the rest really landed.
 
 resources:
   requests:

@@ -860,14 +860,30 @@ jobs:
   # workspaces, in dependency order, with --provenance, idempotent against the
   # registry, and rehearsable via a dry run that defaults to on.
 
+  # GT-679 — the image build now runs on the PR, not after it.
+  #
+  # This job was gated `if: ref == main || tags`, which meant the question "does
+  # this still build?" was asked only AFTER every gate that could have stopped
+  # the change had already let it through. That is not a theoretical ordering
+  # complaint: a broken agent-runtime Dockerfile crossed PRs #669, #670 and #673
+  # carrying 46, 78 and 47 green checks, and was found on main, three promotions
+  # later, by a human reading the registry.
+  #
+  # So the BUILD runs everywhere and the PUSH stays ref-guarded. A pull request
+  # proves all three images compile; only main and version tags publish to GHCR,
+  # which is the same publishing behaviour this job had before.
   docker-services:
-    name: Build & Push Services (GHCR)
+    name: Build Services (GHCR)
     needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: read
       packages: write
+    env:
+      # Single source of truth for "is this a publishing ref?", read by both the
+      # login step and the push flag below. On a pull_request `github.ref` is
+      # refs/pull/N/merge, so this is false and nothing reaches the registry.
+      PUBLISH: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
     strategy:
       fail-fast: false
       matrix:
@@ -894,21 +910,69 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to GHCR
+        if: env.PUBLISH == 'true'
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push ${{ matrix.service }}
+      - name: Build ${{ matrix.service }} (push only from main/tags)
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
-          push: true
+          push: ${{ env.PUBLISH == 'true' }}
+          # Now that this runs on every PR, an uncached three-image rebuild would
+          # be the slowest thing in the pipeline. Scoped per service so the three
+          # matrix legs do not evict each other.
+          #
+          # Everyone READS the cache; only publishing refs WRITE it. Three images
+          # at mode=max is roughly a gigabyte per run, and the repo's Actions
+          # cache is a single 10 GB pool already holding ~1.7 GB that the test
+          # jobs depend on. Letting every PR write its own copy would evict those
+          # npm caches by LRU and show up as the test suites mysteriously slowing
+          # down. This way a PR warms itself from main and writes nothing.
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: ${{ env.PUBLISH == 'true' && format('type=gha,mode=max,scope={0}', matrix.service) || '' }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
+
+  # A matrix job reports one check per leg, and each context carries its matrix
+  # values -- "Build Services (GHCR) (core-api, ., ./src/apps/core-api/Dockerfile)".
+  # Those names change whenever a path or a service does, so they are a poor thing
+  # for branch protection to name. This job collapses the three into one stable
+  # context that CAN be marked required.
+  #
+  # ONLY `success` passes, and that is deliberate. The first version of this job
+  # let `skipped` through, reasoning that a skip means an upstream suite failed
+  # and that failure already carries its own red check. The premise was true and
+  # the conclusion was wrong: `docker-services` needs seven test jobs, and two of
+  # them -- `test-sdk-client` and `test-infra-providers` -- are NOT required
+  # contexts on main or develop. So a broken Dockerfile arriving together with a
+  # single flake in either suite would skip the build, report this check GREEN
+  # having built nothing, and leave all eight required contexts satisfied. That is
+  # the exact failure this job exists to prevent, wearing a required-check badge.
+  #
+  # A required check must assert that the build RAN, not merely that it did not
+  # fail. Two reds instead of one is not double-reporting; it is this check
+  # declining to vouch for something it never saw.
+  docker-services-gate:
+    name: Services build (GHCR)
+    needs: [docker-services]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Assert every service image built
+        run: |
+          result='${{ needs.docker-services.result }}'
+          echo "docker-services: ${result}"
+          if [ "${result}" != "success" ]; then
+            echo "::error::este check no puede afirmar nada: el build de imagenes termino en '${result}', no en 'success'"
+            exit 1
+          fi
+          echo "las tres imagenes de servicio construyen"
 
   # GT-324 — deploy the freshly-pushed images to the Coolify runtime.
   #

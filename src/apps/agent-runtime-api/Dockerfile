@@ -43,14 +43,28 @@ COPY .harness ./.harness
 # un `mv` que no encontraba nada. `-f` convierte un HTTP de error en salida no nula,
 # `-L` sigue la redireccion, y el `test -s` asegura que lo descargado no esta vacio.
 ARG TARGETARCH
-RUN apk add --no-cache curl && \
-    set -eu; \
-    OPA_VERSION="$(node --input-type=module -e "import { OPA_VERSION } from 'file:///repo/.harness/scripts/opa-runtime.mjs'; process.stdout.write(OPA_VERSION);")"; \
-    curl -fsSL -o /tmp/opa "https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_${TARGETARCH:-amd64}_static"; \
-    test -s /tmp/opa; \
-    chmod 0755 /tmp/opa; \
-    mv /tmp/opa .harness/bin/opa; \
-    .harness/bin/opa version | grep -q "Version: ${OPA_VERSION}"
+# Encadenado con `&&`, NO con `set -eu` y `;`. La version anterior fallaba en CI con
+# `mv: can't rename '/tmp/opa'` — tres ordenes despues de la causa y sin nombrarla —
+# porque ni el fallo de la descarga ni el `test -s` posterior abortaban. Un `;` que
+# deberia haber cortado y no corta convierte cualquier error en el error equivocado.
+# Con `&&` la cadena se detiene EN el comando que falla y con SU mensaje.
+#
+# Cada paso ademas se anuncia, porque el log de CI no mostro salida alguna de `curl`
+# ni de `node`: sin saber cual de los dos corrio, el fallo no era diagnosticable.
+RUN set -x \
+ && apk add --no-cache curl \
+ && OPA_VERSION="$(node --input-type=module -e "import { OPA_VERSION } from 'file:///repo/.harness/scripts/opa-runtime.mjs'; process.stdout.write(OPA_VERSION);")" \
+ && echo "OPA pin resuelto: '${OPA_VERSION}'" \
+ && test -n "${OPA_VERSION}" \
+ && OPA_URL="https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_${TARGETARCH:-amd64}_static" \
+ && echo "Descargando ${OPA_URL}" \
+ && curl -fsS --retry 3 --retry-connrefused -L -o /tmp/opa "${OPA_URL}" \
+ && ls -l /tmp/opa \
+ && test -s /tmp/opa \
+ && chmod 0755 /tmp/opa \
+ && mv /tmp/opa .harness/bin/opa \
+ && .harness/bin/opa version \
+ && .harness/bin/opa version | grep -q "Version: ${OPA_VERSION}"
 
 RUN npm ci --legacy-peer-deps
 

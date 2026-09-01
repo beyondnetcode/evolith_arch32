@@ -43,14 +43,18 @@ COPY .harness ./.harness
 # un `mv` que no encontraba nada. `-f` convierte un HTTP de error en salida no nula,
 # `-L` sigue la redireccion, y el `test -s` asegura que lo descargado no esta vacio.
 ARG TARGETARCH
-# Encadenado con `&&`, NO con `set -eu` y `;`. La version anterior fallaba en CI con
-# `mv: can't rename '/tmp/opa'` — tres ordenes despues de la causa y sin nombrarla —
-# porque ni el fallo de la descarga ni el `test -s` posterior abortaban. Un `;` que
-# deberia haber cortado y no corta convierte cualquier error en el error equivocado.
-# Con `&&` la cadena se detiene EN el comando que falla y con SU mensaje.
+# `mkdir -p .harness/bin` NO es defensivo: en CI ese directorio NO EXISTE.
+# `.gitignore:47` ignora `.harness/bin/` —son ~400 MB de binarios OPA— asi que git no
+# rastrea un solo fichero ahi. En una maquina de desarrollo el directorio existe con
+# los binarios que uno descargo; en un checkout limpio no existe en absoluto.
 #
-# Cada paso ademas se anuncia, porque el log de CI no mostro salida alguna de `curl`
-# ni de `node`: sin saber cual de los dos corrio, el fallo no era diagnosticable.
+# Ese es el fallo entero, y lo enmascaraban dos cosas: BusyBox `mv` nombra el ORIGEN
+# cuando falta el DESTINO (`can't rename '/tmp/opa'`, que se lee como si la descarga
+# hubiera fallado), y una build local pasa porque usa ficheros que solo existen en el
+# disco de quien la lanza.
+#
+# La cadena va con `&&` y no con `set -eu` y `;` porque aquella version no abortaba en
+# el comando que fallaba: el error aparecia tres ordenes despues y sin nombrar la causa.
 RUN set -x \
  && apk add --no-cache curl \
  && OPA_VERSION="$(node --input-type=module -e "import { OPA_VERSION } from 'file:///repo/.harness/scripts/opa-runtime.mjs'; process.stdout.write(OPA_VERSION);")" \
@@ -62,6 +66,7 @@ RUN set -x \
  && ls -l /tmp/opa \
  && test -s /tmp/opa \
  && chmod 0755 /tmp/opa \
+ && mkdir -p .harness/bin \
  && mv /tmp/opa .harness/bin/opa \
  && .harness/bin/opa version \
  && .harness/bin/opa version | grep -q "Version: ${OPA_VERSION}"
@@ -118,11 +123,12 @@ COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/pac
 COPY --from=builder --chown=evolith:evolith /repo/src/apps/agent-runtime-api/dist ./src/apps/agent-runtime-api/dist
 COPY --from=builder --chown=evolith:evolith /repo/src/apps/agent-runtime-api/package.json ./src/apps/agent-runtime-api/package.json
 
-# The corpus the real .harness / OPA adapters run against. Copied from the
-# builder stage, which is where the platform's OPA binary replaced the committed
-# macOS one — copying `.harness` straight from the build context would ship a
-# Mach-O binary into a Linux image, which is the bug this build step exists to
-# prevent.
+# The corpus the real .harness / OPA adapters run against. Copied from the builder
+# stage, which is the only place the OPA binary exists: `.harness/bin/` is gitignored
+# (~400 MB of platform binaries), so a clean checkout has no such directory and the
+# build step above creates it and fetches the binary for THIS platform. Copying
+# `.harness` straight from the build context would ship no `bin/` at all on CI, and
+# whatever the developer happened to have locally everywhere else.
 COPY --from=builder --chown=evolith:evolith /repo/.harness ./corpus/.harness
 COPY --from=builder --chown=evolith:evolith /repo/src/rulesets ./corpus/rulesets
 

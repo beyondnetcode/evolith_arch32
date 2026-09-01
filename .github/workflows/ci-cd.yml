@@ -860,14 +860,30 @@ jobs:
   # workspaces, in dependency order, with --provenance, idempotent against the
   # registry, and rehearsable via a dry run that defaults to on.
 
+  # GT-679 — the image build now runs on the PR, not after it.
+  #
+  # This job was gated `if: ref == main || tags`, which meant the question "does
+  # this still build?" was asked only AFTER every gate that could have stopped
+  # the change had already let it through. That is not a theoretical ordering
+  # complaint: a broken agent-runtime Dockerfile crossed PRs #669, #670 and #673
+  # carrying 46, 78 and 47 green checks, and was found on main, three promotions
+  # later, by a human reading the registry.
+  #
+  # So the BUILD runs everywhere and the PUSH stays ref-guarded. A pull request
+  # proves all three images compile; only main and version tags publish to GHCR,
+  # which is the same publishing behaviour this job had before.
   docker-services:
-    name: Build & Push Services (GHCR)
+    name: Build Services (GHCR)
     needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: read
       packages: write
+    env:
+      # Single source of truth for "is this a publishing ref?", read by both the
+      # login step and the push flag below. On a pull_request `github.ref` is
+      # refs/pull/N/merge, so this is false and nothing reaches the registry.
+      PUBLISH: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
     strategy:
       fail-fast: false
       matrix:
@@ -894,21 +910,57 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to GHCR
+        if: env.PUBLISH == 'true'
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push ${{ matrix.service }}
+      - name: Build ${{ matrix.service }} (push only from main/tags)
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
-          push: true
+          push: ${{ env.PUBLISH == 'true' }}
+          # Now that this runs on every PR, an uncached three-image rebuild would
+          # be the slowest thing in the pipeline. Scoped per service so the three
+          # matrix legs do not evict each other.
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
+
+  # A matrix job reports one check per leg, and each context carries its matrix
+  # values -- "Build Services (GHCR) (core-api, ., ./src/apps/core-api/Dockerfile)".
+  # Those names change whenever a path or a service does, so they are a poor thing
+  # for branch protection to name. This job collapses the three into one stable
+  # context that CAN be marked required.
+  docker-services-gate:
+    name: Services build (GHCR)
+    needs: [docker-services]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Assert every service image built
+        run: |
+          result='${{ needs.docker-services.result }}'
+          echo "docker-services: ${result}"
+          case "${result}" in
+            success)
+              echo "las tres imagenes construyen"
+              ;;
+            skipped)
+              # An upstream test suite failed, so the build never ran. That
+              # failure already has its own red check; do not double-report it.
+              echo "no se construyo: una suite previa fallo y lo reporta su propio check"
+              ;;
+            *)
+              echo "::error::al menos una imagen de servicio no construye"
+              exit 1
+              ;;
+          esac
 
   # GT-324 — deploy the freshly-pushed images to the Coolify runtime.
   #

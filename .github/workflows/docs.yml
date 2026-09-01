@@ -90,6 +90,9 @@ jobs:
       - name: Check bilingual parity
         run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
+      - name: Check Field Label Coverage
+        run: node .harness/scripts/ci/71-validate-field-label-coverage.mjs
+
       # GT-620's negative fixtures for the language heuristic the step above depends
       # on — including the two cases where it must DECLINE to judge. They ran in no
       # workflow, so the heuristic that closed GT-620 was itself unguarded.

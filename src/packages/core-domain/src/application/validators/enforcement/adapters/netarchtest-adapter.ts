@@ -2,7 +2,7 @@
  * NetArchTestAdapter (GT-524 · axis 2 — positioning §13.2).
  *
  * The second concrete enforcer adapter, targeting .NET — the suite's PRIMARY runtime
- * (UMS/Tracker/MMS are .NET clean/hexagonal), which had no architecture enforcer while
+ * (UMS and the Tracker are .NET clean/hexagonal), which had no architecture enforcer while
  * only Node/TS (GT-515) did. NetArchTest is a fluent assertion library run INSIDE a
  * test project, so there is no standalone JSON report: this parses the `dotnet test`
  * console output, mapping each FAILED architecture test into one canonical

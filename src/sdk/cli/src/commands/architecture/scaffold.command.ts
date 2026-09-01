@@ -51,7 +51,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
 
-    // GT-455: .NET target. The suite (UMS/Tracker/MMS) is .NET; scaffold a
+    // GT-455: .NET target. The suite (UMS and the Tracker) is .NET; scaffold a
     // clean/hexagonal ASP.NET Core solution instead of the Node/Nx workspace.
     const runtime = ((options?.runtime as string) || 'nodejs').toLowerCase();
     if (runtime === 'dotnet' || runtime === 'csharp' || runtime === '.net') {

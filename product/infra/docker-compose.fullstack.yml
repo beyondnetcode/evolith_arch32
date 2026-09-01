@@ -165,9 +165,17 @@ services:
       DOTNET_BUNDLE_EXTRACT_BASE_DIR: /tmp/efbundle
       PGCONN: Host=tracker-postgres;Port=5432;Database=evolith_tracker;Username=evolith;Password=localdev
     entrypoint: ["/bin/sh", "-c"]
-    # One bundle per DbContext (TrackerDbContext + TenantProjectionDbContext); apply both.
+    # UN solo bundle: `TenantProjectionDbContext` desaparece al retirarse la proyección
+    # de MMS, y el Tracker se queda con un único DbContext.
+    #
+    # El encadenado anterior con `&&` era una bomba de relojería: en cuanto la imagen
+    # deje de hornear `/app/efbundle-projection`, el comando sale distinto de cero,
+    # tracker-migrate falla, y tracker-api NO ARRANCA porque depende de él con
+    # `service_completed_successfully` — arrastrando a tracker-web, que es lo que abre
+    # el cliente. Y falla donde nadie mira: un contenedor one-shot, mientras la web
+    # simplemente no levanta.
     command:
-      - '/app/efbundle/efbundle --connection "$$PGCONN" && /app/efbundle-projection/efbundle-projection --connection "$$PGCONN"'
+      - '/app/efbundle/efbundle --connection "$$PGCONN"'
     depends_on:
       tracker-postgres:
         condition: service_healthy

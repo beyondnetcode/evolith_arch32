@@ -5,6 +5,7 @@
  * isolation (one of the required test cases).
  */
 
+import type { AssistantUsage } from '../domain/ports/assistant-invocation.port';
 import type { EvaluationResult } from '@beyondnet/evolith-core-domain/evaluation/contracts';
 import type {
   AgentRuntimeResult,
@@ -170,6 +171,8 @@ export function applyPolicy(
 }
 
 export interface AssembleArgs {
+  /** Consumo del proveedor de LLM, si hubo llamada externa (ADR-0128 §4). */
+  readonly assistantUsage?: AssistantUsage;
   readonly parts: {
     status: RuntimeStatus;
     findings: RuntimeFinding[];
@@ -197,6 +200,7 @@ export function assembleResult(args: AssembleArgs): AgentRuntimeResult {
     trace: args.trace,
     evaluatedAt: args.evaluatedAt,
     raw: args.raw,
+    assistantUsage: args.assistantUsage,
   };
 }
 

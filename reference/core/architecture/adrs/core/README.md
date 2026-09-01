@@ -82,7 +82,7 @@
 * [0103-architecture-planning-gate-intake](./0103-architecture-planning-gate-intake.md) — **Architecture Planning Gate as pre-Discovery intake**
 * [0104-topology-driven-advisory-design-governance](./0104-topology-driven-advisory-design-governance.md) — **Topology-driven advisory Design-phase governance; blueprint as composable development guide (extends ADR-0079/0101)**
 * [0105-okf-knowledge-projection](./0105-okf-knowledge-projection.md) — **OKF knowledge projection**
-* [0106-master-tenant-context-projections](./0106-master-tenant-context-projections.md) — **Master Tenant context projections (MMS → UMS/Tracker)**
+* [0106-master-tenant-context-projections](./0106-master-tenant-context-projections.md) — **Master Tenant context projections (MMS → UMS/Tracker) — superseded by ADR-0129; MMS was never built**
 * [0107-single-cluster-kubernetes-deployment-topology](./0107-single-cluster-kubernetes-deployment-topology.md) — **Single-cluster Kubernetes deployment topology for the Evolith suite**
 * [0108-masstransit-owned-message-topology](./0108-masstransit-owned-message-topology.md) — **MassTransit owns the message topology; broker CRDs are RBAC-only**
 * [0109-multi-project-satellite-governance](./0109-multi-project-satellite-governance.md) — **Multi-project satellite governance (monorepo satellites); Core stays sovereign**
@@ -94,6 +94,8 @@
 * [0116-canonical-finding-and-authority-boundary](./0116-canonical-finding-and-authority-boundary.md) — **Canonical `Finding` contract (mandatory provenance/determinism, `advisory: true`) and an executable advisory-authority boundary (`evaluateAuthority`, AP-R01..R06)**
 * [0117-bilingual-parity-scope-authored-sources](./0117-bilingual-parity-scope-authored-sources.md) — **Bilingual parity applies to AUTHORED sources, never to generated projections; generated trees inherit their sources' parity, exclusions declared in source with generator + reason**
 * [0118-core-hub-repository-taxonomy](./0118-core-hub-repository-taxonomy.md) — **The Core hub root has its own taxonomy, distinct from satellites: reference/ + product/ + src/ + .harness/; ADR-0070 governs satellites only; enforcement is 03-validate-root-cleanliness.mjs + TAX-05**
+* [0128-llm-provider-abstraction-per-tenant](./0128-llm-provider-abstraction-per-tenant.md)
+* [0129-ums-is-the-tenant-master](./0129-ums-is-the-tenant-master.md) — **The tenant master is UMS, which publishes a versioned snapshot the suite projects; supersedes ADR-0106, whose MMS was never built**
 
 ---
 [Back to Upper Level](../README.md)

@@ -12,24 +12,24 @@
     "weaknessCount": 138
   },
   "corpus": {
-    "rulesetFiles": 182,
-    "rules": 415,
+    "rulesetFiles": 184,
+    "rules": 417,
     "note": "Files that carry gate definitions or topology recommendations rather than conformance rules contribute no rows: architecture/topology-recommendation.rules.json and sdlc/phase-gates.rules.json."
   },
   "summary": {
-    "rules": 415,
+    "rules": 417,
     "mappedToIso5055": 37,
     "mappedDirect": 8,
     "mappedPartial": 29,
-    "noInternationalEquivalent": 378,
-    "adoptedFraction": 0.0892,
+    "noInternationalEquivalent": 380,
+    "adoptedFraction": 0.0887,
     "analyserAdoptable": 46,
     "analyserAdoptablePartial": 23,
-    "analyserAdoptableFraction": 0.1108,
-    "analyserAdoptableFractionIncludingPartial": 0.1663,
+    "analyserAdoptableFraction": 0.1103,
+    "analyserAdoptableFractionIncludingPartial": 0.1655,
     "byClass": {
       "architecture-decision": {
-        "rules": 165,
+        "rules": 167,
         "mapped": 12,
         "adoptable": 6
       },
@@ -146,7 +146,7 @@
         "adoptablePartialRuleIds": []
       },
       "documentation-only": {
-        "rules": 139,
+        "rules": 141,
         "mappedToIso5055": 9,
         "analyserAdoptable": 6,
         "analyserAdoptablePartial": 7,
@@ -3370,6 +3370,44 @@
       "sourceFile": "adr/generated/adr-0127-knowledge-first-discovery-is-retired-and-with-it-the-kdd-con.rules.json",
       "title": "Honor design decision in ADR-0127: Knowledge-First Discovery Is Retired, and With It the KDD Concept",
       "severity": "SHOULD",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0128-01",
+      "sourceFile": "adr/generated/adr-0128-llm-providers-are-a-catalog-the-core-publishes-and-a-choice-.rules.json",
+      "title": "Honor design decision in ADR-0128: LLM Providers Are a Catalog the Core Publishes and a Choice the Tenant Makes",
+      "severity": "SHOULD",
+      "ruleClass": "architecture-decision",
+      "iso5055": {
+        "cwes": [],
+        "weaknesses": [],
+        "measures": [],
+        "strength": "none"
+      },
+      "analyser": {
+        "adoptable": "no",
+        "examples": []
+      },
+      "nativeEvaluability": "documentation-only",
+      "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
+    },
+    {
+      "ruleId": "CORE-0129-01",
+      "sourceFile": "adr/generated/adr-0129-the-tenant-master-is-ums-and-the-suite-projects-a-versioned-.rules.json",
+      "title": "Conform to ADR-0129: The Tenant Master Is UMS, and the Suite Projects a Versioned Snapshot",
+      "severity": "MUST",
       "ruleClass": "architecture-decision",
       "iso5055": {
         "cwes": [],

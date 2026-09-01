@@ -560,6 +560,9 @@ export class ValidateCommand extends BaseEvolithCommand {
         rulesSkipped: result.rulesSkipped,
         rulesErrored: result.rulesErrored,
         rulesTotal: result.rulesTotal,
+        // #628 — the machine-readable surfaces carry the engine too; a captured
+        // table with a coverage figure and no engine cannot be compared to another.
+        engine: result.engine,
         issues: result.issues.map(i => ({
           ruleId: i.ruleId,
           severity: i.severity,
@@ -703,9 +706,26 @@ export class ValidateCommand extends BaseEvolithCommand {
     const errored = result.rulesErrored ?? 0;
     const total = result.rulesTotal ?? checked + skipped + errored;
 
+    // #628 — the engine travels WITH the counts, on the same line, because the
+    // counts are as much a property of the evaluator as of the repository: two
+    // engines ship, they do not cover the same ground, and the default is the
+    // one that covers less. A denominator without the engine beside it is the
+    // GT-569 defect one level up.
+    const engine = result.engine ? ` — engine: ${result.engine}` : '';
     this.promptService.showInfo(
-      `\nRules: ${checked} checked / ${skipped} skipped / ${errored} errored / ${total} total`,
+      `\nRules: ${checked} checked / ${skipped} skipped / ${errored} errored / ${total} total${engine}`,
     );
+
+    // Only on the shape a reader misreads: the default engine, skipping more
+    // than it decided. A hint on every native run is noise that teaches people
+    // to skim past it, and there is nothing to redirect an `--engine opa` run to.
+    if (result.engine === 'native' && skipped > checked) {
+      this.promptService.showWarning(
+        '  Most of those skips belong to the ENGINE, not to your repository: the native evaluator has no ' +
+        'handler for them. Re-run with `--engine opa` to evaluate the same corpus against the compiled ' +
+        'Rego bundle, which decides more of it.',
+      );
+    }
 
     // GT-661 — the SCOPE, next to the counts, because the human reader is the
     // one who most needs to tell "the pack I adopted failed" from "the Core

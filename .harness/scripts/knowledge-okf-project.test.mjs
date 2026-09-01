@@ -112,6 +112,42 @@ test('todo concepto no reservado tiene `type` no vacío', () => {
   }
 });
 
+test('todo concepto firma `generated.by` con el actor humano (OKF §5.2/§7)', () => {
+  for (const f of build()) {
+    const base = f.path.split('/').pop();
+    if (base === 'index.md' || base === 'log.md') continue;
+    const { data } = parseFrontmatter(f.content);
+    assert.equal(data.generated?.by, 'human:@winston', `${f.path} sin generated.by`);
+    // El prefijo `human:` es el que hace que un consumidor v0.2 clasifique el corpus
+    // como autorado por humano (§5.3); perderlo lo degrada a "generado por máquina".
+    assert.ok(String(data.generated.by).startsWith('human:'), `${f.path} no usa prefijo human:`);
+  }
+});
+
+test('`generated.at` se omite: no hay fuente veraz para "last meaningful change"', () => {
+  for (const f of build()) {
+    const base = f.path.split('/').pop();
+    if (base === 'index.md' || base === 'log.md') continue;
+    const { data } = parseFrontmatter(f.content);
+    // Emitir `asOf` aqui afirmaria que el contenido cambio en cada re-proyeccion, que es
+    // lo contrario del uso que §5.2 le da al campo. Ausente es conforme; inventado, no.
+    assert.equal(data.generated.at, undefined, `${f.path} emite un generated.at inventado`);
+  }
+});
+
+test('okfConformance rechaza `generated` sin `by` y con actor no convencional', () => {
+  const withoutBy = [{ path: 'x.md', content: '---\ntype: Concept\ngenerated:\n  at: 2026-01-01T00:00:00Z\n---\n\n# X\n' }];
+  assert.equal(okfConformance(withoutBy).length, 1);
+  assert.match(okfConformance(withoutBy)[0].error, /generated\.by/);
+
+  const badActor = [{ path: 'y.md', content: '---\ntype: Concept\ngenerated:\n  by: winston\n---\n\n# Y\n' }];
+  assert.equal(okfConformance(badActor).length, 1);
+  assert.match(okfConformance(badActor)[0].error, /convención de actor/);
+
+  const ok = [{ path: 'z.md', content: '---\ntype: Concept\ngenerated:\n  by: human:@winston\n---\n\n# Z\n' }];
+  assert.deepEqual(okfConformance(ok), []);
+});
+
 test('el concepto rehidrata el cuerpo desde la fuente y preserva provenance', () => {
   const concept = build().find((f) => f.path === 'concepts/glossary-knowledge.md');
   const { data, body } = parseFrontmatter(concept.content);

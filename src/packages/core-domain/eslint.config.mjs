@@ -27,11 +27,24 @@
  *     this package. The `no-restricted-syntax` rule below fails the build (and CI)
  *     if such an identifier is declared, imported, or referenced.
  *
- * Real-enforcement notes (mode + resolver) — without these the rule is a silent
- * no-op: `mode: 'file'` classifies each .ts file as an instance of its layer
- * (default 'folder' mode leaves files in `src/<layer>/` unclassified), and the
- * `import/resolver` extension list lets boundaries resolve extensionless `.ts`
- * import targets so cross-layer imports are actually detected.
+ * Real-enforcement notes (element patterns + resolver) — get either wrong and the
+ * rule degrades to a SILENT no-op that reports nothing and exits 0:
+ *
+ *  - Element patterns name the layer FOLDER (`src/domain`), never a recursive
+ *    file glob. Element descriptors match folders, so a recursive glob makes
+ *    every *sub-folder* its own element and leaves the files sitting directly
+ *    in `src/<layer>/` unclassified (type: null) — the hole that silences the
+ *    rule. eslint-plugin-boundaries v6 papered over that with `mode: 'file'`;
+ *    v7 deprecates `mode` (elements are always folder-based) and a future major
+ *    removes it, so the workaround is gone from this config rather than left to
+ *    expire underneath us. These folder patterns were verified to classify the
+ *    same file set the old `mode: 'file'` descriptors did.
+ *  - The `import/resolver` extension list lets boundaries resolve extensionless
+ *    `.ts` import targets so cross-layer imports are actually detected.
+ *
+ * Because a broken config fails OPEN, changes here must be re-verified with a
+ * deliberate violation (a value import across a forbidden layer must exit 1)
+ * and with its `import type` twin (which must still exit 0).
  */
 import boundaries from 'eslint-plugin-boundaries';
 import tsParser from '@typescript-eslint/parser';
@@ -46,6 +59,20 @@ const STATELESS_CORE_REPOSITORY_BAN = {
   message:
     'GT-377/ADR-0101: Core is a stateless Evaluation Engine. product/initiative/evidence/decision are context, not entities — a *Repository for them must not appear in core-domain.',
 };
+
+/** Every layer this package classifies — the domain of the type-only exception below. */
+const ALL_LAYERS = [
+  'common',
+  'domain',
+  'application',
+  'infrastructure',
+  'gates',
+  'phases',
+  'tenancy',
+  'providers',
+  'evidence',
+  'evaluation',
+];
 
 export default [
   {
@@ -79,16 +106,16 @@ export default [
         node: { extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'] },
       },
       'boundaries/elements': [
-        { type: 'common', mode: 'file', pattern: 'src/common/**/*' },
-        { type: 'domain', mode: 'file', pattern: 'src/domain/**/*' },
-        { type: 'application', mode: 'file', pattern: 'src/application/**/*' },
-        { type: 'infrastructure', mode: 'file', pattern: 'src/infrastructure/**/*' },
-        { type: 'gates', mode: 'file', pattern: 'src/gates/**/*' },
-        { type: 'phases', mode: 'file', pattern: 'src/phases/**/*' },
-        { type: 'tenancy', mode: 'file', pattern: 'src/tenancy/**/*' },
-        { type: 'providers', mode: 'file', pattern: 'src/providers/**/*' },
-        { type: 'evidence', mode: 'file', pattern: 'src/evidence/**/*' },
-        { type: 'evaluation', mode: 'file', pattern: 'src/evaluation/**/*' },
+        { type: 'common', pattern: 'src/common' },
+        { type: 'domain', pattern: 'src/domain' },
+        { type: 'application', pattern: 'src/application' },
+        { type: 'infrastructure', pattern: 'src/infrastructure' },
+        { type: 'gates', pattern: 'src/gates' },
+        { type: 'phases', pattern: 'src/phases' },
+        { type: 'tenancy', pattern: 'src/tenancy' },
+        { type: 'providers', pattern: 'src/providers' },
+        { type: 'evidence', pattern: 'src/evidence' },
+        { type: 'evaluation', pattern: 'src/evaluation' },
       ],
       'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts'],
     },
@@ -97,74 +124,79 @@ export default [
         'error',
         {
           default: 'disallow',
-          rules: [
+          // Folder-based elements make every intra-layer import "internal", and
+          // internal dependencies are NOT checked by default. Under the previous
+          // file-based elements each file was its own element, so intra-layer
+          // imports WERE checked — `checkInternals: true` keeps it that way.
+          // Without it the `common` policy below (which allows nothing, not even
+          // `common` itself) would quietly stop applying.
+          checkInternals: true,
+          policies: [
             // common: no internal imports
-            { from: { type: 'common' }, allow: { to: { type: [] } } },
+            { from: { element: { type: 'common' } }, allow: { to: { element: { type: [] } } } },
 
             // domain: innermost — only common
-            { from: { type: 'domain' }, allow: { to: { type: ['domain', 'common'] } } },
+            {
+              from: { element: { type: 'domain' } },
+              allow: { to: { element: { type: ['domain', 'common'] } } },
+            },
 
             // application: use cases — domain + common
-            { from: { type: 'application' }, allow: { to: { type: ['application', 'domain', 'common'] } } },
+            {
+              from: { element: { type: 'application' } },
+              allow: { to: { element: { type: ['application', 'domain', 'common'] } } },
+            },
 
             // infrastructure: adapters — can use all inner layers
             {
-              from: { type: 'infrastructure' },
-              allow: { to: { type: ['infrastructure', 'application', 'domain', 'common'] } },
+              from: { element: { type: 'infrastructure' } },
+              allow: {
+                to: { element: { type: ['infrastructure', 'application', 'domain', 'common'] } },
+              },
             },
 
             // gates/phases/tenancy/providers/evidence: cross-cutting within this package
-            { from: { type: 'gates' }, allow: { to: { type: ['gates', 'domain', 'application', 'common'] } } },
-            { from: { type: 'phases' }, allow: { to: { type: ['phases', 'domain', 'application', 'common'] } } },
-            { from: { type: 'tenancy' }, allow: { to: { type: ['tenancy', 'domain', 'common'] } } },
             {
-              from: { type: 'providers' },
-              allow: { to: { type: ['providers', 'infrastructure', 'domain', 'common'] } },
+              from: { element: { type: 'gates' } },
+              allow: { to: { element: { type: ['gates', 'domain', 'application', 'common'] } } },
             },
-            { from: { type: 'evidence' }, allow: { to: { type: ['evidence', 'domain', 'application', 'common'] } } },
+            {
+              from: { element: { type: 'phases' } },
+              allow: { to: { element: { type: ['phases', 'domain', 'application', 'common'] } } },
+            },
+            {
+              from: { element: { type: 'tenancy' } },
+              allow: { to: { element: { type: ['tenancy', 'domain', 'common'] } } },
+            },
+            {
+              from: { element: { type: 'providers' } },
+              allow: {
+                to: { element: { type: ['providers', 'infrastructure', 'domain', 'common'] } },
+              },
+            },
+            {
+              from: { element: { type: 'evidence' } },
+              allow: { to: { element: { type: ['evidence', 'domain', 'application', 'common'] } } },
+            },
 
             // evaluation: stateless Core Evaluation Engine (GT-377/ADR-0101) —
             // canonical contracts + orchestrator; composes domain + application.
             {
-              from: { type: 'evaluation' },
-              allow: { to: { type: ['evaluation', 'domain', 'application', 'common'] } },
+              from: { element: { type: 'evaluation' } },
+              allow: {
+                to: { element: { type: ['evaluation', 'domain', 'application', 'common'] } },
+              },
             },
 
             // Type-only imports are permitted across all layers: erased at compile
             // time, no runtime coupling. VALUE imports stay strictly governed above.
-            // (v6: selector-level dependency.kind replaces the legacy rule-level importKind.)
+            // `dependency.kind` is the supported selector for this (it replaced the
+            // legacy rule-level `importKind`, which v7 deprecates). Policies are
+            // last-match-wins, so this blanket allowance must stay LAST.
             {
-              from: {
-                type: [
-                  'common',
-                  'domain',
-                  'application',
-                  'infrastructure',
-                  'gates',
-                  'phases',
-                  'tenancy',
-                  'providers',
-                  'evidence',
-                  'evaluation',
-                ],
-              },
+              from: { element: { type: ALL_LAYERS } },
               dependency: { kind: 'type' },
-              allow: {
-                to: {
-                  type: [
-                    'common',
-                    'domain',
-                    'application',
-                    'infrastructure',
-                    'gates',
-                    'phases',
-                    'tenancy',
-                    'providers',
-                    'evidence',
-                    'evaluation',
-                  ],
-                },
-              },
+              allow: { to: { element: { type: ALL_LAYERS } } },
             },
           ],
         },

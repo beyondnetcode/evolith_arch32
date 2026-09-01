@@ -10,16 +10,21 @@
 | **Historia técnica** | Un mandato de traducción de alcance repo-wide valorado en 783 pares, gastado en documentos que nadie abre, que además hacía fallar por construcción el primer PR de cualquier contribuyente externo |
 
 <!-- implementation-status: .harness/scripts/lib/bilingual-scope.mjs,.harness/scripts/ci/suites/bilingual-suite.mjs,.harness/scripts/ci/66-validate-bilingual-sync.mjs -->
-> **Estado de implementación en este repositorio: completo** (2026-08-16).
-> El módulo de alcance es `.harness/scripts/lib/bilingual-scope.mjs`; ambos guards lo leen y ambos
-> imprimen el denominador liberado en cada ejecución. Verificado corriendo cada guard antes y
-> después del cambio: la ejecución previa reportó los cuatro defectos que este ADR predice,
-> incluido el desbalance de `<div>` en `README.es.md` sobre el que dos guards bilingües hechos a
-> propósito llevaban dando verde.
+> **Estado de implementación en este repositorio: parcial** (2026-08-16).
+> El módulo de alcance es `.harness/scripts/lib/bilingual-scope.mjs` y ambos guards lo leen, pero
+> solo uno de ellos satisface la cláusula 3: `.harness/scripts/ci/suites/bilingual-suite.mjs`
+> imprime el denominador liberado en cada ejecución, y
+> `.harness/scripts/ci/66-validate-bilingual-sync.mjs` no lo imprime en ninguno de sus tres modos
+> — ver [Brechas pendientes](#brechas-pendientes). Lo que sí quedó verificado corriendo cada guard
+> antes y después del cambio es la detección: la ejecución previa reportó los cuatro defectos que
+> este ADR predice, incluido el desbalance de `<div>` en `README.es.md` sobre el que dos guards
+> bilingües hechos a propósito llevaban dando verde. La mitad del denominador de la cláusula 3
+> **no está verificada**, porque todavía no está implementada en ambos lados.
 
 ## Status
 
-Aceptado — 2026-08-16. En vigor e implementado.
+Aceptado — 2026-08-16. En vigor; implementado salvo la mitad del denominador de la cláusula 3
+en `66-validate-bilingual-sync`, registrada más abajo como brecha abierta.
 
 ## Contexto
 
@@ -89,22 +94,32 @@ Esta es la cláusula que sostiene el peso. Estrechar el alcance de un guard y de
 tick verde que se lee como *el corpus es consistente* cuando significa *un corpus que ya no miro
 no fue examinado*. **Una regla que no se evaluó no es una regla que pasó.**
 
-Ambos guards imprimen por tanto el denominador liberado en cada ejecución, pase o falle, y sus
-líneas de éxito declaran el límite de lo que afirman, con palabras:
+Ambos guards deben por tanto imprimir el denominador liberado en cada ejecución, pase o falle, y
+sus líneas de éxito deben declarar con palabras el límite de lo que afirman. La línea es
+`formatCoverageReport`, en el módulo de alcance:
 
 ```
-bilingual scope (ADR-0126): 16/16 entry-surface document(s) enforced; 783 EN/ES pair(s)
+bilingual scope (ADR-0126): 17/17 entry-surface document(s) enforced; 783 EN/ES pair(s)
 outside the entry surface were NOT evaluated — their state is unknown, not verified.
 ```
 
 Cualquier futuro consumidor del módulo de alcance lo imprime también. Un módulo de alcance cuya
 salida se puede consumir en silencio es un módulo de alcance que se consumirá en silencio.
 
+**Hoy solo uno de los dos guards lo hace.** `.harness/scripts/ci/suites/bilingual-suite.mjs`
+importa `summarizeCoverage` y `formatCoverageReport` e imprime esa línea incondicionalmente
+(línea 280). `.harness/scripts/ci/66-validate-bilingual-sync.mjs` importa únicamente
+`ENTRY_SURFACE` e `isEntrySurface` (línea 55) y no imprime denominador alguno en ninguno de sus
+tres modos. Declara el límite con palabras — *«Pairs outside it were not examined»* — pero nunca
+la cifra, que es la mitad que hace visible el coste de volver a ensanchar. La exigencia de arriba
+se mantiene exactamente como está escrita; el guard 66 la incumple, y el incumplimiento queda
+registrado en [Brechas pendientes](#brechas-pendientes).
+
 ### 4. La profundidad comprada con la amplitud: balance de marcado en la superficie de entrada
 
 El presupuesto liberado al soltar 783 pares compra una comprobación que el mandato antiguo no
 podía permitirse ejecutar en ningún sitio: etiquetas HTML de bloque que abren y nunca cierran, o
-que cierran sin haber abierto, sobre los dieciséis documentos de la superficie de entrada y sus
+que cierran sin haber abierto, sobre los diecisiete documentos de la superficie de entrada y sus
 dos mitades. Deliberadamente estrecha — solo `div`, `details`, `table`, `picture`, `figure`; los
 elementos vacíos y en línea quedan excluidos porque `README.md` los usa sin cerrar y de forma
 legítima; el código en bloque se elimina primero o cada heredoc se convierte en un hallazgo.
@@ -132,14 +147,41 @@ gemelos en español como consecuencia directa de ser nombrados, tras haber estad
 la vida del mandato que se suponía que los garantizaba.
 
 **Cedido.** 783 pares dejan de comprobarse en paridad estructural, corrección de idioma por
-ranura y ediciones a un solo lado. Algunos van a derivar. Ese es el coste aceptado, y los guards
-lo dicen en voz alta en lugar de dejar que un tick verde insinúe lo contrario.
+ranura y ediciones a un solo lado. Algunos van a derivar. Ese es el coste aceptado, y la suite
+bilingüe lo dice en voz alta y con la cifra, en lugar de dejar que un tick verde insinúe lo
+contrario. El guard 66 lo dice solo con palabras, sin el número — la mitad abierta de la
+cláusula 3.
 
 **Reversible.** El alcance es un único array exportado. Re-ensancharlo es un cambio de una línea
-más la deuda de traducción acumulada mientras tanto — que es exactamente por lo que el conteo
-liberado se imprime en cada ejecución en vez de calcularse una vez y olvidarse.
+más la deuda de traducción acumulada mientras tanto — que es exactamente por lo que la cláusula 3
+exige el conteo liberado en cada ejecución en vez de calcularlo una vez y olvidarlo. La suite
+cumple esa exigencia; el guard 66 todavía no.
+
+## Brechas pendientes
+
+La cláusula 3 está en vigor e implementada a medias. La mitad abierta, con su localización:
+
+- **`66-validate-bilingual-sync` no publica el denominador liberado.**
+  `.harness/scripts/ci/66-validate-bilingual-sync.mjs:55` importa únicamente `ENTRY_SURFACE` e
+  `isEntrySurface` de `.harness/scripts/lib/bilingual-scope.mjs`; no importa ni
+  `summarizeCoverage` ni `formatCoverageReport`, y ninguna de sus tres salidas imprime un conteo
+  liberado — autotest en la línea 260, modo rango en las líneas 341-345, barrido de auditoría en
+  las líneas 403-406. Cada una de esas líneas reporta el tamaño de la superficie de entrada y la
+  frase «Pairs outside it were not examined»: la mitad de palabras de la cláusula, no la mitad de
+  cifras. Una ejecución del guard 66 por sí sola no puede decirle a un operador cuántos pares
+  liberó el alcance.
+  **Para cerrarla:** importar los dos helpers de cobertura e imprimir `formatCoverageReport(...)`
+  en cada salida de `main()`, tal como ya hace `.harness/scripts/ci/suites/bilingual-suite.mjs:280`.
+
+Hasta que eso aterrice, la garantía de la cláusula 3 se sostiene para la suite y no para el
+guard 66, y este ADR no afirma lo contrario.
 
 ## ADRs relacionados
 
 - ADR-0125 — un único registro de artefactos indexado por slug: la misma preferencia por una
   lista declarada frente a una regla que infiere la pertenencia a partir de rutas.
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

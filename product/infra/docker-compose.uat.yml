@@ -205,7 +205,7 @@ services:
       PGCONN: Host=tracker-postgres;Port=5432;Database=evolith_tracker;Username=evolith;Password=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
     entrypoint: ["/bin/sh", "-c"]
     command:
-      - '/app/efbundle/efbundle --connection "$$PGCONN" && /app/efbundle-projection/efbundle-projection --connection "$$PGCONN"'
+      - '/app/efbundle/efbundle --connection "$$PGCONN"'
     depends_on:
       tracker-postgres:
         condition: service_healthy

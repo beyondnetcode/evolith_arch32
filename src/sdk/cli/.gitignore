@@ -10,6 +10,19 @@ coverage/
 AGENTS.md
 MASTER_INDEX.md
 
+# E2E scratch trees. Despite the name, NOTHING under test/fixtures/ is authored:
+# every directory in it (drift-repo, test-repo, empty-repo, arch-repo, sdlc-core,
+# parity-test) is built by an `fs.ensureDir` in the e2e that uses it, and most are
+# removed again in `afterAll`. They survive only when a run is interrupted before
+# its teardown — which then leaves generated YAML and drift-history JSON showing as
+# untracked forever, inviting a `git add -A` to fossilise them as if they were
+# checked-in samples.
+#
+# If a REAL committed fixture is ever needed, put it somewhere else — the tracked
+# ones live in src/sdk/cli/test-project/ — or force-add it deliberately. An
+# authored file dropped in here would be ignored silently.
+test/fixtures/
+
 # Jest cache
 .jest-cache/
 

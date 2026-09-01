@@ -926,8 +926,15 @@ jobs:
           # Now that this runs on every PR, an uncached three-image rebuild would
           # be the slowest thing in the pipeline. Scoped per service so the three
           # matrix legs do not evict each other.
+          #
+          # Everyone READS the cache; only publishing refs WRITE it. Three images
+          # at mode=max is roughly a gigabyte per run, and the repo's Actions
+          # cache is a single 10 GB pool already holding ~1.7 GB that the test
+          # jobs depend on. Letting every PR write its own copy would evict those
+          # npm caches by LRU and show up as the test suites mysteriously slowing
+          # down. This way a PR warms itself from main and writes nothing.
           cache-from: type=gha,scope=${{ matrix.service }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+          cache-to: ${{ env.PUBLISH == 'true' && format('type=gha,mode=max,scope={0}', matrix.service) || '' }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
@@ -937,6 +944,20 @@ jobs:
   # Those names change whenever a path or a service does, so they are a poor thing
   # for branch protection to name. This job collapses the three into one stable
   # context that CAN be marked required.
+  #
+  # ONLY `success` passes, and that is deliberate. The first version of this job
+  # let `skipped` through, reasoning that a skip means an upstream suite failed
+  # and that failure already carries its own red check. The premise was true and
+  # the conclusion was wrong: `docker-services` needs seven test jobs, and two of
+  # them -- `test-sdk-client` and `test-infra-providers` -- are NOT required
+  # contexts on main or develop. So a broken Dockerfile arriving together with a
+  # single flake in either suite would skip the build, report this check GREEN
+  # having built nothing, and leave all eight required contexts satisfied. That is
+  # the exact failure this job exists to prevent, wearing a required-check badge.
+  #
+  # A required check must assert that the build RAN, not merely that it did not
+  # fail. Two reds instead of one is not double-reporting; it is this check
+  # declining to vouch for something it never saw.
   docker-services-gate:
     name: Services build (GHCR)
     needs: [docker-services]
@@ -947,20 +968,11 @@ jobs:
         run: |
           result='${{ needs.docker-services.result }}'
           echo "docker-services: ${result}"
-          case "${result}" in
-            success)
-              echo "las tres imagenes construyen"
-              ;;
-            skipped)
-              # An upstream test suite failed, so the build never ran. That
-              # failure already has its own red check; do not double-report it.
-              echo "no se construyo: una suite previa fallo y lo reporta su propio check"
-              ;;
-            *)
-              echo "::error::al menos una imagen de servicio no construye"
-              exit 1
-              ;;
-          esac
+          if [ "${result}" != "success" ]; then
+            echo "::error::este check no puede afirmar nada: el build de imagenes termino en '${result}', no en 'success'"
+            exit 1
+          fi
+          echo "las tres imagenes de servicio construyen"
 
   # GT-324 — deploy the freshly-pushed images to the Coolify runtime.
   #

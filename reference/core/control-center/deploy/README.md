@@ -70,7 +70,9 @@ Source of truth: `.github/workflows/ci-cd.yml`.
    that would have caught it ran after they had already merged. The three matrix
    legs are collapsed into one stable check, **`Services build (GHCR)`** (job
    `docker-services-gate`), which is the context branch protection names —
-   matrix contexts carry their parameters and change whenever a path does.
+   matrix contexts carry their parameters and change whenever a path does. It
+   passes **only** on `success`: a skipped build means the check saw nothing and
+   must not vouch for anything.
 3. **`Deploy services (Coolify)`** (job `deploy`, `needs: [docker-services]`) —
    the promotion step. Its guard is:
 

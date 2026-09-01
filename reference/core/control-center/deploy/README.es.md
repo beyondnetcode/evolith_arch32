@@ -77,7 +77,8 @@ Fuente de verdad: `.github/workflows/ci-cd.yml`.
    un único check estable, **`Services build (GHCR)`** (job
    `docker-services-gate`), que es el contexto que nombra la protección de rama:
    los contextos de matrix llevan sus parámetros y cambian cada vez que cambia
-   una ruta.
+   una ruta. Pasa **solo** en `success`: un build saltado significa que el check
+   no vio nada, y entonces no puede responder por nada.
 3. **`Deploy services (Coolify)`** (job `deploy`, `needs: [docker-services]`) —
    el paso de promoción. Su guarda es:
 

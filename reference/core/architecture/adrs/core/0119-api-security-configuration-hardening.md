@@ -76,14 +76,19 @@ clause.
    - `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:223` — `process.env.NODE_ENV ||
      'development'` in the user context handed to tool authorization.
 
-2. **§4 — the agent-runtime authentication guard fails OPEN outside production. This is the most
-   severe gap.** At `src/apps/agent-runtime-api/src/auth/api-key.guard.ts:60-71`, when neither
-   `AGENT_RUNTIME_API_KEY` nor `AGENT_RUNTIME_JWT_SECRET` is configured, the branch
-   `if (!isProd || allowNoAuth)` attaches a principal with `authMethod: 'none'` and
-   `tenantId: WILDCARD_TENANT` and returns `true` — access granted, with a wildcard tenant and no
-   credential presented. The comment above it reads "Fail-closed"; the code does the opposite, in
-   the authentication guard itself, which is exactly what §4 prohibits. Gap 1 compounds it: an
-   unset `NODE_ENV` is enough to make `isProd` false.
+2. **§4 — the agent-runtime authentication guard used to fail OPEN outside production. CLOSED.**
+   At `src/apps/agent-runtime-api/src/auth/api-key.guard.ts`, when neither `AGENT_RUNTIME_API_KEY`
+   nor `AGENT_RUNTIME_JWT_SECRET` was configured, `if (!isProd || allowNoAuth)` attached a principal
+   with `authMethod: 'none'` and `tenantId: WILDCARD_TENANT` and returned `true` — access granted,
+   wildcard tenant, no credential presented — while the comment above it read "Fail-closed". The
+   posture now reads an **unset or blank `NODE_ENV` as production**, so the state a fresh container,
+   a forgotten env file or a bare `node dist/main` arrives in denies rather than opens. Running
+   without auth takes a deliberate act: `NODE_ENV=development`, which someone typed, or the explicit
+   `AGENT_RUNTIME_ALLOW_NO_AUTH=true`. Pinned by three tests in `api-key.guard.spec.ts` — unset,
+   blank, and the override that must keep working — each verified to fail against the old code.
+
+   Gap 1 no longer compounds this one: the guard derives its own posture instead of trusting the
+   service default. Gap 1 itself stands.
 
 3. **§5 — bare `helmet()` does not emit the mandated header values.** `helmet()` is called with no
    options at `src/apps/core-api/src/main.ts:53` and `src/apps/agent-runtime-api/src/main.ts:12`.

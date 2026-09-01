@@ -76,14 +76,21 @@ para rebajar la cláusula.
    - `src/packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:223` — `process.env.NODE_ENV ||
      'development'` en el contexto de usuario que se entrega a la autorización de herramientas.
 
-2. **§4 — el guard de autenticación del agent-runtime falla ABIERTO fuera de producción. Es la
-   brecha más grave.** En `src/apps/agent-runtime-api/src/auth/api-key.guard.ts:60-71`, cuando no
-   hay configurado ni `AGENT_RUNTIME_API_KEY` ni `AGENT_RUNTIME_JWT_SECRET`, la rama
-   `if (!isProd || allowNoAuth)` adjunta un principal con `authMethod: 'none'` y
-   `tenantId: WILDCARD_TENANT` y devuelve `true` — acceso concedido, con tenant comodín y sin
-   presentar credencial. El comentario que la precede dice «Fail-closed»; el código hace lo
-   contrario, en el propio guard de autenticación, que es justo lo que §4 prohíbe. La brecha 1 lo
-   agrava: basta con no configurar `NODE_ENV` para que `isProd` sea falso.
+2. **§4 — el guard de autenticación del agent-runtime fallaba ABIERTO fuera de producción. CERRADA.**
+   En `src/apps/agent-runtime-api/src/auth/api-key.guard.ts`, cuando no había configurado ni
+   `AGENT_RUNTIME_API_KEY` ni `AGENT_RUNTIME_JWT_SECRET`, la rama `if (!isProd || allowNoAuth)`
+   adjuntaba un principal con `authMethod: 'none'` y `tenantId: WILDCARD_TENANT` y devolvía `true`
+   —acceso concedido, tenant comodín, sin presentar credencial— mientras el comentario que la
+   precede decía «Fail-closed». La postura ahora lee **`NODE_ENV` sin configurar o en blanco como
+   producción**, así que el estado en el que llega un contenedor recién hecho, un fichero de entorno
+   olvidado o un `node dist/main` a secas deniega en vez de abrir. Correr sin autenticación exige un
+   acto deliberado: `NODE_ENV=development`, que alguien escribió, o el explícito
+   `AGENT_RUNTIME_ALLOW_NO_AUTH=true`. Lo fijan tres pruebas en `api-key.guard.spec.ts` —sin
+   configurar, en blanco, y la vía declarada que debe seguir funcionando—, cada una comprobada
+   fallando contra el código anterior.
+
+   La brecha 1 ya no agrava esta: el guard deriva su propia postura en vez de fiarse del valor por
+   defecto del servicio. La brecha 1 sigue abierta por su cuenta.
 
 3. **§5 — `helmet()` sin configurar no emite los valores de cabecera exigidos.** `helmet()` se
    invoca sin opciones en `src/apps/core-api/src/main.ts:53` y

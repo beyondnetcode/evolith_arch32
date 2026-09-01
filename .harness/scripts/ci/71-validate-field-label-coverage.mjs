@@ -18,6 +18,8 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
 
+import { assertScanned } from '../lib/coverage.mjs';
+
 const ROOT = process.cwd();
 const SCHEMA_DIR = path.join(ROOT, 'src', 'rulesets', 'schema');
 const GLOSSARY = path.join(ROOT, 'src', 'rulesets', 'i18n', 'field-labels.es.json');
@@ -77,7 +79,18 @@ function publishedFieldNames() {
     }
   };
 
-  for (const file of readdirSync(SCHEMA_DIR).filter((f) => f.endsWith('.json'))) {
+  // The denominator, asserted before anything is read from it (GT-578). This guard's happy path
+  // prints "0 published field names, all named in Spanish" over an empty scan — a pass that says
+  // the corpus is fully translated when what actually happened is that the schema directory moved.
+  // A guard that can go green over nothing is worse than no guard: it is a green light nobody
+  // earned.
+  const schemaFiles = readdirSync(SCHEMA_DIR).filter((f) => f.endsWith('.json'));
+  assertScanned(schemaFiles.length, {
+    what: 'JSON schemas',
+    where: path.relative(ROOT, SCHEMA_DIR),
+  });
+
+  for (const file of schemaFiles) {
     try {
       walk(JSON.parse(readFileSync(path.join(SCHEMA_DIR, file), 'utf8')), file);
     } catch {

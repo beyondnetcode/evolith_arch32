@@ -33,6 +33,25 @@ function getAllScripts(dir, baseDir = "") {
 const allScripts = getAllScripts(ciDir);
 
 /**
+ * Guards que NO pueden correr fuera de CI, con la razon por la que no pueden.
+ *
+ * `full` enumera el directorio entero desde disco, asi que un guard que exige una entrada que solo
+ * existe en el workflow de GitHub se ejecuta aqui sin ella y falla siempre. Eso no es un fallo de
+ * gobernanza: es el runner local llamando a algo que no le corresponde, y su unico efecto era
+ * ensenar un pipeline rojo permanente que la gente aprende a ignorar — que es peor que no tenerlo.
+ *
+ * La exclusion es DECLARADA y se IMPRIME en cada corrida, nunca silenciosa: el mismo criterio que
+ * la suite bilingue aplica a sus exenciones. Un guard que desaparece sin decirlo es exactamente el
+ * defecto que GT-578 existe para cerrar.
+ */
+const CI_ONLY = {
+  "52-validate-scorecard-regression.mjs":
+    "exige --results con el JSON que emite ossf/scorecard-action; ese fichero solo existe en el " +
+    "workflow. Sin el no hay nada que comparar, y el propio guard declara que «nothing to compare» " +
+    "no es un aprobado. Se ejecuta en CI, donde si tiene la entrada.",
+};
+
+/**
  * Per-script CLI arguments. Without this every script is spawned bare, so a
  * guard with modes could only ever run in its default one — including in
  * `full`, which picks up every .mjs automatically.
@@ -178,9 +197,19 @@ async function main() {
     process.exit(0);
   }
 
+  // Se aparta lo que solo puede correr en CI, y se dice cual y por que.
+  const excluidos = scriptsToRun.filter((s) => CI_ONLY[path.basename(s)]);
+  scriptsToRun = scriptsToRun.filter((s) => !CI_ONLY[path.basename(s)]);
+
   const modeLabel = mode === "auto" ? `AUTOMATICO (${scriptsToRun.length} scripts)` : MODES[mode].label;
   console.log(`🚀 Evolith CI — ${modeLabel} (Ejecución Paralela)`);
   console.log(`══════════════════════════════════════════════════════════════════════`);
+
+  for (const script of excluidos) {
+    console.log(`\x1b[33m⊘ [SOLO CI]\x1b[0m ${script}`);
+    console.log(`   │ ${CI_ONLY[path.basename(script)]}`);
+    console.log("   └────────────────────────────────────────────────────────");
+  }
 
   // Group scripts by stages based on known heavy tasks
   const stage1 = []; // fast checks
@@ -273,7 +302,10 @@ async function main() {
     console.error("❌ CI Pipeline Failed.");
     process.exit(1);
   } else {
-    console.log(`✅ CI Pipeline Passed! (${executedCount} scripts executed)`);
+    const nota = excluidos.length
+      ? `, ${excluidos.length} apartado(s) por ser de solo-CI`
+      : "";
+    console.log(`✅ CI Pipeline Passed! (${executedCount} scripts executed${nota})`);
     process.exit(0);
   }
 }

@@ -95,3 +95,8 @@ como precondición por una compuerta real y no se ejecutó ni una vez.
   Gate precede ahora directamente a la Fase 1.
 - [ADR-0101](./0101-core-stateless-evaluation-engine.es.md) — el Core es un motor de evaluación sin
   estado; los artefactos que no puede evaluar no son asunto del Core.
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

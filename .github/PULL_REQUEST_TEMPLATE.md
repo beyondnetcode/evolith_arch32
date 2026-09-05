@@ -12,7 +12,7 @@ will tell you if it is unhappy. You do not need to run the harness by hand.
 - [ ] **Sign-off (DCO):** my commits carry a `Signed-off-by` line. `git commit -s` adds it, and the `prepare-commit-msg` hook adds it for you if you forget. See [CONTRIBUTING](../CONTRIBUTING.md#developer-certificate-of-origin).
 - [ ] **Conventional Commits:** my PR title and commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (e.g. `docs:`, `feat:`, `fix:`, `chore:`).
 - [ ] **Agnosticism:** this PR does not introduce a specific technology dependency (e.g. AWS, Azure, React) into the agnostic Core reference without an approved ADR.
-- [ ] **Bilingual:** *only if* I edited one of the sixteen entry-surface documents listed in [`bilingual-scope.mjs`](../.harness/scripts/lib/bilingual-scope.mjs), I updated both halves. If I did not touch those, this does not apply — see [ADR-0126](../reference/core/architecture/adrs/core/0126-bilingual-entry-surface.md).
+- [ ] **Bilingual:** *only if* I edited one of the seventeen entry-surface documents listed in [`bilingual-scope.mjs`](../.harness/scripts/lib/bilingual-scope.mjs), I updated both halves. If I did not touch those, this does not apply — see [ADR-0126](../reference/core/architecture/adrs/core/0126-bilingual-entry-surface.md).
 
 ## Linked ADRs / Issues
 <!-- If this PR makes an architectural change, link the Architecture Decision Record (ADR) here. -->
@@ -31,4 +31,4 @@ Red checks that are **ours, not yours**, unless your change caused them:
 
 - Anything under `.harness/scripts/ci/` reporting on the gap board, ADR registry, maturity or coverage floors.
 - `Governance guards`, release-pipeline and provenance failures.
-- Bilingual findings on documents outside the sixteen-file entry surface.
+- Bilingual findings on documents outside the seventeen-file entry surface.

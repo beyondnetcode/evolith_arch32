@@ -25,7 +25,7 @@ const referenceEnglishDocs = [];
  * ADR-0126: entry-surface English docs actually found on disk. Its own denominator,
  * because the parity loop below can be alive while this list is empty — a walk rooted
  * in the wrong directory finds markdown and finds none of THESE, and the orphan check
- * would then iterate a list of sixteen paths that exist nowhere and report a clean pass.
+ * would then iterate a list of seventeen paths that exist nowhere and report a clean pass.
  */
 const entrySurfaceFound = [];
 /** ADR-0126: EN/ES pairs that exist and are no longer enforced. The released denominator. */
@@ -297,7 +297,9 @@ if (orphans.length > 0) {
   }
   console.error(
     "\nEvery document in the ADR-0126 entry surface must have a Spanish counterpart (.es.md)." +
-    "\nThe surface is declared in .harness/scripts/lib/bilingual-scope.mjs — sixteen files a" +
+    // Derivado, no escrito a mano: esta frase decia "sixteen" con diecisiete en la lista.
+    // Una cifra en prosa junto a la lista que la contradice envejece sin que nadie la mire.
+    `\nThe surface is declared in .harness/scripts/lib/bilingual-scope.mjs — ${ENTRY_SURFACE.length} files a` +
     "\nstranger reaches within two clicks. If the document does not belong there, remove it" +
     "\nfrom the list and say why in the ADR; do not add a translation to silence this."
   );

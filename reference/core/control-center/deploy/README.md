@@ -62,10 +62,17 @@ Source of truth: `.github/workflows/ci-cd.yml`.
 1. **Build & test** — jobs `Test`, `Test core-domain`, `Test core`,
    `Test mcp-server`, `Test core-api`, `Test sdk-client`, `Test contract`,
    `Test infra-providers` run on every PR to `main`/`develop`.
-2. **`Build & Push Services (GHCR)`** (job `docker-services`) — runs only on
-   `main` or `v*` tags. Builds `core-api`, `mcp-server`, `agent-runtime` and
-   pushes `:latest` + `:<sha>` to GHCR using the built-in `GITHUB_TOKEN` (no
-   extra secret).
+2. **`Build Services (GHCR)`** (job `docker-services`) — builds `core-api`,
+   `mcp-server` and `agent-runtime` on **every PR**, and pushes `:latest` +
+   `:<sha>` to GHCR only from `main` or `v*` tags, using the built-in
+   `GITHUB_TOKEN` (no extra secret). The build was main-only until GT-679; a
+   broken Dockerfile crossed three PRs with green checks because the only job
+   that would have caught it ran after they had already merged. The three matrix
+   legs are collapsed into one stable check, **`Services build (GHCR)`** (job
+   `docker-services-gate`), which is the context branch protection names —
+   matrix contexts carry their parameters and change whenever a path does. It
+   passes **only** on `success`: a skipped build means the check saw nothing and
+   must not vouch for anything.
 3. **`Deploy services (Coolify)`** (job `deploy`, `needs: [docker-services]`) —
    the promotion step. Its guard is:
 
@@ -188,8 +195,9 @@ irreversible go-live and is the user's to run.**
    With these set and `VPS_DEPLOY_ENABLED` still unset, the deploy job stays
    skipped — nothing deploys yet.
 3. **Merge a normal change to `main`** (or re-run the workflow) and confirm the
-   `Build & Push Services (GHCR)` job is green and the three images appear in
-   GHCR. The `deploy` job should still show as **skipped** (guard is off).
+   `Build Services (GHCR)` job is green and the three images appear in GHCR (on a
+   PR the same job is green without publishing anything). The `deploy` job should
+   still show as **skipped** (guard is off).
 4. **Optionally deploy once manually from the Coolify UI** (each app → Deploy) to
    prove the images boot and the runtime env is correct, before wiring the
    automatic trigger. Watch each `/health` go green.

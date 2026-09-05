@@ -45,3 +45,8 @@ Las herramientas MCP aceptan rutas del sistema de ficheros, parámetros controla
 
 - ADR-0073 (contrato unificado de salida del CLI — sin ejecución arbitraria de comandos)
 - ADR-0082 (frontera de confianza — el contenido no confiable es dato, no instrucción)
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

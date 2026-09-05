@@ -45,3 +45,8 @@ Establish SSRF prevention rules for all outbound HTTP requests:
 
 - ADR-0081 (Sandbox Isolation — network deny-by-default)
 - GT-351 (SSRF guard on WebhookAdapter)
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

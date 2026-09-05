@@ -121,3 +121,8 @@ fall back when a budget runs out — without a second mechanism.
 - [ADR-0101](./0101-core-stateless-evaluation-engine.md) — the Core is stateless; tenant is context
 - [ADR-0020](./0020-identity-provider-abstraction-strategy.md) — same abstraction pattern, identity
 - [ADR-0025](./0025-feature-flag-provider-abstraction.md) — same abstraction pattern, feature flags
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

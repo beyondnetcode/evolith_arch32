@@ -68,10 +68,17 @@ Fuente de verdad: `.github/workflows/ci-cd.yml`.
 1. **Build & test** — los jobs `Test`, `Test core-domain`, `Test core`,
    `Test mcp-server`, `Test core-api`, `Test sdk-client`, `Test contract`,
    `Test infra-providers` corren en cada PR a `main`/`develop`.
-2. **`Build & Push Services (GHCR)`** (job `docker-services`) — corre solo en
-   `main` o tags `v*`. Construye `core-api`, `mcp-server`, `agent-runtime` y
-   publica `:latest` + `:<sha>` en GHCR usando el `GITHUB_TOKEN` incorporado (sin
-   secret extra).
+2. **`Build Services (GHCR)`** (job `docker-services`) — construye `core-api`,
+   `mcp-server` y `agent-runtime` en **cada PR**, y publica `:latest` + `:<sha>`
+   en GHCR solo desde `main` o tags `v*`, usando el `GITHUB_TOKEN` incorporado
+   (sin secret extra). El build era solo-main hasta GT-679; un Dockerfile roto
+   cruzó tres PRs en verde porque el único job que lo habría detenido corría
+   después de que ya hubieran mergeado. Las tres ramas del matrix se colapsan en
+   un único check estable, **`Services build (GHCR)`** (job
+   `docker-services-gate`), que es el contexto que nombra la protección de rama:
+   los contextos de matrix llevan sus parámetros y cambian cada vez que cambia
+   una ruta. Pasa **solo** en `success`: un build saltado significa que el check
+   no vio nada, y entonces no puede responder por nada.
 3. **`Deploy services (Coolify)`** (job `deploy`, `needs: [docker-services]`) —
    el paso de promoción. Su guarda es:
 
@@ -194,9 +201,9 @@ el go-live irreversible y le corresponde ejecutarlo al usuario.**
    Con estos definidos y `VPS_DEPLOY_ENABLED` aún sin definir, el job de deploy sigue
    saltándose — nada se despliega todavía.
 3. **Mergea un cambio normal a `main`** (o vuelve a ejecutar el workflow) y confirma
-   que el job `Build & Push Services (GHCR)` está en verde y las tres imágenes aparecen
-   en GHCR. El job `deploy` debería seguir mostrándose como **skipped** (la guarda está
-   apagada).
+   que el job `Build Services (GHCR)` está en verde y las tres imágenes aparecen en
+   GHCR (en un PR el mismo job va en verde sin publicar nada). El job `deploy` debería
+   seguir mostrándose como **skipped** (la guarda está apagada).
 4. **Opcionalmente despliega una vez manualmente desde la UI de Coolify** (cada app →
    Deploy) para probar que las imágenes arrancan y el env de runtime es correcto, antes
    de cablear el disparador automático. Observa que cada `/health` pase a verde.

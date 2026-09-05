@@ -47,3 +47,8 @@ Varios componentes ejecutaban comandos de shell: la herramienta de andamiaje del
 - ADR-0073 (contrato unificado de salida del CLI)
 - GT-346 (superficie de inyección de shell cerrada)
 - GT-251 (inyección de comandos en el comando update, corregida)
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

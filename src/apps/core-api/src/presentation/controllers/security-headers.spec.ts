@@ -28,12 +28,24 @@ describe('Security & Validation (Integration)', () => {
       transform: true,
     }));
 
-    app.use(helmet());
+    // Este arnés monta LO MISMO que `main.ts`. Antes montaba `helmet()` a secas y
+    // un CORS con `origin: ['*'], credentials: true` — el contrario del
+    // `credentials: false` que manda §6 —, así que las pruebas verdes de abajo no
+    // decían nada sobre el servicio que se despliega.
+    app.use(
+      helmet({
+        contentSecurityPolicy: { useDefaults: false, directives: { 'default-src': ["'none'"] } },
+        frameguard: { action: 'deny' },
+        referrerPolicy: { policy: 'no-referrer' },
+      }),
+    );
     app.use(correlationIdMiddleware);
 
     app.enableCors({
-      origin: ['*'],
-      credentials: true,
+      origin: false,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'x-correlation-id', 'x-api-key'],
+      credentials: false,
     });
 
     await app.init();
@@ -43,18 +55,48 @@ describe('Security & Validation (Integration)', () => {
     await app.close();
   });
 
-  describe('Security Headers', () => {
-    it('should set X-Frame-Options header', async () => {
+  // ADR-0119 §5, comprobado por VALOR y no por existencia. `toBeDefined()` pasaba
+  // con `default-src 'self'` y `SAMEORIGIN`, que son justo los valores que §5
+  // prohíbe: una cabecera presente con el contenido equivocado es indistinguible
+  // de una correcta para una aserción de existencia, y ese fue el hueco por el que
+  // el servicio se desplegó dos versiones sin cumplir su propia norma.
+  describe('Security Headers (ADR-0119 §5)', () => {
+    it('sets Content-Security-Policy to default-src none', async () => {
       const res = await request(app.getHttpServer()).get('/health');
-      expect(res.headers['x-frame-options']).toBeDefined();
+      expect(res.headers['content-security-policy']).toBe("default-src 'none'");
     });
 
-    it('should set X-Content-Type-Options header', async () => {
+    it('sets X-Frame-Options to DENY, not SAMEORIGIN', async () => {
       const res = await request(app.getHttpServer()).get('/health');
-      expect(res.headers['x-content-type-options']).toBeDefined();
+      expect(res.headers['x-frame-options']).toBe('DENY');
     });
 
-    it('should set X-DNS-Prefetch-Control header', async () => {
+    it('sets X-Content-Type-Options to nosniff', async () => {
+      const res = await request(app.getHttpServer()).get('/health');
+      expect(res.headers['x-content-type-options']).toBe('nosniff');
+    });
+
+    it('sets Referrer-Policy to no-referrer', async () => {
+      const res = await request(app.getHttpServer()).get('/health');
+      expect(res.headers['referrer-policy']).toBe('no-referrer');
+    });
+
+    it('sets Strict-Transport-Security', async () => {
+      const res = await request(app.getHttpServer()).get('/health');
+      expect(res.headers['strict-transport-security']).toMatch(/max-age=\d+/);
+    });
+
+    it('sets X-XSS-Protection to 0 (the auditor is disabled on purpose)', async () => {
+      const res = await request(app.getHttpServer()).get('/health');
+      expect(res.headers['x-xss-protection']).toBe('0');
+    });
+
+    it('does not advertise credentials on CORS (ADR-0119 §6)', async () => {
+      const res = await request(app.getHttpServer()).get('/health');
+      expect(res.headers['access-control-allow-credentials']).toBeUndefined();
+    });
+
+    it('still sets X-DNS-Prefetch-Control', async () => {
       const res = await request(app.getHttpServer()).get('/health');
       expect(res.headers['x-dns-prefetch-control']).toBeDefined();
     });

@@ -10,15 +10,20 @@
 | **Technical story** | A repo-wide translation mandate priced at 783 pairs, spent on documents nobody opens, that also made the first PR from an outside contributor fail by construction |
 
 <!-- implementation-status: .harness/scripts/lib/bilingual-scope.mjs,.harness/scripts/ci/suites/bilingual-suite.mjs,.harness/scripts/ci/66-validate-bilingual-sync.mjs -->
-> **Implementation status in this repository: full** (2026-08-16).
-> The scope module is `.harness/scripts/lib/bilingual-scope.mjs`; both guards read it and both
-> print the released denominator on every run. Verified by running each guard before and after
-> the change: the pre-change run reported the four defects this ADR predicts, including the
-> `<div>` imbalance in `README.es.md` that two purpose-built bilingual guards had been green over.
+> **Implementation status in this repository: partial** (2026-08-16).
+> The scope module is `.harness/scripts/lib/bilingual-scope.mjs` and both guards read it, but only
+> one of them satisfies clause 3: `.harness/scripts/ci/suites/bilingual-suite.mjs` prints the
+> released denominator on every run, and `.harness/scripts/ci/66-validate-bilingual-sync.mjs`
+> prints it in none of its three modes — see [Pending gaps](#pending-gaps). What running each
+> guard before and after the change did verify is the detection: the pre-change run reported the
+> four defects this ADR predicts, including the `<div>` imbalance in `README.es.md` that two
+> purpose-built bilingual guards had been green over. The denominator half of clause 3 is **not
+> verified**, because it is not yet implemented on both sides.
 
 ## Status
 
-Accepted — 2026-08-16. In force and implemented.
+Accepted — 2026-08-16. In force; implemented except for the denominator half of clause 3 in
+`66-validate-bilingual-sync`, which is recorded below as an open gap.
 
 ## Context
 
@@ -85,22 +90,32 @@ unchanged produces the precise defect this repository sells a product against: a
 reads as *the corpus is consistent* when it means *a corpus I no longer look at was not
 examined*. **A rule that was not evaluated is not a rule that passed.**
 
-Both guards therefore print the released denominator on every run, pass or fail, and their
-success lines state the limit of the claim in words:
+Both guards must therefore print the released denominator on every run, pass or fail, and their
+success lines must state the limit of the claim in words. The line is `formatCoverageReport` in
+the scope module:
 
 ```
-bilingual scope (ADR-0126): 16/16 entry-surface document(s) enforced; 783 EN/ES pair(s)
+bilingual scope (ADR-0126): 17/17 entry-surface document(s) enforced; 783 EN/ES pair(s)
 outside the entry surface were NOT evaluated — their state is unknown, not verified.
 ```
 
 Any future caller of the scope module prints it too. A scope module whose output can be consumed
 silently is a scope module that will be.
 
+**Today only one of the two guards does this.** `.harness/scripts/ci/suites/bilingual-suite.mjs`
+imports `summarizeCoverage` and `formatCoverageReport` and prints that line unconditionally
+(line 280). `.harness/scripts/ci/66-validate-bilingual-sync.mjs` imports only `ENTRY_SURFACE`
+and `isEntrySurface` (line 55) and prints no denominator in any of its three modes. It states
+the limit in words — *"Pairs outside it were not examined"* — but never the number, which is the
+half that makes the cost of re-widening visible. The requirement above stands exactly as
+written; guard 66 is in breach of it, and the breach is recorded in
+[Pending gaps](#pending-gaps).
+
 ### 4. Depth bought with the breadth: markup balance on the entry surface
 
 The budget freed by dropping 783 pairs buys a check the old mandate could not afford to run
 anywhere: block-level HTML tags that open and never close, or close having never opened, on the
-sixteen entry-surface documents and both their halves. Deliberately narrow — only `div`,
+seventeen entry-surface documents and both their halves. Deliberately narrow — only `div`,
 `details`, `table`, `picture`, `figure`; void and inline elements are excluded because
 `README.md` uses them unclosed and legally; fenced code is stripped first or every heredoc
 becomes a finding.
@@ -128,14 +143,39 @@ consequence of being named, having gone without for the entire life of the manda
 supposed to guarantee them.
 
 **Given up.** 783 pairs are no longer checked for structural parity, language-slot correctness,
-or one-sided edits. Some of them will drift. That is the accepted cost, and the guards say so
-out loud rather than letting a green tick imply otherwise.
+or one-sided edits. Some of them will drift. That is the accepted cost, and the bilingual suite
+says so out loud with the count rather than letting a green tick imply otherwise. Guard 66 says
+it in words only, without the number — the open half of clause 3.
 
 **Reversible.** The scope is one exported array. Re-widening is a one-line change plus the
-translation debt accumulated in the interim — which is exactly why the released count is printed
-on every run rather than computed once and forgotten.
+translation debt accumulated in the interim — which is exactly why clause 3 requires the released
+count on every run rather than computed once and forgotten. The suite meets that requirement;
+guard 66 does not yet.
+
+## Pending gaps
+
+Clause 3 is in force and half implemented. The open half, with its location:
+
+- **`66-validate-bilingual-sync` publishes no released denominator.**
+  `.harness/scripts/ci/66-validate-bilingual-sync.mjs:55` imports only `ENTRY_SURFACE` and
+  `isEntrySurface` from `.harness/scripts/lib/bilingual-scope.mjs`; it imports neither
+  `summarizeCoverage` nor `formatCoverageReport`, and none of its three exits prints a released
+  count — self-test at line 260, range mode at lines 341-345, audit sweep at lines 403-406. Each
+  of those lines reports the entry-surface size and the sentence "Pairs outside it were not
+  examined": the words half of the clause, not the number half. A run of guard 66 on its own
+  therefore cannot tell an operator how many pairs the scope released.
+  **To close:** import the two coverage helpers and print `formatCoverageReport(...)` on every
+  exit of `main()`, the way `.harness/scripts/ci/suites/bilingual-suite.mjs:280` already does.
+
+Until that lands, the guarantee in clause 3 holds for the suite and not for guard 66, and this
+ADR does not claim otherwise.
 
 ## Related ADRs
 
 - ADR-0125 — a single artifact registry, keyed by slug: the same preference for one declared
   list over a rule that infers membership from paths.
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

@@ -1,9 +1,9 @@
 
 # [OK] Bilingual Coverage Dashboard
 
-**Generated:** 2026-08-16T19:59:29.106Z
+**Generated:** 2026-09-01T12:27:13.833Z
 **Repository:** evolith_arch32
-**Total EN files:** 504 | **ES files:** 502 | **Paired:** 501 | **Coverage:** 99.4%
+**Total EN files:** 500 | **ES files:** 497 | **Paired:** 496 | **Coverage:** 99.2%
 
 ---
 
@@ -11,15 +11,15 @@
 
 | Metric | Value |
 |--------|-------|
-| Total EN files | 504 |
-| Total ES files | 502 |
-| Paired files | 501 |
-| **Coverage** | **99.4%** |
+| Total EN files | 500 |
+| Total ES files | 497 |
+| Paired files | 496 |
+| **Coverage** | **99.2%** |
 
 ### Coverage Bar
 
 ```
-████████████████████ 99.4%
+████████████████████ 99.2%
 ```
 
 ---
@@ -29,7 +29,7 @@
 | Area | EN | ES | Paired | Coverage | Status |
 |------|----|----|--------|----------|--------|
 | README.md | 1 | 1 | 1 | 100% | [OK] |
-| core | 500 | 498 | 497 | 99% | [OK] |
+| core | 496 | 493 | 492 | 99% | [OK] |
 | harness | 1 | 1 | 1 | 100% | [OK] |
 | knowledge | 2 | 2 | 2 | 100% | [OK] |
 
@@ -49,13 +49,13 @@
 |----------|----|----|--------|----------|--------|
 | BILINGUAL_INDEX.md | 1 | 1 | 1 | 100% | [OK] |
 | README.md | 1 | 1 | 1 | 100% | [OK] |
-| architecture | 256 | 256 | 256 | 100% | [OK] |
-| control-center | 41 | 38 | 38 | 93% | [OK] |
+| architecture | 259 | 259 | 259 | 100% | [OK] |
+| control-center | 42 | 38 | 38 | 90% | [OK] |
 | core-evaluation-engine-design.md | 1 | 1 | 1 | 100% | [OK] |
 | foundations | 117 | 117 | 117 | 100% | [OK] |
 | interfaces | 5 | 5 | 5 | 100% | [OK] |
 | product-initiative-governance-redesign.md | 1 | 1 | 1 | 100% | [OK] |
-| sdlc | 77 | 77 | 77 | 100% | [OK] |
+| sdlc | 69 | 69 | 69 | 100% | [OK] |
 | tracker-core-evaluation-compat-audit.md | 0 | 1 | 0 | 0% | [CRIT] |
 
 ### harness

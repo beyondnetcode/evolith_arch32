@@ -312,7 +312,7 @@ function main() {
   // ALLOWED map, and an outside contributor cannot populate it: the sha does not exist
   // until after they have committed, and editing this file to add it is not something a
   // first PR should have to do. Applied to 783 released pairs that hatch made the guard a
-  // wall for exactly the people the project is trying to attract. Applied to sixteen
+  // wall for exactly the people the project is trying to attract. Applied to seventeen
   // documents the maintainer edits deliberately, it is a reasonable ask.
   const pairExists = (en, es) =>
     isEntrySurface(en) &&

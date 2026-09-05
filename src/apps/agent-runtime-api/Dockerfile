@@ -19,6 +19,58 @@ COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
 COPY src ./src
 COPY .harness ./.harness
 
+# ── OPA binary for THIS platform ────────────────────────────────────────────
+# Every binary committed under .harness/bin is Mach-O arm64 — a developer's macOS
+# host. Copying that tree into a Linux image ships something the container cannot
+# execute, and OpaCliPolicyValidationAdapter fails CLOSED on it
+# (`opa.execution_error`, severity error). The effect is the opposite of the one
+# the file comment below promises: every capability carrying `requiresPolicy:
+# true` would be DENIED rather than governed. So fetch the platform's own binary
+# and overwrite the default path the adapter resolves,
+# `<AGENT_RUNTIME_WORKSPACE_ROOT>/.harness/bin/opa`.
+#
+# The version is IMPORTED from `.harness/scripts/opa-runtime.mjs`, never spelled
+# again here: that module is the single owner of the pin (GT-591), and
+# `53-validate-opa-pin.mjs` reds the build on any second spelling — a Dockerfile
+# comment included.
+#
+# `_static` is not optional: this is Alpine/musl, and the non-static Linux asset
+# links against glibc.
+#
+# `curl -fsSL`, y no `wget`: la URL de descarga REDIRIGE a otro host, y el wget de
+# BusyBox que trae Alpine sale con codigo 0 sin escribir el fichero. El `set -eu` no
+# lo cazaba —no habia error que cazar— y el fallo aparecia tres ordenes despues, en
+# un `mv` que no encontraba nada. `-f` convierte un HTTP de error en salida no nula,
+# `-L` sigue la redireccion, y el `test -s` asegura que lo descargado no esta vacio.
+ARG TARGETARCH
+# `mkdir -p .harness/bin` NO es defensivo: en CI ese directorio NO EXISTE.
+# `.gitignore:47` ignora `.harness/bin/` —son ~400 MB de binarios OPA— asi que git no
+# rastrea un solo fichero ahi. En una maquina de desarrollo el directorio existe con
+# los binarios que uno descargo; en un checkout limpio no existe en absoluto.
+#
+# Ese es el fallo entero, y lo enmascaraban dos cosas: BusyBox `mv` nombra el ORIGEN
+# cuando falta el DESTINO (`can't rename '/tmp/opa'`, que se lee como si la descarga
+# hubiera fallado), y una build local pasa porque usa ficheros que solo existen en el
+# disco de quien la lanza.
+#
+# La cadena va con `&&` y no con `set -eu` y `;` porque aquella version no abortaba en
+# el comando que fallaba: el error aparecia tres ordenes despues y sin nombrar la causa.
+RUN set -x \
+ && apk add --no-cache curl \
+ && OPA_VERSION="$(node --input-type=module -e "import { OPA_VERSION } from 'file:///repo/.harness/scripts/opa-runtime.mjs'; process.stdout.write(OPA_VERSION);")" \
+ && echo "OPA pin resuelto: '${OPA_VERSION}'" \
+ && test -n "${OPA_VERSION}" \
+ && OPA_URL="https://openpolicyagent.org/downloads/v${OPA_VERSION}/opa_linux_${TARGETARCH:-amd64}_static" \
+ && echo "Descargando ${OPA_URL}" \
+ && curl -fsS --retry 3 --retry-connrefused -L -o /tmp/opa "${OPA_URL}" \
+ && ls -l /tmp/opa \
+ && test -s /tmp/opa \
+ && chmod 0755 /tmp/opa \
+ && mkdir -p .harness/bin \
+ && mv /tmp/opa .harness/bin/opa \
+ && .harness/bin/opa version \
+ && .harness/bin/opa version | grep -q "Version: ${OPA_VERSION}"
+
 RUN npm ci --legacy-peer-deps
 
 # Build the app and its project references (agent-runtime -> core-domain).
@@ -71,10 +123,12 @@ COPY --from=builder --chown=evolith:evolith /repo/src/packages/agent-runtime/pac
 COPY --from=builder --chown=evolith:evolith /repo/src/apps/agent-runtime-api/dist ./src/apps/agent-runtime-api/dist
 COPY --from=builder --chown=evolith:evolith /repo/src/apps/agent-runtime-api/package.json ./src/apps/agent-runtime-api/package.json
 
-# Optional corpus so the real .harness / OPA adapters can be enabled by env
-# (AGENT_RUNTIME_HARNESS_ROOT / AGENT_RUNTIME_OPA_*) without rebuilding. Copied
-# from the builder stage so the bundled OPA binary and policy.wasm match the
-# container platform, not the developer host.
+# The corpus the real .harness / OPA adapters run against. Copied from the builder
+# stage, which is the only place the OPA binary exists: `.harness/bin/` is gitignored
+# (~400 MB of platform binaries), so a clean checkout has no such directory and the
+# build step above creates it and fetches the binary for THIS platform. Copying
+# `.harness` straight from the build context would ship no `bin/` at all on CI, and
+# whatever the developer happened to have locally everywhere else.
 COPY --from=builder --chown=evolith:evolith /repo/.harness ./corpus/.harness
 COPY --from=builder --chown=evolith:evolith /repo/src/rulesets ./corpus/rulesets
 

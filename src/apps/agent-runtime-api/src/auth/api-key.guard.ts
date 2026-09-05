@@ -16,6 +16,12 @@
  *   - When NEITHER credential is configured, a production posture DENIES every
  *     non-public route (refuses to serve without auth). Dev still runs, and prod
  *     can opt out only via an explicit `AGENT_RUNTIME_ALLOW_NO_AUTH=true`.
+ *   - **An unset `NODE_ENV` counts as production** (ADR-0119 §4). It used to count
+ *     as development, which made the most common misconfiguration of all — a
+ *     variable nobody set — the one that opened the service to anonymous callers
+ *     with a wildcard tenant. Running without auth now takes a deliberate act:
+ *     either `NODE_ENV=development`, which someone typed, or the explicit override.
+ *     A default that opens is not a default, it is a hole with a schedule.
  *   - A JWT-shaped bearer with no `AGENT_RUNTIME_JWT_SECRET` configured is
  *     denied (cannot verify → refuse). A verified JWT with a missing/invalid
  *     tenant claim is denied.
@@ -57,7 +63,12 @@ export class ApiKeyGuard implements CanActivate {
     const apiKey = process.env.AGENT_RUNTIME_API_KEY;
     const jwtSecret = process.env.AGENT_RUNTIME_JWT_SECRET;
     const allowNoAuth = process.env.AGENT_RUNTIME_ALLOW_NO_AUTH === 'true';
-    const isProd = process.env.NODE_ENV === 'production';
+
+    // ADR-0119 §4: fail-closed when NODE_ENV is unconfigured. `=== 'production'`
+    // alone made "unset" mean development, and unset is the state a fresh
+    // container, a forgotten env file or a bare `node dist/main` all arrive in.
+    const nodeEnv = process.env.NODE_ENV?.trim();
+    const isProd = nodeEnv === undefined || nodeEnv === '' || nodeEnv === 'production';
 
     // Fail-closed: no credential material configured at all.
     if (!apiKey && !jwtSecret) {

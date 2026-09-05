@@ -22,7 +22,7 @@
     "node": ">=20 <21"
   },
   "devDependencies": {
-    "@commitlint/cli": "20.5.3",
+    "@commitlint/cli": "21.2.2",
     "@commitlint/config-conventional": "20.5.3",
     "husky": "9.1.7",
     "jest": "30.4.2",
@@ -36,7 +36,8 @@
     "micromatch": "4.0.8",
     "ajv": "8.20.0",
     "typescript": "6.0.3",
-    "fast-uri": "3.1.5",
+    "fast-uri": "3.1.7",
+    "browserslist": "4.28.9",
     "eslint": {
       "ajv": "^6.12.6"
     },

@@ -576,7 +576,7 @@ jobs:
           echo "✅ All $count platform binaries present"
 
       - name: Upload to Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.release-gate.outputs.tag_name }}
           name: Release ${{ needs.release-gate.outputs.tag_name }}

@@ -220,7 +220,12 @@ export class ToolDispatchService {
       role: 'anonymous',
       roles: [],
       tenant: tenant || 'default',
-      environment: process.env.NODE_ENV || 'development',
+      // ADR-0119 §4. No es cosmético: el ABAC concede herramientas de ESCRITURA a
+      // los roles de desarrollo cuando `environment !== 'production'`
+      // (abac-evaluator: «Allow write tools in non-production environments»), así
+      // que con `|| 'development'` bastaba con no configurar la variable para
+      // abrir la escritura.
+      environment: process.env.NODE_ENV?.trim() || 'production',
       scopes: [],
     };
 

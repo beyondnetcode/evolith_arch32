@@ -154,6 +154,9 @@ jobs:
       - name: Check Bilingual Parity
         run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
+      - name: Check Field Label Coverage
+        run: node .harness/scripts/ci/71-validate-field-label-coverage.mjs
+
       - name: Verify version format
         run: |
           BRANCH_NAME=${{ github.ref_name }}

@@ -45,3 +45,8 @@ Establecer reglas de prevención de SSRF para toda petición HTTP saliente:
 
 - ADR-0081 (aislamiento del sandbox — red denegada por defecto)
 - GT-351 (protección contra SSRF en WebhookAdapter)
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

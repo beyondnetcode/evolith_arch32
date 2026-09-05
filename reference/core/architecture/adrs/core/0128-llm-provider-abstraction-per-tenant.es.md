@@ -126,3 +126,8 @@ un proveedor concreto, cambiar cuando se agote un presupuesto— sin un segundo 
 - [ADR-0101](./0101-core-stateless-evaluation-engine.es.md) — el Core no guarda estado; el tenant es contexto
 - [ADR-0020](./0020-identity-provider-abstraction-strategy.es.md) — mismo patrón de abstracción, identidad
 - [ADR-0025](./0025-feature-flag-provider-abstraction.es.md) — mismo patrón de abstracción, feature flags
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

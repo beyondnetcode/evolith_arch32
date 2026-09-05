@@ -49,3 +49,8 @@ GitHub tokens were passed as tool arguments (appearing in audit logs and process
 - ADR-0016 (Immutable Audit Trail)
 - ADR-0065 (PII-Safe Serilog Pipeline — .NET)
 - ADR-0091 (Workload Identity Token Rotation)
+
+---
+[Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

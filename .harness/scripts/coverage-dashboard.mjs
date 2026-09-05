@@ -248,7 +248,7 @@ const isParityExempt = (f) => PARITY_EXEMPT_BASENAMES.has(path.basename(f));
 
 // ADR-0126 — this dashboard was the THIRD enforcer of the repo-wide bilingual mandate and
 // the one the ADR missed. `04-check-bilingual-parity` and `66-validate-bilingual-sync` were
-// both narrowed to the sixteen-document entry surface; this file kept failing the build for
+// both narrowed to the seventeen-document entry surface; this file kept failing the build for
 // any English doc under `reference/` without a Spanish twin, independently of them.
 //
 // It surfaced the way these things do: three new documents under

@@ -9,7 +9,16 @@ import { AppModule } from "./app.module";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: false });
 
-  app.use(helmet());
+  // ADR-0119 §5. `helmet()` a secas entrega `default-src 'self'` y
+  // `X-Frame-Options: SAMEORIGIN`, no el `'none'`/`DENY` que exige §5. Este
+  // servicio no sirve interfaz alguna, así que el CSP estricto no tiene excepción.
+  app.use(
+    helmet({
+      contentSecurityPolicy: { useDefaults: false, directives: { 'default-src': ["'none'"] } },
+      frameguard: { action: 'deny' },
+      referrerPolicy: { policy: 'no-referrer' },
+    }),
+  );
 
   // Lenient validation: the runtime's parseAgentRuntimeRequest is the source of
   // truth for the request contract (it accepts a dynamic `parameters` object),
@@ -38,7 +47,11 @@ async function bootstrap() {
     next();
   });
 
-  const nodeEnv = process.env.NODE_ENV ?? "development";
+  // ADR-0119 §4/§6: sin NODE_ENV configurado la postura es producción, y
+  // producción DENIEGA cross-origin salvo CORS_ORIGINS explícito. Con el
+  // `?? "development"` anterior, no poner la variable abría `origin: "*"`.
+  const rawNodeEnv = process.env.NODE_ENV?.trim();
+  const nodeEnv = rawNodeEnv === undefined || rawNodeEnv === "" ? "production" : rawNodeEnv;
   const rawOrigins = process.env.CORS_ORIGINS;
   app.enableCors({
     origin:

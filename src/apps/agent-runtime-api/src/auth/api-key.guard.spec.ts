@@ -66,6 +66,36 @@ describe('ApiKeyGuard (fail-closed auth + JWT tenant extraction, GT-439)', () =>
       expect(req[PRINCIPAL_KEY]).toEqual({ authMethod: 'none', tenantId: WILDCARD_TENANT });
     });
 
+    it('DENIES when NODE_ENV is unset (unset is production, not development)', () => {
+      // El agujero que esta prueba existe para impedir. `NODE_ENV === 'production'`
+      // hacia que la variable SIN CONFIGURAR contara como desarrollo, y ese es el
+      // estado en el que llega un contenedor recien hecho, un fichero de entorno
+      // olvidado o un `node dist/main` a secas. El guard concedia acceso con
+      // `authMethod: 'none'` y tenant comodin, sin credencial alguna.
+      delete process.env.NODE_ENV;
+      const guard = guardWith();
+      const req: MockReq = { headers: {} };
+      expect(() => guard.canActivate(makeContext(req))).toThrow(UnauthorizedException);
+      expect(req[PRINCIPAL_KEY]).toBeUndefined();
+    });
+
+    it('DENIES when NODE_ENV is empty or blank', () => {
+      process.env.NODE_ENV = '   ';
+      const guard = guardWith();
+      const req: MockReq = { headers: {} };
+      expect(() => guard.canActivate(makeContext(req))).toThrow(UnauthorizedException);
+    });
+
+    it('allows with NODE_ENV unset only under the explicit override', () => {
+      // El contrapunto: cerrar el hueco no puede cerrar tambien la via declarada.
+      delete process.env.NODE_ENV;
+      process.env.AGENT_RUNTIME_ALLOW_NO_AUTH = 'true';
+      const guard = guardWith();
+      const req: MockReq = { headers: {} };
+      expect(guard.canActivate(makeContext(req))).toBe(true);
+      expect(req[PRINCIPAL_KEY]).toEqual({ authMethod: 'none', tenantId: WILDCARD_TENANT });
+    });
+
     it('allows in development (dev still runs without a key)', () => {
       process.env.NODE_ENV = 'development';
       const guard = guardWith();

@@ -10185,7 +10185,8 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
   | fact | value |
   |---|---|
   | required contexts on `main` and `develop` | 9 |
-  | do they include `Security Audit`? | **no** (nor `Trivy` nor `build-and-test`) |
+  | do they include `Security Audit`? | **no** when registered; **yes since 2026-09-05** (10 contexts on both branches, verified) |
+  | do they include `Trivy Container Scan` or `build-and-test`? | **no** — decided required, not yet applied; `build-and-test` carries a precondition (see criterion 3) |
   | `Security Audit` red since | `b84523b4`, 2026-09-02 |
   | merges into `main` in that window | **8**, four of them npm dependency changes |
   | how GitHub renders them | `UNSTABLE`, not `BLOCKED` |
@@ -10204,5 +10205,5 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
 - **Acceptance criteria:**
   - [ ] `Security Audit` appears in the required contexts of both `main` and `develop`.
   - [ ] **FALSIFIABILITY:** a PR carrying an undeclared HIGH advisory comes out `BLOCKED` rather than `UNSTABLE`, observed and not assumed.
-  - [ ] The decision on `Trivy` and `build-and-test` is written down — required too, or a recorded reason why not.
+  - [~] The decision on `Trivy` and `build-and-test` is written down — required too, or a recorded reason why not. **DECIDED by the owner 2026-09-05: both required.** Only half is executable, and the other half is not laziness but a measured deadlock: **`Trivy Container Scan` is safe to require** because it lives in `sdk-cli-ci.yml`, which carries **no `paths` filter** — and whose comment says it must never carry one, because of the block `CodeQL SAST` caused on PR #218 once it became required — so it reports on every PR. **`build-and-test` CANNOT be required as it stands:** it lives in `sdk-cli-release.yml`, whose `pull_request` trigger does filter on `src/sdk/cli/**`, `src/packages/**`, `.github/workflows/sdk-cli-release.yml` and `.harness/**`. A required check behind a path filter **never reports** on a PR that misses those paths, and GitHub reads "never reported" as "not satisfied": the PR is unmergeable forever with everything green. That is exactly what would have happened to [#690](https://github.com/beyondnetcode/evolith_arch32/pull/690), which touched only `reference/`. **A precondition, not an alternative:** drop the `paths` filter from `sdk-cli-release.yml`'s `pull_request` — the same fix already applied to `sdk-cli-ci.yml` — and only then add it to the required set. **On the name:** the check to require is `Trivy Container Scan`, the job name; the bare `Trivy` check published by `aquasecurity/trivy-action` shows on `main` but not on `develop`'s head, so requiring that name would reintroduce the same deadlock by another route.
 - **Status:** `PENDING`

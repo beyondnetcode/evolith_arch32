@@ -10,12 +10,24 @@ on:
   # NOTHING but core-validation, and every downstream job skipped with it. The
   # validation half only ever executed on a v* tag, which is how five consecutive
   # tags each discovered a different long-standing defect.
+  #
+  # NO `paths:` FILTER ON `pull_request` — deliberately, and it must stay that way,
+  # for the same reason `sdk-cli-ci.yml` carries the identical note. `build-and-test`
+  # is a job in this workflow and is intended to become a REQUIRED status check
+  # (GT-710). A required check behind a path filter never reports on a PR that misses
+  # those paths, and GitHub reads "never reported" as "not satisfied" -- so such a PR
+  # is unmergeable forever, with every visible check green and nothing to point at.
+  # `sdk-cli-ci.yml` records the repository living through exactly that with
+  # `CodeQL SAST` on PR #218; this filter would have reproduced it on the next
+  # docs-only change. Measured before removing it, not argued: the filter listed
+  # `src/sdk/cli/**`, `src/packages/**`, this file and `.harness/**`, and PR #690
+  # touched only `reference/` -- so it would have been the first casualty.
+  #
+  # The `push` trigger below keeps its filter on purpose: pushes are not gated by
+  # required checks, so no deadlock is possible there and the CI minutes are worth
+  # saving. That asymmetry is the whole design, not an oversight.
   pull_request:
-    paths:
-      - 'src/sdk/cli/**'
-      - 'src/packages/**'
-      - '.github/workflows/sdk-cli-release.yml'
-      - '.harness/**'
+    branches: [main, develop]
   push:
     branches:
       - main

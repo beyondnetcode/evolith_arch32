@@ -10635,6 +10635,23 @@
         "BOTH HALVES: evolith_arch32#623 (144fce23) and evolith_tracker#153 (97e1bc8e).",
         "node .harness/scripts/ci/08-validate-tracking.mjs && node --test src/rulesets/standards/iso-5055-mapping.test.mjs"
       ]
+    },
+    {
+      "id": "GT-709",
+      "closedAt": "2026-09-05",
+      "closureCommit": "eb458372",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "package.json",
+        "package-lock.json"
+      ],
+      "validationCommands": [
+        "BASELINE MEASURED ON THE TREE WITHOUT THE CHANGE, with the same guard CI runs, rather than inherited from the CI log: `63-validate-npm-audit-gate.mjs` on `origin/main` (11562cce) reports 11 blocking rows / 7 high, naming fast-uri's four advisories (GHSA-jqff-g426-hqxp, GHSA-5jgf-p345-68v8, GHSA-f65p-4m7j-42xc, GHSA-fph4-wmhf-6fwf), the five ajv/commitlint chain rows it reports as `via:fast-uri`, and browserslist's two (GHSA-73wf-gq98-2v4g, GHSA-c83g-rgw3-j3cx).",
+        "THE CAUSE WAS A PIN OF OUR OWN, NOT A MISSING UPSTREAM FIX. `overrides.fast-uri` was `3.1.5` — exactly the last vulnerable release of the 3.x line. The advisory patches in `3.1.6`, inside the `^3.0.1` that `ajv@8.20.0` declares, so the fix fitted in the pin that already existed.",
+        "AFTER `fast-uri` 3.1.7: 2 blocking rows / 2 high, both browserslist — so 9 of the 11 rows are attributable to the single pin, measured and not inferred. AFTER `browserslist` 4.28.9: `0 undeclared high/critical advisories; 0 accepted with a recorded reason, 0 stale`.",
+        "NO EXCEPTION WAS DECLARED. `.harness/config/npm-audit-exceptions.json` still holds zero entries; that file is for advisories with no upstream fix, and both of these had one. The moderate `qs` advisory survives on purpose — the gate does not block below HIGH.",
+        "WHY THE GATE STOPPED NOTHING is registered as its own row rather than as prose here: `Security Audit` is not among the nine required contexts, and eight PRs merged into `main` while it was red. See GT-710."
+      ]
     }
   ]
 }

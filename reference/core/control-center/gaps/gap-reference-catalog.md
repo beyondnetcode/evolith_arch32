@@ -10143,3 +10143,66 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
   - [x] **FALSIFIABILITY:** no link in either repository resolves to a deleted KDD file, checked after the sweep rather than assumed from the delete list. **MET for the Core** — searching the eight deleted filenames across every markdown file returns nothing outside `ADR-0127` and the redesign doc's correction notice, both of which name them as retired rather than link to them.
 - **Status:** `DONE`
 
+#### GT-709
+
+**Title:** An `overrides` pin added to close an advisory becomes the ceiling that prevents closing it the next time
+
+- **Purpose:** Stop the `overrides` block being the place a CVE settles in, and make `Security Audit` mean something again.
+- **Evidence, measured 2026-09-05 with `63-validate-npm-audit-gate.mjs` — the guard CI runs — against the same tree:**
+
+  | tree | blocking rows | high |
+  |---|---:|---:|
+  | `origin/main` (`11562cce`) | 11 | 7 |
+  | + `fast-uri` `3.1.7` | 2 | 2 |
+  | + `browserslist` `4.28.9` | **0** | **0** |
+
+- **The cause was not a dependency without a fix, but two pins of our own.** `overrides.fast-uri` was set to `3.1.5` — exactly the last vulnerable release of the 3.x line. `GHSA-jqff-g426-hqxp` patches in `3.1.6`, inside the `^3.0.1` that `ajv@8.20.0` declares, so the fix fitted in the pin that was already there. The nine rows that go with that change are `fast-uri`'s own four advisories (`GHSA-jqff-g426-hqxp`, `GHSA-5jgf-p345-68v8`, `GHSA-f65p-4m7j-42xc`, `GHSA-fph4-wmhf-6fwf`) plus the five rows of the `ajv` / `@commitlint/config-validator` / `@commitlint/resolve-extends` / `@commitlint/load` / `@commitlint/cli` chain, which the gate reported as `via:fast-uri`.
+- **The remaining two were the same pattern again.** `browserslist` `4.28.4`, a dev-only transitive through `ts-jest`→`@babel/core`→`@babel/helper-compilation-targets` and `@nestjs/cli`→`webpack`, with `GHSA-73wf-gq98-2v4g` and `GHSA-c83g-rgw3-j3cx` patched in `4.28.7`. Pinned to `4.28.9` with the same override shape `sdk-cli-ci.yml`'s own comment prescribes for this case.
+- **What was NOT done, and why:** no exception was declared in `.harness/config/npm-audit-exceptions.json`. That file is for advisories with no upstream fix, and both of these had one; declaring them would have turned a stale pin into a permanent exception.
+- **Use cases:**
+  - A reviewer sees `Security Audit` red, checks that the advisory is transitive and dismisses it as somebody else's, without noticing that the ceiling is set by an `overrides` entry of our own.
+  - Someone adds an `overrides` entry to close a CVE and thereby pins the version that will prevent closing the next one in that same package.
+- **Impact:** A HIGH CVE live on `main` for three days, with the gate that detects it red and eight merges going past it.
+- **Expected outcome:** `63-validate-npm-audit-gate.mjs` green on `main` with no declared exceptions.
+- **Files affected:** `package.json`, `package-lock.json`
+- **Component:** `Infra` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `XS` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-09-05, found while sweeping the dependabot pull requests: all five npm ones came out with `Security Audit` red, and contrasting that against `main` showed the red predated all five.
+- **Acceptance criteria:**
+  - [x] The gate goes from 11 blocking rows to 0, measured with the real guard against the tree rather than deduced from the advisory. **MET** — `0 undeclared high/critical advisories; 0 accepted with a recorded reason, 0 stale`.
+  - [x] The fix is a version change, not a declared exception. **MET** — `npm-audit-exceptions.json` still holds zero entries.
+  - [x] The chosen version respects the range the consumer declares rather than forcing it. **MET** — `3.1.7` falls inside `ajv@8.20.0`'s `^3.0.1`.
+  - [x] **FALSIFIABILITY:** the baseline was measured on the tree WITHOUT the change and with the same guard, not inherited from the CI log. **MET** — 11 rows / 7 high on `origin/main`, with `fast-uri`'s four rows and `browserslist`'s two named one by one before anything was touched.
+- **Status:** `DONE`
+
+#### GT-710
+
+**Title:** The gate that measures CVEs is not a required check, so eight merges went past it while it was red
+
+- **Purpose:** Make an undeclared HIGH advisory block the merge instead of merely reporting it.
+- **Evidence, measured 2026-09-05:**
+
+  | fact | value |
+  |---|---|
+  | required contexts on `main` and `develop` | 9 |
+  | do they include `Security Audit`? | **no** (nor `Trivy` nor `build-and-test`) |
+  | `Security Audit` red since | `b84523b4`, 2026-09-02 |
+  | merges into `main` in that window | **8**, four of them npm dependency changes |
+  | how GitHub renders them | `UNSTABLE`, not `BLOCKED` |
+
+- **The nine required are** `CodeQL SAST`, `Secret Detection (gitleaks)`, `Services build (GHCR)`, `Test`, `Test core`, `Test core-api`, `Test core-domain`, `Test mcp-server` and `Validate documentation`.
+- **The workflow names the failure mode and then builds it.** The comment in `sdk-cli-ci.yml` warns that a permanently red check trains reviewers to discount red — and the check is left out of the required set, which is the most direct route to that outcome. The four npm dependency PRs merged in the window ([#664](https://github.com/beyondnetcode/evolith_arch32/pull/664), [#665](https://github.com/beyondnetcode/evolith_arch32/pull/665), [#666](https://github.com/beyondnetcode/evolith_arch32/pull/666), [#667](https://github.com/beyondnetcode/evolith_arch32/pull/667)) are exactly the class of change that gate exists to judge.
+- **Use cases:**
+  - A dependency bump introduces a HIGH CVE and merges anyway, because the only check that sees it is not required.
+  - A reviewer learns that a red `Security Audit` is normal and stops reading it.
+- **Impact:** The dependency security gate is advisory and blocks no merge, including dependency merges.
+- **Expected outcome:** `Security Audit` among the required contexts on `main` and `develop`, with a PR carrying an undeclared high coming out `BLOCKED`.
+- **Files affected:** branch protection on `main` and `develop`, `.github/workflows/sdk-cli-ci.yml`
+- **Component:** `Infra` · **Criticality:** P1 · **Complexity:** S
+- **Principal:** `XS` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-09-05 while closing [`GT-709`](#gt-709): explaining why a HIGH CVE had survived three days required looking at which checks actually block, and `Security Audit` was not among them.
+- **Acceptance criteria:**
+  - [ ] `Security Audit` appears in the required contexts of both `main` and `develop`.
+  - [ ] **FALSIFIABILITY:** a PR carrying an undeclared HIGH advisory comes out `BLOCKED` rather than `UNSTABLE`, observed and not assumed.
+  - [ ] The decision on `Trivy` and `build-and-test` is written down — required too, or a recorded reason why not.
+- **Status:** `PENDING`

@@ -10050,3 +10050,66 @@ Los dos se arreglaron de forma estructural y no como correcciones: el rethrow no
   - [x] **FALSABILIDAD:** ningún enlace de ninguno de los dos repositorios resuelve a un fichero KDD borrado, comprobado tras el barrido y no supuesto desde la lista de borrados. **CUMPLIDO para el Core** — buscar los ocho nombres borrados en todos los markdown no devuelve nada fuera del `ADR-0127` y del aviso de corrección del documento de rediseño, que los nombran como retirados en vez de enlazarlos.
 - **Estado:** `COMPLETADO`
 
+#### GT-709
+
+**Título:** Un `overrides` puesto para cerrar un advisory se vuelve el techo que impide cerrarlo la vez siguiente
+
+- **Propósito:** Que el bloque de `overrides` deje de ser el sitio donde una CVE se queda a vivir, y que `Security Audit` vuelva a significar algo.
+- **Evidencia, medida el 2026-09-05 con `63-validate-npm-audit-gate.mjs` —el guard que corre CI— sobre el mismo árbol:**
+
+  | árbol | filas bloqueantes | altas |
+  |---|---:|---:|
+  | `origin/main` (`11562cce`) | 11 | 7 |
+  | + `fast-uri` `3.1.7` | 2 | 2 |
+  | + `browserslist` `4.28.9` | **0** | **0** |
+
+- **La causa no era una dependencia sin arreglo, sino dos pins propios.** `overrides.fast-uri` estaba fijado en `3.1.5` — exactamente la última versión vulnerable de la rama 3.x. `GHSA-jqff-g426-hqxp` parchea en `3.1.6`, dentro del `^3.0.1` que declara `ajv@8.20.0`, así que el arreglo cabía en el pin que ya existía. Las nueve filas que se van con ese cambio son las cuatro advisories de `fast-uri` (`GHSA-jqff-g426-hqxp`, `GHSA-5jgf-p345-68v8`, `GHSA-f65p-4m7j-42xc`, `GHSA-fph4-wmhf-6fwf`) más las cinco filas de la cadena `ajv` / `@commitlint/config-validator` / `@commitlint/resolve-extends` / `@commitlint/load` / `@commitlint/cli`, que el gate reportaba `via:fast-uri`.
+- **Las dos restantes eran el mismo patrón otra vez.** `browserslist` `4.28.4`, transitivo solo-dev por `ts-jest`→`@babel/core`→`@babel/helper-compilation-targets` y por `@nestjs/cli`→`webpack`, con `GHSA-73wf-gq98-2v4g` y `GHSA-c83g-rgw3-j3cx` parcheados en `4.28.7`. Se pinea `4.28.9` con la misma forma de override que el comentario del propio `sdk-cli-ci.yml` prescribe para este caso.
+- **Lo que NO se hizo, y por qué:** no se declaró ninguna excepción en `.harness/config/npm-audit-exceptions.json`. Ese fichero es para advisories sin arreglo upstream, y aquí había arreglo en las dos; declararlas habría convertido un pin caduco en una excepción permanente.
+- **Casos de uso:**
+  - Un revisor ve `Security Audit` en rojo, comprueba que la advisory es de un transitivo y la descarta como ajena, sin mirar que el techo lo pone un `overrides` propio.
+  - Alguien añade un `overrides` para cerrar una CVE y con ello fija la versión que impedirá cerrar la siguiente de ese mismo paquete.
+- **Impacto:** Una CVE ALTA viva en `main` durante tres días, con el gate que la detecta en rojo y ocho merges pasando por encima.
+- **Resultado esperado:** `63-validate-npm-audit-gate.mjs` en verde sobre `main` sin excepciones declaradas.
+- **Ficheros afectados:** `package.json`, `package-lock.json`
+- **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `XS` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Procedencia:** Registrado el 2026-09-05, encontrado barriendo los pull requests de dependabot: los cinco de npm salían con `Security Audit` en rojo, y contrastarlo contra `main` mostró que el rojo era anterior a los cinco.
+- **Criterios de aceptación:**
+  - [x] El gate pasa de 11 filas bloqueantes a 0, medido con el guard real sobre el árbol y no deducido del advisory. **CUMPLIDO** — `0 undeclared high/critical advisories; 0 accepted with a recorded reason, 0 stale`.
+  - [x] El arreglo es un cambio de versión, no una excepción declarada. **CUMPLIDO** — `npm-audit-exceptions.json` sigue con cero entradas.
+  - [x] La versión elegida respeta el rango que declara el consumidor, en vez de forzarlo. **CUMPLIDO** — `3.1.7` cae dentro del `^3.0.1` de `ajv@8.20.0`.
+  - [x] **FALSABILIDAD:** el baseline se midió sobre el árbol SIN el cambio y con el mismo guard, no se heredó del log de CI. **CUMPLIDO** — 11 filas / 7 altas sobre `origin/main`, con las cuatro filas de `fast-uri` y las dos de `browserslist` nombradas una a una antes de tocar nada.
+- **Estado:** `COMPLETADO`
+
+#### GT-710
+
+**Título:** El gate que mide las CVE no es un check requerido, así que ocho merges pasaron por encima de él en rojo
+
+- **Propósito:** Que un advisory ALTA sin declarar bloquee el merge en lugar de limitarse a informarlo.
+- **Evidencia, medida el 2026-09-05:**
+
+  | dato | valor |
+  |---|---|
+  | contextos requeridos en `main` y `develop` | 9 |
+  | ¿incluyen `Security Audit`? | **no** (tampoco `Trivy` ni `build-and-test`) |
+  | `Security Audit` en rojo desde | `b84523b4`, 2026-09-02 |
+  | merges a `main` en ese intervalo | **8**, cuatro de ellos de dependencias npm |
+  | cómo lo presenta GitHub | `UNSTABLE`, no `BLOCKED` |
+
+- **Los nueve requeridos son** `CodeQL SAST`, `Secret Detection (gitleaks)`, `Services build (GHCR)`, `Test`, `Test core`, `Test core-api`, `Test core-domain`, `Test mcp-server` y `Validate documentation`.
+- **El workflow nombra el modo de fallo y luego lo construye.** El comentario de `sdk-cli-ci.yml` advierte de que un check permanentemente rojo enseña a los revisores a descontar el rojo — y el check queda fuera del conjunto requerido, que es la vía más directa a ese resultado. Los cuatro PR de dependencias npm mergeados en el intervalo ([#664](https://github.com/beyondnetcode/evolith_arch32/pull/664), [#665](https://github.com/beyondnetcode/evolith_arch32/pull/665), [#666](https://github.com/beyondnetcode/evolith_arch32/pull/666), [#667](https://github.com/beyondnetcode/evolith_arch32/pull/667)) son exactamente la clase de cambio que el gate existe para juzgar.
+- **Casos de uso:**
+  - Un bump de dependencias introduce una CVE ALTA y se mergea igual, porque el único check que la ve no es requerido.
+  - Un revisor aprende que `Security Audit` rojo es normal y deja de leerlo.
+- **Impacto:** El gate de seguridad de dependencias es informativo y no impide ningún merge, incluidos los de dependencias.
+- **Resultado esperado:** `Security Audit` entre los contextos requeridos de `main` y `develop`, con un PR que lleve una alta sin declarar quedando `BLOCKED`.
+- **Ficheros afectados:** protección de rama de `main` y `develop`, `.github/workflows/sdk-cli-ci.yml`
+- **Componente:** `Infra` · **Criticidad:** P1 · **Complejidad:** S
+- **Principal:** `XS` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Procedencia:** Registrado el 2026-09-05 al cerrar [`GT-709`](#gt-709): explicar por qué una CVE ALTA había sobrevivido tres días exigía mirar qué checks bloquean de verdad, y `Security Audit` no estaba entre ellos.
+- **Criterios de aceptación:**
+  - [ ] `Security Audit` figura en los contextos requeridos de `main` y de `develop`.
+  - [ ] **FALSABILIDAD:** un PR con un advisory ALTA sin declarar sale `BLOCKED` y no `UNSTABLE`, observado y no supuesto.
+  - [ ] La decisión sobre `Trivy` y `build-and-test` queda escrita — requeridos también, o registrado por qué no lo son.
+- **Estado:** `PENDIENTE`

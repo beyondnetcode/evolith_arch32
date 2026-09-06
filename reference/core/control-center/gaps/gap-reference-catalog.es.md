@@ -10092,7 +10092,8 @@ Los dos se arreglaron de forma estructural y no como correcciones: el rethrow no
   | dato | valor |
   |---|---|
   | contextos requeridos en `main` y `develop` | 9 |
-  | ¿incluyen `Security Audit`? | **no** (tampoco `Trivy` ni `build-and-test`) |
+  | ¿incluyen `Security Audit`? | **no** cuando se registró; **sí desde el 2026-09-05** (10 contextos en ambas ramas, verificado) |
+  | ¿incluyen `Trivy Container Scan` o `build-and-test`? | **no** — decididos requeridos, pendiente de aplicar; `build-and-test` con una precondición (ver criterio 3) |
   | `Security Audit` en rojo desde | `b84523b4`, 2026-09-02 |
   | merges a `main` en ese intervalo | **8**, cuatro de ellos de dependencias npm |
   | cómo lo presenta GitHub | `UNSTABLE`, no `BLOCKED` |
@@ -10111,5 +10112,5 @@ Los dos se arreglaron de forma estructural y no como correcciones: el rethrow no
 - **Criterios de aceptación:**
   - [ ] `Security Audit` figura en los contextos requeridos de `main` y de `develop`.
   - [ ] **FALSABILIDAD:** un PR con un advisory ALTA sin declarar sale `BLOCKED` y no `UNSTABLE`, observado y no supuesto.
-  - [ ] La decisión sobre `Trivy` y `build-and-test` queda escrita — requeridos también, o registrado por qué no lo son.
+  - [~] La decisión sobre `Trivy` y `build-and-test` queda escrita — requeridos también, o registrado por qué no lo son. **DECIDIDO por el dueño el 2026-09-05: requeridos los dos.** Ejecutable solo la mitad, y la otra mitad no es pereza sino un deadlock medido: **`Trivy Container Scan` es seguro de requerir** porque vive en `sdk-cli-ci.yml`, que **no lleva filtro `paths`** —y su comentario explica que no debe llevarlo nunca, por el bloqueo que `CodeQL SAST` causó en el PR #218 al volverse requerido—, así que reporta en todo PR. **`build-and-test` NO puede requerirse tal como está:** vive en `sdk-cli-release.yml`, cuyo disparador `pull_request` sí filtra por `src/sdk/cli/**`, `src/packages/**`, `.github/workflows/sdk-cli-release.yml` y `.harness/**`. Un check requerido detrás de un filtro de rutas **nunca reporta** en un PR que no las toca, y GitHub lee «no reportó» como «no satisfecho»: el PR queda inmergeable para siempre con todo en verde. Es exactamente lo que le habría pasado a [#690](https://github.com/beyondnetcode/evolith_arch32/pull/690), que solo tocó `reference/`. **Precondición, no alternativa:** quitar el filtro `paths` del `pull_request` de `sdk-cli-release.yml` —el mismo arreglo que ya se aplicó a `sdk-cli-ci.yml`— y solo entonces añadirlo a los requeridos. **Nota sobre el nombre:** el check a requerir es `Trivy Container Scan`, el nombre del job; el check `Trivy` a secas que publica `aquasecurity/trivy-action` aparece en `main` pero no en la cabeza de `develop`, así que requerir ese nombre reintroduciría el mismo deadlock por otra vía.
 - **Estado:** `PENDIENTE`

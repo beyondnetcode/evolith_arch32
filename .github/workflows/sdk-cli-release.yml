@@ -257,9 +257,16 @@ jobs:
         working-directory: ${{ env.CLI_DIR }}
         run: npm run build
 
+      # Same gate as `Security Audit` in sdk-cli-ci.yml, for the same reason (GT-657):
+      # a raw `npm audit --audit-level=high` cannot express an advisory that no
+      # override can reach, so the day one lands this job turns permanently red —
+      # the failure mode GT-622 removed, where a check that is always red trains
+      # reviewers to discount red. The gate keeps the HIGH threshold and audits the
+      # whole root lockfile (the CLI's tree is a subset of it); what it adds is that
+      # such an advisory must be NAMED in .harness/config/npm-audit-exceptions.json
+      # with the path it arrives by, and it turns red again when the entry goes stale.
       - name: Security Audit
-        working-directory: ${{ env.CLI_DIR }}
-        run: npm audit --audit-level=high
+        run: node .harness/scripts/ci/63-validate-npm-audit-gate.mjs --verbose
 
       - name: Unit Tests (MUST PASS)
         working-directory: ${{ env.CLI_DIR }}

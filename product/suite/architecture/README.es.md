@@ -17,6 +17,7 @@ No debe contener principios universales que pertenecen a Evolith Core ni detalle
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
 | [Diseño Objetivo de Composición Gobernada](./evolith-governed-composition-target-design.es.md) | Diseño objetivo de la composición gobernada de productos | Diseñar el estado objetivo compuesto | Referencia de diseño | Sí |
+| [Vista Conceptual con Tecnologías y Protocolos](./evolith-conceptual-view.es.md) | Los cinco procesos de Evolith con sus tecnologías, frameworks y protocolos por proceso; SVG bilingüe compartible regenerado desde un solo modelo | Entender qué es Evolith y con qué está hecho en una imagen | Vista de arquitectura | No |
 | [Modelo de Abstracción de Proveedores y Plugins](../../../reference/core/foundations/principles/evolith-provider-abstraction-plugin-model.es.md) | Modelo de abstracción de proveedores y plugins (destino de migración: Core Architecture Principle) | Mantener los proveedores reemplazables | Referencia de diseño | Sí |
 | [Interfaces Técnicas de Tracker](../../products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md) | Interfaces técnicas del Tracker (destino de migración: Tracker Product Design) | Especificar las superficies de integración del Tracker | Referencia de diseño | No |
 

@@ -27,7 +27,9 @@
  * Every prerequisite that is mechanically checkable from inside the repository:
  *
  *   1. the metadata file is at the ROOT and is the only one there;
- *   2. it declares `name`, `description` and `runs`;
+ *   2. it declares `name`, `description` and `runs`, and `description` fits the
+ *      publish dialog's limit (fewer than 125 characters, measured on the parsed
+ *      value);
  *   3. `name` is not one of the reserved words GitHub rejects at publish time;
  *   4. `branding.icon` is a Feather name and `branding.color` one of the eight
  *      literals GitHub accepts — a listing attempt with anything else is
@@ -90,6 +92,17 @@ export const ROOT = rootIdx !== -1 ? resolve(process.cwd(), argv[rootIdx + 1]) :
 export const BRANDING_COLORS = new Set(['white', 'yellow', 'blue', 'green', 'orange', 'red', 'purple', 'gray-dark']);
 
 /**
+ * The publish dialog rejects a listing with «Description must be less than 125
+ * characters». It says so on the release, after the tag exists, which is the
+ * worst possible moment: the tag is immutable, so the fix is another promotion
+ * and another tag. The first attempt at the v1.3.7 listing (2026-09-12) died
+ * there with a 237-character description this guard had certified. Measured on
+ * the PARSED value -- a folded `>` scalar folds its newlines into spaces, and it
+ * is the folded string GitHub counts.
+ */
+export const DESCRIPTION_MAX_LENGTH = 125;
+
+/**
  * Names GitHub refuses for a Marketplace listing. The full rule is «cannot match
  * an existing action, a GitHub user or organization (unless you own it), a
  * Marketplace category, or a reserved GitHub feature name» — only the last is
@@ -137,7 +150,7 @@ export const KNOWN_ICONS = new Set([
 // --- YAML --------------------------------------------------------------------
 
 /** The monorepo already installs `yaml`; `js-yaml` is the fallback. */
-const parseYaml = (() => {
+export const parseYaml = (() => {
   try {
     const mod = require('yaml');
     return (src) => mod.parse(src);
@@ -240,6 +253,16 @@ export function checkManifest(manifest, ctx) {
     if (manifest[field] === undefined || manifest[field] === null || manifest[field] === '') {
       err(`\`${field}\` is missing — Marketplace requires it and rejects the listing without it.`);
     }
+  }
+
+  // 2b. Description length. Rejected at publish time, on the release.
+  const description = typeof manifest.description === 'string' ? manifest.description.trim() : '';
+  if (description.length >= DESCRIPTION_MAX_LENGTH) {
+    err(
+      `\`description\` is ${description.length} characters; GitHub rejects the listing with\n` +
+      `      «Description must be less than ${DESCRIPTION_MAX_LENGTH} characters» -- in the publish dialog, on the\n` +
+      '      release, after the tag exists. Shorten it here, where the fix is one line.',
+    );
   }
 
   // 3. Name.

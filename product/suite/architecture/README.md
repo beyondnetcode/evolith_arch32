@@ -17,6 +17,7 @@ It must not contain universal architecture principles that belong in Evolith Cor
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Governed Composition Target Design](./evolith-governed-composition-target-design.md) | Target design for governed product composition | Design the composed target state | Design reference | Yes |
+| [Conceptual View with Technologies and Protocols](./evolith-conceptual-view.md) | The five Evolith processes with their technologies, frameworks and protocols per process; shareable bilingual SVG regenerated from one model | Understand what Evolith is and what it is made of in one picture | Architecture view | No |
 | [Provider Abstraction and Plugin Model](../../../reference/core/foundations/principles/evolith-provider-abstraction-plugin-model.md) | Provider abstraction and plugin model (migration target: Core Architecture Principle) | Keep providers replaceable | Design reference | Yes |
 | [Tracker Technical Interfaces](../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md) | Tracker technical interfaces (migration target: Tracker Product Design) | Specify Tracker integration surfaces | Design reference | No |
 

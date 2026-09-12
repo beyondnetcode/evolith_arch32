@@ -91,8 +91,8 @@
     "typescript": "6.0.3"
   },
   "overrides": {
-    "multer": "^2.2.0",
-    "js-yaml": "^4.2.0"
+    "multer": "^2.3.0",
+    "js-yaml": "^4.3.2"
   },
   "license": "MIT",
   "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",

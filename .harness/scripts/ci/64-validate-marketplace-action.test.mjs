@@ -19,10 +19,12 @@ import { fileURLToPath } from 'node:url';
 
 import {
   BRANDING_COLORS,
+  DESCRIPTION_MAX_LENGTH,
   KNOWN_ICONS,
   RESERVED_NAMES,
   checkManifest,
   findActionManifests,
+  parseYaml,
 } from './64-validate-marketplace-action.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -138,6 +140,27 @@ describe('64-validate-marketplace-action', () => {
     assert.equal(findings.filter((f) => f.level === 'error').length, 0);
     assert.equal(findings.filter((f) => f.level === 'note').length, 1);
     assert.equal(KNOWN_ICONS.has('shield'), true);
+  });
+
+  test('a description the publish dialog would reject is RED here, where the tag does not exist yet', () => {
+    // The exact text that killed the first v1.3.7 listing attempt (2026-09-12): 237
+    // characters, certified by this guard as it stood. It must never be certified again.
+    const shipped =
+      'Architecture and policy governance as a PR gate. Evaluates your repository against a ' +
+      'Rego/OPA rule corpus and reports a rule it could NOT evaluate as a failure, never as a ' +
+      'silent pass -- so coverage and compliance stop looking identical.';
+    assert.equal(shipped.length, 237);
+    const errors = errorsOf({ ...VALID, description: shipped });
+    assert.equal(errors.length, 1);
+    assert.match(errors[0].message, /less than 125 characters/);
+
+    // The boundary is «less than»: 125 is rejected, 124 is not.
+    assert.equal(errorsOf({ ...VALID, description: 'x'.repeat(DESCRIPTION_MAX_LENGTH) }).length, 1);
+    assert.deepEqual(errorsOf({ ...VALID, description: 'x'.repeat(DESCRIPTION_MAX_LENGTH - 1) }), []);
+
+    // A folded scalar is measured after folding, which is what GitHub counts.
+    const folded = parseYaml('description: >\n  ' + 'y '.repeat(70).trim() + '\n');
+    assert.equal(errorsOf({ ...VALID, description: folded.description }).length, 1);
   });
 
   test('a reserved name is rejected here rather than at publish time', () => {

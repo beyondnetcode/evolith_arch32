@@ -27,10 +27,12 @@ name: Evolith Governance Validation
 # stranger rather than for this repository. The previous text said "Evolith Core
 # standards" and "satellite repositories" -- both internal vocabulary that tells a
 # reader nothing about what the action does or why it is different.
-description: >
-  Architecture and policy governance as a PR gate. Evaluates your repository against a
-  Rego/OPA rule corpus and reports a rule it could NOT evaluate as a failure, never as a
-  silent pass -- so coverage and compliance stop looking identical.
+#
+# It is also capped: GitHub rejects the listing with «Description must be less than
+# 125 characters», and it does so in the publish dialog, on the release, after the
+# tag exists -- the first draft of the v1.3.7 listing died there on 2026-09-12 with a
+# 237-character description that guard 64 had passed. Guard 64 now counts.
+description: Architecture governance as a PR gate. Rego/OPA rules on your repo; a rule it could not evaluate fails, never a silent pass.
 
 # Required to publish to GitHub Marketplace, and constrained: the icon must be a
 # Feather name and the color one of eight literals. Guard 64 checks both against

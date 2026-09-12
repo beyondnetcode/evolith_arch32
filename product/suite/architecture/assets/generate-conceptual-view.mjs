@@ -57,7 +57,7 @@ const LANES = [
       { title: T("MCP Services", "MCP Services"), desc: T("governed tools for AI agents", "herramientas gobernadas para agentes"),
         chips: ["NestJS", "@modelcontextprotocol/sdk", "opa-wasm", "ABAC"], proto: T("JSON-RPC 2.0 stdio · Streamable HTTP · API-key fail-closed", "JSON-RPC 2.0 stdio · Streamable HTTP · API-key fail-closed") },
       { title: T("Agent Runtime API", "Agent Runtime API"), desc: T("governed agent orchestration", "orquestación gobernada de agentes"),
-        chips: ["NestJS", "@Sse", "OTLP exporter"], proto: T("POST /v1/agent handle · converse · hermes · stream (SSE) · API-key/JWT", "POST /v1/agent handle · converse · hermes · stream (SSE) · API-key/JWT") },
+        chips: ["NestJS", "@Sse", "OTLP exporter"], proto: T("POST /v1/agent handle · converse · stream (SSE) · API-key/JWT", "POST /v1/agent handle · converse · stream (SSE) · API-key/JWT") },
     ],
   },
   {
@@ -72,9 +72,9 @@ const LANES = [
       { title: T("Contracts and SDK", "Contratos y SDK"), desc: T("contracts · sdk-client", "contracts · sdk-client"),
         chips: ["JSON Schema (sha256)", "SemVer", "capabilities manifest", T("typed client", "cliente tipado")], proto: T("GET /api/v1/capabilities", "GET /api/v1/capabilities") },
       { title: T("Adapters", "Adaptadores"), desc: T("infra-providers · repo-facts", "infra-providers · repo-facts"),
-        chips: ["ajv + ajv-formats", "yaml", "fs-extra", T("content-hashed module/symbol graph", "grafo módulos/símbolos content-hashed")] },
+        chips: ["ajv + ajv-formats", "yaml", "fs-extra", T("module + symbol graph", "grafo de módulos y símbolos"), "content-hashed"] },
       { title: T("Agent runtime", "Agent runtime"), desc: T("agentic layer, ports and adapters (ADR-0102)", "capa agéntica, puertos y adaptadores (ADR-0102)"),
-        chips: ["OPA", "HITL", T("memory", "memoria"), "skills", "Hermes", T("LLM egress: Claude · Gemini per tenant", "LLM egress: Claude · Gemini por tenant")] },
+        chips: ["OPA", "HITL", T("memory", "memoria"), "skills", T("swappable engine", "motor intercambiable"), "Hermes · Swarms · stub", T("LLM egress per tenant", "LLM egress por tenant"), "Claude · Gemini"] },
       { title: T("Deterministic verification", "Verificación determinista"), desc: T("same rule in two engines, R-25 parity", "misma regla en dos motores, paridad R-25"),
         chips: [T("native TS rulesets", "rulesets nativos TS"), "Rego → policy.wasm", "@open-policy-agent/opa-wasm", "opa build"] },
     ],
@@ -147,6 +147,7 @@ function layoutChips(chips, maxW, lang) {
   for (const c of chips) {
     const label = pick(c, lang);
     const w = Math.ceil(width(label, F.chip) + CHIP_PADX * 2);
+    if (w > maxW) throw new Error(`chip "${label}" (${w}px) is wider than its card (${maxW}px): shorten it or split it`);
     if (x + w > maxW && rows[rows.length - 1].length) { rows.push([]); x = 0; }
     rows[rows.length - 1].push({ label, w, x });
     x += w + CHIP_GAP;

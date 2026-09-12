@@ -2,11 +2,11 @@
 <!-- Evolith conceptual view (EN). Generated 2026-09-12 from product/suite/architecture/evolith-conceptual-view.md.
      Technologies, frameworks and protocols were read from the workspace package.json files,
      product/infra/docker-compose.fullstack.yml and product/products/ecosystem-and-communication.md. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1414" width="1600" height="1414" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1442" width="1600" height="1442" font-family="Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="t d">
 <title id="t">Evolith — conceptual view with technologies, frameworks and protocols per process</title>
 <desc id="d">Chips = technologies and frameworks · monospace line = protocols and contracts · arrows = direction of consumption · source: product/suite/architecture/evolith-conceptual-view.md · 2026-09-12</desc>
 <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-<rect x="0" y="0" width="1600" height="1414" fill="#FCFCFA"/>
+<rect x="0" y="0" width="1600" height="1442" fill="#FCFCFA"/>
 <text x="40" y="64" font-size="26" font-weight="600" fill="#2C2C2A">Evolith — conceptual view with technologies, frameworks and protocols per process</text>
 <text x="40" y="92" font-size="13" fill="#5F5E5A">Chips = technologies and frameworks · monospace line = protocols and contracts · arrows = direction of consumption · source: product/suite/architecture/evolith-conceptual-view.md · 2026-09-12</text>
 <rect x="40" y="120" width="1520" height="220" rx="14" fill="#FFFFFF" stroke="#888780" stroke-width="1" stroke-dasharray="6 4"/>
@@ -110,13 +110,13 @@
 <text x="1281.5" y="503" font-size="12" text-anchor="middle" fill="#26215C">@Sse</text>
 <rect x="1310" y="488" width="106" height="22" rx="11" fill="#FFFFFF" stroke="#AFA9EC" stroke-width="1"/>
 <text x="1363" y="503" font-size="12" text-anchor="middle" fill="#26215C">OTLP exporter</text>
-<text x="1194" y="532" font-size="12" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" fill="#7F77DD">POST /v1/agent handle · converse · hermes ·</text>
-<text x="1194" y="548" font-size="12" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" fill="#7F77DD">stream (SSE) · API-key/JWT</text>
+<text x="1194" y="532" font-size="12" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" fill="#7F77DD">POST /v1/agent handle · converse · stream</text>
+<text x="1194" y="548" font-size="12" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" fill="#7F77DD">(SSE) · API-key/JWT</text>
 <line x1="800" y1="646" x2="800" y2="670" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arr)"/>
-<rect x="40" y="676" width="1520" height="268" rx="14" fill="#FFFFFF" stroke="#1D9E75" stroke-width="1" stroke-dasharray="6 4"/>
+<rect x="40" y="676" width="1520" height="296" rx="14" fill="#FFFFFF" stroke="#1D9E75" stroke-width="1" stroke-dasharray="6 4"/>
 <text x="60" y="712" font-size="18" font-weight="600" fill="#04342C">Evolith Core</text>
 <text x="203.6" y="712" font-size="13" fill="#0F6E56">stateless engine: EvaluationContext → EvaluationResult · seals without opinion · the tenant configures · AI proposes, OPA decides</text>
-<rect x="60" y="730" width="283" height="194" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+<rect x="60" y="730" width="283" height="222" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
 <text x="72" y="758" font-size="16" font-weight="600" fill="#04342C">Domain and application</text>
 <text x="72" y="782" font-size="13" fill="#0F6E56">core-domain · core</text>
 <rect x="72" y="788" width="86" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
@@ -127,7 +127,7 @@
 <text x="138.5" y="831" font-size="12" text-anchor="middle" fill="#04342C">OverlayFileSystem</text>
 <rect x="211" y="816" width="79" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
 <text x="250.5" y="831" font-size="12" text-anchor="middle" fill="#04342C">use cases</text>
-<rect x="359" y="730" width="283" height="194" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+<rect x="359" y="730" width="283" height="222" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
 <text x="371" y="758" font-size="16" font-weight="600" fill="#04342C">Contracts and SDK</text>
 <text x="371" y="782" font-size="13" fill="#0F6E56">contracts · sdk-client</text>
 <rect x="371" y="788" width="153" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
@@ -139,7 +139,7 @@
 <rect x="371" y="844" width="99" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
 <text x="420.5" y="859" font-size="12" text-anchor="middle" fill="#04342C">typed client</text>
 <text x="371" y="888" font-size="12" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" fill="#1D9E75">GET /api/v1/capabilities</text>
-<rect x="658" y="730" width="283" height="194" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+<rect x="658" y="730" width="283" height="222" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
 <text x="670" y="758" font-size="16" font-weight="600" fill="#04342C">Adapters</text>
 <text x="670" y="782" font-size="13" fill="#0F6E56">infra-providers · repo-facts</text>
 <rect x="670" y="788" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
@@ -148,9 +148,11 @@
 <text x="831.5" y="803" font-size="12" text-anchor="middle" fill="#04342C">yaml</text>
 <rect x="670" y="816" width="72" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
 <text x="706" y="831" font-size="12" text-anchor="middle" fill="#04342C">fs-extra</text>
-<rect x="670" y="844" width="247" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
-<text x="793.5" y="859" font-size="12" text-anchor="middle" fill="#04342C">content-hashed module/symbol graph</text>
-<rect x="957" y="730" width="283" height="194" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+<rect x="748" y="816" width="160" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="828" y="831" font-size="12" text-anchor="middle" fill="#04342C">module + symbol graph</text>
+<rect x="670" y="844" width="113" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="726.5" y="859" font-size="12" text-anchor="middle" fill="#04342C">content-hashed</text>
+<rect x="957" y="730" width="283" height="222" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
 <text x="969" y="758" font-size="16" font-weight="600" fill="#04342C">Agent runtime</text>
 <text x="969" y="782" font-size="13" fill="#0F6E56">agentic layer, ports and adapters</text>
 <text x="969" y="800" font-size="13" fill="#0F6E56">(ADR-0102)</text>
@@ -162,11 +164,15 @@
 <text x="1094.5" y="821" font-size="12" text-anchor="middle" fill="#04342C">memory</text>
 <rect x="1130" y="806" width="59" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
 <text x="1159.5" y="821" font-size="12" text-anchor="middle" fill="#04342C">skills</text>
-<rect x="969" y="834" width="59" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
-<text x="998.5" y="849" font-size="12" text-anchor="middle" fill="#04342C">Hermes</text>
-<rect x="969" y="862" width="274" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
-<text x="1106" y="877" font-size="12" text-anchor="middle" fill="#04342C">LLM egress: Claude · Gemini per tenant</text>
-<rect x="1256" y="730" width="283" height="194" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+<rect x="969" y="834" width="126" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="1032" y="849" font-size="12" text-anchor="middle" fill="#04342C">swappable engine</text>
+<rect x="969" y="862" width="166" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="1052" y="877" font-size="12" text-anchor="middle" fill="#04342C">Hermes · Swarms · stub</text>
+<rect x="969" y="890" width="160" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="1049" y="905" font-size="12" text-anchor="middle" fill="#04342C">LLM egress per tenant</text>
+<rect x="969" y="918" width="119" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="1028.5" y="933" font-size="12" text-anchor="middle" fill="#04342C">Claude · Gemini</text>
+<rect x="1256" y="730" width="283" height="222" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
 <text x="1268" y="758" font-size="16" font-weight="600" fill="#04342C">Deterministic verification</text>
 <text x="1268" y="782" font-size="13" fill="#0F6E56">same rule in two engines, R-25</text>
 <text x="1268" y="800" font-size="13" fill="#0F6E56">parity</text>
@@ -178,92 +184,92 @@
 <text x="1368" y="877" font-size="12" text-anchor="middle" fill="#04342C">@open-policy-agent/opa-wasm</text>
 <rect x="1268" y="890" width="79" height="22" rx="11" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
 <text x="1307.5" y="905" font-size="12" text-anchor="middle" fill="#04342C">opa build</text>
-<line x1="800" y1="974" x2="800" y2="950" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arr)"/>
-<rect x="40" y="980" width="1520" height="166" rx="14" fill="#FFFFFF" stroke="#D85A30" stroke-width="1" stroke-dasharray="6 4"/>
-<text x="60" y="1016" font-size="18" font-weight="600" fill="#4A1B0C">Governed knowledge and SDLC</text>
-<text x="365.59999999999997" y="1016" font-size="13" fill="#993C1D">what the Core evaluates; prose describes, it never relaxes a gate</text>
-<rect x="60" y="1034" width="482" height="92" rx="10" fill="#FAECE7" stroke="#D85A30" stroke-width="1"/>
-<text x="72" y="1062" font-size="16" font-weight="600" fill="#4A1B0C">Manifests and schemas</text>
-<text x="72" y="1086" font-size="13" fill="#993C1D">technical contract of the satellite</text>
-<rect x="72" y="1092" width="99" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="121.5" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">evolith.yaml</text>
-<rect x="177" y="1092" width="166" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="260" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">topology.manifest.json</text>
-<rect x="349" y="1092" width="106" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="402" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">*.schema.json</text>
-<rect x="558" y="1034" width="482" height="92" rx="10" fill="#FAECE7" stroke="#D85A30" stroke-width="1"/>
-<text x="570" y="1062" font-size="16" font-weight="600" fill="#4A1B0C">Decisions and standards</text>
-<text x="570" y="1086" font-size="13" fill="#993C1D">authoritative source</text>
-<rect x="570" y="1092" width="166" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="653" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">ADRs (Markdown, EN/ES)</text>
-<rect x="742" y="1092" width="99" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="791.5" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">8 topologies</text>
-<rect x="847" y="1092" width="180" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="937" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">CI guards .harness/*.mjs</text>
-<rect x="1056" y="1034" width="482" height="92" rx="10" fill="#FAECE7" stroke="#D85A30" stroke-width="1"/>
-<text x="1068" y="1062" font-size="16" font-weight="600" fill="#4A1B0C">SDLC cycle</text>
-<text x="1068" y="1086" font-size="13" fill="#993C1D">f1 discovery → f5 delivery</text>
-<rect x="1068" y="1092" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="1134.5" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">gate-f1 … gate-f5</text>
-<rect x="1207" y="1092" width="126" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="1270" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">explicit waivers</text>
-<rect x="1339" y="1092" width="139" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
-<text x="1408.5" y="1107" font-size="12" text-anchor="middle" fill="#4A1B0C">evidence per phase</text>
-<rect x="40" y="1170" width="1520" height="204" rx="14" fill="#FFFFFF" stroke="#EF9F27" stroke-width="1" stroke-dasharray="6 4"/>
-<text x="60" y="1206" font-size="18" font-weight="600" fill="#412402">Platform and operations</text>
-<text x="322.4" y="1206" font-size="13" fill="#854F0B">builds, deploys and observes everything above</text>
-<rect x="60" y="1224" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-<text x="72" y="1252" font-size="16" font-weight="600" fill="#412402">Build and CI</text>
-<rect x="72" y="1264" width="113" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="128.5" y="1279" font-size="12" text-anchor="middle" fill="#412402">npm workspaces</text>
-<rect x="191" y="1264" width="59" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="220.5" y="1279" font-size="12" text-anchor="middle" fill="#412402">tsc -b</text>
-<rect x="256" y="1264" width="66" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="289" y="1279" font-size="12" text-anchor="middle" fill="#412402">Jest 30</text>
-<rect x="72" y="1292" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="138.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">ESLint boundaries</text>
-<rect x="72" y="1320" width="139" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="141.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">husky + commitlint</text>
-<rect x="217" y="1320" width="86" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="260" y="1335" font-size="12" text-anchor="middle" fill="#412402">Dependabot</text>
-<rect x="359" y="1224" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-<text x="371" y="1252" font-size="16" font-weight="600" fill="#412402">Containers and deployment</text>
-<rect x="371" y="1264" width="139" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="440.5" y="1279" font-size="12" text-anchor="middle" fill="#412402">Docker multi-stage</text>
-<rect x="516" y="1264" width="113" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="572.5" y="1279" font-size="12" text-anchor="middle" fill="#412402">docker-compose</text>
-<rect x="371" y="1292" width="45" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="393.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">Helm</text>
-<rect x="422" y="1292" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="488.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">Kubernetes · kind</text>
-<rect x="371" y="1320" width="173" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="457.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">Coolify + Traefik (TLS)</text>
-<rect x="550" y="1320" width="45" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="572.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">GHCR</text>
-<rect x="658" y="1224" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-<text x="670" y="1252" font-size="16" font-weight="600" fill="#412402">Data and cache</text>
-<rect x="670" y="1264" width="106" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="723" y="1279" font-size="12" text-anchor="middle" fill="#412402">PostgreSQL 16</text>
-<rect x="782" y="1264" width="66" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="815" y="1279" font-size="12" text-anchor="middle" fill="#412402">Redis 7</text>
-<rect x="957" y="1224" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-<text x="969" y="1252" font-size="16" font-weight="600" fill="#412402">Observability</text>
-<rect x="969" y="1264" width="106" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="1022" y="1279" font-size="12" text-anchor="middle" fill="#412402">OpenTelemetry</text>
-<rect x="1081" y="1264" width="79" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="1120.5" y="1279" font-size="12" text-anchor="middle" fill="#412402">OTLP/HTTP</text>
-<rect x="969" y="1292" width="86" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="1012" y="1307" font-size="12" text-anchor="middle" fill="#412402">Prometheus</text>
-<rect x="1061" y="1292" width="66" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="1094" y="1307" font-size="12" text-anchor="middle" fill="#412402">Grafana</text>
-<rect x="1133" y="1292" width="45" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="1155.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">pino</text>
-<rect x="1256" y="1224" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
-<text x="1268" y="1252" font-size="16" font-weight="600" fill="#412402">Distribution</text>
-<rect x="1268" y="1264" width="180" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="1358" y="1279" font-size="12" text-anchor="middle" fill="#412402">npm @beyondnet/evolith-*</text>
-<rect x="1268" y="1292" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="1334.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">provenance (OIDC)</text>
-<rect x="1268" y="1320" width="139" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
-<text x="1337.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">GitHub Marketplace</text>
+<line x1="800" y1="1002" x2="800" y2="978" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arr)"/>
+<rect x="40" y="1008" width="1520" height="166" rx="14" fill="#FFFFFF" stroke="#D85A30" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="60" y="1044" font-size="18" font-weight="600" fill="#4A1B0C">Governed knowledge and SDLC</text>
+<text x="365.59999999999997" y="1044" font-size="13" fill="#993C1D">what the Core evaluates; prose describes, it never relaxes a gate</text>
+<rect x="60" y="1062" width="482" height="92" rx="10" fill="#FAECE7" stroke="#D85A30" stroke-width="1"/>
+<text x="72" y="1090" font-size="16" font-weight="600" fill="#4A1B0C">Manifests and schemas</text>
+<text x="72" y="1114" font-size="13" fill="#993C1D">technical contract of the satellite</text>
+<rect x="72" y="1120" width="99" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="121.5" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">evolith.yaml</text>
+<rect x="177" y="1120" width="166" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="260" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">topology.manifest.json</text>
+<rect x="349" y="1120" width="106" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="402" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">*.schema.json</text>
+<rect x="558" y="1062" width="482" height="92" rx="10" fill="#FAECE7" stroke="#D85A30" stroke-width="1"/>
+<text x="570" y="1090" font-size="16" font-weight="600" fill="#4A1B0C">Decisions and standards</text>
+<text x="570" y="1114" font-size="13" fill="#993C1D">authoritative source</text>
+<rect x="570" y="1120" width="166" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="653" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">ADRs (Markdown, EN/ES)</text>
+<rect x="742" y="1120" width="99" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="791.5" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">8 topologies</text>
+<rect x="847" y="1120" width="180" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="937" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">CI guards .harness/*.mjs</text>
+<rect x="1056" y="1062" width="482" height="92" rx="10" fill="#FAECE7" stroke="#D85A30" stroke-width="1"/>
+<text x="1068" y="1090" font-size="16" font-weight="600" fill="#4A1B0C">SDLC cycle</text>
+<text x="1068" y="1114" font-size="13" fill="#993C1D">f1 discovery → f5 delivery</text>
+<rect x="1068" y="1120" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="1134.5" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">gate-f1 … gate-f5</text>
+<rect x="1207" y="1120" width="126" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="1270" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">explicit waivers</text>
+<rect x="1339" y="1120" width="139" height="22" rx="11" fill="#FFFFFF" stroke="#F0997B" stroke-width="1"/>
+<text x="1408.5" y="1135" font-size="12" text-anchor="middle" fill="#4A1B0C">evidence per phase</text>
+<rect x="40" y="1198" width="1520" height="204" rx="14" fill="#FFFFFF" stroke="#EF9F27" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="60" y="1234" font-size="18" font-weight="600" fill="#412402">Platform and operations</text>
+<text x="322.4" y="1234" font-size="13" fill="#854F0B">builds, deploys and observes everything above</text>
+<rect x="60" y="1252" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+<text x="72" y="1280" font-size="16" font-weight="600" fill="#412402">Build and CI</text>
+<rect x="72" y="1292" width="113" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="128.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">npm workspaces</text>
+<rect x="191" y="1292" width="59" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="220.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">tsc -b</text>
+<rect x="256" y="1292" width="66" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="289" y="1307" font-size="12" text-anchor="middle" fill="#412402">Jest 30</text>
+<rect x="72" y="1320" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="138.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">ESLint boundaries</text>
+<rect x="72" y="1348" width="139" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="141.5" y="1363" font-size="12" text-anchor="middle" fill="#412402">husky + commitlint</text>
+<rect x="217" y="1348" width="86" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="260" y="1363" font-size="12" text-anchor="middle" fill="#412402">Dependabot</text>
+<rect x="359" y="1252" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+<text x="371" y="1280" font-size="16" font-weight="600" fill="#412402">Containers and deployment</text>
+<rect x="371" y="1292" width="139" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="440.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">Docker multi-stage</text>
+<rect x="516" y="1292" width="113" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="572.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">docker-compose</text>
+<rect x="371" y="1320" width="45" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="393.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">Helm</text>
+<rect x="422" y="1320" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="488.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">Kubernetes · kind</text>
+<rect x="371" y="1348" width="173" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="457.5" y="1363" font-size="12" text-anchor="middle" fill="#412402">Coolify + Traefik (TLS)</text>
+<rect x="550" y="1348" width="45" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="572.5" y="1363" font-size="12" text-anchor="middle" fill="#412402">GHCR</text>
+<rect x="658" y="1252" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+<text x="670" y="1280" font-size="16" font-weight="600" fill="#412402">Data and cache</text>
+<rect x="670" y="1292" width="106" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="723" y="1307" font-size="12" text-anchor="middle" fill="#412402">PostgreSQL 16</text>
+<rect x="782" y="1292" width="66" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="815" y="1307" font-size="12" text-anchor="middle" fill="#412402">Redis 7</text>
+<rect x="957" y="1252" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+<text x="969" y="1280" font-size="16" font-weight="600" fill="#412402">Observability</text>
+<rect x="969" y="1292" width="106" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="1022" y="1307" font-size="12" text-anchor="middle" fill="#412402">OpenTelemetry</text>
+<rect x="1081" y="1292" width="79" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="1120.5" y="1307" font-size="12" text-anchor="middle" fill="#412402">OTLP/HTTP</text>
+<rect x="969" y="1320" width="86" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="1012" y="1335" font-size="12" text-anchor="middle" fill="#412402">Prometheus</text>
+<rect x="1061" y="1320" width="66" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="1094" y="1335" font-size="12" text-anchor="middle" fill="#412402">Grafana</text>
+<rect x="1133" y="1320" width="45" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="1155.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">pino</text>
+<rect x="1256" y="1252" width="283" height="130" rx="10" fill="#FAEEDA" stroke="#EF9F27" stroke-width="1"/>
+<text x="1268" y="1280" font-size="16" font-weight="600" fill="#412402">Distribution</text>
+<rect x="1268" y="1292" width="180" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="1358" y="1307" font-size="12" text-anchor="middle" fill="#412402">npm @beyondnet/evolith-*</text>
+<rect x="1268" y="1320" width="133" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="1334.5" y="1335" font-size="12" text-anchor="middle" fill="#412402">provenance (OIDC)</text>
+<rect x="1268" y="1348" width="139" height="22" rx="11" fill="#FFFFFF" stroke="#FAC775" stroke-width="1"/>
+<text x="1337.5" y="1363" font-size="12" text-anchor="middle" fill="#412402">GitHub Marketplace</text>
 </svg>

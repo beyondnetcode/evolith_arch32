@@ -41,3 +41,4 @@ intención.
 - [Glosario del Ecosistema](./reference/core/sdlc/glossary/glossary-ecosystem.es.md)
 - [Referencias de Demo](./product/research/demo/README.md)
 - [Captura de la primera ejecución](./docs/evidence/first-run-capture.es.md)
+- [Estado real del proyecto](./docs/known-limitations.es.md)

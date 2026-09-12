@@ -41,3 +41,4 @@ intent.
 - [Ecosystem Glossary](./reference/core/sdlc/glossary/glossary-ecosystem.md)
 - [Demo References](./product/research/demo/README.md)
 - [First-run capture](./docs/evidence/first-run-capture.md)
+- [Known limitations](./docs/known-limitations.md)

@@ -67,7 +67,7 @@ Exit codes are a taxonomy, not a boolean:
 - Narrow what runs: `evolith rulesets` lists the packs, and `--select <ref>` evaluates only
   the ones you name. Naming nothing evaluates the whole corpus this Core carries, reported as
   `selection.source: core-default`.
-- Put it in CI: see [Use it as a PR gate](../../README.md#use-it-as-a-pr-gate).
+- Put it in CI: see [In CI](../../README.md#in-ci).
 - Serve it to an AI agent: `npx -y @beyondnet/evolith-mcp` over stdio.
 - Run the Core API yourself -- only needed for the REST surface and multi-repository
   scenarios, never for the CLI: [Self-hosting the Core API](./self-hosting-core-api.md).

@@ -70,7 +70,7 @@ examinado.
 - Acota lo que corre: `evolith rulesets` lista los packs, y `--select <ref>` evalúa solo los
   que nombres. No nombrar nada evalúa el corpus completo que carga este Core, reportado como
   `selection.source: core-default`.
-- Ponlo en CI: ver [Úsalo como puerta de PR](../../README.es.md#úsalo-como-puerta-de-pr).
+- Ponlo en CI: ver [En CI](../../README.es.md#en-ci).
 - Sírvelo a un agente de IA: `npx -y @beyondnet/evolith-mcp` sobre stdio.
 - Levanta tú el Core API -- solo hace falta para la superficie REST y escenarios
   multi-repositorio, nunca para el CLI:

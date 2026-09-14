@@ -11,6 +11,10 @@
 
 **Tus reglas de arquitectura, ejecutándose en cada PR.**
 
+<img src="./docs/assets/evolith-demo.es.svg" alt="Terminal: evolith init, evolith validate; 133 reglas evaluadas, 26 omitidas, 9 bloqueantes no evaluadas reportadas como fallo; exit 2" width="960">
+
+<sub>Salida real del CLI publicado sobre un repositorio vacío (2026-09-14, abreviada; <a href="./docs/evidence/first-run-capture.md">captura completa de 71 filas</a>).</sub>
+
 </div>
 
 Evolith es un linter de arquitectura para CI. Lee tu repositorio —estructura, workflows, manifiestos, decisiones de arquitectura— y lo contrasta con una biblioteca de reglas: capas, dependencias, seguridad, CI/CD. Si una regla bloqueante falla, el PR falla.

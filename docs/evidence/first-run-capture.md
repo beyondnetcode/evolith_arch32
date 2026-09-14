@@ -35,7 +35,7 @@ report that blurred them would be the exact defect this project exists to stop.
   repository, and `253 + 159 = 412`.
 - Of those 159, **133 were evaluated** and **26 were skipped** — the engine could
   not decide them.
-- The run reports **72 issues, 37 of them blocking**. **Nine of the 37 are skipped
+- The run reports **71 issues, 37 of them blocking**. **Nine of the 37 are skipped
   rules**, not failed ones: they carry the prefix `Blocking rule did not run:`.
   A blocking rule that ends undecided fails the run, because an undecided rule is
   not a passing one.
@@ -142,7 +142,7 @@ version and the same corpus it does not cover the same ground:
 |---|---|---|
 | Rules checked | 133 | **41** |
 | Rules skipped | 26 | **118** |
-| Issue rows | 72 | 114 |
+| Issue rows | 71 | 113 |
 | Blocking | 37 | 77 |
 | Exit code | 2 | 2 |
 

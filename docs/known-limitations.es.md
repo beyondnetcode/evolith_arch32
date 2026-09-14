@@ -31,7 +31,7 @@ Ninguna de esas cifras es la viva. La del árbol la mide CI en cada PR y la publ
 
 ## La primera ejecución falla sobre un repositorio nuevo
 
-Un repositorio recién configurado con `init` es una línea base, no un aprobado: muchas reglas asumen un layout más completo. La captura íntegra de esa primera ejecución —72 filas, 37 bloqueantes, 9 de ellas reglas que el motor no pudo decidir— está en [first-run-capture](./evidence/first-run-capture.es.md). Llevar el default a cero se sigue como GT-571 en el [Tablero de Gaps](../reference/core/control-center/gaps/gap-tracking.es.md).
+Un repositorio recién configurado con `init` es una línea base, no un aprobado: muchas reglas asumen un layout más completo. La captura íntegra de esa primera ejecución —71 filas, 37 bloqueantes, 9 de ellas reglas que el motor no pudo decidir— está en [first-run-capture](./evidence/first-run-capture.es.md). Llevar el default a cero se sigue como GT-571 en el [Tablero de Gaps](../reference/core/control-center/gaps/gap-tracking.es.md).
 
 ## Lo que no está construido
 

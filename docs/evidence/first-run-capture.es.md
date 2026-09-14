@@ -35,7 +35,7 @@ que los mezclara sería el defecto exacto que este proyecto existe para evitar.
   aplican a este repositorio, y `253 + 159 = 412`.
 - De esas 159, **133 se evaluaron** y **26 se saltaron** — el motor no pudo
   decidirlas.
-- La ejecución reporta **72 issues, 37 de ellos bloqueantes**. **Nueve de los 37
+- La ejecución reporta **71 issues, 37 de ellos bloqueantes**. **Nueve de los 37
   son reglas saltadas**, no reglas que fallaron: llevan el prefijo
   `Blocking rule did not run:`. Una regla bloqueante que acaba sin decidir hace
   fallar la ejecución, porque una regla sin decidir no es una regla que pasa.
@@ -142,7 +142,7 @@ el mismo corpus no cubre lo mismo:
 |---|---|---|
 | Reglas evaluadas | 133 | **41** |
 | Reglas saltadas | 26 | **118** |
-| Filas de issues | 72 | 114 |
+| Filas de issues | 71 | 113 |
 | Bloqueantes | 37 | 77 |
 | Código de salida | 2 | 2 |
 

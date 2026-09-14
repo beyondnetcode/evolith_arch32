@@ -1,4 +1,3 @@
-import * as path from 'node:path';
 import { resolveCorePath } from '../mcp/core-path';
 import type { IFileSystem, ILogger } from '@beyondnet/evolith-core';
 import { PatternCatalogService } from '@beyondnet/evolith-core';

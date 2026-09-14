@@ -360,6 +360,19 @@ jobs:
       - name: Build every workspace
         run: npm run build
 
+      # `src/rulesets/opa/policy.wasm` is gitignored (root .gitignore:154), so a fresh
+      # runner does not have it and nothing above compiles it: the root build is
+      # `tsc -b`. `prepublishOnly` then runs copy-rulesets -> build -> copy-assets ->
+      # check:release-drift -> check:install-smoke, and the smoke check REQUIRES a
+      # non-trivial `rulesets/opa/policy.wasm` (that check exists because 1.2.2
+      # shipped 87 .rego sources and zero wasm). Without this step the first
+      # `cli-v*` tag dies inside `npm publish`, after every gate above went green.
+      # Same step, same reason, as npm-release.yml.
+      - name: Compile the OPA policy bundle
+        run: |
+          npm run build:policy
+          test -f src/rulesets/opa/policy.wasm
+
       - name: Build
         working-directory: ${{ env.CLI_DIR }}
         run: npm run build

@@ -36,12 +36,38 @@ on:
       - 'src/packages/**'
       - '.github/workflows/sdk-cli-release.yml'
       - '.harness/**'
+    # A `v*` TAG IS NOT A CLI RELEASE, AND THIS PIPELINE SPENT SIX TAGS INSISTING IT WAS.
+    #
+    # `vX.Y.Z` is the MONOREPO tag. Three other workflows read it that way and are right:
+    # ci-cd.yml and docker-images.yml stamp the images with it, and npm-release.yml
+    # publishes whichever package versions are new REGARDLESS of what the tag says. The
+    # GitHub Release on a `v*` tag is hand-written ("Evolith Core 1.3.8 — ...") and the
+    # Marketplace listing points at it. The tag message on v1.3.8 says it in so many
+    # words: "Package versions are unchanged: @beyondnet/evolith-cli 1.3.2 — nothing new
+    # reaches npm from this tag."
+    #
+    # This workflow was the one reader that took `v1.3.8` to mean "@beyondnet/evolith-cli
+    # 1.3.8". The package carried 1.3.2, as it had for the previous five tags, and the gate
+    # below refused — correctly, given its premise — and filed #707. Six consecutive tags,
+    # six refusals (#599, #603, #606, #627, #707 and v1.3.6 unfiled): the premise is what
+    # was wrong, not the tags.
+    #
+    # And a passing gate would have been worse: `upload-assets` sets the Release's `name`
+    # and `body` on `tag_name`, which on a `v*` tag would have OVERWRITTEN the hand-written
+    # Core release notes with this template's. The only reason that never happened is that
+    # no `v*` tag has agreed with the package since v1.3.0, and v1.3.0 died in SBOM.
+    #
+    # So the CLI gets its own tag, `cli-vX.Y.Z`, which is the convention this repository
+    # already used (cli-v1.0.0 … cli-v1.1.0 are in the release list). `X.Y.Z` must equal
+    # `src/sdk/cli/package.json` — that is the gate below, and on a `cli-v*` tag it is a
+    # real question rather than a coincidence. The release it cuts is the CLI's own, so
+    # its `name`/`body` collide with nothing.
     tags:
-      - 'v*'
+      - 'cli-v*'
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Tag to release, e.g. v1.1.0. Leave empty to run validation only.'
+        description: 'CLI tag to release, e.g. cli-v1.3.2 — must equal src/sdk/cli/package.json. Leave empty to run validation only.'
         required: false
         default: ''
 
@@ -94,7 +120,7 @@ jobs:
   # managed manually"). release_created could therefore never be true, so every
   # job below was unreachable and the failure-notification issue was dead code.
   # Versioning is manual in this repo (the 1.1.0 set was published by hand), so
-  # the gate now derives the release from an explicit v* tag or a dispatch input.
+  # the gate now derives the release from an explicit cli-v* tag or a dispatch input.
   release-gate:
     needs: core-validation
     runs-on: ubuntu-latest
@@ -111,18 +137,29 @@ jobs:
         env:
           DISPATCH_TAG: ${{ github.event.inputs.release_tag }}
         run: |
+          set -euo pipefail
           TAG=""
           if [ -n "$DISPATCH_TAG" ]; then
             TAG="$DISPATCH_TAG"
-          elif case "$GITHUB_REF" in refs/tags/v*) true ;; *) false ;; esac; then
+          elif case "$GITHUB_REF" in refs/tags/cli-v*) true ;; *) false ;; esac; then
             TAG="${GITHUB_REF#refs/tags/}"
           fi
 
           if [ -n "$TAG" ]; then
+            # The dispatch input is free text. A bare `v1.3.2` here would cut a GitHub
+            # Release on the monorepo tag — the collision the `cli-v*` trigger exists to
+            # rule out — so the shape is checked before anything downstream reads it.
+            case "$TAG" in
+              cli-v[0-9]*.[0-9]*.[0-9]*) ;;
+              *)
+                echo "::error::'$TAG' is not a CLI release tag. The CLI releases on cli-vX.Y.Z (e.g. cli-v1.3.2); vX.Y.Z is the monorepo tag and is not a CLI release."
+                exit 1
+                ;;
+            esac
             echo "release_created=true" >> "$GITHUB_OUTPUT"
             echo "tag_name=$TAG" >> "$GITHUB_OUTPUT"
-            echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
-            echo "Release requested: $TAG (version ${TAG#v})"
+            echo "version=${TAG#cli-v}" >> "$GITHUB_OUTPUT"
+            echo "Release requested: $TAG (version ${TAG#cli-v})"
           else
             echo "release_created=" >> "$GITHUB_OUTPUT"
             echo "No release requested for $GITHUB_REF — validation only."
@@ -139,16 +176,22 @@ jobs:
       # on `npm error code ETARGET / No matching version found`. That is not a flake and
       # no re-run fixes it: the tag names a version that was never built.
       #
-      # It happened on five consecutive tags, and each one filed an issue:
+      # It happened on six consecutive tags, and each one filed an issue:
       #   v1.3.3 -> cli 1.3.1   (#599)
       #   v1.3.4 -> cli 1.3.1   (#603)
       #   v1.3.5 -> cli 1.3.1   (#606)
       #   v1.3.6 -> cli 1.3.2
       #   v1.3.7 -> cli 1.3.2   (#627)
+      #   v1.3.8 -> cli 1.3.2   (#707)  <- refused HERE, by this step, and still filed
       #
       # Every one was doomed the moment the tag was pushed, and the pipeline spent a full
       # build, three binary packagings and three platform smoke tests finding that out.
       # The question belongs here, in the gate, before anything is built or published.
+      #
+      # #707 is the one this step caught, and it is why the trigger changed: none of those
+      # six tags was ever meant to release the CLI (see the `on:` block). With the trigger
+      # on `cli-v*` this step stops firing on monorepo tags and asks its question only of
+      # a tag that claims to BE a CLI version — where a disagreement is a genuine mistake.
       - name: Tag must name the version the package carries
         if: steps.gate.outputs.release_created == 'true'
         env:
@@ -173,7 +216,7 @@ jobs:
               echo "with \`ETARGET\`."
               echo ""
               echo "Fix one of the two: bump the package to \`$EXPECTED\`, or delete this tag and"
-              echo "push \`v$ACTUAL\`."
+              echo "push \`cli-v$ACTUAL\`."
             } >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
@@ -590,12 +633,15 @@ jobs:
       - name: Upload to Release
         uses: softprops/action-gh-release@v3
         with:
+          # `tag_name` is a `cli-v*` tag, so this Release is the CLI's own and the
+          # `name`/`body` below overwrite nothing hand-written. On a `v*` tag they
+          # would have replaced the Core release notes the Marketplace points at.
           tag_name: ${{ needs.release-gate.outputs.tag_name }}
-          name: Release ${{ needs.release-gate.outputs.tag_name }}
+          name: Evolith CLI ${{ needs.release-gate.outputs.version }}
           body: |
             ## Release Summary
 
-            **Version:** `${{ needs.release-gate.outputs.version }}`
+            **Package:** `@beyondnet/evolith-cli@${{ needs.release-gate.outputs.version }}`
 
             ### ✅ Quality Gates Passed
             - [x] Core Validation (docs, bilingual, cleanliness)
@@ -617,7 +663,7 @@ jobs:
 
             ```bash
             # NPM
-            npm install -g @beyondnet/evolith-cli
+            npm install -g @beyondnet/evolith-cli@${{ needs.release-gate.outputs.version }}
 
             # Or download binary directly
             ```
@@ -661,7 +707,9 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: '❌ Release Pipeline Failed',
-                body: `Release pipeline failed for tag ${{ needs.release-gate.outputs.tag_name || 'unknown' }}
+                body: `CLI release pipeline failed for tag ${{ needs.release-gate.outputs.tag_name || 'unknown' }} (package version ${{ needs.release-gate.outputs.version || 'unknown' }}).
+
+                Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
                 Please check the workflow logs and fix the issue.
 

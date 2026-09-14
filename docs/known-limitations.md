@@ -31,7 +31,7 @@ None of those numbers is the live one. The tree's is measured by CI on every PR 
 
 ## The first run fails on a fresh repository
 
-A repository freshly configured with `init` is a baseline, not a pass: many rules assume a fuller layout. The full capture of that first run — 72 rows, 37 blocking, 9 of them rules the engine could not decide — is in [first-run-capture](./evidence/first-run-capture.md). Bringing the default to zero is tracked as GT-571 on the [gap board](../reference/core/control-center/gaps/gap-tracking.md).
+A repository freshly configured with `init` is a baseline, not a pass: many rules assume a fuller layout. The full capture of that first run — 71 rows, 37 blocking, 9 of them rules the engine could not decide — is in [first-run-capture](./evidence/first-run-capture.md). Bringing the default to zero is tracked as GT-571 on the [gap board](../reference/core/control-center/gaps/gap-tracking.md).
 
 ## What is not built
 

@@ -11,6 +11,10 @@
 
 **Your architecture rules, running on every PR.**
 
+<img src="./docs/assets/evolith-demo.svg" alt="Terminal: evolith init, evolith validate; 133 rules evaluated, 26 skipped, 9 blocking rules not evaluated reported as failures; exit 2" width="960">
+
+<sub>Real output of the published CLI on an empty repository (2026-09-14, abridged; <a href="./docs/evidence/first-run-capture.md">full 71-row capture</a>).</sub>
+
 </div>
 
 Evolith is an architecture linter for CI. It reads your repository — structure, workflows, manifests, architecture decisions — and checks it against a library of rules: layering, dependencies, security, CI/CD. If a blocking rule fails, the PR fails.

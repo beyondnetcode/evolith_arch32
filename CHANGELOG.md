@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Release process — the CLI releases on `cli-vX.Y.Z`, not on the monorepo tag (#707)
+
+`sdk-cli-release.yml` no longer runs on `v*` tags. A `vX.Y.Z` tag names the
+monorepo (images, Marketplace listing, hand-written Core release notes) and its
+`X.Y.Z` has not matched `@beyondnet/evolith-cli` since v1.3.0; the pipeline read
+it as the CLI version anyway, refused six tags in a row and filed an issue for
+each (#599, #603, #606, #627, #707). To cut a CLI release, bump
+`src/sdk/cli/package.json` and push `cli-v<that version>` — the tag and the
+package must agree, and the GitHub Release it creates (`Evolith CLI X.Y.Z`) is
+the CLI's own, so it can no longer overwrite the Core release notes on `v*`.
+`npm-release.yml` is unchanged: it still publishes every new package version on
+a `v*` tag.
+
 ### Behaviour change — a `-t` override is now UNIONED with what the satellite declares (GT-688)
 
 Before this change, `topologyRef` was a scalar that travelled alone: a caller

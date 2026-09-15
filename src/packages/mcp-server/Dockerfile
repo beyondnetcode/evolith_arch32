@@ -7,7 +7,7 @@
 # (@beyondnet/evolith-core-domain, @beyondnet/evolith-infra-providers, @beyondnet/evolith-core) from source.
 #   Coolify: Dockerfile = src/packages/mcp-server/Dockerfile, base directory = /
 # ──────────────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS builder
 
 WORKDIR /repo
 
@@ -48,7 +48,7 @@ RUN test -f src/packages/mcp-server/dist/main.js || { \
 RUN npm prune --omit=dev --legacy-peer-deps
 
 # ── Runner ──────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
+FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS runner
 
 LABEL org.opencontainers.image.title="Evolith MCP Server"
 LABEL org.opencontainers.image.source="https://github.com/beyondnetcode/evolith_arch32"

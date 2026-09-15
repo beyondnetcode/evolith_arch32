@@ -70,9 +70,18 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
  * That is why this stays empty rather than being deleted outright. A commit that is
  * genuinely and permanently one-sided — one whose counterpart will never move for any
  * reason — belongs here WITH its reason, because for that case the classifier has
- * nothing to observe. Nothing in this repository is currently in that position.
+ * nothing to observe. One entry is in that position today: an ES-only link repair on
+ * README.es.md (the EN link was already right), declared below.
  */
-const ALLOWED = new Map([]);
+const ALLOWED = new Map([
+  [
+    '02833d76',
+    'ES-only link repair: README.es.md pointed the first-run capture at first-run-capture.md ' +
+      'instead of first-run-capture.es.md (the EN half already pointed at its own file). No EN ' +
+      'counterpart exists to change; README.md is touched by too many commits for convergedAfter ' +
+      'to mean anything (see the note above). PR #711.',
+  ],
+]);
 
 function fail(lines) {
   console.error(`\n\x1b[31m✗\x1b[0m ${GUARD}: ${lines[0]}`);

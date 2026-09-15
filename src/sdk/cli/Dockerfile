@@ -19,7 +19,7 @@
 # This image is the CLI: a governance tool you exec against a mounted
 # satellite workspace, not a long-running server.
 # ──────────────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS builder
+FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS builder
 
 WORKDIR /repo
 
@@ -51,7 +51,7 @@ RUN npx tsc -b tsconfig.json && \
 RUN npm prune --omit=dev --legacy-peer-deps
 
 # ── Runner ──────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
+FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS runner
 
 LABEL org.opencontainers.image.title="Evolith CLI"
 LABEL org.opencontainers.image.description="Evolith CLI — governance, standards validation, and AI agent integration for satellite repositories"

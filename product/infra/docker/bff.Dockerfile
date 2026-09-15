@@ -4,7 +4,7 @@
 # ---------------------------------------------------------
 
 # Stage 1: Dependencies and Build
-FROM node:22-alpine AS builder
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS builder
 WORKDIR /app
 
 # Install dependencies for native modules
@@ -17,13 +17,13 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production Dependencies
-FROM node:22-alpine AS prod-deps
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS prod-deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Stage 3: Runtime
-FROM node:22-alpine AS runtime
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS runtime
 WORKDIR /app
 
 # Standard Evolith security rules: do not run as root

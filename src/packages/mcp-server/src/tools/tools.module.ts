@@ -34,6 +34,9 @@ import { createUpgradeTools } from './upgrade.tools';
 import { createFixturesTools } from './fixtures.tools';
 import { createScaffoldTools } from './scaffold.tool';
 import { createKnowledgeTools } from './knowledge.tools';
+import { createHistoryTools } from './history.tools';
+import { createProfileTools } from './profile.tools';
+import { createStandardsTools } from './standards.tools';
 import { createKnowledgePort } from '../domain/knowledge.factory';
 
 /**
@@ -107,6 +110,13 @@ import { createKnowledgePort } from '../domain/knowledge.factory';
         // GT-592 — the RAG corpus finally gets an MCP surface. The wiring is resolved
         // once here (composition root) so the tool never reads the environment itself.
         ...createKnowledgeTools(createKnowledgePort()),
+        // GT-682 (#759/#760/#761) — three read-only CLI commands that had no MCP
+        // counterpart. Each reuses the CLI's own reader from core-domain; the
+        // history and profile stores are per-machine files, resolved here at the
+        // composition root so the tools never decide a location themselves.
+        ...createHistoryTools(),
+        ...createProfileTools(),
+        ...createStandardsTools(fs),
       ],
       inject: [
         ValidateTool,

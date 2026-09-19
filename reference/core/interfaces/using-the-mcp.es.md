@@ -1412,3 +1412,63 @@ La recuperación es **híbrida, BM25 primero**. No es una preferencia, es un aju
 `retrievalMode` es `hybrid` cuando corrieron ambos recuperadores y `lexical-only` cuando no hay sidecar de embeddings configurado — o cuando el lado denso falló y la búsqueda degradó a BM25 en vez de no devolver nada.
 
 **Cuándo no está disponible.** El corpus vive en un store pgvector (`EVOLITH_RAG_PG_URL`) poblado por el workflow de delta-sync. Sin store configurado la tool **falla explícitamente** en vez de devolver un resultado vacío, porque un agente que recibe «sin coincidencias» de un corpus no configurado concluirá que el corpus no dice nada del asunto y actuará sobre eso.
+
+### 6.18. `evolith-history` — leer el historial de comandos de la CLI
+
+**Qué hace.** Lee el historial de comandos de Evolith CLI — el mismo `$HOME/.evolith/history.jsonl` que lee `evolith history`, a través del mismo `CommandHistoryService` — para que un agente vea qué ejecutó un operador, cuándo y si tuvo éxito. Una sola tool con cuatro modos de lectura elegidos con `action`. Solo lectura: `--clear` y `--replay` se quedan en la CLI (GT-682).
+
+**Argumentos.**
+
+| campo | tipo | req | para qué |
+| --- | --- | --- | --- |
+| `action` | string | no | `list` (por defecto), `get`, `search` o `stats`. |
+| `limit` | number | no | `list`: cuántas de las entradas más recientes devolver (`20` por defecto, el mismo valor que la CLI). |
+| `id` | string | `get` | El id de la entrada, p. ej. `h-000042`. |
+| `query` | string | `search` | Texto, sin distinguir mayúsculas, que se busca en el comando y sus argumentos. |
+
+**Ejemplo.**
+
+```json
+{ "name": "evolith-history", "arguments": { "action": "search", "query": "gate evaluate" } }
+```
+
+**Qué esperar.** Los mismos payloads que imprime `evolith history --format json`: `list` y `search` devuelven un array de entradas (`id`, `timestamp`, `command`, `args`, `exitCode`, `durationMs`, `success`), de la más reciente a la más antigua; `get` devuelve una entrada; `stats` devuelve `totalCommands`, `successRate`, `mostUsed` y `recentCommands`. Un id desconocido es un envelope de error `PATH_NOT_FOUND`; una máquina sin historial responde una lista vacía.
+
+### 6.19. `evolith-profile` — leer el perfil activo de la CLI
+
+**Qué hace.** Lee los perfiles con nombre de la CLI desde el mismo store que usa `evolith profile`, para que un agente sepa con qué contexto de core/satélite/tenant/iniciativa está configurada la CLI del operador. La ubicación del store, su formato y la precedencia `EVOLITH_PROFILE` > guardado > `default` los resuelve un único lector en core-domain, al que ahora también delega la CLI. Solo lectura: `create`, `switch` y `delete` se quedan en la CLI — cambiar el perfil del operador desde un gateway sería una acción a distancia (GT-682).
+
+**Argumentos.**
+
+| campo | tipo | req | para qué |
+| --- | --- | --- | --- |
+| `action` | string | no | `current` (por defecto) o `list`. |
+
+**Ejemplo.**
+
+```json
+{ "name": "evolith-profile", "arguments": { "action": "list" } }
+```
+
+**Qué esperar.** `current` devuelve `{ name, core?, satellite?, tenant?, initiative?, select? }`; `list` devuelve `{ profiles: [...], active }` — los mismos payloads que imprime la CLI con `--format json`. Una máquina donde la CLI nunca ha corrido responde `default`, y no se crea nada.
+
+### 6.20. `evolith-standards` — leer los estándares corporativos
+
+**Qué hace.** Lee los estándares registrados en `<path>/reference/standards/standards-index.json` a través del mismo `StandardsService` que usa `evolith standards`. Solo lectura: `--init`, `--validate` y `--export` se quedan en la CLI (GT-682).
+
+**Argumentos.**
+
+| campo | tipo | req | para qué |
+| --- | --- | --- | --- |
+| `action` | string | no | `list` (por defecto) o `get`. |
+| `category` | string | no | `list`: conservar solo `architecture`, `governance`, `operations` o `infrastructure`. |
+| `id` | string | `get` | El id del estándar. |
+| `path` | string | no | Raíz del workspace que contiene `reference/standards` (por defecto el cwd del servidor, igual que la CLI usa el suyo). |
+
+**Ejemplo.**
+
+```json
+{ "name": "evolith-standards", "arguments": { "action": "list", "category": "governance", "path": "/repos/my-satellite" } }
+```
+
+**Qué esperar.** `list` devuelve `{ count, standards: [{ id, name, version, category, rulesCount }] }`; `get` devuelve el estándar completo con sus `rules`. Un workspace sin índice responde `count: 0`; un id desconocido es un envelope de error `PATH_NOT_FOUND`.

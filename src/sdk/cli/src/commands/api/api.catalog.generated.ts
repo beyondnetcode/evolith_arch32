@@ -94,6 +94,10 @@ export const GENERATED_TOOLS: ApiEntry[] = [
     "description": "Evaluate a specific SDLC phase gate"
   },
   {
+    "name": "evolith-history",
+    "description": "Read the Evolith CLI command history ($HOME/.evolith/history.jsonl), the same store `evolith history` reads. `list` (default) returns the most recent entries, newest first; `get` one entry by id; `search` the entries whose command or arguments contain a query; `stats` the totals, success rate and most-used commands. Read-only: clearing or replaying history stays on the CLI. Returns the ADR-0073 success envelope."
+  },
+  {
     "name": "evolith-init-batch",
     "description": "Non-interactive (batch/CI) initialization of an Evolith satellite. Parity with the CLI `init --config <json>` / `init --name … --yes` path, without prompts. Delegates scaffolding to the core-domain InitializeProjectUseCase. Returns an ADR-0073 output envelope with the initialization result (created artifacts, warnings, errors)."
   },
@@ -154,6 +158,10 @@ export const GENERATED_TOOLS: ApiEntry[] = [
     "description": "Measure downstream-phase artifact completeness for a confirmed topology composition (advisory, ADR-0104 / DN-06 / GT-434). Stateless and non-binding: for a downstream phase (construction/quality/deployment) it compares the declared artifacts against the UNION of the universal per-phase artifacts and each topology's spec.phaseProfiles. Returns required/present/missing artifacts + completeness in the ADR-0073 success envelope. Produces the same result as POST /api/v1/architecture/evaluate-phase-artifacts and `evolith topology phase-artifacts`."
   },
   {
+    "name": "evolith-profile",
+    "description": "Read the Evolith CLI profiles from the same store `evolith profile` uses. `current` (default) returns the active profile — `EVOLITH_PROFILE` if set, else the stored selection, else `default` — with its core/satellite/tenant/initiative/select values; `list` returns every profile name and which one is active. Read-only: creating, switching and deleting profiles stay on the CLI. Returns the ADR-0073 success envelope."
+  },
+  {
     "name": "evolith-ruleset-list",
     "description": "List the ruleset packs this Core can evaluate. Returns the canonical refs accepted by `evolith-validate`'s `select` argument, with the rule count and — per pack — how many of those rules can FAIL a run. Read this before selecting: a ref this Core does not carry is a blocking failure, never a quiet pass."
   },
@@ -188,6 +196,10 @@ export const GENERATED_TOOLS: ApiEntry[] = [
   {
     "name": "evolith-sdlc-status",
     "description": "Get the current SDLC phase status"
+  },
+  {
+    "name": "evolith-standards",
+    "description": "Read the corporate standards registered under <path>/reference/standards (the index `evolith standards` reads). `list` (default) returns id/name/version/category/rulesCount per standard, optionally filtered by category; `get` returns one standard in full, rules included. Read-only: init, validate and export stay on the CLI. Returns the ADR-0073 success envelope."
   },
   {
     "name": "evolith-topology-get",

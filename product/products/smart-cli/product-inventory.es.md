@@ -10,7 +10,7 @@ Inventario generado de la superficie instalable de Evolith CLI y MCP. No editar 
 | Package | `@beyondnet/evolith-cli@1.3.2` |
 | Binary | `evolith`, `evolith-cli` |
 | CLI commands | 38 |
-| MCP tools | 52 |
+| MCP tools | 55 |
 | MCP resources | 12 |
 | MCP prompts | 8 |
 | MCP transports | `stdio (JSON-RPC 2.0)`, `Streamable HTTP (official MCP SDK)` |

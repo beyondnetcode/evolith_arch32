@@ -9,7 +9,7 @@
 import type { ToolSchema } from './api.catalog';
 
 /** sha256 of the manifest operation catalog these schemas were generated from. */
-export const GENERATED_TOOL_SCHEMAS_SHA256 = '5384696d77a7985340cc0caefcb289789eef1aae69dc5d2038a85c896c4cc5c5';
+export const GENERATED_TOOL_SCHEMAS_SHA256 = '6a72e9839285ce6605d6fcddfdd43bf99dbffe7b089a16a088697423d4153c12';
 
 export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
   "evolith-adr-create": {
@@ -3798,6 +3798,177 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
       ]
     }
   },
+  "evolith-history": {
+    "description": "Read the Evolith CLI command history ($HOME/.evolith/history.jsonl), the same store `evolith history` reads. `list` (default) returns the most recent entries, newest first; `get` one entry by id; `search` the entries whose command or arguments contain a query; `stats` the totals, success rate and most-used commands. Read-only: clearing or replaying history stays on the CLI. Returns the ADR-0073 success envelope.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "list",
+            "get",
+            "search",
+            "stats"
+          ],
+          "description": "Which read to perform (default: list)"
+        },
+        "limit": {
+          "type": "number",
+          "description": "list: number of most recent entries to return (default: 20)"
+        },
+        "id": {
+          "type": "string",
+          "description": "get: the entry id, e.g. h-000042"
+        },
+        "query": {
+          "type": "string",
+          "description": "search: case-insensitive text matched against command and arguments"
+        }
+      }
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "title": "EvolithMcpOutputEnvelope",
+      "description": "Envelope returned by every Evolith MCP tool, mirrored verbatim in `structuredContent`. `success: true` carries `data`; `success: false` carries `error`. Envelope schema version 1.0.0.",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation completed. Not the governance verdict."
+        },
+        "data": {
+          "description": "Tool-specific payload, present when `success` is true. Not narrowed for this tool yet — per-operation payload schemas are generated from the capability manifest (GT-583)."
+        },
+        "error": {
+          "type": "object",
+          "description": "Present when `success` is false. `code` is machine-readable and append-only.",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "VALIDATION_FAILED",
+                "SCHEMA_INVALID",
+                "REPO_NOT_FOUND",
+                "PHASE_INVALID",
+                "RULESET_NOT_FOUND",
+                "NOT_A_SATELLITE",
+                "GATE_BLOCKED",
+                "COMMAND_FAILED",
+                "TIMEOUT",
+                "IO_ERROR",
+                "PATH_NOT_FOUND",
+                "GIT_ERROR",
+                "UNAUTHORIZED",
+                "FORBIDDEN",
+                "CONCURRENCY_CONFLICT",
+                "INTERNAL_ERROR",
+                "NOT_IMPLEMENTED"
+              ],
+              "description": "Stable Evolith error code. FORBIDDEN covers every ABAC / scope / approval refusal."
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "description": "ADR-0073 envelope metadata. Identical across the CLI, REST and MCP surfaces.",
+          "properties": {
+            "correlationId": {
+              "type": "string",
+              "description": "Correlation id, prefixed 'evl-'."
+            },
+            "command": {
+              "type": "string",
+              "description": "ADR-0073 canonical name of the invoked operation."
+            },
+            "tool": {
+              "type": "string",
+              "description": "MCP-native alias of `command`."
+            },
+            "durationMs": {
+              "type": "number",
+              "description": "Server-side wall time of the call."
+            },
+            "executedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ADR-0073 canonical timestamp."
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "MCP-native alias of `executedAt`."
+            },
+            "schemaVersion": {
+              "type": "string",
+              "const": "1.0.0",
+              "description": "Pinned envelope shape version. Bumped only on a breaking envelope change."
+            },
+            "context": {
+              "type": "object",
+              "description": "Verbatim echo of the caller-supplied execution context.",
+              "properties": {
+                "initiative": {
+                  "type": "string"
+                },
+                "tenant": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "correlationId",
+            "command",
+            "tool",
+            "durationMs",
+            "executedAt",
+            "timestamp",
+            "schemaVersion"
+          ]
+        }
+      },
+      "required": [
+        "success",
+        "meta"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "const": false
+              }
+            },
+            "required": [
+              "success"
+            ]
+          },
+          "then": {
+            "required": [
+              "error"
+            ]
+          }
+        }
+      ]
+    }
+  },
   "evolith-init-batch": {
     "description": "Non-interactive (batch/CI) initialization of an Evolith satellite. Parity with the CLI `init --config <json>` / `init --name … --yes` path, without prompts. Delegates scaffolding to the core-domain InitializeProjectUseCase. Returns an ADR-0073 output envelope with the initialization result (created artifacts, warnings, errors).",
     "inputSchema": {
@@ -6491,6 +6662,163 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
       ]
     }
   },
+  "evolith-profile": {
+    "description": "Read the Evolith CLI profiles from the same store `evolith profile` uses. `current` (default) returns the active profile — `EVOLITH_PROFILE` if set, else the stored selection, else `default` — with its core/satellite/tenant/initiative/select values; `list` returns every profile name and which one is active. Read-only: creating, switching and deleting profiles stay on the CLI. Returns the ADR-0073 success envelope.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "current",
+            "list"
+          ],
+          "description": "Which read to perform (default: current)"
+        }
+      }
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "title": "EvolithMcpOutputEnvelope",
+      "description": "Envelope returned by every Evolith MCP tool, mirrored verbatim in `structuredContent`. `success: true` carries `data`; `success: false` carries `error`. Envelope schema version 1.0.0.",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation completed. Not the governance verdict."
+        },
+        "data": {
+          "description": "Tool-specific payload, present when `success` is true. Not narrowed for this tool yet — per-operation payload schemas are generated from the capability manifest (GT-583)."
+        },
+        "error": {
+          "type": "object",
+          "description": "Present when `success` is false. `code` is machine-readable and append-only.",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "VALIDATION_FAILED",
+                "SCHEMA_INVALID",
+                "REPO_NOT_FOUND",
+                "PHASE_INVALID",
+                "RULESET_NOT_FOUND",
+                "NOT_A_SATELLITE",
+                "GATE_BLOCKED",
+                "COMMAND_FAILED",
+                "TIMEOUT",
+                "IO_ERROR",
+                "PATH_NOT_FOUND",
+                "GIT_ERROR",
+                "UNAUTHORIZED",
+                "FORBIDDEN",
+                "CONCURRENCY_CONFLICT",
+                "INTERNAL_ERROR",
+                "NOT_IMPLEMENTED"
+              ],
+              "description": "Stable Evolith error code. FORBIDDEN covers every ABAC / scope / approval refusal."
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "description": "ADR-0073 envelope metadata. Identical across the CLI, REST and MCP surfaces.",
+          "properties": {
+            "correlationId": {
+              "type": "string",
+              "description": "Correlation id, prefixed 'evl-'."
+            },
+            "command": {
+              "type": "string",
+              "description": "ADR-0073 canonical name of the invoked operation."
+            },
+            "tool": {
+              "type": "string",
+              "description": "MCP-native alias of `command`."
+            },
+            "durationMs": {
+              "type": "number",
+              "description": "Server-side wall time of the call."
+            },
+            "executedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ADR-0073 canonical timestamp."
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "MCP-native alias of `executedAt`."
+            },
+            "schemaVersion": {
+              "type": "string",
+              "const": "1.0.0",
+              "description": "Pinned envelope shape version. Bumped only on a breaking envelope change."
+            },
+            "context": {
+              "type": "object",
+              "description": "Verbatim echo of the caller-supplied execution context.",
+              "properties": {
+                "initiative": {
+                  "type": "string"
+                },
+                "tenant": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "correlationId",
+            "command",
+            "tool",
+            "durationMs",
+            "executedAt",
+            "timestamp",
+            "schemaVersion"
+          ]
+        }
+      },
+      "required": [
+        "success",
+        "meta"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "const": false
+              }
+            },
+            "required": [
+              "success"
+            ]
+          },
+          "then": {
+            "required": [
+              "error"
+            ]
+          }
+        }
+      ]
+    }
+  },
   "evolith-ruleset-list": {
     "description": "List the ruleset packs this Core can evaluate. Returns the canonical refs accepted by `evolith-validate`'s `select` argument, with the rule count and — per pack — how many of those rules can FAIL a run. Read this before selecting: a ref this Core does not carry is a blocking failure, never a quiet pass.",
     "inputSchema": {
@@ -7907,6 +8235,181 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
       "required": [
         "path"
       ]
+    },
+    "outputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "title": "EvolithMcpOutputEnvelope",
+      "description": "Envelope returned by every Evolith MCP tool, mirrored verbatim in `structuredContent`. `success: true` carries `data`; `success: false` carries `error`. Envelope schema version 1.0.0.",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the operation completed. Not the governance verdict."
+        },
+        "data": {
+          "description": "Tool-specific payload, present when `success` is true. Not narrowed for this tool yet — per-operation payload schemas are generated from the capability manifest (GT-583)."
+        },
+        "error": {
+          "type": "object",
+          "description": "Present when `success` is false. `code` is machine-readable and append-only.",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "VALIDATION_FAILED",
+                "SCHEMA_INVALID",
+                "REPO_NOT_FOUND",
+                "PHASE_INVALID",
+                "RULESET_NOT_FOUND",
+                "NOT_A_SATELLITE",
+                "GATE_BLOCKED",
+                "COMMAND_FAILED",
+                "TIMEOUT",
+                "IO_ERROR",
+                "PATH_NOT_FOUND",
+                "GIT_ERROR",
+                "UNAUTHORIZED",
+                "FORBIDDEN",
+                "CONCURRENCY_CONFLICT",
+                "INTERNAL_ERROR",
+                "NOT_IMPLEMENTED"
+              ],
+              "description": "Stable Evolith error code. FORBIDDEN covers every ABAC / scope / approval refusal."
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "description": "ADR-0073 envelope metadata. Identical across the CLI, REST and MCP surfaces.",
+          "properties": {
+            "correlationId": {
+              "type": "string",
+              "description": "Correlation id, prefixed 'evl-'."
+            },
+            "command": {
+              "type": "string",
+              "description": "ADR-0073 canonical name of the invoked operation."
+            },
+            "tool": {
+              "type": "string",
+              "description": "MCP-native alias of `command`."
+            },
+            "durationMs": {
+              "type": "number",
+              "description": "Server-side wall time of the call."
+            },
+            "executedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ADR-0073 canonical timestamp."
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "MCP-native alias of `executedAt`."
+            },
+            "schemaVersion": {
+              "type": "string",
+              "const": "1.0.0",
+              "description": "Pinned envelope shape version. Bumped only on a breaking envelope change."
+            },
+            "context": {
+              "type": "object",
+              "description": "Verbatim echo of the caller-supplied execution context.",
+              "properties": {
+                "initiative": {
+                  "type": "string"
+                },
+                "tenant": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "correlationId",
+            "command",
+            "tool",
+            "durationMs",
+            "executedAt",
+            "timestamp",
+            "schemaVersion"
+          ]
+        }
+      },
+      "required": [
+        "success",
+        "meta"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "const": false
+              }
+            },
+            "required": [
+              "success"
+            ]
+          },
+          "then": {
+            "required": [
+              "error"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "evolith-standards": {
+    "description": "Read the corporate standards registered under <path>/reference/standards (the index `evolith standards` reads). `list` (default) returns id/name/version/category/rulesCount per standard, optionally filtered by category; `get` returns one standard in full, rules included. Read-only: init, validate and export stay on the CLI. Returns the ADR-0073 success envelope.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "list",
+            "get"
+          ],
+          "description": "Which read to perform (default: list)"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "architecture",
+            "governance",
+            "operations",
+            "infrastructure"
+          ],
+          "description": "list: keep only standards in this category"
+        },
+        "id": {
+          "type": "string",
+          "description": "get: the standard id"
+        },
+        "path": {
+          "type": "string",
+          "description": "Workspace root containing reference/standards (defaults to the server cwd)"
+        }
+      }
     },
     "outputSchema": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",

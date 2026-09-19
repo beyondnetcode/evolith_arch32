@@ -10114,3 +10114,43 @@ Los dos se arreglaron de forma estructural y no como correcciones: el rethrow no
   - [ ] **FALSABILIDAD:** un PR con un advisory ALTA sin declarar sale `BLOCKED` y no `UNSTABLE`, observado y no supuesto.
   - [~] La decisión sobre `Trivy` y `build-and-test` queda escrita — requeridos también, o registrado por qué no lo son. **DECIDIDO por el dueño el 2026-09-05: requeridos los dos.** Ejecutable solo la mitad, y la otra mitad no es pereza sino un deadlock medido: **`Trivy Container Scan` es seguro de requerir** porque vive en `sdk-cli-ci.yml`, que **no lleva filtro `paths`** —y su comentario explica que no debe llevarlo nunca, por el bloqueo que `CodeQL SAST` causó en el PR #218 al volverse requerido—, así que reporta en todo PR. **`build-and-test` NO puede requerirse tal como está:** vive en `sdk-cli-release.yml`, cuyo disparador `pull_request` sí filtra por `src/sdk/cli/**`, `src/packages/**`, `.github/workflows/sdk-cli-release.yml` y `.harness/**`. Un check requerido detrás de un filtro de rutas **nunca reporta** en un PR que no las toca, y GitHub lee «no reportó» como «no satisfecho»: el PR queda inmergeable para siempre con todo en verde. Es exactamente lo que le habría pasado a [#690](https://github.com/beyondnetcode/evolith_arch32/pull/690), que solo tocó `reference/`. **Precondición, no alternativa:** quitar el filtro `paths` del `pull_request` de `sdk-cli-release.yml` —el mismo arreglo que ya se aplicó a `sdk-cli-ci.yml`— y solo entonces añadirlo a los requeridos. **Nota sobre el nombre:** el check a requerir es `Trivy Container Scan`, el nombre del job; el check `Trivy` a secas que publica `aquasecurity/trivy-action` aparece en `main` pero no en la cabeza de `develop`, así que requerir ese nombre reintroduciría el mismo deadlock por otra vía.
 - **Estado:** `PENDIENTE`
+#### GT-711
+
+**Título:** La ventana de la evidencia de madurez se cierra en una fecha conocida con treinta días de antelación, y el primero en enterarse era quien abriera un PR esa mañana
+
+- **Propósito:** Enterarse de la caducidad de los cuatro checks de runtime una semana antes, en una issue, en lugar de ese día, en un check requerido en rojo sobre un PR ajeno.
+- **Evidencia, medida el 2026-09-19 contra el fichero de evidencia y el historial de Actions:**
+
+  | hecho | valor |
+  |---|---|
+  | regla | `validateRuntimeEvidence` en `09-reconcile-maturity.mjs` rechaza un check cuyo `observedAt` supera los 30 días |
+  | dónde corre | `Validate documentation`, contexto requerido en `main` y `develop`, con `--check` |
+  | los cuatro checks se observaron | 2026-08-18 (`3e5aac80`) |
+  | último día válido / primer día caducado | 2026-09-17 / 2026-09-18 |
+  | último verde en `develop` | run 34998373244, 2026-09-15, a 28 días |
+  | primer rojo | [#724](https://github.com/beyondnetcode/evolith_arch32/pull/724), 2026-09-19, a 32 días — un cambio de posicionamiento en los dos README |
+  | ocurrencia anterior | 2026-08-18: `documentation` cruzó los 31 días sobre una promoción, consta en el resumen del propio fichero de evidencia |
+  | qué miraba el calendario antes de ese día | nada |
+
+- **La ventana no es el defecto.** La evidencia que caduca debe re-tomarse, no estirarse — las dos re-observaciones (`3e5aac80`, `2ee3f9a0`) lo dicen en sus resúmenes y ninguna es un cambio de fecha. El defecto es que una fecha conocida con treinta días de antelación se aprendía el día en que empezaba a bloquear merges, por quien abriera un PR, sin relación alguna entre el cambio y el rojo.
+- **Lo que lo cierra, en `30065070`:**
+  - `assessEvidenceFreshness(evidence, now)` nombra, por check, el primer día en que `validateRuntimeEvidence` lo rechazará — `observedAt + EVIDENCE_MAX_AGE_DAYS + 1`, la misma constante y la misma aritmética, no una segunda opinión — y lo clasifica `fresh`, `expiring` (dentro de `EVIDENCE_WARN_DAYS = 7`, hoy incluido), `stale` o `future`.
+  - Cada ejecución del reconciliador, `--check` incluido, imprime los checks a punto de caducar con su fecha tras aceptar la evidencia. No bloquea: la ventana no se mueve.
+  - `--freshness [--now=YYYY-MM-DD]` imprime el informe y sale 1 dentro de la banda o pasada la ventana; `--now` permite observar el camino rojo bajo demanda en vez de esperarlo.
+  - `maturity-evidence-freshness.yml` lo ejecuta a diario a las 06:45 UTC contra `develop` (la rama donde se redactan las re-observaciones) y abre una issue con etiqueta `maturity-evidence` con el log y el procedimiento; el hilo se actualiza, no se duplica, y se cierra solo cuando los checks vuelven a estar frescos. La misma forma que el canary del artefacto publicado (GT-671), por la misma razón: una pestaña de Actions en rojo a la que nadie está suscrito no es una señal.
+- **Casos de uso:**
+  - Alguien abre un PR de documentación y `Validate documentation` sale en rojo por cuatro entradas JSON que el PR nunca tocó.
+  - Una promoción a `main` se bloquea la mañana en que la evidencia cruza la ventana, sin que nadie hubiera planificado la re-observación.
+- **Impacto:** Dos veces en un mes un check requerido se puso en rojo sobre trabajo ajeno, el día en que empezaba a bloquear, con un arreglo — una re-observación — que nadie había programado.
+- **Resultado esperado:** Una issue una semana antes de que se cierre la ventana, con la fecha y los cuatro checks; la re-observación entra antes de que ningún PR vea rojo.
+- **Ficheros afectados:** `.harness/scripts/ci/09-reconcile-maturity.mjs`, `.harness/scripts/reconcile-maturity.test.mjs`, `.github/workflows/maturity-evidence-freshness.yml`, `.github/workflows/docs.yml`
+- **Componente:** `Infra` · **Criticidad:** P2 · **Complejidad:** S
+- **Principal:** `XS` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-09-19 al mergear [#724](https://github.com/beyondnetcode/evolith_arch32/pull/724): el PR cambiaba dos README y salió en rojo en `Validate documentation`; leer el log mostró `cli-baseline evidence is stale or future-dated` cuatro veces, y los resúmenes del propio fichero de evidencia mostraron que lo mismo había pasado el 2026-08-18.
+- **Criterios de aceptación:**
+  - [x] El primer día caducado que nombra el informe es el primer día en que `validateRuntimeEvidence` rechaza el check, probado a ambos lados del borde. **CUMPLIDO** — el self-test reproduce el incidente real: observado el 2026-08-18, aceptado a las 2026-09-17T23:59Z, rechazado a las 2026-09-18T00:00Z, el informe dice `turns stale on 2026-09-18`.
+  - [x] La banda de aviso tiene sus cuatro bordes probados: último día fresco, primer día en la banda, último día válido (0 restantes), primer día caducado, más fecha futura. **CUMPLIDO** — 24 casos en `reconcile-maturity.test.mjs`, 3 nuevos.
+  - [x] La ventana y la regla de re-observación no cambian. **CUMPLIDO** — `EVIDENCE_MAX_AGE_DAYS = 30` es el mismo `30` que usaba el rechazo, ahora compartido; el texto del propio informe dice "never a date bump".
+  - [x] **FALSABILIDAD:** el camino rojo se observó, no se supuso. **CUMPLIDO** — `--freshness --now=2026-10-13` imprime cuatro líneas `turns stale on 2026-10-20 (6 day(s) left)` y sale 1; `--now=2026-10-20` imprime cuatro líneas `STALE since 2026-10-20` y sale 1; hoy sale 0.
+  - [x] Lo que aún no puede observarse queda escrito como tal, no reclamado: la ejecución programada abriendo la issue es observable por primera vez el 2026-10-13 (primer día dentro de la banda para la evidencia observada el 2026-09-19) y cerrándola tras la re-observación. **CUMPLIDO como declaración de lo que NO se reclama** — la fecha consta aquí y en el registro de cierre; los pasos de issue son los del canary publicado (GT-671), con el mismo estado de aún-no-disparado.
+- **Estado:** `COMPLETADO`

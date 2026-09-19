@@ -10652,6 +10652,25 @@
         "NO EXCEPTION WAS DECLARED. `.harness/config/npm-audit-exceptions.json` still holds zero entries; that file is for advisories with no upstream fix, and both of these had one. The moderate `qs` advisory survives on purpose — the gate does not block below HIGH.",
         "WHY THE GATE STOPPED NOTHING is registered as its own row rather than as prose here: `Security Audit` is not among the nine required contexts, and eight PRs merged into `main` while it was red. See GT-710."
       ]
+    },
+    {
+      "id": "GT-711",
+      "closedAt": "2026-09-19",
+      "closureCommit": "30065070",
+      "dependencyDisposition": "none",
+      "evidence": [
+        ".harness/scripts/ci/09-reconcile-maturity.mjs",
+        ".harness/scripts/reconcile-maturity.test.mjs",
+        ".github/workflows/maturity-evidence-freshness.yml"
+      ],
+      "validationCommands": [
+        "THE WINDOW IS UNCHANGED AND THE RULE IS UNCHANGED. EVIDENCE_MAX_AGE_DAYS = 30 is the same literal the rejection used, now shared with the report, so the day the report names is by construction the day validateRuntimeEvidence starts rejecting -- the self-test proves it at both sides of the boundary on the real incident's dates (observed 2026-08-18: accepted 2026-09-17T23:59Z, rejected 2026-09-18T00:00Z, report says 2026-09-18).",
+        "THE RED PATH WAS OBSERVED, NOT ASSUMED: `node .harness/scripts/ci/09-reconcile-maturity.mjs --freshness --now=2026-10-13` prints four `turns stale on 2026-10-20 (6 day(s) left)` lines and exits 1; `--now=2026-10-20` prints four `STALE since 2026-10-20` lines and exits 1; with no --now (2026-09-19) it prints four fresh lines and exits 0; `--now=ayer` exits 2.",
+        "WHAT IS DEFERRED TO THE CALENDAR AND NOT CLAIMED: the scheduled workflow opening the issue. First observable 2026-10-13, the first day inside the band for the evidence observed 2026-09-19. Its issue steps are the published-canary's (GT-671), which have the same not-yet-fired status.",
+        "node --test .harness/scripts/reconcile-maturity.test.mjs  # 24 cases, 3 new, 0 failures",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check  # still green on the same tree; the warning band is empty today",
+        "node .harness/scripts/ci/40-validate-path-literals.mjs  # the workflow's run: body resolves"
+      ]
     }
   ]
 }

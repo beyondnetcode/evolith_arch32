@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import {
   parseBoard,
   validateRuntimeEvidence,
+  assessEvidenceFreshness,
+  formatEvidenceFreshness,
+  EVIDENCE_MAX_AGE_DAYS,
+  EVIDENCE_WARN_DAYS,
   auditIsoRatings,
   auditAssessmentRatings,
   bandFor,
@@ -123,6 +127,51 @@ test('runtime evidence rejects stale and unowned blockers', () => {
   assert.ok(errors.some((error) => error.includes('stale')));
   assert.ok(errors.some((error) => error.includes('active gap')));
   assert.ok(errors.some((error) => error.includes('Missing required maturity check')));
+});
+
+// ---------------------------------------------------------------------------
+// GT-711 — the window is announced before it closes
+// ---------------------------------------------------------------------------
+
+// The real incident, replayed: four checks observed 2026-08-18 were accepted by the develop
+// run of 2026-09-15 and rejected by a README-only PR on 2026-09-19. The report has to say
+// "turns stale on 2026-09-18" from the day it is within the warning band.
+const observedAugust18 = (id) => ({ id, status: 'PASS', observedAt: '2026-08-18', commit: 'abc1234', source: 'https://github.com/o/r/actions/runs/1', summary: 'x' });
+
+test('freshness names the first day a check turns stale, and it is the day validateRuntimeEvidence starts rejecting it', () => {
+  const evidence = { schemaVersion: '1.0.0', asOf: '2026-09-05', checks: [observedAugust18('cli-baseline')] };
+  const [row] = assessEvidenceFreshness(evidence, new Date('2026-09-15T17:00:00Z'));
+  assert.equal(row.staleFrom, '2026-09-18');
+  assert.equal(row.ageDays, 28);
+  assert.equal(row.daysLeft, 2);
+  assert.equal(row.state, 'expiring');
+
+  const board = { ...parseBoard('**Last Updated:** 2026-09-05\n| [`GT-1`](./c.md#gt-1) | x | Cross | P0 | M | `DONE` |\n'), content: '' };
+  const lastValidDay = validateRuntimeEvidence(evidence, board, process.cwd(), new Date('2026-09-17T23:59:00Z'));
+  const firstStaleDay = validateRuntimeEvidence(evidence, board, process.cwd(), new Date('2026-09-18T00:00:00Z'));
+  assert.ok(!lastValidDay.some((error) => error.includes('stale')), 'day 30 is still inside the window');
+  assert.ok(firstStaleDay.some((error) => error.includes('stale')), 'day 31 is outside it — the same day the report announced');
+});
+
+test('freshness bands: fresh beyond the warning band, expiring inside it (today included), stale past the window, future ahead of it', () => {
+  const evidence = { schemaVersion: '1.0.0', asOf: '2026-09-05', checks: [observedAugust18('coverage')] };
+  const stateOn = (day) => assessEvidenceFreshness(evidence, new Date(`${day}T12:00:00Z`))[0].state;
+  assert.equal(EVIDENCE_MAX_AGE_DAYS, 30);
+  assert.equal(EVIDENCE_WARN_DAYS, 7);
+  assert.equal(stateOn('2026-09-09'), 'fresh', '22 days old: 8 left, outside the band');
+  assert.equal(stateOn('2026-09-10'), 'expiring', '23 days old: 7 left, first day of the band');
+  assert.equal(stateOn('2026-09-17'), 'expiring', '30 days old: last valid day, 0 left');
+  assert.equal(stateOn('2026-09-18'), 'stale', '31 days old: rejected');
+  assert.equal(stateOn('2026-08-17'), 'future', 'observed tomorrow: a date, not an observation');
+  assert.equal(assessEvidenceFreshness({ checks: [{ id: 'release', observedAt: 'soon' }] })[0].state, 'invalid');
+});
+
+test('the freshness report is one line per check and carries the date on the lines that matter', () => {
+  const evidence = { schemaVersion: '1.0.0', asOf: '2026-09-05', checks: [observedAugust18('cli-baseline'), { ...observedAugust18('release'), observedAt: '2026-09-15' }] };
+  const lines = formatEvidenceFreshness(assessEvidenceFreshness(evidence, new Date('2026-09-19T09:00:00Z')));
+  assert.equal(lines.length, 2);
+  assert.match(lines[0], /^❌ cli-baseline .*STALE since 2026-09-18/);
+  assert.match(lines[1], /^✅ release .*turns stale on 2026-10-16/);
 });
 
 // ---------------------------------------------------------------------------

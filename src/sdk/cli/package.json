@@ -94,7 +94,7 @@
     "inherits": "2.0.4",
     "nest-commander": "3.20.1",
     "path-to-regexp": "8.4.2",
-    "yaml": "2.9.0"
+    "yaml": "2.9.1"
   },
   "devDependencies": {
     "@nestjs/testing": "11.1.28",

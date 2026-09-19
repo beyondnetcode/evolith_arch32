@@ -111,7 +111,7 @@
     "eslint-plugin-boundaries": "7.2.0",
     "fast-json-stable-stringify": "2.1.0",
     "jest": "30.4.2",
-    "nest-commander-testing": "3.5.1",
+    "nest-commander-testing": "3.6.0",
     "once": "1.4.0",
     "ts-jest": "29.4.12",
     "typescript": "6.0.3",

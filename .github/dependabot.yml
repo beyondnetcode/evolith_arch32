@@ -4,6 +4,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # NestJS 12 es ESM-only y se migra en bloque (todo @nestjs/* + jest/ts config).
+      # Un major por paquete rompe los 5 workspaces (ver PRs #720 y #721, cerrados).
+      - dependency-name: "@nestjs/*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /

@@ -67,7 +67,7 @@ jobs:
       # duplicated, so a week of red is one thread and not seven.
       - name: Open or update the canary issue
         if: failure() && github.event_name == 'schedule'
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const fs = require('fs');
@@ -106,7 +106,7 @@ jobs:
       # healthy again the thread says so and closes itself.
       - name: Close the canary issue when the registry is healthy again
         if: success() && github.event_name == 'schedule'
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const existing = await github.rest.issues.listForRepo({

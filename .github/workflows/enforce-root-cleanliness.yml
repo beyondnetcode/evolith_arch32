@@ -12,6 +12,11 @@ on:
     branches:
       - main
 
+# Scorecard Token-Permissions: the default GITHUB_TOKEN is read-only for every job;
+# a job that has to write declares exactly what it writes on itself.
+permissions:
+  contents: read
+
 jobs:
   validate-root:
     runs-on: ubuntu-latest

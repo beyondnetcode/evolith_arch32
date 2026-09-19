@@ -70,6 +70,25 @@ async function init(overrides: Partial<typeof INPUT> = {}) {
   return { fs, result, root: `/tmp/${(overrides.name ?? INPUT.name)}` };
 }
 
+describe('InitializeProjectUseCase · the name is a directory, not a path (CWE-22)', () => {
+  it.each(['../escape', 'a/b', '..', '.hidden', '-flag', 'nul\0byte', ''])(
+    'refuses %j before writing anything',
+    async (name) => {
+      const fs = memoryFs();
+      const result = await new InitializeProjectUseCase(fs, catalogLoader).execute({ ...INPUT, name } as any, '/tmp');
+      expect(result.success).toBe(false);
+      expect(result.errors[0]).toMatch(/not a valid directory name/);
+      expect(fs.dirs.size).toBe(0);
+      expect(fs.files.size).toBe(0);
+    },
+  );
+
+  it('keeps accepting the dotted and dashed names npm does', async () => {
+    const { root } = await init({ name: 'acme.billing-api_v2' });
+    expect(root).toBe('/tmp/acme.billing-api_v2');
+  });
+});
+
 describe('InitializeProjectUseCase · GIT-08 — the scaffold enforces what it mandates', () => {
   it('writes a commitlint config carrying the commit types GIT-08 names', async () => {
     const { fs, root } = await init();

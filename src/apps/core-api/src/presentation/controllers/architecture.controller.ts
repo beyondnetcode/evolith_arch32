@@ -119,10 +119,15 @@ export class ArchitectureController {
   @ApiBody({ type: ValidateSatelliteDto })
   @ApiEnvelopeResponse(undefined, { description: 'Validation results or ADR-0073 envelope if manifest is provided' })
   async validateSatellite(@Body() body: ValidateSatelliteDto) {
+    const satellitePath = this.workspaceResolver.resolve(body.workspaceRef);
+    const corePath = this.workspaceResolver.corePath();
     const response = await this.validateSatelliteUseCase.execute({
-      satellitePath: this.workspaceResolver.resolve(body.workspaceRef),
-      corePath: this.workspaceResolver.corePath(),
-      manifest: body.manifest,
+      satellitePath,
+      corePath,
+      // CWE-22: a manifest takes precedence in the use case and carries its own
+      // `satellitePath`/`corePath`, so those are pinned to the resolved ones —
+      // the client's values never reach the filesystem.
+      manifest: body.manifest ? { ...body.manifest, satellitePath, corePath } : undefined,
     });
     return response.evaluationVerdict?.outputEnvelope ?? response.result;
   }

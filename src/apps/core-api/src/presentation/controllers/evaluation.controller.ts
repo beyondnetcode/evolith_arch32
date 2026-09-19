@@ -163,17 +163,20 @@ export class EvaluationController {
 
     // Legacy path: satellite filesystem path (pre-ADR-0101). Returns the legacy verdict envelope.
     if (body.satellitePath) {
+      // CWE-22: the raw path only reaches the filesystem once the resolver has
+      // pinned it inside WORKSPACE_ROOT (and corePath to the configured Core).
+      const { satellitePath, corePath } = this.containLegacyPaths(body.satellitePath, body.corePath);
       const { evaluationVerdict } = await this.validateSatelliteUseCase.execute(
         {
-          satellitePath: body.satellitePath,
-          corePath: body.corePath,
+          satellitePath,
+          corePath,
           rulesetRefs: selectionFrom(body),
           // GT-676 — the floor the caller asked for reaches the engine on this
           // surface too, so a REST verdict is reproducible from a CLI one.
           maxSkippedFraction: body.maxSkippedFraction,
           manifest: {
-            satellitePath: body.satellitePath,
-            corePath: body.corePath,
+            satellitePath,
+            corePath,
             topology: body.topology,
             phase: body.phase,
           },
@@ -187,6 +190,27 @@ export class EvaluationController {
     throw new BadRequestException(
       'Provide `evaluationInput.files` (inline), `workspaceRef` (canonical), or `satellitePath` (legacy)',
     );
+  }
+
+  /**
+   * The legacy branch used to hand `body.satellitePath` / `body.corePath` straight
+   * to the pipeline, which reads directories under both — so an authenticated
+   * caller could point the Core at any path on the host. Both now go through the
+   * resolver's containment; an instance wired without one fails closed.
+   */
+  private containLegacyPaths(
+    satellitePath: string,
+    corePath: string | undefined,
+  ): { satellitePath: string; corePath: string } {
+    if (!this.workspaceResolver) {
+      throw new BadRequestException(
+        'Legacy `satellitePath` evaluation is not available on this Core instance; send `workspaceRef` or `evaluationInput.files`',
+      );
+    }
+    return {
+      satellitePath: this.workspaceResolver.resolveLegacyPath(satellitePath),
+      corePath: this.workspaceResolver.resolveCorePathOverride(corePath),
+    };
   }
 
   /**
@@ -209,8 +233,11 @@ export class EvaluationController {
     }
 
     // corePath resolved exactly as the existing flows do: explicit override, or
-    // the Core's configured CORE_PATH (so the Core rules are found on disk).
-    const corePath = body.corePath || this.workspaceResolver?.corePath();
+    // the Core's configured CORE_PATH (so the Core rules are found on disk). An
+    // override is honoured only where the resolver allows it (CWE-22).
+    const corePath = this.workspaceResolver
+      ? this.workspaceResolver.resolveCorePathOverride(body.corePath)
+      : undefined;
     if (!corePath) {
       throw new BadRequestException(
         'Unable to resolve corePath for inline evaluation',

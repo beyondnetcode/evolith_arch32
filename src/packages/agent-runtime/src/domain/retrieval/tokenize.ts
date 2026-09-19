@@ -55,7 +55,20 @@ const SEPARATORS = /[_\-./]+/g;
 const SEPARATOR_SPLIT = /[_\-./]+/;
 
 /** Leading/trailing separators are punctuation, not part of the word. */
-const TRIM_SEPARATORS = /^[_\-./]+|[_\-./]+$/g;
+const SEPARATOR_CHARS = new Set(['_', '-', '.', '/']);
+
+/**
+ * Char-based trim of leading/trailing separators. The former
+ * `/^[_\-./]+|[_\-./]+$/` backtracks polynomially on a long run of separators
+ * (ReDoS on the retrieval corpus, which is caller-supplied text).
+ */
+function trimSeparators(word: string): string {
+  let start = 0;
+  let end = word.length;
+  while (start < end && SEPARATOR_CHARS.has(word[start])) start += 1;
+  while (end > start && SEPARATOR_CHARS.has(word[end - 1])) end -= 1;
+  return word.slice(start, end);
+}
 
 /** Tokens shorter than this are dropped unless they contain a digit. */
 const MIN_TOKEN_LENGTH = 2;
@@ -85,7 +98,7 @@ export function tokenize(text: string): string[] {
   const out: string[] = [];
 
   for (const rawWord of text.split(WORD_SPLIT)) {
-    const word = rawWord.replace(TRIM_SEPARATORS, '');
+    const word = trimSeparators(rawWord);
     if (!word) continue;
 
     const compound = compoundForm(word);

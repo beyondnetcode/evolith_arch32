@@ -21,25 +21,25 @@
       "id": "cli-baseline",
       "status": "PASS",
       "observedAt": "2026-09-19",
-      "commit": "99b53259",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/35435224907",
-      "summary": "Re-observed 2026-09-19 on main (99b53259, the merge of #719) and GREEN. Run 35435224907 of the CLI CI pipeline shows all THIRTEEN jobs succeeding, CI Gate included: Lint and Type Check, Package Integrity, Unit Tests, E2E Tests, Architecture Validation, Evolith Core Validation, Security Audit, Secret Detection (gitleaks), Trivy Container Scan, CodeQL SAST, DAST OWASP ZAP, Winston Agentic Review and CI Gate. Why now: the four entries were taken together on 2026-08-18 and all four crossed the 0..30 day window on 2026-09-18, turning `Validate documentation` red on two Dependabot PRs whose content had nothing to do with it. Same rule as last time: aged-out evidence is re-taken against a fresh green run, not date-bumped."
+      "commit": "4d655745",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/34998373252",
+      "summary": "Re-observed 2026-09-19 against the head of develop (4d655745, pushed 2026-09-15) and GREEN. Run 34998373252 shows all THIRTEEN jobs of the CLI CI pipeline succeeding, CI Gate included: Lint and Type Check, Package Integrity, Unit Tests, E2E Tests, Architecture Validation, Evolith Core Validation, Security Audit, Secret Detection (gitleaks), Trivy Container Scan, CodeQL SAST, DAST OWASP ZAP, Winston Agentic Review and CI Gate. WHY THIS RE-OBSERVATION HAPPENED, stated plainly: the previous four entries were taken on 2026-08-18 and crossed the 30-day window on 2026-09-17, so `09-reconcile-maturity.mjs` turned `Validate documentation` red on a README-only PR (#724) whose content had nothing to do with it. Same pattern as the 2026-08-18 re-observation: the window is the point, evidence that ages out is re-taken, not extended."
     },
     {
       "id": "coverage",
       "status": "PASS",
       "observedAt": "2026-09-19",
-      "commit": "99b53259",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/35435224907",
-      "summary": "Re-observed 2026-09-19 on main (99b53259) and GREEN. The Unit Tests job of run 35435224907 succeeds with 107 suites and 1492 tests, 0 failures, and both coverage gates clear: the jest global thresholds (statements 80 / lines 80 / functions 75 / branches 75) with Statements 87.22% (5450/6248), Lines 87.54% (5116/5844), Functions 84.79% (853/1006) and Branches 75.73% (2382/3145), plus the workflow statement gate at 80%. Suite count, test count and branch total all grew since the previous observation (106 suites / 1486 tests, 2376/3139 branches), so the margin over the branch threshold is still being held while the corpus grows, not by shrinking what is measured."
+      "commit": "4d655745",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/34998373252",
+      "summary": "Re-observed 2026-09-19 against the head of develop (4d655745, pushed 2026-09-15) and GREEN. The Unit Tests job of run 34998373252 succeeds with 107 suites and 1492 tests, 0 failures, and the blocking coverage gate clears: Branches 75.73% (2382/3145) against the unchanged 75% global threshold. Since the previous observation (106 suites / 1486 tests, 2376/3139 branches) the corpus grew by one suite, six tests and six branches, and the margin over the threshold moved from 75.69% to 75.73%: held while the corpus grows, not by shrinking what is measured."
     },
     {
       "id": "documentation",
       "status": "PASS",
-      "observedAt": "2026-09-16",
-      "commit": "3d0662c7",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/35125943994",
-      "summary": "Observed 2026-09-16 on 3d0662c7 (the head of #719, whose tree became main as 99b53259 with no other change) and GREEN. Run 35125943994 of Documentation Validation has both jobs succeeding -- `Validate documentation` and `Validate semantic tracking (guard)` -- so the reconciler, bilingual parity, the bilingual sync guard, the gap-board tracking guard and the derived-artifact order guard all pass on the same tree. This entry cites a run three days older than its siblings ON PURPOSE: once the window closes, every later run of this workflow is red at the `Reconcile maturity evidence` step because of the window itself (see run 35435224859 on 99b53259: the evidence and ISO rules pass, then the reconciler rejects the four aged entries), so the last green run BEFORE the window closed is the only honest observation of this claim available until this very refresh lands."
+      "observedAt": "2026-09-19",
+      "commit": "4d655745",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/34998373244",
+      "summary": "Re-observed 2026-09-19 against the head of develop (4d655745, pushed 2026-09-15) and GREEN. Run 34998373244 of Documentation Validation has both of its jobs succeeding -- 'Validate documentation' and 'Validate semantic tracking (guard)' -- so the reconciler, the bilingual parity suite and the gap-board tracking guard all pass on the same tree. That run passed at 28 days of evidence age; the same check went red four days later on PR #724 purely by the calendar, which is the 0..30 day window working as designed. All four entries are re-taken together, as on 2026-08-18."
     },
     {
       "id": "release",
@@ -47,7 +47,7 @@
       "observedAt": "2026-09-19",
       "commit": "99b53259",
       "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/35435224976",
-      "summary": "Re-observed 2026-09-19 on main (99b53259) and GREEN through the binary jobs. Run 35435224976 of the Evolith SDK CLI Release Pipeline succeeds across release-gate, build-and-test, Evolith Core Validation, package-binaries on all three platforms (linux-x64, macos-x64, win-x64), smoke-test on all three platforms and smoke-test-functional. publish-npm, upload-assets and failure-notification are `skipped` because this run is a push to main, not a `cli-v*` tag. Second consecutive observation with the packaged binaries passing `--help` on every platform, which until GT-707 had never happened."
+      "summary": "Re-observed 2026-09-19 on the head of main (99b53259, push of 2026-09-19) and GREEN THROUGH THE BINARY JOBS AGAIN. Run 35435224976 of the Evolith SDK CLI Release Pipeline succeeds across release-gate, build-and-test, Evolith Core Validation, package-binaries on all three platforms, smoke-test on all three platforms and smoke-test-functional. This is the second consecutive observation in which the packaged binaries answer `--help` (the ERR_REQUIRE_ESM regression closed by GT-707 has not returned). publish-npm, upload-assets and failure-notification are `skipped` because this run is a push to main, not a `cli-v*` tag (PR #708 moved the CLI release trigger to `cli-v*` tags)."
     }
   ],
   "externalProducts": [

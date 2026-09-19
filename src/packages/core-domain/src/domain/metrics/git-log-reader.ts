@@ -1,12 +1,13 @@
 /**
  * Thin wrapper around `git log` for reading commit history.
- * Uses child_process.exec so it works without any git library dependency.
+ * Uses child_process.execFile so it works without any git library dependency
+ * and without a shell: the options travel as argv, never as a command line.
  */
 
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export interface GitCommit {
   hash: string;
@@ -38,8 +39,9 @@ export async function readGitLog(opts: GitLogOptions): Promise<GitCommit[]> {
   // format: hash|ISO-date|subject|parent1 parent2...
   const format = '%H|%aI|%s|%P';
 
-  const { stdout } = await execAsync(
-    `git log --format="${format}" --since="${since}" --max-count=${maxCount}`,
+  const { stdout } = await execFileAsync(
+    'git',
+    ['log', `--format=${format}`, `--since=${since}`, `--max-count=${maxCount}`],
     { cwd },
   );
 
@@ -66,7 +68,7 @@ export async function readGitLog(opts: GitLogOptions): Promise<GitCommit[]> {
  */
 export async function isGitRepo(cwd: string): Promise<boolean> {
   try {
-    await execAsync('git rev-parse --git-dir', { cwd });
+    await execFileAsync('git', ['rev-parse', '--git-dir'], { cwd });
     return true;
   } catch {
     return false;

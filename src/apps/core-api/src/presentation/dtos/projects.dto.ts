@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsBoolean, MinLength } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, Matches, MinLength } from 'class-validator';
 
 export class InitProjectDto {
   @ApiProperty({ description: 'Opaque workspace reference issued by the Tracker BFF', example: 'op_01j7wq8e2n' })
@@ -7,9 +7,12 @@ export class InitProjectDto {
   @MinLength(1)
   workspaceRef!: string;
 
-  @ApiProperty({ description: 'Project name', example: 'my-service' })
+  @ApiProperty({ description: 'Project name — becomes the directory under the workspace, so one path segment only', example: 'my-service' })
   @IsString()
   @MinLength(1)
+  @Matches(/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/, {
+    message: 'name must be a single directory name: letters, digits, ".", "-" or "_" (cannot start with "." or "-")',
+  })
   name!: string;
 
   @ApiProperty({ description: 'Project type', example: 'nestjs' })

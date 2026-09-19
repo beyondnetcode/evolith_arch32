@@ -107,7 +107,10 @@ const configParser = {
   stringify: (data: unknown) => JSON.stringify(data),
 };
 const rulesetRepo = { getRuleset: async () => null, listRulesets: async () => [] } as any;
-const workspaceResolver = { corePath: () => CORE_PATH } as any;
+const workspaceResolver = {
+  corePath: () => CORE_PATH,
+  resolveCorePathOverride: (raw?: string) => raw ?? CORE_PATH,
+} as any;
 
 function buildController(fallback: IFileSystem) {
   return new EvaluationController(

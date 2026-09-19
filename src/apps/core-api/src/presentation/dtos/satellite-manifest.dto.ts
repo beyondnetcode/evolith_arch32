@@ -99,9 +99,13 @@ export class EvaluationFactsDto {
 }
 
 export class SatelliteManifestDto {
-  @ApiProperty({ description: 'Filesystem path to the satellite repository', example: '/path/to/satellite' })
+  @ApiPropertyOptional({
+    description: 'Ignored on the REST surface: the satellite path is derived from `workspaceRef` (kept optional for wire compatibility)',
+    example: '/path/to/satellite',
+  })
+  @IsOptional()
   @IsString()
-  satellitePath!: string;
+  satellitePath?: string;
 
   @ApiPropertyOptional({ description: 'Optional explicit path to the Evolith Core repository' })
   @IsOptional()

@@ -31,6 +31,16 @@ describe('config tools', () => {
     expect(reread.value).toBe('phase-1');
   });
 
+  it('refuses a key path that walks onto Object.prototype (CWE-1321)', async () => {
+    const set = byName(tools, 'evolith-config-set');
+    await expect(set.execute({ key: '__proto__.polluted', value: 'yes', dir })).rejects.toThrow(/not an allowed segment/);
+    await expect(set.execute({ key: 'product.constructor.prototype.polluted', value: 'yes', dir })).rejects.toThrow(/not an allowed segment/);
+    await expect(set.execute({ key: 'product..phase', value: 'x', dir })).rejects.toThrow(/empty segment/);
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+    // The file is untouched by a refused write.
+    expect(await fsExtra.readFile(path.join(dir, 'evolith.yaml'), 'utf-8')).toBe('product:\n  name: demo\n  phase: phase-0\n');
+  });
+
   it('throws when evolith.yaml is absent', async () => {
     const empty = await fsExtra.mkdtemp(path.join(os.tmpdir(), 'evolith-empty-'));
     try {

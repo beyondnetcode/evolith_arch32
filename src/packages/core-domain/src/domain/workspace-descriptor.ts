@@ -48,8 +48,15 @@ export function enumerateWorkspaceProjects(doc: unknown): WorkspaceProject[] {
     .map(p => ({ name: p.name, path: normalizeProjectPath(p.path) }));
 }
 
+/** Char-based trim of trailing `/` — no `\/+$` regex, which backtracks polynomially (ReDoS). */
+function stripTrailingSlashes(s: string): string {
+  let end = s.length;
+  while (end > 0 && s.charCodeAt(end - 1) === 47 /* '/' */) end -= 1;
+  return s.slice(0, end);
+}
+
 /** Strip a leading `./` and any trailing slash; empty/root normalizes to '.'. */
 export function normalizeProjectPath(rawPath: string): string {
-  const trimmed = rawPath.replace(/^\.\//, '').replace(/\/+$/, '');
+  const trimmed = stripTrailingSlashes(rawPath.startsWith('./') ? rawPath.slice(2) : rawPath);
   return trimmed.length === 0 ? '.' : trimmed;
 }

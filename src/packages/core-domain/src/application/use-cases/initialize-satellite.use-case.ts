@@ -157,9 +157,14 @@ export class InitializeSatelliteUseCase {
     };
   }
 
-  /** Parse owner and repo name from a GitHub URL such as https://github.com/owner/repo */
+  /**
+   * Parse owner and repo name from a GitHub URL such as https://github.com/owner/repo
+   * (also `git@github.com:owner/repo.git` and `ssh://git@github.com/owner/repo`).
+   * Anchored at the start so `github.com` has to BE the host, not merely appear
+   * in the string, and every quantifier is possessive-shaped (no overlap → linear).
+   */
   private parseRepoUrl(url: string): { owner: string; name: string } {
-    const match = url.match(/github\.com[/:]([^/]+)\/([^/.]+?)(?:\.git)?$/);
+    const match = url.trim().match(/^(?:[a-z][a-z0-9+.-]*:\/\/)?(?:[^@/\s]+@)?github\.com[/:]([^/\s]+)\/([^/.\s]+)(?:\.git)?\/?$/i);
     if (!match) {
       throw new Error(`Cannot parse GitHub URL: ${url}`);
     }

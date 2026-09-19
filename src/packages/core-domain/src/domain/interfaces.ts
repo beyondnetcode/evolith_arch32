@@ -63,8 +63,20 @@ export interface PlatformCheck {
 }
 
 export interface ICommandExecutor {
+  /**
+   * @deprecated Runs through a shell: any caller-controlled fragment in
+   * `command` is an injection vector (CWE-78). Prefer {@link executeFile}.
+   */
   execute(command: string, cwd?: string): Promise<CommandResult>;
+  /** @deprecated Shell-backed like {@link execute}; prefer {@link executeFileOrThrow}. */
   executeOrThrow(command: string, cwd?: string): Promise<string>;
+  /**
+   * Shell-free execution: `args` reach the binary verbatim, so metacharacters
+   * in caller-supplied values are data, never syntax.
+   */
+  executeFile(file: string, args: string[], cwd?: string): Promise<CommandResult>;
+  /** {@link executeFile} that throws on a non-zero exit instead of returning it. */
+  executeFileOrThrow(file: string, args: string[], cwd?: string): Promise<string>;
   checkTool(name: string, versionCommand: string): Promise<PlatformCheck>;
 }
 
@@ -182,11 +194,6 @@ export interface PhaseTransition {
   timestamp: string;
 }
 
-export interface ICommandExecutor {
-  execute(command: string, cwd?: string): Promise<CommandResult>;
-  executeOrThrow(command: string, cwd?: string): Promise<string>;
-  checkTool(name: string, versionCommand: string): Promise<PlatformCheck>;
-}
 
 export interface ICatalogLoader {
   loadRuntimeCatalog(): Runtime[];

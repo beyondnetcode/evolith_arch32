@@ -5,6 +5,24 @@ import { McpTool } from '../mcp/tool.interface';
 import { sanitizePathInput } from '../utils/path-security';
 
 /**
+ * Segments that would walk the key path onto `Object.prototype` instead of into
+ * the document (CWE-1321). `evolith.yaml` never legitimately holds them.
+ */
+const FORBIDDEN_KEY_SEGMENTS = new Set(['__proto__', 'constructor', 'prototype']);
+
+/** Split a dot-path into segments, refusing empties and prototype walkers. */
+function keySegments(key: string): string[] {
+  const segments = key.split('.');
+  for (const segment of segments) {
+    if (segment.length === 0) throw new Error(`Invalid key "${key}": empty segment`);
+    if (FORBIDDEN_KEY_SEGMENTS.has(segment)) {
+      throw new Error(`Invalid key "${key}": "${segment}" is not an allowed segment`);
+    }
+  }
+  return segments;
+}
+
+/**
  * Config Tool Service — reads/writes evolith.yaml.
  * Converted from procedural module to class for testability (SRP).
  */
@@ -21,7 +39,7 @@ export class ConfigToolService {
 
     const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
     let value: unknown = config;
-    for (const k of key.split('.')) {
+    for (const k of keySegments(key)) {
       value = (value as Record<string, unknown>)?.[k];
     }
     return { key, value: value ?? null };
@@ -39,10 +57,13 @@ export class ConfigToolService {
     if (!(await fs.pathExists(configPath))) throw new Error('evolith.yaml not found');
 
     const config = yaml.parse(await fs.readFile(configPath, 'utf-8')) ?? {};
-    const keys = key.split('.');
+    const keys = keySegments(key);
     let target: Record<string, unknown> = config;
     for (let i = 0; i < keys.length - 1; i++) {
-      if (!target[keys[i]]) target[keys[i]] = {};
+      // Only descend into an OWN plain object; a scalar or an inherited property
+      // is replaced, never written through.
+      const next = Object.prototype.hasOwnProperty.call(target, keys[i]) ? target[keys[i]] : undefined;
+      if (typeof next !== 'object' || next === null || Array.isArray(next)) target[keys[i]] = {};
       target = target[keys[i]] as Record<string, unknown>;
     }
     target[keys[keys.length - 1]] = value;

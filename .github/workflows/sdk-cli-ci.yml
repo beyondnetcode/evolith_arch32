@@ -50,6 +50,11 @@ env:
   # Bumping it is a reviewed change; guard 60 re-derives nothing from it.
   GITLEAKS_VERSION: '8.30.1'
 
+# Scorecard Token-Permissions: the default GITHUB_TOKEN is read-only for every job;
+# a job that has to write declares exactly what it writes on itself.
+permissions:
+  contents: read
+
 jobs:
   # ============================================
   # JOB 1: Evolith Core Validation

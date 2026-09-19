@@ -14,6 +14,13 @@
 
 import type { Violation } from './violation';
 
+/** Char-based trim of trailing `/` — no `\/+$` regex, which backtracks polynomially (ReDoS). */
+function stripTrailingSlashes(s: string): string {
+  let end = s.length;
+  while (end > 0 && s.charCodeAt(end - 1) === 47 /* '/' */) end -= 1;
+  return s.slice(0, end);
+}
+
 /** A component's ownership, normalized across sources. */
 export interface OwnershipEntry {
   /** Component/service name. */
@@ -28,7 +35,8 @@ export interface OwnershipEntry {
 
 /** Normalize a path for prefix comparison (posix separators, strip `./` and trailing `/`). */
 function normalizePath(p: string): string {
-  return p.replace(/\\/g, '/').replace(/^\.\//, '').replace(/\/+$/, '');
+  const posix = p.replace(/\\/g, '/');
+  return stripTrailingSlashes(posix.startsWith('./') ? posix.slice(2) : posix);
 }
 
 /**

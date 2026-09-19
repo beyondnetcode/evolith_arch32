@@ -78,6 +78,11 @@ defaults:
   run:
     shell: bash
 
+# Scorecard Token-Permissions: the default GITHUB_TOKEN is read-only for every job;
+# a job that has to write declares exactly what it writes on itself.
+permissions:
+  contents: read
+
 jobs:
   k6-load:
     name: k6 load profile (thresholds + published metrics)

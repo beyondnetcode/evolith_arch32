@@ -22,15 +22,28 @@ on:
   # scanner filtered to `src/sdk/cli/**` cannot see a change to `src/packages/**`
   # or `src/apps/**`, which is most of the code in this repository.
   #
-  # The `push` trigger below keeps its filter on purpose: pushes are not gated by
+  # The `push` trigger below keeps a filter on purpose: pushes are not gated by
   # required checks, so no deadlock is possible there and the CI minutes are worth
-  # saving.
+  # saving on docs-only changes. The filter now spans every tree CodeQL scans
+  # (GT-713) — a push that changes no code still skips the run.
   pull_request:
     branches: [main, develop]
   push:
     branches: [main, develop]
     paths:
       - 'src/sdk/cli/**'
+      # GT-713: the `CodeQL SAST` job below is the ONLY producer of the CodeQL
+      # analysis for `refs/heads/main` (category `/language:javascript-typescript`,
+      # the one the Security tab's alerts are keyed to). A pull-request run is
+      # diff-informed and does not update the branch's alerts, and the default
+      # "Code Quality" setup is a different suite. With the filter limited to the
+      # CLI tree, promotion 19d736da (2026-09-19, changes under src/packages and
+      # src/apps only) landed on main with no analysis at all: the tab kept
+      # reporting alerts on code that no longer existed until a manual
+      # `gh workflow run sdk-cli-ci.yml --ref main`. Every path CodeQL scans
+      # therefore has to be a path that triggers this workflow on push.
+      - 'src/packages/**'
+      - 'src/apps/**'
       - '.harness/**'
       # package.json / package-lock.json: this pipeline installs with `npm ci`,
       # so a lock desync breaks every job here -- and until now neither file

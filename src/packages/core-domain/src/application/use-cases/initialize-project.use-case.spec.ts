@@ -83,6 +83,11 @@ describe('InitializeProjectUseCase · the name is a directory, not a path (CWE-2
     },
   );
 
+  it('names the .csproj after the validated directory, never a second read of input.name', async () => {
+    const { fs, root } = await init({ name: 'Billing.Api', runtime: 'dotnet' });
+    expect(fs.files.has(`${root}/Billing.Api.csproj`)).toBe(true);
+  });
+
   it('keeps accepting the dotted and dashed names npm does', async () => {
     const { root } = await init({ name: 'acme.billing-api_v2' });
     expect(root).toBe('/tmp/acme.billing-api_v2');

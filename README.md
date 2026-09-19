@@ -25,7 +25,7 @@ And it is not only a linter: **the rules are tied to the product's SDLC phase.**
 
 It is for engineering teams that want their architecture decisions enforced in CI rather than reviewed by hand, for platform teams blocking non-conformant artifacts before production, and for AI agents that need to validate their own output against the same rules.
 
-[Try it](#try-it-in-two-minutes) · [Four terms](#four-terms-you-need) · [In CI](#in-ci) · [What is inside](#what-is-inside) · [What it is not](#what-it-is-not) · [Documentation](#documentation) · [Interactive atlas](https://beyondnetcode.github.io/evolith_arch32/)
+[Try it](#try-it-in-two-minutes) · [Four terms](#four-terms-you-need) · [In CI](#in-ci) · [What is inside](#what-is-inside) · [How it compares](#how-it-compares) · [What it is not](#what-it-is-not) · [Documentation](#documentation) · [Interactive atlas](https://beyondnetcode.github.io/evolith_arch32/)
 
 ---
 
@@ -92,6 +92,26 @@ For an AI agent, the same engine as an MCP server over stdio (Node ≥ 20):
 How many rules, packs and ADRs your installation loads is printed by `evolith rulesets`; the tree's counts are measured by CI on every PR and published in the [corpus inventory](./reference/core/control-center/maturity-reports/inventory-summary.md).
 
 <div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Open the interactive diagram"><img src="./reference/core/sdlc/assets/master-view.svg" alt="How the CLI, the Core and the five SDLC phases fit together" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Open the interactive viewer</a></b> — drag to pan, scroll to zoom</sub></div>
+
+---
+
+## How it compares
+
+The tools people reach for first check different things, and the differences are in the rows, not in the adjectives. Verified against each tool's own documentation on 2026-09-19; corrections welcome as a PR.
+
+| | ArchUnit | dependency-cruiser | Conftest | Evolith |
+|---|---|---|---|---|
+| **What it reads** | JVM bytecode: classes, packages, layers | The JS/TS module import graph | Structured config files (YAML, JSON, HCL, Dockerfile…) | The repository around the code: layout, workflows, manifests, ADRs — **not** the AST |
+| **Rule language** | Java fluent DSL, run as unit tests | JSON/JS config (`forbidden` / `allowed`) | Rego | Rego, compiled to Wasm, in JSON packs |
+| **Where rules live** | In the code base, per repository | In the repository (`.dependency-cruiser.js`) | A policy directory; shareable with `conftest pull` (git, OCI) | A library outside the repositories, adopted per repository with `--select` |
+| **A rule that did not evaluate** | Fails a rule whose `should` got an empty set (`failOnEmptyShould`, on by default) | `severity: ignore` skips it silently; no other outcome exists | No outcome: an undefined `deny` is a pass | `skipped` is a first-class verdict, counted next to `passed` and `failed`; a **blocking** `skipped` fails the run |
+| **Exit code** | A failing unit test | The number of `error` violations | `1` on failure (`0`/`1`/`2` with `--fail-on-warn`) | `0` pass · `1` the tool failed · `2` the gate blocked · `3` invalid invocation |
+| **Surfaces** | Java tests | CLI (+ dependency graphs) | CLI | CLI · GitHub Action · MCP server · REST API |
+| **Rules derived from ADRs** | — | — | — | Yes: `evolith adr create`, and many packs are derived from decisions |
+| **Language scope** | JVM | JavaScript / TypeScript | Any structured file | Any repository for structural, CI/CD and ADR rules; Node/TypeScript for the dependency and linter rules |
+| **License** | Apache-2.0 | MIT | Apache-2.0 | MIT |
+
+They are complements, not substitutes: ArchUnit and dependency-cruiser see *inside* the code, Conftest sees one file at a time, Evolith sees the repository as a governed unit and counts what it could not decide. Running Evolith next to one of them is the intended setup.
 
 ---
 

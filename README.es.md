@@ -25,7 +25,7 @@ Y no es solo un linter: **las reglas van atadas a la fase SDLC del producto.** E
 
 Es para equipos que quieren sus decisiones de arquitectura aplicadas en CI y no revisadas a mano, para plataformas que bloquean artefactos no conformes antes de producción, y para agentes de IA que necesitan validar su propia salida contra las mismas reglas.
 
-[Pruébalo](#pruébalo-en-dos-minutos) · [Cuatro términos](#cuatro-términos-que-necesitas) · [En CI](#en-ci) · [Qué hay dentro](#qué-hay-dentro) · [Qué no es](#qué-no-es) · [Documentación](#documentación) · [Atlas interactivo](https://beyondnetcode.github.io/evolith_arch32/)
+[Pruébalo](#pruébalo-en-dos-minutos) · [Cuatro términos](#cuatro-términos-que-necesitas) · [En CI](#en-ci) · [Qué hay dentro](#qué-hay-dentro) · [Cómo se compara](#cómo-se-compara) · [Qué no es](#qué-no-es) · [Documentación](#documentación) · [Atlas interactivo](https://beyondnetcode.github.io/evolith_arch32/)
 
 ---
 
@@ -92,6 +92,26 @@ Para un agente de IA, el mismo motor como servidor MCP sobre stdio (Node ≥ 20)
 Cuántas reglas, packs y ADRs carga tu instalación lo imprime `evolith rulesets`; los conteos del árbol los mide CI en cada PR y los publica el [inventario del corpus](./reference/core/control-center/maturity-reports/inventory-summary.es.md).
 
 <div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Abrir el diagrama interactivo"><img src="./reference/core/sdlc/assets/master-view.svg" alt="Cómo encajan CLI, Core y las cinco fases del SDLC" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Abrir visor interactivo</a></b> — arrastra para desplazar, rueda para zoom</sub></div>
+
+---
+
+## Cómo se compara
+
+Las herramientas a las que uno acude primero comprueban cosas distintas, y las diferencias están en las filas, no en los adjetivos. Verificado contra la documentación de cada herramienta el 2026-09-19; las correcciones son bienvenidas como PR.
+
+| | ArchUnit | dependency-cruiser | Conftest | Evolith |
+|---|---|---|---|---|
+| **Qué lee** | Bytecode de la JVM: clases, paquetes, capas | El grafo de imports de módulos JS/TS | Ficheros de configuración estructurados (YAML, JSON, HCL, Dockerfile…) | El repositorio alrededor del código: layout, workflows, manifiestos, ADRs — **no** el AST |
+| **Lenguaje de reglas** | DSL fluido en Java, ejecutado como tests unitarios | Configuración JSON/JS (`forbidden` / `allowed`) | Rego | Rego, compilado a Wasm, en packs JSON |
+| **Dónde viven las reglas** | En el código, por repositorio | En el repositorio (`.dependency-cruiser.js`) | Un directorio de políticas; compartible con `conftest pull` (git, OCI) | Una biblioteca fuera de los repositorios, adoptada por repositorio con `--select` |
+| **Una regla que no se evaluó** | Falla la regla cuyo `should` recibió un conjunto vacío (`failOnEmptyShould`, activo por defecto) | `severity: ignore` la omite en silencio; no existe otro resultado | Sin resultado: un `deny` indefinido es un aprobado | `skipped` es un veredicto de primera clase, contado junto a `passed` y `failed`; un `skipped` **bloqueante** hace fallar la ejecución |
+| **Código de salida** | Un test unitario que falla | El número de violaciones `error` | `1` si falla (`0`/`1`/`2` con `--fail-on-warn`) | `0` pasa · `1` falló la herramienta · `2` el gate bloqueó · `3` invocación inválida |
+| **Superficies** | Tests Java | CLI (+ grafos de dependencias) | CLI | CLI · GitHub Action · servidor MCP · API REST |
+| **Reglas derivadas de ADRs** | — | — | — | Sí: `evolith adr create`, y muchos packs se derivan de decisiones |
+| **Alcance de lenguaje** | JVM | JavaScript / TypeScript | Cualquier fichero estructurado | Cualquier repositorio para reglas estructurales, de CI/CD y de ADR; Node/TypeScript para las de dependencias y linters |
+| **Licencia** | Apache-2.0 | MIT | Apache-2.0 | MIT |
+
+Son complementos, no sustitutos: ArchUnit y dependency-cruiser ven *dentro* del código, Conftest ve un fichero cada vez, Evolith ve el repositorio como unidad gobernada y cuenta lo que no pudo decidir. Ejecutar Evolith junto a una de ellas es la configuración prevista.
 
 ---
 

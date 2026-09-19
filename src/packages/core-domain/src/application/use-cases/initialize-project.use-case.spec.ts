@@ -87,6 +87,25 @@ describe('InitializeProjectUseCase · the name is a directory, not a path (CWE-2
     const { root } = await init({ name: 'acme.billing-api_v2' });
     expect(root).toBe('/tmp/acme.billing-api_v2');
   });
+
+  it('scaffolds with the name the guard checked, even if the request object changes its answer afterwards', async () => {
+    // The guard reads `input.name` once. Every later read must see the SAME string,
+    // not a fresh read of a caller-controlled object: a getter that answers "fine"
+    // to the guard and "../escape" to the scaffolder is the shape of a TOCTOU, and
+    // it is also the flow CodeQL reported (alert #226: `${projectDir}/${input.name}.csproj`).
+    let reads = 0;
+    const shifty = Object.defineProperty({ ...INPUT, runtime: 'dotnet' }, 'name', {
+      enumerable: true,
+      get: () => (reads++ === 0 ? 'honest' : '../escape'),
+    });
+    const fs = memoryFs();
+    const result = await new InitializeProjectUseCase(fs, catalogLoader).execute(shifty as any, '/tmp');
+    expect(result.success).toBe(true);
+    const written = [...fs.files.keys()];
+    expect(written).toContain('/tmp/honest/honest.csproj');
+    expect(written.some((f) => f.includes('..'))).toBe(false);
+    expect(result.artifacts.every((a) => a.startsWith('honest/'))).toBe(true);
+  });
 });
 
 describe('InitializeProjectUseCase · GIT-08 — the scaffold enforces what it mandates', () => {

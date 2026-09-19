@@ -9,8 +9,19 @@ updates:
       # Un major por paquete rompe los 5 workspaces (ver PRs #720 y #721, cerrados).
       - dependency-name: "@nestjs/*"
         update-types: ["version-update:semver-major"]
+      # nestjs-pino 5.x exige Node >= 22.12 y el repo corre en Node 20 por diseño
+      # (engines raíz `>=20 <21`, imágenes node:20-alpine). Es una migración de
+      # runtime, no un bump (ver PR #727, cerrado).
+      - dependency-name: "nestjs-pino"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      # init, autobuild, analyze y upload-sarif tienen que moverse JUNTOS: analyze
+      # rechaza la configuración escrita por un init de otra versión (ver PRs #731
+      # y #733, cerrados). Dependabot los trata como dependencias distintas.
+      codeql-action:
+        patterns: ["github/codeql-action*"]

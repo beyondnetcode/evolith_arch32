@@ -75,7 +75,13 @@ function describeErrors(errors: readonly ErrorObject[]): string {
  */
 export class RuleOverridesLoader {
   private readonly ajv: Ajv;
-  private readonly validators = new Map<string, ValidateFunction>();
+  /**
+   * One compiled validator per corpus root. Kept as a plain pair rather than a
+   * map keyed by the caller's `corePath`: a function fetched by a user-controlled
+   * key and then invoked is the shape CodeQL reads as a dynamic method call, and
+   * a loader sees one corpus per process anyway.
+   */
+  private compiled?: { readonly corePath: string; readonly validate: ValidateFunction };
 
   constructor(private readonly fs: IFileSystem) {
     this.ajv = new Ajv({ allErrors: true, strict: false });
@@ -131,8 +137,7 @@ export class RuleOverridesLoader {
   }
 
   private async validatorFor(corePath: string): Promise<ValidateFunction> {
-    const cached = this.validators.get(corePath);
-    if (cached) return cached;
+    if (this.compiled && this.compiled.corePath === corePath) return this.compiled.validate;
 
     const { rulesetsRoot, probes } = await probeRulesetsLocation(
       corePath,
@@ -162,8 +167,8 @@ export class RuleOverridesLoader {
       );
     }
 
-    const compiled = this.ajv.compile(schema as Record<string, unknown>);
-    this.validators.set(corePath, compiled);
-    return compiled;
+    const validate = this.ajv.compile(schema as Record<string, unknown>);
+    this.compiled = { corePath, validate };
+    return validate;
   }
 }

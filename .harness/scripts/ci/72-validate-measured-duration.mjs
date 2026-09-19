@@ -122,9 +122,12 @@ export function scanTree(root) {
   return { scanned: files.length, findings };
 }
 
+/** The built CLI entry point, relative to the repo root. Built, not written: it only exists after `npm run build`. */
+export const CLI_ENTRY_SEGMENTS = Object.freeze(['src', 'sdk', 'cli', 'dist', 'main.js']);
+
 /** Where the built CLI entry point lives, if it has been built. */
 export function cliEntry(root) {
-  const entry = join(root, 'src', 'sdk', 'cli', 'dist', 'main.js');
+  const entry = join(root, ...CLI_ENTRY_SEGMENTS);
   return existsSync(entry) && statSync(entry).isFile() ? entry : null;
 }
 
@@ -196,10 +199,10 @@ function main() {
   const entry = cliEntry(root);
   if (!entry) {
     if (allowUnbuilt) {
-      console.log('⚠ executed: CLI not built (src/sdk/cli/dist/main.js missing) — skipped under --allow-unbuilt');
+      console.log(`⚠ executed: CLI not built (${CLI_ENTRY_SEGMENTS.join('/')} missing) — skipped under --allow-unbuilt`);
     } else {
       failed = true;
-      console.error('✗ executed: src/sdk/cli/dist/main.js is missing. Build the CLI first, or pass --allow-unbuilt to run the static half only.');
+      console.error(`✗ executed: ${CLI_ENTRY_SEGMENTS.join('/')} is missing. Build the CLI first, or pass --allow-unbuilt to run the static half only.`);
     }
   } else {
     const probe = probeCli(root, entry);

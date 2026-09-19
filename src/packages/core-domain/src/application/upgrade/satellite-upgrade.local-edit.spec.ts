@@ -143,7 +143,8 @@ describe('GT-673: a tenant edit to a scaffolded file survives `evolith upgrade`'
 
     const aclRelative = path.join('rulesets', 'acl', 'anti-corruption-layer.rules.json');
     const aclFile = path.join(satellitePath, aclRelative);
-    expect(fs.existsSync(aclFile)).toBe(true);
+    // Read, not exists-then-write: init must have scaffolded the Core's content here.
+    expect(JSON.parse(await fsp.readFile(aclFile, 'utf8'))).toMatchObject({ version: '1.0.0' });
 
     // The tenant tightens the scaffolded ruleset.
     const tenantEdit = JSON.stringify({ version: '1.0.0', principles: ['no-shared-db'], maxCoupling: 2 }, null, 2);

@@ -715,7 +715,6 @@ describe('DiskRulesetRepository — non-corpus document kinds (GT-649)', () => {
  * accepted and discarded looks like configuration and is not.
  */
 describe('DiskRulesetRepository — tenant pack overrides (GT-678)', () => {
-  const nodeFs = new NodeFileSystemProvider().createFileSystem();
   const REAL_SCHEMA_PATH = nodePath.resolve(
     __dirname,
     '..',

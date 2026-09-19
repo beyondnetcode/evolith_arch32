@@ -21,6 +21,8 @@ Evolith es un linter de arquitectura para CI. Lee tu repositorio —estructura, 
 
 Lo que lo distingue de otros linters: **también cuenta las reglas que no pudo evaluar.** Una regla bloqueante que no llegó a ejecutarse hace fallar el PR igual que una que falló. Cobertura y cumplimiento nunca se pintan del mismo verde.
 
+Y no es solo un linter: **las reglas van atadas a la fase SDLC del producto.** Evolith sabe en qué fase está un producto (Discovery → Design → Construction → QA → Delivery), evalúa los controles de esa fase (`evolith gate evaluate --phase`) y bloquea el paso a la siguiente hasta que se cumplen (`evolith phase advance`), dejando evidencia legible por máquina de cada transición. Las decisiones de arquitectura viven en el mismo ciclo: `evolith adr create` las redacta y muchas reglas se derivan de ellas.
+
 Es para equipos que quieren sus decisiones de arquitectura aplicadas en CI y no revisadas a mano, para plataformas que bloquean artefactos no conformes antes de producción, y para agentes de IA que necesitan validar su propia salida contra las mismas reglas.
 
 [Pruébalo](#pruébalo-en-dos-minutos) · [Cuatro términos](#cuatro-términos-que-necesitas) · [En CI](#en-ci) · [Qué hay dentro](#qué-hay-dentro) · [Qué no es](#qué-no-es) · [Documentación](#documentación) · [Atlas interactivo](https://beyondnetcode.github.io/evolith_arch32/)

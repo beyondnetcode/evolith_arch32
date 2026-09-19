@@ -147,7 +147,7 @@ jobs:
       - name: Self-test for the inventory generator
         run: node --test .harness/scripts/ci/07-generate-inventories.test.mjs
 
-      # 21 cases over `09-reconcile-maturity.mjs`, including the GT-576 rule that a
+      # 24 cases over `09-reconcile-maturity.mjs`, including the GT-576 rule that a
       # capability may not be marked Validated on an ADR citation alone and the GT-596
       # ISO/IEC 33020 threshold rule. Both were closed with "ships with a negative
       # self-test" as the evidence; the self-test ran nowhere.

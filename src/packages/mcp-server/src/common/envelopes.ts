@@ -127,5 +127,12 @@ export function toErrorEnvelope(err: unknown, meta: MetaInput): ErrorEnvelope {
   if (err instanceof Error && err.name === 'RulesetsNotFoundError') {
     return failure(ErrorCodes.RULESET_NOT_FOUND, message, meta);
   }
+  // GT-678: a satellite's rule-overrides document that is missing, malformed or
+  // off-schema is the caller's input being wrong. The CLI exits 3 with
+  // SCHEMA_INVALID and REST answers 422 with the same code; matched by name here
+  // for the same reason as above.
+  if (err instanceof Error && err.name === 'RuleOverridesInvalidError') {
+    return failure(ErrorCodes.SCHEMA_INVALID, message, meta);
+  }
   return failure(ErrorCodes.INTERNAL_ERROR, message, meta);
 }

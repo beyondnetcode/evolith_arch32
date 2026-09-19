@@ -23,7 +23,7 @@
     },
     "overridesRef": {
       "type": "string",
-      "description": "Relative path to the tenant-override.json file"
+      "description": "Relative path to the tenant's rule-overrides document (rule-overrides.schema.json). Informational: the document a run reads is the one evolith.yaml names in spec.rulesets.overrides (GT-678)."
     },
     "contacts": {
       "type": "array",

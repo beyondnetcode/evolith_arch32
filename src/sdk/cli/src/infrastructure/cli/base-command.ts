@@ -68,11 +68,16 @@ export abstract class BaseEvolithCommand extends CommandRunner {
       // Classify a missing ruleset corpus consistently across every command
       // (and with MCP/REST) instead of collapsing it to INTERNAL_ERROR. Matched
       // by name to avoid importing the infra error type into this base class.
+      // GT-678: an invalid rule-overrides document is SCHEMA_INVALID on every
+      // surface (MCP and REST match the same name), so a consumer reading the
+      // envelope sees the same code whichever interface it asked.
       const code = carriesCliExitCode(error) && error.envelopeErrorCode
         ? error.envelopeErrorCode
         : error instanceof Error && error.name === 'RulesetsNotFoundError'
           ? 'RULESET_NOT_FOUND'
-          : 'INTERNAL_ERROR';
+          : error instanceof Error && error.name === 'RuleOverridesInvalidError'
+            ? 'SCHEMA_INVALID'
+            : 'INTERNAL_ERROR';
       console.log(JSON.stringify(createErrorEnvelope(code as ErrorCode, message, meta), null, 2));
       // In JSON mode, emit envelope and set exit code; don't re-throw
       setExitCode(exitCode);

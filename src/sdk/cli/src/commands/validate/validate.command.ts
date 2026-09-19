@@ -575,6 +575,8 @@ export class ValidateCommand extends BaseEvolithCommand {
         // the tenant selected those rules or the Core evaluated all 402 of its
         // own opinions, and those are different facts.
         selection: result.selection,
+        // GT-678 — and so do the per-rule softenings, for the same reason.
+        overrides: result.overrides,
         coreRef: result.coreRef,
         timestamp: result.timestamp,
       };
@@ -748,6 +750,28 @@ export class ValidateCommand extends BaseEvolithCommand {
         `Scope: no selection — the whole corpus was evaluated (${selection.corpusTotal} rule(s)), which is this ` +
         "Core's PROPOSAL, not a tenant choice. Set `select` in the profile or pass " +
         '`--select` to narrow it; `evolith rulesets` lists what is available.',
+      );
+    }
+    // GT-678 — the SOFTENINGS, next to the scope: a reader looking at a green
+    // report is entitled to see, on the same screen, that ACL-02 was waived
+    // from MUST to SHOULD by a named approver until a named date. Silence here
+    // would be the report hiding the one thing that changed its verdict.
+    const overrides = result.overrides;
+    if (overrides && overrides.applied.length > 0) {
+      this.promptService.showInfo(
+        `Overrides: ${overrides.applied.length} applied` +
+        (overrides.source ? ` from ${overrides.source}` : '') + ' — ' +
+        overrides.applied
+          .map(a => `${a.ruleId} ${a.field} ${String(a.from)} -> ${String(a.to)}` +
+            (a.approvedBy ? ` (approved by ${a.approvedBy}${a.expiresOn ? `, until ${a.expiresOn}` : ''})` : ''))
+          .join('; '),
+      );
+    }
+    if (overrides && overrides.rejected.length > 0) {
+      this.promptService.showWarning(
+        `  ${overrides.rejected.length} override(s) NOT honoured: ` +
+        overrides.rejected.map(r => `${r.ruleId} [${r.code}]`).join(', ') +
+        ' — see the OVR-* issues above.',
       );
     }
     if (skipped > 0) {

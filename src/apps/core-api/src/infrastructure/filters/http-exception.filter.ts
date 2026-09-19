@@ -72,6 +72,15 @@ const EXCEPTION_MATCHERS: ExceptionMatcher[] = [
     getDomainCode: () => 'RULESET_NOT_FOUND',
   },
   {
+    // GT-678: the satellite's `spec.rulesets.overrides` document is the
+    // caller's input; one that is missing, malformed or off-schema is 422 with
+    // SCHEMA_INVALID, the code the CLI (exit 3) and MCP report for it.
+    match: (e) => e.name === 'RuleOverridesInvalidError',
+    getStatus: () => HttpStatus.UNPROCESSABLE_ENTITY,
+    getTitle: () => 'Rule Overrides Invalid',
+    getDomainCode: () => 'SCHEMA_INVALID',
+  },
+  {
     match: (e) => e.message.includes('not found') || e.message.includes('does not exist'),
     getStatus: () => HttpStatus.NOT_FOUND,
     getTitle: () => 'Not Found',

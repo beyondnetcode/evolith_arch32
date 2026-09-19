@@ -146,6 +146,21 @@ describe('BaseEvolithCommand', () => {
       expect(envelope.error.message).toBe('no rulesets at /nowhere');
     });
 
+    it('GT-678: classifies an invalid rule-overrides document as SCHEMA_INVALID with exit 3 (invalid input)', async () => {
+      // The satellite's `spec.rulesets.overrides` is the caller's input; a
+      // document that is missing, malformed or off-schema is exit 3, not the
+      // tool failure an agent would retry, and the code MCP and REST also use.
+      const invalid = new Error('governance/rule-overrides.json does not satisfy rule-overrides.schema.json');
+      invalid.name = 'RuleOverridesInvalidError';
+      const command = new ThrowingCommand(invalid, promptService, configService);
+
+      await command.run([], { format: 'json' });
+
+      const envelope = JSON.parse(logSpy.mock.calls[0][0] as string);
+      expect(envelope.error.code).toBe('SCHEMA_INVALID');
+      expect(process.exitCode).toBe(3);
+    });
+
     it('stamps the envelope with the command name, a correlation id and a schema version', async () => {
       const command = new ThrowingCommand(new Error('boom'), promptService, configService);
 

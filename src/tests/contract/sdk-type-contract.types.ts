@@ -388,6 +388,22 @@ export const WIRE_VALIDATION_RESULT: WireCheck<SdkValidationResult> = {
       isNumber((v as Record<string, unknown>).rulesSelected) &&
       isNumber((v as Record<string, unknown>).corpusTotal),
   },
+  // GT-678: WHICH single rules inside that scope were softened, from what to
+  // what, by whom and until when — and which softenings the policy refused.
+  // Present and EMPTY on a clean run (`{ applied: [], rejected: [] }`), never
+  // absent, so a consumer can state "no override changed this verdict" from
+  // the payload rather than infer it from a missing key. `rejected` is the
+  // field that matters on the wire: an `OVR-BLOCKING-REMOVED` there is also a
+  // blocking issue, so `status: 'failed'` and the refusal are the same fact
+  // published twice, and a consumer can act on the code without parsing text.
+  overrides: {
+    required: false,
+    declaredAs: '{ applied: OverrideRecord[]; rejected: OverrideIssue[]; source?: string }',
+    accepts: (v) =>
+      isObject(v) &&
+      isArray((v as Record<string, unknown>).applied) &&
+      isArray((v as Record<string, unknown>).rejected),
+  },
   issues: { required: true, declaredAs: 'ValidationIssue[]', accepts: isArray },
   coreRef: {
     required: true,

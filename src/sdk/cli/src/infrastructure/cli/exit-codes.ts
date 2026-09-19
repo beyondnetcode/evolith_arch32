@@ -128,6 +128,10 @@ export function resolveExitCode(error: unknown): CliExitCode {
       return CLI_EXIT_CODES.INVALID_INPUT;
     }
     if (error.name === 'CliBlockedError') return CLI_EXIT_CODES.BLOCKED;
+    // GT-678: a satellite's `spec.rulesets.overrides` document that is missing,
+    // malformed or off-schema is the CALLER'S input being wrong — exit 3, not a
+    // tool failure an agent would retry, and never a silently unchanged run.
+    if (error.name === 'RuleOverridesInvalidError') return CLI_EXIT_CODES.INVALID_INPUT;
   }
   return CLI_EXIT_CODES.TOOL_FAILURE;
 }

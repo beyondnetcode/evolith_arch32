@@ -143,6 +143,10 @@ Response shape (captured live):
     "notApplicableRuleIds": [
       "<string>"
     ],
+    "overrides": {
+      "applied": [],
+      "rejected": []
+    },
     "perRuleset": [
       {
         "executable": "<number>",
@@ -242,6 +246,10 @@ Response shape (captured live):
     "notApplicableRuleIds": [
       "<string>"
     ],
+    "overrides": {
+      "applied": [],
+      "rejected": []
+    },
     "perRuleset": [
       {
         "executable": "<number>",
@@ -335,6 +343,10 @@ Response shape (captured live):
     "notApplicableRuleIds": [
       "<string>"
     ],
+    "overrides": {
+      "applied": [],
+      "rejected": []
+    },
     "perRuleset": [
       {
         "executable": "<number>",

@@ -38,6 +38,33 @@ export class RulesetCorpusNotResolvedError extends RulesetsNotFoundError {
 }
 
 /**
+ * GT-678 — the same rule id declared by two files that are BOTH the Core's.
+ *
+ * A rule id is the unit every report, waiver, selection and override keys on;
+ * two Core declarations of one id is a corrupt corpus, not a merge to attempt.
+ * The loader used to push both additively — `TOTAL RULES LOADED: 2`, one
+ * `ACL-02` blocking and one not — and every downstream number counted a rule
+ * that fired twice at two severities. Fail closed, naming both files, so the
+ * author fixes the corpus instead of the reader reconciling the report.
+ *
+ * A `tenants/**` copy is NOT this error: that is a per-rule override of the
+ * Core rule, kept as one rule with the tenant's delta attached.
+ */
+export class DuplicateRuleIdError extends Error {
+  constructor(
+    readonly ruleId: string,
+    readonly files: readonly string[],
+  ) {
+    super(
+      `Rule id "${ruleId}" is declared in ${files.length} corpus files: ${files.join(', ')}. ` +
+        'A rule id must be declared once; a second Core declaration is a corrupt corpus, not an ' +
+        'override. Remove or rename one of them (a tenant delta belongs under tenants/**).',
+    );
+    this.name = 'DuplicateRuleIdError';
+  }
+}
+
+/**
  * What the corpus loader did with a `*.rules.json` that produced no rules.
  *
  * #575: the loader globs `*.rules.json` and four shipped files are not rule

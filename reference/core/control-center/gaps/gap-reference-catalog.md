@@ -10247,3 +10247,77 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
   - [x] **FALSIFIABILITY:** the red path was observed, not assumed. **MET** — `--freshness --now=2026-10-13` prints four `turns stale on 2026-10-20 (6 day(s) left)` lines and exits 1; `--now=2026-10-20` prints four `STALE since 2026-10-20` lines and exits 1; today exits 0.
   - [x] What cannot be observed yet is written down as such, not claimed: the scheduled run opening the issue is first observable on 2026-10-13 (the first day inside the band for the evidence observed 2026-09-19) and closing it after the re-observation. **MET as a statement of what is NOT claimed** — the date is recorded here and in the closure record; the issue steps are the published canary's (GT-671), which have the same not-yet-fired status.
 - **Status:** `DONE`
+
+#### GT-712
+
+**Title:** Of the 95 alerts on the Security tab, 37 were real: a shell line built from MCP tool input, filesystem paths taken verbatim from three HTTP bodies, a config writer that reached `Object.prototype`, eight polynomial regexes and seven workflows with a write-capable default token
+
+- **Purpose:** Fix at the source what an agent driving the MCP scaffold tool or an authenticated REST client could actually exploit, and leave the tab with zero open alerts and a written reason on every dismissed one, so the next triage starts from the code and not from `per_page=100`.
+- **Evidence, measured 2026-09-19 against the SARIF of the last CodeQL analysis on `main` (`GET …/code-scanning/analyses/{id}` with `Accept: application/sarif+json`, its `codeFlows` name the source of every taint):**
+
+  | fact | value |
+  |---|---|
+  | open on the tab | 95 (75 CodeQL, 20 Scorecard); Dependabot 0, secret-scanning 0 |
+  | CWE-78 (11) | `NxWorkspaceStrategy` built `npx nx g @nx/${fw}:host --name=${name} --remotes=${remotes} --directory=apps/${name}` and ran it through `execAsync`; `name`, `remotes` and `domains` came unvalidated from the MCP tool `evolith-scaffold` (`apiName`, `hostName`, `remotes`, `domains`); `git-log-reader` interpolated `--since` |
+  | CWE-22 (9 sinks in `node-filesystem.provider.ts`) | sources `evaluation.controller.ts:168-169` (`body.satellitePath`, `body.corePath`, legacy branch, straight to the pipeline that lists and reads directories under both), `architecture.controller.ts:125` (`body.manifest.satellitePath/corePath` override the resolved `workspaceRef` inside the use case), `projects.controller.ts:26` (`body.name` → `${cwd}/${name}`) |
+  | CWE-1321 (1) | `ConfigToolService.setConfig` walked `key.split('.')` into the document with no guard on `__proto__`/`constructor`/`prototype` |
+  | ReDoS (8) | `/\/+$/` ×5, `/=+$/`, `/^[_\-./]+|[_\-./]+$/`, and an unanchored `github\.com[/:]…` — the first measured at **15 326 ms** on 200 000 slashes |
+  | Scorecard Token-Permissions (7) | `ci-cd.yml`, `docker-images.yml` (top-level `packages: write`), `docs-release.yml`, `enforce-root-cleanliness.yml`, `reliability.yml`, `sdk-cli-ci.yml`, `sdk-cli-release.yml` without a read-only top-level `permissions:` |
+  | not real (58) | `insufficient-password-hash` ×9 (SHA-256 as length normalisation before `timingSafeEqual`), `user-controlled-bypass` ×3 (auth chain, constant-time), `clear-text-logging` (the flow taints `options` for carrying `apiKey`; what is logged is `correlationId`), `http-to-file-access`/`file-system-race`/`insecure-temporary-file` (registry JSON, mtime cache, user-chosen paths, tests), `path-injection` ×7 in an integration spec, `unused-local-variable` ×13, `unneeded-defensive-code` ×2, `.wasm` ×8 (compiled from the adjacent Rego, parity in `opa-parity.yml`), `npm install -g` ×2 of our own exact version, Fuzzing/CII/Code-Review |
+
+- **What closes it:**
+  - `cb2c8a1e` ([#725](https://github.com/beyondnetcode/evolith_arch32/pull/725)): `ICommandExecutor` gains `executeFile`/`executeFileOrThrow` (argv, no shell), implemented by the CLI `CommandExecutor` and the MCP `NodeCommandExecutor`; `NxWorkspaceStrategy` builds argv and rejects any name outside `^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$` before spawning (`--directory=apps/../..` and `--name=--flag` included); `git-log-reader` uses `execFile`. `WorkspaceReferenceResolverService.resolveLegacyPath`/`resolveCorePathOverride` contain the legacy paths, `EvaluationController` fails closed without a resolver, `ArchitectureController` pins the manifest's paths to the resolved ones, `InitProjectDto.name` and `InitializeProjectUseCase` accept one directory segment. `ConfigToolService` refuses the three prototype segments and only descends into own plain objects. The eight regexes become char-based trims; `parseRepoUrl` is anchored to the host. The seven workflows declare `contents: read` at the top and `packages`/`contents`/`pull-requests` writes on the jobs that need them. 58 alerts dismissed with a reason each.
+  - `8920b140` ([#737](https://github.com/beyondnetcode/evolith_arch32/pull/737)): the CodeQL run on `main` closed 20 of 37 and kept 10 — the containment was real but written in shapes the engine does not model. Rewritten to its canonical ones: `path.resolve` + ONE `startsWith(root + sep)` (the compound `resolved !== root && …` was not credited), `includes('..')` + `path.isAbsolute` on the same variable (a regex alone is not a barrier), a literal `=== '__proto__'` comparison at the write (a `Set` in another function is not).
+  - `b200c5cb` ([#748](https://github.com/beyondnetcode/evolith_arch32/pull/748)): the last one — the .NET scaffolder re-read `input.name` as a property for `${projectDir}/${input.name}.csproj`; it now takes `path.basename(projectDir)`, the same string, already sanitised for the engine.
+- **Use cases:**
+  - An agent calls `evolith-scaffold` with `apiName: "api; rm -rf /"`; before, the shell ran it; now the tool answers `Invalid API app name` and nothing is spawned.
+  - A Tracker with a valid key sends `POST /evaluate {satellitePath: "/etc"}`; before, the Core listed and read `/etc`; now it answers 400 `satellitePath resolves outside the workspace root; send an opaque workspaceRef instead`.
+- **Impact:** Remote command execution reachable from the MCP surface and arbitrary directory reads reachable from the REST surface, both behind credentials the deployment hands to its own clients.
+- **Expected outcome:** Zero open alerts on `main` with every dismissal carrying its reason, and the three surfaces (CLI, MCP, REST) unchanged for valid input.
+- **Files affected:** `src/packages/core-domain/src/domain/interfaces.ts`, `src/packages/infra-providers/src/architecture/nx-workspace.strategy.ts`, `src/packages/mcp-server/src/tools/scaffold.tool.ts`, `src/sdk/cli/src/infrastructure/cli/command-executor.ts`, `src/packages/core-domain/src/domain/metrics/git-log-reader.ts`, `src/apps/core-api/src/application/services/workspace-reference-resolver.service.ts`, `src/apps/core-api/src/presentation/controllers/evaluation.controller.ts`, `src/apps/core-api/src/presentation/controllers/architecture.controller.ts`, `src/apps/core-api/src/presentation/dtos/projects.dto.ts`, `src/apps/core-api/src/presentation/dtos/satellite-manifest.dto.ts`, `src/packages/core-domain/src/application/use-cases/initialize-project.use-case.ts`, `src/packages/core-domain/src/application/services/project-scaffolder.service.ts`, `src/packages/mcp-server/src/tools/config.tools.ts`, eight regex sites, seven workflows under `.github/workflows/`
+- **Component:** `Core` · **Criticality:** P0 · **Complexity:** M
+- **Principal:** `M` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-09-19 from the owner's request to review the Security tab, fix what mattered and dismiss the rest; the previous triage of 2026-09-15 (GT-709/GT-710) had closed the dependency and pinning halves and left the CodeQL findings in `src` and Token-Permissions as the next value.
+- **Acceptance criteria:**
+  - [x] Every shell line built from caller input is gone: the strategy and the git reader spawn with argv. **MET** — the MCP spec asserts every recorded `execFile` call is `npx`/`npm` with the exact argv, and that `api; rm -rf /` and `../../escape` are refused before any `nx g` call.
+  - [x] No HTTP body path reaches the filesystem outside `WORKSPACE_ROOT`/`CORE_PATH`. **MET** — `/etc`, `../outside`, `/workspaces/../etc`, `/workspacesX/sat` and `/somewhere/else` are 400 before the use case runs; the manifest's paths are overwritten; `../escape`, `a/b`, `..`, `.hidden`, `-flag`, a NUL byte and `""` are refused as project names with nothing written.
+  - [x] A dot-path key cannot reach `Object.prototype`. **MET** — `__proto__.polluted`, `product.constructor.prototype.polluted` and `product..phase` are refused and the file is untouched.
+  - [x] The regexes are linear. **MET** — the old `/\/+$/` measured at 15 326 ms on 200 000 slashes; the char-based trims are O(n); `parseRepoUrl` still accepts the https, `.git`, `git@…:` and `ssh://` forms and rejects `evil.example/github.com/…` and `github.com.evil`.
+  - [x] Every workflow starts read-only and each write is declared on its job. **MET** — parsed with `yaml`: seven top-level `contents: read`; `packages: write` on `docker-images/build` and `ci-cd/docker-services`, `contents: write` on `docs-release/update-version-log`, `docs-release/create-release` and `sdk-cli-release/upload-assets`, `pull-requests: read` on `ci-cd/governance-guards` for guard 50's `gh pr list/diff`.
+  - [x] **FALSIFIABILITY:** the count is CodeQL's on `main`, not a local claim. **MET** — analysis of `c5547114` (`sdk-cli-ci` dispatched by hand, see GT-713): 37 results, 0 open; Scorecard dispatched the same afternoon: 0 open; Dependabot 0; secret-scanning 0.
+  - [x] Nothing valid changed behaviour. **MET** — `tsc -b` clean on the 11 projects; the touched suites: core-domain 75+, mcp-server 12 (+2), core-api 71 (+4), agent-runtime 85, infra-providers 21, CLI 133; ESLint on the touched files shows the same 8 pre-existing `max-lines`/`max-params`/`complexity` errors as `develop` and none new.
+- **Status:** `DONE`
+
+#### GT-713
+
+**Title:** The analysis that the Security tab's alerts are keyed to is produced only by the `push` run of `sdk-cli-ci.yml`, and its path filter skipped most of the code
+
+- **Purpose:** Make a code promotion to `main` re-analyse `main`, so the tab describes the commit that is there and not the previous one.
+- **Evidence, measured 2026-09-19 against the code-scanning API and the Actions history:**
+
+  | fact | value |
+  |---|---|
+  | which analysis the alerts follow | category `/language:javascript-typescript`, uploaded by the `CodeQL SAST` job of `sdk-cli-ci.yml` via `github/codeql-action/analyze` |
+  | what a pull-request run does | diff-informed: `refs/pull/737/merge` analysed with `results=0` while `main` still held 55 — results outside the diff are pruned and the branch's alerts never move |
+  | what "Code Quality: Push on main" is | the default-setup suite, a different category; it ran green on `19d736da` while the tab stayed at 10 alerts |
+  | the `push` filter | `src/sdk/cli/**`, `.harness/**`, `package.json`, `package-lock.json`, the workflow file — by design, to save minutes on pushes, which required checks do not gate |
+  | what fell through | promotion `19d736da` (12:25, changes only under `src/packages`, `src/apps`, `.github`) and `c5547114` (13:15, `src/packages/core-domain` only): no push run, no analysis, tab stale |
+  | what closed the alerts each time | `gh workflow run sdk-cli-ci.yml --ref main`, by hand, 25 and 10 minutes after the merge |
+  | last time it did work by itself | `50121746` (11:20) — because #725 had touched `src/sdk/cli/**` |
+
+- **What closes it, in `72aceb70`:** the `push` filter adds `src/packages/**` and `src/apps/**`, the trees CodeQL scans. The filter stays: a docs-only push still skips the 13 jobs, and the PR trigger is unchanged (already unfiltered since #218's deadlock). The comment on the trigger records why the filter exists AND why it must cover every scanned tree, so the next reader does not narrow it back.
+- **Use cases:**
+  - A promotion that fixes a CodeQL finding in `src/packages` reaches `main`; the tab closes the alert on the next push run without anyone dispatching it.
+  - A regression introduced under `src/apps` reaches `main`; the tab reports it on that commit, not on the next CLI change.
+- **Impact:** The Security tab on `main` described the previous commit after most code promotions; on 2026-09-19 it showed 10 alerts for 35 minutes on code that had been fixed and promoted.
+- **Expected outcome:** Every push to `main`/`develop` that changes scanned code produces a `refs/heads/<branch>` analysis; manual dispatch is no longer part of a promotion.
+- **Files affected:** `.github/workflows/sdk-cli-ci.yml`
+- **Component:** `Infra` · **Criticality:** P2 · **Complexity:** XS
+- **Principal:** `XS` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-09-19 while closing GT-712: after promotion #739 the tab still showed the 10 alerts #737 had fixed; the CLI CI run on `main`'s head was a `pull_request` event (PR #740, head `main`), its analysis had landed on `refs/pull/740/merge` with `results=0`, and no `push` run existed for the commit.
+- **Acceptance criteria:**
+  - [x] The push filter covers every tree CodeQL scans. **MET** — `on.push.paths` parsed with `yaml`: `src/sdk/cli/**`, `src/packages/**`, `src/apps/**`, `.harness/**`, `package.json`, `package-lock.json`, `.github/workflows/sdk-cli-ci.yml`.
+  - [x] A docs-only push still skips the run. **MET** — `reference/**`, `README*` and `.github/workflows/*.yml` other than this one are not in the filter.
+  - [x] The pull-request trigger is untouched. **MET** — `on.pull_request` has no `paths`, as #218 required.
+  - [x] **FALSIFIABILITY:** what cannot be observed yet is written down as such, not claimed. **MET as a statement of what is NOT claimed** — the first push to `main` after this lands that changes `src/packages/**` or `src/apps/**` must show a `push`-event run of `Evolith SDK CLI - CI Pipeline` on that SHA and a `refs/heads/main` CodeQL analysis with that `commit_sha`, with no manual dispatch. This workflow file itself is in the filter, so the promotion carrying this change will run, but that proves the file path, not the new ones; the row closes on the filter change and the first `src/packages`-only promotion is what confirms it. Recorded here and in the closure record.
+- **Status:** `DONE`

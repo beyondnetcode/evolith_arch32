@@ -10671,6 +10671,51 @@
         "node .harness/scripts/ci/09-reconcile-maturity.mjs --check  # still green on the same tree; the warning band is empty today",
         "node .harness/scripts/ci/40-validate-path-literals.mjs  # the workflow's run: body resolves"
       ]
+    },
+    {
+      "id": "GT-712",
+      "closedAt": "2026-09-19",
+      "closureCommit": "cb2c8a1e",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/domain/interfaces.ts",
+        "src/packages/infra-providers/src/architecture/nx-workspace.strategy.ts",
+        "src/packages/mcp-server/src/tools/scaffold.tool.ts",
+        "src/packages/mcp-server/src/tools/scaffold.tool.spec.ts",
+        "src/apps/core-api/src/application/services/workspace-reference-resolver.service.ts",
+        "src/apps/core-api/src/presentation/controllers/evaluation.controller.ts",
+        "src/apps/core-api/src/presentation/controllers/evaluation.controller.spec.ts",
+        "src/apps/core-api/src/presentation/controllers/architecture.controller.ts",
+        "src/packages/core-domain/src/application/use-cases/initialize-project.use-case.ts",
+        "src/packages/core-domain/src/application/services/project-scaffolder.service.ts",
+        "src/packages/mcp-server/src/tools/config.tools.ts",
+        "src/packages/mcp-server/src/tools/config.tools.spec.ts"
+      ],
+      "validationCommands": [
+        "THE COUNT IS CODEQL'S, NOT OURS: the /language:javascript-typescript analysis of main at c5547114 (sdk-cli-ci run 35445364556, dispatched by hand -- see GT-713) reports 37 results and 0 open alerts; the Scorecard run dispatched the same afternoon (35445777316) closed the 7 Token-Permissions alerts; Dependabot and secret-scanning were already at 0. The 58 dismissals each carry a dismissed_comment naming why (false positive / used in tests / won't fix).",
+        "THREE COMMITS, ONE CLOSURE: cb2c8a1e (#725) fixed the 37; 8920b140 (#737) rewrote three guards into the shapes CodeQL models (path.resolve + one startsWith; includes('..') + isAbsolute on the same variable; a literal === '__proto__' at the write) after the main run kept 10 open on containment it did not credit; b200c5cb (#748) replaced the .NET scaffolder's second read of input.name with path.basename(projectDir). Promoted in #726, #739, #752.",
+        "MEASURED, NOT ASSUMED: the former /\\/+$/ on 200 000 slashes took 15 326 ms in node before the change; the char-based trim is O(n). parseRepoUrl was checked against https, .git, git@…: and ssh:// forms (accepted) and evil.example/github.com/…, github.com.evil (rejected).",
+        "npx jest --config src/packages/mcp-server/jest.config.js --runInBand src/packages/mcp-server/src/tools/scaffold.tool.spec.ts src/packages/mcp-server/src/tools/config.tools.spec.ts  # 12 tests: every execFile call is npx/npm with the exact argv; 'api; rm -rf /' and '../../escape' refused before any nx g; __proto__/constructor/prototype refused with the file untouched",
+        "npx jest --config src/apps/core-api/jest.config.js --runInBand src/apps/core-api/src/presentation/controllers/evaluation.controller.spec.ts src/apps/core-api/src/presentation/controllers/architecture.controller.spec.ts  # /etc, ../outside, /workspaces/../etc, /workspacesX/sat, /somewhere/else are 400 before the use case; the manifest's paths are pinned; no resolver fails closed",
+        "npx jest --config src/packages/core-domain/jest.config.js --runInBand src/packages/core-domain/src/application/use-cases/initialize-project.use-case.spec.ts  # ../escape, a/b, .., .hidden, -flag, NUL and '' refused as project names with nothing written; Billing.Api -> Billing.Api.csproj",
+        "npx tsc -b tsconfig.json  # clean on the 11 projects",
+        "node .harness/scripts/ci/40-validate-path-literals.mjs  # the seven workflows still resolve every path they name"
+      ]
+    },
+    {
+      "id": "GT-713",
+      "closedAt": "2026-09-19",
+      "closureCommit": "72aceb70",
+      "dependencyDisposition": "none",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "THE GAP WAS OBSERVED TWICE THE SAME AFTERNOON: promotions 19d736da (12:25) and c5547114 (13:15) reached main with no push run of sdk-cli-ci (their changes were under src/packages and src/apps only), no /language:javascript-typescript analysis for refs/heads/main was recorded for either SHA, and the tab kept reporting alerts on code that was gone; the pull_request run on the same head (PR #740) uploaded to refs/pull/740/merge with results=0 because PR analyses are diff-informed. Both times `gh workflow run sdk-cli-ci.yml --ref main` produced the analysis (runs 35443436054 and 35445364556) and the alerts closed.",
+        "WHAT IS NOT CLAIMED: that the widened filter fired on a real promotion. The first push to main after this lands that changes src/packages/** or src/apps/** is what confirms it -- a push-event run of 'Evolith SDK CLI - CI Pipeline' on that SHA and a refs/heads/main CodeQL analysis with that commit_sha, without a dispatch. The promotion carrying this change touches the workflow file itself, which was already in the filter, so it proves nothing about the new paths.",
+        "node -e \"const y=require('yaml');const d=y.parse(require('fs').readFileSync('.github/workflows/sdk-cli-ci.yml','utf8'));const p=d.on.push.paths;if(!p.includes('src/packages/**')||!p.includes('src/apps/**')||d.on.pull_request.paths)process.exit(1);console.log(p.join(' '))\"  # push filter spans every tree CodeQL scans; the PR trigger stays unfiltered",
+        "node .harness/scripts/ci/40-validate-path-literals.mjs  # the workflow's paths resolve"
+      ]
     }
   ]
 }

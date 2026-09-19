@@ -2,7 +2,6 @@ import * as path from 'node:path';
 import * as fs from 'fs-extra';
 import * as yaml from 'yaml';
 import { McpTool } from '../mcp/tool.interface';
-import { sanitizePathInput } from '../utils/path-security';
 
 /**
  * Segments that would walk the key path onto `Object.prototype` instead of into
@@ -60,13 +59,24 @@ export class ConfigToolService {
     const keys = keySegments(key);
     let target: Record<string, unknown> = config;
     for (let i = 0; i < keys.length - 1; i++) {
+      const segment = keys[i];
+      // keySegments() already refused these; restated here, on the value that is
+      // written, because this literal comparison is the guard CodeQL models for
+      // js/prototype-pollution-utility — a Set lookup in another function is not.
+      if (segment === '__proto__' || segment === 'constructor' || segment === 'prototype') {
+        throw new Error(`Invalid key "${key}": "${segment}" is not an allowed segment`);
+      }
       // Only descend into an OWN plain object; a scalar or an inherited property
       // is replaced, never written through.
-      const next = Object.prototype.hasOwnProperty.call(target, keys[i]) ? target[keys[i]] : undefined;
-      if (typeof next !== 'object' || next === null || Array.isArray(next)) target[keys[i]] = {};
-      target = target[keys[i]] as Record<string, unknown>;
+      const next = Object.prototype.hasOwnProperty.call(target, segment) ? target[segment] : undefined;
+      if (typeof next !== 'object' || next === null || Array.isArray(next)) target[segment] = {};
+      target = target[segment] as Record<string, unknown>;
     }
-    target[keys[keys.length - 1]] = value;
+    const leaf = keys[keys.length - 1];
+    if (leaf === '__proto__' || leaf === 'constructor' || leaf === 'prototype') {
+      throw new Error(`Invalid key "${key}": "${leaf}" is not an allowed segment`);
+    }
+    target[leaf] = value;
     await fs.writeFile(configPath, yaml.stringify(config));
     return { key, value, updated: true };
   }

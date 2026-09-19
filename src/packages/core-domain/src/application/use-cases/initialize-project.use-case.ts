@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { ICatalogLoader, IFileSystem } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
 import { InitProjectInput, InitProjectResult } from '../services/use-case.types';
@@ -27,9 +28,18 @@ export class InitializeProjectUseCase {
     const artifacts: string[] = [];
 
     try {
-      if (typeof input.name !== 'string' || !PROJECT_NAME.test(input.name)) {
+      const name = input.name;
+      // The regex already excludes separators and dot-segments; the two explicit
+      // checks restate the same fact in the form CodeQL models as a path sanitizer
+      // (no `..`, not absolute), so `${cwd}/${name}` reads as contained downstream.
+      if (
+        typeof name !== 'string' ||
+        !PROJECT_NAME.test(name) ||
+        name.includes('..') ||
+        path.isAbsolute(name)
+      ) {
         errors.push(
-          `Project name "${input.name}" is not a valid directory name: use letters, digits, ".", "-" or "_" (max 128 chars, cannot start with "." or "-")`,
+          `Project name "${name}" is not a valid directory name: use letters, digits, ".", "-" or "_" (max 128 chars, cannot start with "." or "-")`,
         );
         return { success: false, artifacts, warnings, errors };
       }
@@ -55,7 +65,7 @@ export class InitializeProjectUseCase {
         return { success: false, artifacts, warnings, errors };
       }
 
-      const projectDir = `${cwd}/${input.name}`;
+      const projectDir = `${cwd}/${name}`;
       await this.fs.ensureDir(projectDir);
 
       await this.projectScaffolder.scaffoldEvolithYaml(input, projectDir);

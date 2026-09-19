@@ -32,6 +32,13 @@ import type {
   TrackerApprovalSubmission,
 } from './tracker-approval.adapter';
 
+/** Char-based trim of trailing `/` — no `\/+$` regex, which backtracks polynomially (ReDoS). */
+function stripTrailingSlashes(s: string): string {
+  let end = s.length;
+  while (end > 0 && s.charCodeAt(end - 1) === 47 /* '/' */) end -= 1;
+  return s.slice(0, end);
+}
+
 interface FetchResponse {
   readonly ok: boolean;
   readonly status: number;
@@ -69,7 +76,7 @@ export class TrackerApprovalHttpClient implements TrackerApprovalClient {
     }
     this.fetchImpl = impl;
     // Trim trailing slashes so a base with or without one yields one clean join.
-    this.endpoint = `${options.baseUrl.replace(/\/+$/, '')}/runtime-approvals`;
+    this.endpoint = `${stripTrailingSlashes(options.baseUrl)}/runtime-approvals`;
     this.apiKey = options.apiKey;
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   }

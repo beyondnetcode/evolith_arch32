@@ -21,6 +21,11 @@ on:
     branches: [main, develop]
   workflow_dispatch:
 
+# Scorecard Token-Permissions: the default GITHUB_TOKEN is read-only for every job;
+# a job that has to write declares exactly what it writes on itself.
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Test
@@ -525,6 +530,10 @@ jobs:
   governance-guards:
     name: Governance guards (GT-578)
     runs-on: ubuntu-latest
+    # Guard 50 lists the open pull requests and reads each one's diff.
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup Node.js

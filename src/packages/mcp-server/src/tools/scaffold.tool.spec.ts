@@ -4,24 +4,33 @@ import fs from 'node:fs/promises';
 
 /**
  * Mock `node:child_process` so the embedded NodeCommandExecutor never spawns a
- * real process. `scaffold.tool.ts` builds `execAsync = promisify(exec)` at module
- * load, so we attach a `util.promisify.custom` implementation to the mocked
- * `exec`: promisify returns it directly. Behaviour is switched per-test through a
+ * real process. `scaffold.tool.ts` builds `promisify(exec)` / `promisify(execFile)`
+ * at module load, so we attach a `util.promisify.custom` implementation to both
+ * mocks: promisify returns it directly. Behaviour is switched per-test through a
  * global flag (jest.mock factories cannot close over test-scoped variables).
+ * The strategy runs shell-free, so `execFile` is the one that actually fires;
+ * every invocation is recorded in `__EVOLITH_EXEC_CALLS__` for the argv assertions.
  */
 jest.mock('node:child_process', () => {
   const util = require('node:util') as typeof import('node:util');
-  const exec: any = jest.fn();
-  exec[util.promisify.custom] = (command: string) => {
+  const respond = (shown: string) => {
     const mode = (globalThis as any).__EVOLITH_EXEC_MODE__ ?? 'ok';
     if (mode === 'fail') {
       return Promise.reject(
         Object.assign(new Error('spawn boom'), { stdout: '', stderr: 'nx exploded', code: 2 }),
       );
     }
-    return Promise.resolve({ stdout: `ran: ${command}`, stderr: '' });
+    return Promise.resolve({ stdout: `ran: ${shown}`, stderr: '' });
   };
-  return { exec };
+  const exec: any = jest.fn();
+  exec[util.promisify.custom] = (command: string) => respond(command);
+  const execFile: any = jest.fn();
+  execFile[util.promisify.custom] = (file: string, args: string[]) => {
+    const calls = ((globalThis as any).__EVOLITH_EXEC_CALLS__ ??= []) as Array<{ file: string; args: string[] }>;
+    calls.push({ file, args });
+    return respond([file, ...args].join(' '));
+  };
+  return { exec, execFile };
 });
 
 // Imported AFTER jest.mock so the mocked child_process is in place.
@@ -30,6 +39,10 @@ import { createScaffoldTools } from './scaffold.tool';
 
 function setExecMode(mode: 'ok' | 'fail'): void {
   (globalThis as any).__EVOLITH_EXEC_MODE__ = mode;
+}
+
+function execCalls(): Array<{ file: string; args: string[] }> {
+  return ((globalThis as any).__EVOLITH_EXEC_CALLS__ ?? []) as Array<{ file: string; args: string[] }>;
 }
 
 async function tmpDir(): Promise<string> {
@@ -48,6 +61,7 @@ describe('createScaffoldTools — evolith-scaffold', () => {
   afterEach(() => {
     stderrSpy.mockRestore();
     delete (globalThis as any).__EVOLITH_EXEC_MODE__;
+    delete (globalThis as any).__EVOLITH_EXEC_CALLS__;
   });
 
   it('exposes a single mutative write-scoped tool with the expected schema', () => {
@@ -137,6 +151,47 @@ describe('createScaffoldTools — evolith-scaffold', () => {
       domains: ['identity'],
       baseDir: dir,
     });
+
+    // CWE-78: every command goes out as argv through execFile — never a shell line.
+    const calls = execCalls();
+    expect(calls.length).toBeGreaterThan(0);
+    expect(calls.every((c) => c.file === 'npx' || c.file === 'npm')).toBe(true);
+    expect(calls).toContainEqual({
+      file: 'npx',
+      args: ['nx', 'g', '@nx/react:app', '--name=web-spa', '--directory=apps/web-spa', '--no-interactive'],
+    });
+    expect(calls).toContainEqual({
+      file: 'npx',
+      args: ['nx', 'g', '@nx/nest:library', '--name=identity', '--directory=libs/domain/identity', '--no-interactive'],
+    });
+  });
+
+  it('refuses a caller-supplied name that is not a plain identifier before spawning anything', async () => {
+    const [tool] = createScaffoldTools();
+    const dir = await tmpDir();
+
+    await expect(
+      tool.execute({
+        path: dir,
+        frontend: 'react',
+        orm: 'typeorm',
+        phase: '1',
+        apiName: 'api; rm -rf /',
+        dryRun: false,
+      }),
+    ).rejects.toThrow(/Invalid API app name/);
+    expect(execCalls().filter((c) => c.args.includes('g'))).toHaveLength(0);
+
+    await expect(
+      tool.execute({
+        path: dir,
+        frontend: 'react',
+        orm: 'typeorm',
+        phase: '2',
+        remotes: ['catalog', '../../escape'],
+        dryRun: false,
+      }),
+    ).rejects.toThrow(/Invalid remote name/);
   });
 
   it('surfaces a command failure as a thrown error (NodeCommandExecutor.executeOrThrow)', async () => {

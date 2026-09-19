@@ -128,8 +128,23 @@ describe('ArchitectureController', () => {
       expect(validateUseCase.execute).toHaveBeenCalledWith({
         satellitePath: '/workspaces/op_01',
         corePath: '/core',
+        manifest: undefined,
       });
       expect(workspaceResolver.resolve).toHaveBeenCalledWith('op_01');
+    });
+
+    // CWE-22: the manifest wins inside the use case and carried its own paths,
+    // so a client could evaluate any directory by sending them in the manifest.
+    it('pins the manifest paths to the resolved workspace and the configured Core', async () => {
+      await controller.validateSatellite({
+        workspaceRef: 'op_01',
+        manifest: { satellitePath: '/etc', corePath: '/somewhere/else', topology: 'modular-monolith' } as any,
+      });
+      expect(validateUseCase.execute).toHaveBeenCalledWith({
+        satellitePath: '/workspaces/op_01',
+        corePath: '/core',
+        manifest: { satellitePath: '/workspaces/op_01', corePath: '/core', topology: 'modular-monolith' },
+      });
     });
 
     it('should propagate validation errors', async () => {

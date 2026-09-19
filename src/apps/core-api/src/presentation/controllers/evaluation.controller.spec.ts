@@ -4,6 +4,7 @@ import { ValidateSatelliteUseCase } from '@beyondnet/evolith-core-domain/applica
 import { EvaluationOrchestrator } from '@beyondnet/evolith-core-domain/evaluation';
 import type { DirEntry, IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import { EvaluateSatelliteDto, EvaluationContextDto } from '../dtos/evaluation.dto';
+import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
 const SAMPLE_GATE_EVAL = {
   artifactEvaluations: [
@@ -62,6 +63,14 @@ describe('EvaluationController (GT-361)', () => {
       providers: [
         { provide: EvaluationOrchestrator, useValue: orchestrator },
         { provide: ValidateSatelliteUseCase, useValue: mockUseCase },
+        // The real resolver over a fake config: the legacy branch must contain
+        // `satellitePath` under WORKSPACE_ROOT and `corePath` to CORE_PATH.
+        {
+          provide: WorkspaceReferenceResolverService,
+          useValue: new WorkspaceReferenceResolverService({
+            getOrThrow: (key: string) => ({ WORKSPACE_ROOT, CORE_PATH: CORE })[key],
+          } as any),
+        },
       ],
     }).compile();
 
@@ -71,8 +80,11 @@ describe('EvaluationController (GT-361)', () => {
 
   afterEach(() => jest.clearAllMocks());
 
+  const WORKSPACE_ROOT = '/workspaces';
+  const CORE = '/core';
+
   const body: EvaluateSatelliteDto = {
-    satellitePath: '/satellite',
+    satellitePath: '/workspaces/satellite',
     corePath: '/core',
     topology: 'modular-monolith',
     phase: 'f1',
@@ -132,10 +144,10 @@ describe('EvaluationController (GT-361)', () => {
       await controller.evaluate(body);
 
       expect(useCase.execute).toHaveBeenCalledWith({
-        satellitePath: '/satellite',
+        satellitePath: '/workspaces/satellite',
         corePath: '/core',
         manifest: {
-          satellitePath: '/satellite',
+          satellitePath: '/workspaces/satellite',
           corePath: '/core',
           topology: 'modular-monolith',
           phase: 'f1',
@@ -143,27 +155,60 @@ describe('EvaluationController (GT-361)', () => {
       });
     });
 
-    it('works with minimal body (only satellitePath)', async () => {
+    it('works with minimal body (only satellitePath); corePath defaults to the configured Core', async () => {
       const minimalEnvelope = { ...SAMPLE_ENVELOPE };
       useCase.execute.mockResolvedValue({
         result: {} as any,
         evaluationVerdict: { ...({} as any), outputEnvelope: minimalEnvelope },
       });
 
-      const minimalBody: EvaluateSatelliteDto = { satellitePath: '/satellite' };
+      // Relative legacy paths resolve against WORKSPACE_ROOT.
+      const minimalBody: EvaluateSatelliteDto = { satellitePath: 'satellite' };
       const response = await controller.evaluate(minimalBody);
 
       expect(useCase.execute).toHaveBeenCalledWith({
-        satellitePath: '/satellite',
-        corePath: undefined,
+        satellitePath: '/workspaces/satellite',
+        corePath: '/core',
         manifest: {
-          satellitePath: '/satellite',
-          corePath: undefined,
+          satellitePath: '/workspaces/satellite',
+          corePath: '/core',
           topology: undefined,
           phase: undefined,
         },
       });
       expect(response).toBe(minimalEnvelope);
+    });
+
+    // CWE-22: the legacy fields used to reach the filesystem verbatim, so an
+    // authenticated caller could evaluate (read) any directory on the host.
+    it('refuses a legacy satellitePath outside WORKSPACE_ROOT before touching the use case', async () => {
+      for (const satellitePath of ['/etc', '../outside', '/workspaces/../etc', '/workspacesX/sat']) {
+        await expect(controller.evaluate({ satellitePath })).rejects.toThrow(/outside the workspace root/);
+      }
+      expect(useCase.execute).not.toHaveBeenCalled();
+    });
+
+    it('refuses a legacy corePath that is neither the configured Core nor inside the workspace', async () => {
+      await expect(
+        controller.evaluate({ satellitePath: 'sat', corePath: '/somewhere/else' }),
+      ).rejects.toThrow(/corePath resolves outside the workspace root/);
+      expect(useCase.execute).not.toHaveBeenCalled();
+
+      // A Core checkout inside the workspace is still an allowed override.
+      useCase.execute.mockResolvedValue({
+        result: {} as any,
+        evaluationVerdict: { ...({} as any), outputEnvelope: SAMPLE_ENVELOPE },
+      });
+      await controller.evaluate({ satellitePath: 'sat', corePath: '/workspaces/core-checkout' });
+      expect(useCase.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ satellitePath: '/workspaces/sat', corePath: '/workspaces/core-checkout' }),
+      );
+    });
+
+    it('fails closed when the instance has no workspace resolver', async () => {
+      const bare = new EvaluationController({ evaluate: jest.fn() } as any, useCase);
+      await expect(bare.evaluate({ satellitePath: '/workspaces/satellite' })).rejects.toThrow(/not available on this Core instance/);
+      expect(useCase.execute).not.toHaveBeenCalled();
     });
   });
 
@@ -268,7 +313,9 @@ describe('EvaluationController — inline evaluationInput path', () => {
     stringify: (data: unknown) => JSON.stringify(data),
   };
   const rulesetRepo = { getRuleset: async () => null, listRulesets: async () => [] } as any;
-  const workspaceResolver = { corePath: () => CORE_PATH } as any;
+  const workspaceResolver = new WorkspaceReferenceResolverService({
+    getOrThrow: (key: string) => ({ CORE_PATH, WORKSPACE_ROOT: '/workspaces' })[key],
+  } as any);
 
   function buildController(fallback: IFileSystem) {
     return new EvaluationController(

@@ -18,13 +18,17 @@ on:
     tags:
       - "v*"
 
+# Scorecard Token-Permissions: read-only by default; the build job below is the
+# one that pushes to GHCR and declares `packages: write` itself.
 permissions:
   contents: read
-  packages: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:

@@ -116,6 +116,15 @@ export class CommandExecutor implements ICommandExecutor {
     return result.stdout;
   }
 
+  /** {@link executeFile} that throws {@link CommandExecutionError} on a non-zero exit. */
+  async executeFileOrThrow(file: string, args: string[], cwd?: string): Promise<string> {
+    const result = await this.executeFile(file, args, cwd);
+    if (!result.success) {
+      throw new CommandExecutionError([file, ...args].join(' '), result.exitCode, result.stderr);
+    }
+    return result.stdout;
+  }
+
   private getInstallHint(tool: string): string {
     const hints: Record<string, string> = {
       npm: 'Install Node.js from https://nodejs.org/',

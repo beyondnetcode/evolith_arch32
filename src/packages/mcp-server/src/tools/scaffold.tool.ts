@@ -1,4 +1,4 @@
-import { exec } from 'node:child_process';
+import { exec, execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { NxWorkspaceStrategy } from '@beyondnet/evolith-infra-providers';
 import type {
@@ -9,6 +9,10 @@ import type {
 import { McpTool } from '../mcp/tool.interface';
 
 const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
+
+// Node-based CLIs ship as `.cmd` shims on Windows; execFile needs the explicit name.
+const WINDOWS_CMD_TOOLS = new Set(['npm', 'npx', 'nx']);
 
 /** Allowlists for user-controlled scaffold parameters (CWE-78 mitigation). */
 const ALLOWED_FRONTEND = new Set(['react', 'angular', 'vue']);
@@ -16,9 +20,10 @@ const ALLOWED_ORM = new Set(['prisma', 'typeorm', 'drizzle']);
 
 /**
  * Minimal {@link ICommandExecutor} for the MCP gateway: runs `npx nx` / `npm`
- * via child_process. Only `executeOrThrow` is exercised by
- * {@link NxWorkspaceStrategy}; `execute`/`checkTool` are provided to satisfy the
- * port. Kept here (not in the CLI's richer executor) so the MCP server has no
+ * via child_process. Only `executeFileOrThrow` is exercised by
+ * {@link NxWorkspaceStrategy} (argv, no shell — the tool's `apiName`,
+ * `hostName`, `remotes` and `domains` are caller-controlled); `execute`,
+ * `executeOrThrow` and `checkTool` are provided to satisfy the port. Kept here (not in the CLI's richer executor) so the MCP server has no
  * cross-package dependency on the CLI.
  */
 class NodeCommandExecutor implements ICommandExecutor {
@@ -36,6 +41,25 @@ class NodeCommandExecutor implements ICommandExecutor {
     const result = await this.execute(command, cwd);
     if (!result.success) {
       throw new Error(`Command failed (exit ${result.exitCode}): ${command}\n${result.stderr}`);
+    }
+    return result.stdout;
+  }
+
+  async executeFile(file: string, args: string[], cwd?: string): Promise<CommandResult> {
+    const bin = process.platform === 'win32' && WINDOWS_CMD_TOOLS.has(file) ? `${file}.cmd` : file;
+    try {
+      const { stdout, stderr } = await execFileAsync(bin, args, { cwd, env: process.env, timeout: Number(process.env.MCP_SCAFFOLD_TIMEOUT_MS) || 120000 });
+      return { success: true, stdout, stderr, exitCode: 0 };
+    } catch (err) {
+      const e = err as { stdout?: string; stderr?: string; code?: number; message?: string };
+      return { success: false, stdout: e.stdout ?? '', stderr: e.stderr ?? e.message ?? '', exitCode: e.code ?? 1 };
+    }
+  }
+
+  async executeFileOrThrow(file: string, args: string[], cwd?: string): Promise<string> {
+    const result = await this.executeFile(file, args, cwd);
+    if (!result.success) {
+      throw new Error(`Command failed (exit ${result.exitCode}): ${[file, ...args].join(' ')}\n${result.stderr}`);
     }
     return result.stdout;
   }

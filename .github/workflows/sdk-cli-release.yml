@@ -75,6 +75,11 @@ env:
   NODE_VERSION: '20'
   CLI_DIR: 'src/sdk/cli'
 
+# Scorecard Token-Permissions: the default GITHUB_TOKEN is read-only for every job;
+# a job that has to write declares exactly what it writes on itself.
+permissions:
+  contents: read
+
 jobs:
   # ============================================
   # GATE 0: Evolith Core Validation
@@ -629,6 +634,9 @@ jobs:
     # a GitHub Release must not be cut when the npm publish failed.
     if: ${{ needs.release-gate.outputs.release_created }}
     runs-on: ubuntu-latest
+    # Creates the GitHub Release and uploads the binaries to it.
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

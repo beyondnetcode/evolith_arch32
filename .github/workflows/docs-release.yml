@@ -13,6 +13,11 @@ on:
       - 'release/docs-*'
       - 'hotfix/docs-*'
 
+# Scorecard Token-Permissions: the default GITHUB_TOKEN is read-only for every job;
+# a job that has to write declares exactly what it writes on itself.
+permissions:
+  contents: read
+
 jobs:
   release-trigger-check:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -59,6 +64,9 @@ jobs:
     needs: release-trigger-check
     if: needs.release-trigger-check.outputs.version != ''
     runs-on: ubuntu-latest
+    # Commits the version log back to main.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -93,6 +101,9 @@ jobs:
     needs: [release-trigger-check, update-version-log]
     if: needs.release-trigger-check.outputs.version != ''
     runs-on: ubuntu-latest
+    # Pushes the tag and creates the GitHub Release.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

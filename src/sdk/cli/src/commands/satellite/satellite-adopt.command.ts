@@ -67,7 +67,7 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
           if (!v.startsWith('https://github.com/')) {
             return 'URL must start with https://github.com/';
           }
-          if (!/github\.com\/[^/]+\/[^/]+/.test(v)) {
+          if (!/^https:\/\/github\.com\/[^/]+\/[^/]+/.test(v)) {
             return 'URL must be in the form https://github.com/owner/repo';
           }
           return undefined;

@@ -11,6 +11,13 @@ import { IGitHubApiClient } from '../../domain/github-api-client.interface';
 import { ILogger } from '../../domain/interfaces';
 import { enumerateWorkspaceProjects } from '../../domain/workspace-descriptor';
 
+/** Char-based trim of trailing `/` — no `\/+$` regex, which backtracks polynomially (ReDoS). */
+function stripTrailingSlashes(s: string): string {
+  let end = s.length;
+  while (end > 0 && s.charCodeAt(end - 1) === 47 /* '/' */) end -= 1;
+  return s.slice(0, end);
+}
+
 export interface SyncSatelliteInput {
   satellite: SatelliteRecord;
   corePath: string;
@@ -116,7 +123,7 @@ function walkDir(dir: string): string[] {
 function destinationPath(satellite: SatelliteRecord, relativePath: string): string {
   const sub = satellite.subpath;
   if (!sub || sub === '.' || sub === '') return relativePath;
-  return path.posix.join(sub.replace(/\\/g, '/').replace(/\/+$/, ''), relativePath);
+  return path.posix.join(stripTrailingSlashes(sub.replace(/\\/g, '/')), relativePath);
 }
 
 /**

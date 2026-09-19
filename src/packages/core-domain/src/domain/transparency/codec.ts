@@ -48,7 +48,10 @@ export function toBase64(bytes: Uint8Array): string {
 
 /** Standard base64 decoding. Throws on a character outside the alphabet. */
 export function fromBase64(b64: string): Uint8Array {
-  const clean = b64.replace(/=+$/, '');
+  // Char-based trim of the `=` padding — no `=+$` regex (polynomial backtracking, ReDoS).
+  let end = b64.length;
+  while (end > 0 && b64.charCodeAt(end - 1) === 61 /* '=' */) end -= 1;
+  const clean = b64.slice(0, end);
   const out = new Uint8Array(Math.floor((clean.length * 3) / 4));
   let acc = 0;
   let bits = 0;

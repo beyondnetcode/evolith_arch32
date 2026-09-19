@@ -3,6 +3,13 @@ import { IPlatformProviders } from '../ports/platform-detection.port';
 import { InitProjectInput, InitProjectResult } from '../services/use-case.types';
 import { ProjectScaffolderService } from '../services/project-scaffolder.service';
 
+/**
+ * The project name becomes the directory under `cwd` (and a path prefix on every
+ * artifact), so it has to be exactly one path segment: no separators, no `.`/`..`,
+ * no leading dash. Same alphabet npm accepts for an unscoped package name.
+ */
+const PROJECT_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+
 export class InitializeProjectUseCase {
   private readonly fs: IFileSystem;
   private readonly catalogLoader: ICatalogLoader;
@@ -20,6 +27,13 @@ export class InitializeProjectUseCase {
     const artifacts: string[] = [];
 
     try {
+      if (typeof input.name !== 'string' || !PROJECT_NAME.test(input.name)) {
+        errors.push(
+          `Project name "${input.name}" is not a valid directory name: use letters, digits, ".", "-" or "_" (max 128 chars, cannot start with "." or "-")`,
+        );
+        return { success: false, artifacts, warnings, errors };
+      }
+
       const runtimes = this.catalogLoader.loadRuntimeCatalog();
       const runtime = runtimes.find((r: any) => (r as any).id === input.runtime);
       if (!runtime) {

@@ -10,6 +10,29 @@ import * as path from 'path';
  */
 const MFE_CAPABLE_FRAMEWORKS = new Set(['react', 'angular']);
 
+/**
+ * Every value interpolated into an `nx g` / `npm install` argument must be a
+ * plain identifier. The commands run shell-free (argv, never a command line),
+ * so this is not what stops `; rm -rf`: it is what stops `--directory=apps/../..`
+ * escaping the workspace and `--name=--flag` being read as an option. Nx project
+ * names are the same alphabet, so nothing legitimate is refused.
+ */
+const SAFE_IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$/;
+
+/**
+ * Validates one caller-supplied name and returns it. Throws on anything outside
+ * {@link SAFE_IDENTIFIER}, naming the field so the error is actionable at the
+ * CLI prompt and in the MCP envelope alike.
+ */
+export function assertSafeIdentifier(value: string, field: string): string {
+  if (typeof value !== 'string' || !SAFE_IDENTIFIER.test(value)) {
+    throw new Error(
+      `Invalid ${field} "${value}": use letters, digits, "-" or "_" only (max 128 chars, cannot start with "-").`,
+    );
+  }
+  return value;
+}
+
 export interface NxWorkspaceStrategyOptions {
   /** Progress sink for human-facing step messages. Defaults to a no-op. */
   progress?: (message: string) => void;
@@ -53,52 +76,61 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
     return path.join(this.baseDir, 'src');
   }
 
-  private async runNx(command: string): Promise<void> {
+  /**
+   * Shell-free: `npx` receives `['nx', ...args, '--no-interactive']` as argv.
+   * The progress line joins them for the human only; nothing is re-parsed.
+   */
+  private async runNx(args: string[]): Promise<void> {
     const targetDir = this.getTargetDir();
+    const shown = `npx nx ${args.join(' ')}`;
     if (this.dryRun) {
-      this.progress(`[DRY-RUN] Would execute in ${targetDir}: npx nx ${command}`);
+      this.progress(`[DRY-RUN] Would execute in ${targetDir}: ${shown}`);
       return;
     }
-    this.progress(`> Executing in ${targetDir}: npx nx ${command}`);
-    // executeOrThrow surfaces a standard error on non-zero exit.
-    await this.commandExecutor.executeOrThrow(`npx nx ${command} --no-interactive`, targetDir);
+    this.progress(`> Executing in ${targetDir}: ${shown}`);
+    // executeFileOrThrow surfaces a standard error on non-zero exit.
+    await this.commandExecutor.executeFileOrThrow('npx', ['nx', ...args, '--no-interactive'], targetDir);
   }
 
-  private async runNpm(command: string): Promise<void> {
+  private async runNpm(args: string[]): Promise<void> {
     const targetDir = this.getTargetDir();
+    const shown = `npm ${args.join(' ')}`;
     if (this.dryRun) {
-      this.progress(`[DRY-RUN] Would execute in ${targetDir}: npm ${command}`);
+      this.progress(`[DRY-RUN] Would execute in ${targetDir}: ${shown}`);
       return;
     }
-    this.progress(`> Executing in ${targetDir}: npm ${command}`);
-    await this.commandExecutor.executeOrThrow(`npm ${command} --legacy-peer-deps`, targetDir);
+    this.progress(`> Executing in ${targetDir}: ${shown}`);
+    await this.commandExecutor.executeFileOrThrow('npm', [...args, '--legacy-peer-deps'], targetDir);
   }
 
   async installDependencies(frontendFramework: string, orm: string): Promise<void> {
-    const fw = frontendFramework.toLowerCase();
+    const fw = assertSafeIdentifier(frontendFramework.toLowerCase(), 'frontend framework');
     this.frontendFramework = fw;
 
     this.progress(`Installing Nx Plugins for ${fw.toUpperCase()} and NestJS...`);
-    await this.runNpm(`install -D @nx/nest @nx/${fw} @nx/webpack`);
+    await this.runNpm(['install', '-D', '@nx/nest', `@nx/${fw}`, '@nx/webpack']);
 
     if (orm.toLowerCase() === 'prisma') {
-      await this.runNpm(`install -D prisma @prisma/client`);
+      await this.runNpm(['install', '-D', 'prisma', '@prisma/client']);
     } else if (orm.toLowerCase() === 'typeorm') {
-      await this.runNpm(`install -D typeorm`);
+      await this.runNpm(['install', '-D', 'typeorm']);
     }
   }
 
   async generateStandardWebApp(name: string, framework: string): Promise<void> {
-    const fw = framework.toLowerCase();
+    const fw = assertSafeIdentifier(framework.toLowerCase(), 'frontend framework');
+    const app = assertSafeIdentifier(name, 'web app name');
     this.frontendFramework = fw;
-    this.progress(`Generating Standard Web App (Phase 1) [${name}] (${fw.toUpperCase()})...`);
-    await this.runNx(`g @nx/${fw}:app --name=${name} --directory=apps/${name}`);
+    this.progress(`Generating Standard Web App (Phase 1) [${app}] (${fw.toUpperCase()})...`);
+    await this.runNx(['g', `@nx/${fw}:app`, `--name=${app}`, `--directory=apps/${app}`]);
   }
 
   async generateHostApp(name: string, remotes: string[], framework: string): Promise<void> {
-    const fw = framework.toLowerCase();
+    const fw = assertSafeIdentifier(framework.toLowerCase(), 'frontend framework');
+    const host = assertSafeIdentifier(name, 'host app name');
+    const safeRemotes = remotes.map((r) => assertSafeIdentifier(r, 'remote name'));
     this.frontendFramework = fw;
-    this.progress(`Generating MFE Host App [${name}] with Remotes [${remotes.join(', ')}] (${fw.toUpperCase()})...`);
+    this.progress(`Generating MFE Host App [${host}] with Remotes [${safeRemotes.join(', ')}] (${fw.toUpperCase()})...`);
 
     if (!MFE_CAPABLE_FRAMEWORKS.has(fw)) {
       this.progress(
@@ -106,31 +138,33 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
         `Generating a standard ${fw.toUpperCase()} app instead; configure MFE manually ` +
         `(e.g. @originjs/vite-plugin-federation for Vue).`,
       );
-      await this.runNx(`g @nx/${fw}:app --name=${name} --directory=apps/${name}`);
+      await this.runNx(['g', `@nx/${fw}:app`, `--name=${host}`, `--directory=apps/${host}`]);
       return;
     }
 
-    const remotesFlag = remotes.length > 0 ? `--remotes=${remotes.join(',')}` : '';
-    await this.runNx(`g @nx/${fw}:host --name=${name} ${remotesFlag} --directory=apps/${name}`);
+    const remotesFlag = safeRemotes.length > 0 ? [`--remotes=${safeRemotes.join(',')}`] : [];
+    await this.runNx(['g', `@nx/${fw}:host`, `--name=${host}`, ...remotesFlag, `--directory=apps/${host}`]);
   }
 
   async generateApiApp(name: string): Promise<void> {
-    this.progress(`Generating NestJS API App [${name}]...`);
-    await this.runNx(`g @nx/nest:app --name=${name} --directory=apps/${name}`);
+    const api = assertSafeIdentifier(name, 'API app name');
+    this.progress(`Generating NestJS API App [${api}]...`);
+    await this.runNx(['g', '@nx/nest:app', `--name=${api}`, `--directory=apps/${api}`]);
   }
 
   async generateLibrary(name: string, type: 'domain' | 'shell' | 'shared'): Promise<void> {
-    this.progress(`Generating Library [${type}/${name}]...`);
+    const lib = assertSafeIdentifier(name, `${type} library name`);
+    this.progress(`Generating Library [${type}/${lib}]...`);
 
-    if (type === 'shared' && name.includes('ui')) {
+    if (type === 'shared' && lib.includes('ui')) {
       // UI libraries use the active frontend framework — e.g. @nx/react:library,
       // @nx/angular:library, @nx/vue:library.
       const fw = this.frontendFramework;
       this.progress(`Using @nx/${fw}:library for shared UI library.`);
-      await this.runNx(`g @nx/${fw}:library --name=${name} --directory=libs/${type}/${name}`);
+      await this.runNx(['g', `@nx/${fw}:library`, `--name=${lib}`, `--directory=libs/${type}/${lib}`]);
     } else {
       // Domain, shell and non-UI shared libs always use NestJS (backend) generator.
-      await this.runNx(`g @nx/nest:library --name=${name} --directory=libs/${type}/${name}`);
+      await this.runNx(['g', '@nx/nest:library', `--name=${lib}`, `--directory=libs/${type}/${lib}`]);
     }
   }
 }

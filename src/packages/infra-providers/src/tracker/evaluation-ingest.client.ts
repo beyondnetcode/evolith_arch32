@@ -48,6 +48,13 @@ import {
   type EvaluationIngestSurface,
 } from '@beyondnet/evolith-contracts/ingest';
 
+/** Char-based trim of trailing `/` — no `\/+$` regex, which backtracks polynomially (ReDoS). */
+function stripTrailingSlashes(s: string): string {
+  let end = s.length;
+  while (end > 0 && s.charCodeAt(end - 1) === 47 /* '/' */) end -= 1;
+  return s.slice(0, end);
+}
+
 // ---------------------------------------------------------------------------
 // Transport seam
 // ---------------------------------------------------------------------------
@@ -114,7 +121,7 @@ export class TrackerEvaluationIngestClient {
     // The route is taken from the published contract rather than typed here, so a
     // path change upstream moves this client with it instead of leaving a caller
     // that 404s against a route nobody remembers renaming.
-    this.endpoint = `${options.baseUrl.replace(/\/+$/, '')}${EVALUATION_INGEST_ENDPOINT_CONTRACT.path}`;
+    this.endpoint = `${stripTrailingSlashes(options.baseUrl)}${EVALUATION_INGEST_ENDPOINT_CONTRACT.path}`;
     this.apiKey = options.apiKey;
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   }

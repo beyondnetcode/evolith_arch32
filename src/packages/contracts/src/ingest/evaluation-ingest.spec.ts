@@ -459,6 +459,10 @@ describe('GT-604 · the wire shape is DERIVED, and cannot silently diverge', () 
       'producer.surface',
       'producer.version',
       'schemaVersion',
+      // GT-686 — handed over by the surface that measured, never synthesized here.
+      'timing.ai.costUsd',
+      'timing.ai.totalTokens',
+      'timing.durationMs',
     ]);
     // Every derived field carries the reason it is derived.
     expect(EVALUATION_INGEST_FIELD_SOURCES.filter((e) => e.source === null && !e.note)).toEqual([]);
@@ -489,5 +493,65 @@ describe('GT-604 · the endpoint the Tracker must expose', () => {
     expect(EVALUATION_INGEST_ENDPOINT_CONTRACT.idempotency.key).toBe('correlationId');
     expect(EVALUATION_INGEST_ENDPOINT_CONTRACT.persistence.requiredIndex).toContain('correlation_id');
     expect(EVALUATION_INGEST_ENDPOINT_CONTRACT.persistence.table).toBe('core_evaluation_transactions');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GT-686 — timing is handed over, never synthesized, and zero is not a measurement
+// ---------------------------------------------------------------------------
+
+describe('GT-686 · timing is handed over by the surface, never synthesized here', () => {
+  const base = { result: RESULT, violations: VIOLATIONS, surface: 'cli' as const };
+
+  it('emits NO timing when the surface measured nothing — absent, not zero', () => {
+    const payload = toEvaluationIngestPayload(base);
+    expect('timing' in payload).toBe(false);
+    expect(checkEvaluationIngestPayload(payload).ok).toBe(true);
+  });
+
+  it('carries the measured duration verbatim, and the oracle accepts it', () => {
+    const payload = toEvaluationIngestPayload({ ...base, durationMs: 137 });
+    expect(payload.timing).toEqual({ durationMs: 137 });
+    expect(checkEvaluationIngestPayload(payload)).toEqual({ ok: true, problems: [] });
+  });
+
+  it('refuses a reading that is not a whole non-negative millisecond count', () => {
+    expect(() => toEvaluationIngestPayload({ ...base, durationMs: -1 })).toThrow(/non-negative integer/);
+    expect(() => toEvaluationIngestPayload({ ...base, durationMs: 12.5 })).toThrow(/non-negative integer/);
+  });
+
+  it('refuses model usage without a measured duration', () => {
+    expect(() => toEvaluationIngestPayload({ ...base, aiUsage: { totalTokens: 10 } })).toThrow(/without a measured durationMs/);
+  });
+
+  it('the oracle rejects durationMs: 0 as a stand-in — a run that executed rules took time', () => {
+    const payload = { ...toEvaluationIngestPayload({ ...base, durationMs: 137 }), timing: { durationMs: 0 } };
+    const check = checkEvaluationIngestPayload(payload);
+    expect(check.ok).toBe(false);
+    expect(check.problems.join('\n')).toMatch(/timing\.durationMs is 0/);
+  });
+
+  it('the oracle rejects an invented cost: totalTokens/costUsd of 0 with no AI signal', () => {
+    // No AI signal at all: the fixture's requester (if any) is dropped so `modelRef` is absent.
+    const { requestedBy: _requestedBy, ...withoutRequester } = toEvaluationIngestPayload({ ...base, durationMs: 137 });
+    void _requestedBy;
+    const payload = { ...withoutRequester, timing: { durationMs: 137, ai: { totalTokens: 0, costUsd: 0 } } };
+    const check = checkEvaluationIngestPayload(payload);
+    expect(check.ok).toBe(false);
+    expect(check.problems.filter((p) => /invented cost/.test(p))).toHaveLength(2);
+  });
+
+  it('accepts a real model usage when the payload names the model that ran', () => {
+    const withModel = {
+      ...toEvaluationIngestPayload({ ...base, durationMs: 137, aiUsage: { totalTokens: 812, costUsd: 0.0041 } }),
+      requestedBy: { actorType: 'agent', actorId: 'reviewer-1', modelRef: 'claude-opus-5' },
+    };
+    expect(checkEvaluationIngestPayload(withModel)).toEqual({ ok: true, problems: [] });
+  });
+
+  it('declares every timing field in the derivation map, as handed over (source: null)', () => {
+    const timingEntries = EVALUATION_INGEST_FIELD_SOURCES.filter((e) => e.field.startsWith('timing.'));
+    expect(timingEntries.map((e) => e.field).sort()).toEqual(['timing.ai.costUsd', 'timing.ai.totalTokens', 'timing.durationMs']);
+    for (const entry of timingEntries) expect(entry.source).toBeNull();
   });
 });

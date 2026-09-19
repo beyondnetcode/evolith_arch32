@@ -1,5 +1,6 @@
 import { ProfileStoreReader } from '@beyondnet/evolith-core-domain/application/services';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
+import { createSuccessEnvelope, measuredMeta, startEnvelopeClock } from '@beyondnet/evolith-core-domain';
+import type { EnvelopeClock } from '@beyondnet/evolith-core-domain';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { McpTool } from '../mcp/tool.interface';
 
@@ -22,15 +23,12 @@ import { McpTool } from '../mcp/tool.interface';
 const PROFILE_ACTIONS = ['current', 'list'] as const;
 export type ProfileAction = (typeof PROFILE_ACTIONS)[number];
 
-function envelope<T>(command: string, data: T) {
-  const executedAt = new Date().toISOString();
-  return createSuccessEnvelope(data, {
-    command,
-    executedAt,
-    durationMs: 0,
-    correlationId: `mcp-${command}-${executedAt}`,
-    schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-  });
+// GT-686 — `durationMs` is read from the clock the tool started, never a literal.
+function envelope<T>(command: string, clock: EnvelopeClock, data: T) {
+  return createSuccessEnvelope(
+    data,
+    measuredMeta(clock, { command, correlationId: `mcp-${command}-${clock.executedAt}` }),
+  );
 }
 
 /** Thrown, never returned — see `history.tools.ts`. */
@@ -63,6 +61,7 @@ export function createProfileTools(reader: ProfileStoreReader = new ProfileStore
         },
       },
       execute: async (args) => {
+        const clock = startEnvelopeClock();
         const action = (args.action as ProfileAction | undefined) ?? 'current';
         if (!PROFILE_ACTIONS.includes(action)) {
           throw new DomainException(
@@ -74,11 +73,11 @@ export function createProfileTools(reader: ProfileStoreReader = new ProfileStore
         try {
           if (action === 'list') {
             // Same payload the CLI prints for `profile list --format json`.
-            return envelope('evolith-profile', { profiles: reader.listProfiles(), active: reader.activeProfile() });
+            return envelope('evolith-profile', clock, { profiles: reader.listProfiles(), active: reader.activeProfile() });
           }
           // Same payload the CLI prints for `profile current --format json`.
           const name = reader.activeProfile();
-          return envelope('evolith-profile', { name, ...reader.getProfile(name) });
+          return envelope('evolith-profile', clock, { name, ...reader.getProfile(name) });
         } catch (error) {
           fail('evolith-profile', error);
         }

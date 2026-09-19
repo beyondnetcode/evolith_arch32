@@ -481,6 +481,10 @@ export class McpServerService {
 
   /** Per-request handler for the Streamable HTTP transport. */
   private async handleHttpRequest(req: http.IncomingMessage, res: http.ServerResponse, port: number): Promise<void> {
+      // GT-686 — every envelope this handler writes reports the request's own
+      // wall clock, started here, never a literal.
+      const requestStartedAt = Date.now();
+      const elapsedMs = () => Date.now() - requestStartedAt;
       // Rate limiting (H1) — reject requests that exceed the per-IP limit
       const clientIp = req.socket.remoteAddress || 'unknown';
       if (this.rateLimit.isRateLimited(clientIp)) {
@@ -515,7 +519,7 @@ export class McpServerService {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(success(
           { status: 'OK', transport: 'http', protocol: 'mcp', probe, service: 'Evolith MCP Server' },
-          { correlationId: generateCorrelationId(), tool: `http GET ${url.pathname}`, durationMs: 0 },
+          { correlationId: generateCorrelationId(), tool: `http GET ${url.pathname}`, durationMs: elapsedMs() },
         )));
         return;
       }
@@ -525,7 +529,7 @@ export class McpServerService {
         res.writeHead(ready ? 200 : 503, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(success(
           { status: ready ? 'OK' : 'STARTING', probe: 'ready', service: 'Evolith MCP Server' },
-          { correlationId: generateCorrelationId(), tool: 'http GET /health/ready', durationMs: 0 },
+          { correlationId: generateCorrelationId(), tool: 'http GET /health/ready', durationMs: elapsedMs() },
         )));
         return;
       }

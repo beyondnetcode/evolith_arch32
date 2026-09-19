@@ -16,9 +16,15 @@ import { failure, generateCorrelationId } from '../common/envelopes';
  * server is on the API-key path, where there is no authorization server to point
  * a client at.
  */
-export function writeUnauthorized(res: http.ServerResponse, message: string, challenge?: string): null {
+export function writeUnauthorized(
+  res: http.ServerResponse,
+  message: string,
+  challenge?: string,
+  /** GT-686 — milliseconds the authentication attempt actually took; the refusal is measured like any other envelope. */
+  durationMs = 0,
+): null {
   const correlationId = generateCorrelationId();
-  const err = failure(ErrorCodes.UNAUTHORIZED, message, { correlationId, tool: 'auth', durationMs: 0 });
+  const err = failure(ErrorCodes.UNAUTHORIZED, message, { correlationId, tool: 'auth', durationMs });
   res.writeHead(401, {
     'Content-Type': 'application/json',
     ...(challenge ? { 'WWW-Authenticate': challenge } : {}),

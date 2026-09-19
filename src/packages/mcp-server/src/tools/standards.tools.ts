@@ -1,7 +1,8 @@
 import { StandardsService } from '@beyondnet/evolith-core-domain/domain/services/standards.service';
 import type { StandardCategory } from '@beyondnet/evolith-core-domain/domain/services/standards.service';
 import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
+import { createSuccessEnvelope, measuredMeta, startEnvelopeClock } from '@beyondnet/evolith-core-domain';
+import type { EnvelopeClock } from '@beyondnet/evolith-core-domain';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { McpTool } from '../mcp/tool.interface';
 
@@ -27,15 +28,12 @@ export type StandardsAction = (typeof STANDARDS_ACTIONS)[number];
 /** Mirrors `StandardCategory` in core-domain; kept as a literal list so the input schema can enumerate it. */
 const STANDARD_CATEGORIES: readonly StandardCategory[] = ['architecture', 'governance', 'operations', 'infrastructure'];
 
-function envelope<T>(command: string, data: T) {
-  const executedAt = new Date().toISOString();
-  return createSuccessEnvelope(data, {
-    command,
-    executedAt,
-    durationMs: 0,
-    correlationId: `mcp-${command}-${executedAt}`,
-    schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-  });
+// GT-686 — `durationMs` is read from the clock the tool started, never a literal.
+function envelope<T>(command: string, clock: EnvelopeClock, data: T) {
+  return createSuccessEnvelope(
+    data,
+    measuredMeta(clock, { command, correlationId: `mcp-${command}-${clock.executedAt}` }),
+  );
 }
 
 /** Thrown, never returned — see `history.tools.ts`. */
@@ -78,6 +76,7 @@ export function createStandardsTools(fs: IFileSystem): McpTool[] {
         },
       },
       execute: async (args) => {
+        const clock = startEnvelopeClock();
         const action = (args.action as StandardsAction | undefined) ?? 'list';
         if (!STANDARDS_ACTIONS.includes(action)) {
           throw new DomainException(
@@ -106,11 +105,11 @@ export function createStandardsTools(fs: IFileSystem): McpTool[] {
             if (!standard) {
               throw new DomainException(ErrorCodes.PATH_NOT_FOUND, `Standard ${id} not found`);
             }
-            return envelope('evolith-standards', standard);
+            return envelope('evolith-standards', clock, standard);
           }
           // Same projection the CLI prints for `standards --list --format json`.
           const standards = await service.list(category);
-          return envelope('evolith-standards', {
+          return envelope('evolith-standards', clock, {
             count: standards.length,
             standards: standards.map((s) => ({
               id: s.id,

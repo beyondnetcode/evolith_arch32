@@ -1,6 +1,7 @@
 import { CommandHistoryService } from '@beyondnet/evolith-core-domain/application/services/services/command-history.service';
 import type { HistoryEntry } from '@beyondnet/evolith-core-domain/application/services/services/command-history.service';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
+import { createSuccessEnvelope, measuredMeta, startEnvelopeClock } from '@beyondnet/evolith-core-domain';
+import type { EnvelopeClock } from '@beyondnet/evolith-core-domain';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { McpTool } from '../mcp/tool.interface';
 
@@ -33,15 +34,12 @@ export const HISTORY_DEFAULT_LIMIT = 20;
  */
 export type HistoryServiceFactory = () => CommandHistoryService;
 
-function envelope<T>(command: string, data: T) {
-  const executedAt = new Date().toISOString();
-  return createSuccessEnvelope(data, {
-    command,
-    executedAt,
-    durationMs: 0,
-    correlationId: `mcp-${command}-${executedAt}`,
-    schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-  });
+// GT-686 — `durationMs` is read from the clock the tool started, never a literal.
+function envelope<T>(command: string, clock: EnvelopeClock, data: T) {
+  return createSuccessEnvelope(
+    data,
+    measuredMeta(clock, { command, correlationId: `mcp-${command}-${clock.executedAt}` }),
+  );
 }
 
 /**
@@ -95,6 +93,7 @@ export function createHistoryTools(
         },
       },
       execute: async (args) => {
+        const clock = startEnvelopeClock();
         const action = (args.action as HistoryAction | undefined) ?? 'list';
         if (!HISTORY_ACTIONS.includes(action)) {
           throw new DomainException(
@@ -119,19 +118,19 @@ export function createHistoryTools(
         try {
           switch (action) {
             case 'stats':
-              return envelope('evolith-history', await history.stats());
+              return envelope('evolith-history', clock, await history.stats());
             case 'get': {
               const entry: HistoryEntry | undefined = await history.get(id);
               if (!entry) {
                 throw new DomainException(ErrorCodes.PATH_NOT_FOUND, `Entry not found: ${id}`);
               }
-              return envelope('evolith-history', entry);
+              return envelope('evolith-history', clock, entry);
             }
             case 'search':
-              return envelope('evolith-history', await history.search(query));
+              return envelope('evolith-history', clock, await history.search(query));
             case 'list':
             default:
-              return envelope('evolith-history', await history.list(limit));
+              return envelope('evolith-history', clock, await history.list(limit));
           }
         } catch (error) {
           fail('evolith-history', error);

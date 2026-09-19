@@ -40,7 +40,11 @@ export class WorkspaceReferenceResolverService {
     }
     const root = path.resolve(this.config.getOrThrow('WORKSPACE_ROOT'));
     const resolved = path.resolve(root, rawPath);
-    if (resolved !== root && !resolved.startsWith(`${root}${path.sep}`)) {
+    // Same shape as `resolve()` above on purpose: a normalized path followed by ONE
+    // `startsWith(root + sep)` guard is what CodeQL models as containment; the
+    // compound `resolved !== root && …` form was not, and left js/path-injection open
+    // on every sink downstream. The root itself is not a satellite, so nothing is lost.
+    if (!resolved.startsWith(`${root}${path.sep}`)) {
       throw new BadRequestException(
         `${field} resolves outside the workspace root; send an opaque workspaceRef instead`,
       );

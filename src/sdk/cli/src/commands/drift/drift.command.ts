@@ -2,7 +2,7 @@ import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import chalk from 'chalk';
 import { ArchitectureDriftService, DriftReport, DriftViolation } from '@beyondnet/evolith-core-domain/application/validators/architecture-drift.service';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { toLegacyLevel } from '../../infrastructure/architecture/topology-catalog';
@@ -53,7 +53,6 @@ export class DriftCommand extends BaseEvolithCommand {
     const meta = {
       command: commandId,
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -64,7 +63,7 @@ export class DriftCommand extends BaseEvolithCommand {
       try {
         const result = await service.getDriftTrend(projectPath);
         if (json) {
-          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         } else {
           await this.showTrend(service, projectPath);
         }
@@ -72,7 +71,7 @@ export class DriftCommand extends BaseEvolithCommand {
         const message = error instanceof Error ? error.message : String(error);
         if (json) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         } else {
           throw error;
         }
@@ -84,7 +83,7 @@ export class DriftCommand extends BaseEvolithCommand {
       try {
         const history = await service.getDriftHistory(projectPath);
         if (json) {
-          console.log(JSON.stringify(createSuccessEnvelope(history, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createSuccessEnvelope(history, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         } else {
           await this.showHistory(service, projectPath);
         }
@@ -92,7 +91,7 @@ export class DriftCommand extends BaseEvolithCommand {
         const message = error instanceof Error ? error.message : String(error);
         if (json) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         } else {
           throw error;
         }
@@ -114,7 +113,7 @@ export class DriftCommand extends BaseEvolithCommand {
       if (!json) this.promptService.stopSpinner();
 
       if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope(report, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(report, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
 
@@ -124,7 +123,7 @@ export class DriftCommand extends BaseEvolithCommand {
       if (json) {
         const message = error instanceof Error ? error.message : String(error);
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         throw error;
       }

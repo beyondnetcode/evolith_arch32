@@ -7,6 +7,7 @@ import type { SatelliteTopology } from '@beyondnet/evolith-core-domain/domain/sa
 import {
   createSuccessEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
@@ -46,7 +47,6 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith satellite adopt',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -178,7 +178,7 @@ export class SatelliteAdoptCommand extends BaseEvolithCommand {
       if (json) {
         console.log(
           JSON.stringify(
-            createSuccessEnvelope({ satellite }, { ...meta, durationMs: Date.now() - startedAt }),
+            createSuccessEnvelope({ satellite }, { ...meta, durationMs: elapsedMsSince(startedAt) }),
             null,
             2,
           ),

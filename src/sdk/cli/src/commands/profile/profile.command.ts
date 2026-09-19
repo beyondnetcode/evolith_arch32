@@ -2,7 +2,7 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { randomUUID } from 'node:crypto';
 import { ConfigService, ProfileConfig } from '../../infrastructure/config/config.service';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, type ErrorCode } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, type ErrorCode, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { CLI_EXIT_CODES, carriesCliExitCode, resolveExitCode, setExitCode } from '../../infrastructure/cli/exit-codes';
@@ -33,7 +33,6 @@ export class ProfileCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith profile',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       startedAt,
@@ -66,7 +65,7 @@ export class ProfileCommand extends BaseEvolithCommand {
         const code = carriesCliExitCode(error) && error.envelopeErrorCode
           ? (error.envelopeErrorCode as ErrorCode)
           : 'INTERNAL_ERROR';
-        console.log(JSON.stringify(createErrorEnvelope(code, message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope(code, message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         throw error;
       }
@@ -79,7 +78,7 @@ export class ProfileCommand extends BaseEvolithCommand {
 
     if (json) {
       const result = { name: active, ...cfg };
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 
@@ -98,7 +97,7 @@ export class ProfileCommand extends BaseEvolithCommand {
 
     if (json) {
       const result = { profiles, active };
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 
@@ -130,7 +129,7 @@ export class ProfileCommand extends BaseEvolithCommand {
         if (!(err instanceof UserCancelledError)) throw err;
         if (json) {
           setExitCode(CLI_EXIT_CODES.INVALID_INPUT);
-          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Profile creation cancelled', { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Profile creation cancelled', { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
         } else {
           this.promptService.showOutro('Cancelled');
         }
@@ -142,7 +141,7 @@ export class ProfileCommand extends BaseEvolithCommand {
       const message = `Profile "${profileName}" already exists`;
       if (json) {
         setExitCode(CLI_EXIT_CODES.INVALID_INPUT);
-        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showError(message);
       }
@@ -180,7 +179,7 @@ export class ProfileCommand extends BaseEvolithCommand {
 
     if (json) {
       const result = { name: profileName, ...profile };
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
     } else {
       this.promptService.showSuccess(`Profile "${profileName}" created`);
     }
@@ -191,7 +190,7 @@ export class ProfileCommand extends BaseEvolithCommand {
       const message = 'Usage: evolith profile switch <name>';
       setExitCode(CLI_EXIT_CODES.INVALID_INPUT);
       if (json) {
-        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showError(message);
       }
@@ -200,7 +199,7 @@ export class ProfileCommand extends BaseEvolithCommand {
     try {
       this.configService.switchProfile(name);
       if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope({ switched: name }, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope({ switched: name }, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showSuccess(`Switched to profile "${name}"`);
       }
@@ -208,7 +207,7 @@ export class ProfileCommand extends BaseEvolithCommand {
       const message = (e as Error).message;
       setExitCode(CLI_EXIT_CODES.TOOL_FAILURE);
       if (json) {
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showError(message);
       }
@@ -220,7 +219,7 @@ export class ProfileCommand extends BaseEvolithCommand {
       const message = 'Usage: evolith profile delete <name>';
       setExitCode(CLI_EXIT_CODES.INVALID_INPUT);
       if (json) {
-        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showError(message);
       }
@@ -229,7 +228,7 @@ export class ProfileCommand extends BaseEvolithCommand {
     try {
       this.configService.deleteProfile(name);
       if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope({ deleted: name }, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope({ deleted: name }, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showSuccess(`Profile "${name}" deleted`);
       }
@@ -237,7 +236,7 @@ export class ProfileCommand extends BaseEvolithCommand {
       const message = (e as Error).message;
       setExitCode(CLI_EXIT_CODES.TOOL_FAILURE);
       if (json) {
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showError(message);
       }

@@ -10,6 +10,7 @@ import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { resolveCoreOverride } from '../../infrastructure/paths/core-resolver';
@@ -55,7 +56,6 @@ export class GateStatusCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith sdlc gate-status',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -78,7 +78,7 @@ export class GateStatusCommand extends BaseEvolithCommand {
       if (json) {
         const msg = error instanceof Error ? error.message : String(error);
         process.exitCode = exitCodeForErrorCode('INTERNAL_ERROR');
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', msg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', msg, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
       throw error; // Let BaseEvolithCommand handle it
@@ -120,7 +120,7 @@ export class GateStatusCommand extends BaseEvolithCommand {
         gateStatus: status,
         doraMetrics: dora,
       };
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
     }
   }
 

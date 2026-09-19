@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import * as path from 'path';
 
@@ -44,7 +44,6 @@ export class FixturesCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith fixtures',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       startedAt,
@@ -58,7 +57,7 @@ export class FixturesCommand extends BaseEvolithCommand {
       const message = `Invalid fixture type: ${fixtureType}. Valid types: demo, adr, ruleset, evolith, full`;
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         this.promptService.showError(message);
       }
@@ -97,7 +96,7 @@ export class FixturesCommand extends BaseEvolithCommand {
         created: files.map(f => f.relativePath),
       };
       if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       }
       return;
     }
@@ -134,9 +133,9 @@ export class FixturesCommand extends BaseEvolithCommand {
       };
       if (errors.length > 0) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `${errors.length} errors`, { ...meta, durationMs: Date.now() - startedAt }, result), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', `${errors.length} errors`, { ...meta, durationMs: elapsedMsSince(startedAt) }, result), null, 2));
       } else {
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       }
     } else {
       if (errors.length === 0) {

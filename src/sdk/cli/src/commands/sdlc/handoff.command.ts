@@ -10,6 +10,7 @@ import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { IFileSystem, ToolGroup } from '@beyondnet/evolith-core-domain/domain/interfaces';
@@ -51,7 +52,6 @@ export class HandoffCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith sdlc handoff',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -63,9 +63,9 @@ export class HandoffCommand extends BaseEvolithCommand {
 
         if (json) {
           if (result.success) {
-            console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           } else {
-            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', result.errors.join(', '), { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', result.errors.join(', '), { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           }
           return;
         }
@@ -79,7 +79,7 @@ export class HandoffCommand extends BaseEvolithCommand {
       } catch (error: unknown) {
         if (json) {
           const msg = error instanceof Error ? error.message : String(error);
-          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', msg, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', msg, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           return;
         }
         throw error;
@@ -173,7 +173,7 @@ export class HandoffCommand extends BaseEvolithCommand {
     }
 
     if (json) {
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       return;
     }
 

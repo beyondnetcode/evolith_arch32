@@ -1,4 +1,6 @@
 import { UpgradeCommand } from './upgrade.command';
+import { getChangeIcon, printUpgradePlan } from './upgrade.render';
+import type { UpgradePlan } from '@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service';
 
 jest.mock('@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service', () => ({
   // GT-673: the command also imports NO_FINGERPRINT_HINT from this module; keep
@@ -352,7 +354,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [],
       });
 
-      (command as any).printUpgradePlan(plan);
+      printUpgradePlan(plan as unknown as UpgradePlan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Upgrade Plan')
@@ -377,7 +379,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [],
       });
 
-      (command as any).printUpgradePlan(plan);
+      printUpgradePlan(plan as unknown as UpgradePlan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('HIGH')
@@ -393,7 +395,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [],
       });
 
-      (command as any).printUpgradePlan(plan);
+      printUpgradePlan(plan as unknown as UpgradePlan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('MEDIUM')
@@ -409,7 +411,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [{ type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'breaking', breaking: true }],
       });
 
-      (command as any).printUpgradePlan(plan);
+      printUpgradePlan(plan as unknown as UpgradePlan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Breaking Changes:')
@@ -425,7 +427,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'breaking change', breaking: true }],
       });
 
-      (command as any).printUpgradePlan(plan);
+      printUpgradePlan(plan as unknown as UpgradePlan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('[BREAKING]')
@@ -435,41 +437,23 @@ describe('UpgradeCommand', () => {
 
   describe('getChangeIcon', () => {
     it('should return + for add', () => {
-      expect((command as any).getChangeIcon('add')).toBe('+');
+      expect(getChangeIcon('add')).toBe('+');
     });
 
     it('should return ~ for modify', () => {
-      expect((command as any).getChangeIcon('modify')).toBe('~');
+      expect(getChangeIcon('modify')).toBe('~');
     });
 
     it('should return - for remove', () => {
-      expect((command as any).getChangeIcon('remove')).toBe('-');
+      expect(getChangeIcon('remove')).toBe('-');
     });
 
     it('should return » for migrate', () => {
-      expect((command as any).getChangeIcon('migrate')).toBe('»');
+      expect(getChangeIcon('migrate')).toBe('»');
     });
 
     it('should return ? for unknown type', () => {
-      expect((command as any).getChangeIcon('unknown')).toBe('?');
-    });
-  });
-
-  describe('getRiskColor', () => {
-    it('should return high for high risk', () => {
-      expect((command as any).getRiskColor('high')).toBe('high');
-    });
-
-    it('should return medium for medium risk', () => {
-      expect((command as any).getRiskColor('medium')).toBe('medium');
-    });
-
-    it('should return low for unknown risk', () => {
-      expect((command as any).getRiskColor('unknown')).toBe('low');
-    });
-
-    it('should return low for empty string', () => {
-      expect((command as any).getRiskColor('')).toBe('low');
+      expect(getChangeIcon('unknown')).toBe('?');
     });
   });
 
@@ -618,7 +602,7 @@ describe('UpgradeCommand', () => {
     it('printUpgradePlan prints the three classes and the no-fingerprint hint', () => {
       const plan = makePlan({ changes: [upstream, local, { ...conflict, reason: 'no-fingerprint' }], manifestPresent: false });
 
-      (command as any).printUpgradePlan(plan);
+      printUpgradePlan(plan as unknown as UpgradePlan);
 
       const printed = logSpy.mock.calls.map(c => String(c[0])).join('\n');
       expect(printed).toContain('Upstream-only (applied): 1');

@@ -1,7 +1,8 @@
 import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import chalk from 'chalk';
-import { NO_FINGERPRINT_HINT, SatelliteUpgradeService, UpgradePlan } from '@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service';
+import { SatelliteUpgradeService } from '@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service';
+import { divergenceOf, printUpgradePlan } from './upgrade.render';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
@@ -11,6 +12,7 @@ import { logger } from '../../infrastructure/observability';
 import {
   createSuccessEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 
 interface UpgradeCommandOptions {
@@ -23,16 +25,6 @@ interface UpgradeCommandOptions {
   // GT-673
   overwriteLocal?: boolean;
   acceptLocal?: boolean;
-}
-
-/** GT-673: the per-class summary every envelope carries, next to the full plan. */
-function divergenceOf(plan: UpgradePlan) {
-  return {
-    manifestPresent: plan.manifestPresent,
-    upstreamOnly: plan.upstreamOnly.map(c => c.relativePath),
-    localOnly: plan.localOnly.map(c => c.relativePath),
-    conflicts: plan.conflicts.map(c => ({ path: c.relativePath, reason: c.reason ?? 'both-changed' })),
-  };
 }
 
 @Command({
@@ -53,7 +45,6 @@ export class UpgradeCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith upgrade',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -91,7 +82,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
       // has its own path because "no changes" is not "nothing to baseline".
       if (options?.acceptLocal) {
         if (!json) {
-          this.printUpgradePlan(plan);
+          printUpgradePlan(plan);
           const confirm = await this.promptService.confirm(
             'Record the current Core content as the baseline for every tracked ruleset (nothing is copied)?',
             true,
@@ -105,7 +96,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
         if (json) {
           console.log(JSON.stringify(createSuccessEnvelope(
             { ...result, divergence: divergenceOf(result.plan), dryRun: Boolean(options?.dryRun) },
-            { ...meta, durationMs: Date.now() - startedAt },
+            { ...meta, durationMs: elapsedMsSince(startedAt) },
           ), null, 2));
           return;
         }
@@ -122,7 +113,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
       if (plan.changes.length === 0) {
         const result = { success: true, message: 'Satellite is already up to date', divergence: divergenceOf(plan) };
         if (json) {
-          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           return;
         }
         this.promptService.showSuccess('Satellite is already up to date');
@@ -131,7 +122,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
       }
 
       if (!json) {
-        this.printUpgradePlan(plan);
+        printUpgradePlan(plan);
       }
 
       if (options?.dryRun) {
@@ -153,7 +144,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
             divergence: divergenceOf(dryResult.plan),
             warnings: dryResult.warnings,
           };
-          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           return;
         }
         this.promptService.showInfo('Dry run complete - no changes applied');
@@ -174,7 +165,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
           const result = await service.executeUpgrade({ satellitePath, corePath, overwriteLocal: options?.overwriteLocal });
           console.log(JSON.stringify(createSuccessEnvelope(
             { ...result, divergence: divergenceOf(result.plan) },
-            { ...meta, durationMs: Date.now() - startedAt },
+            { ...meta, durationMs: elapsedMsSince(startedAt) },
           ), null, 2));
         }
         return;
@@ -222,7 +213,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
       } else {
         console.log(JSON.stringify(createSuccessEnvelope(
           { ...result, divergence: divergenceOf(result.plan) },
-          { ...meta, durationMs: Date.now() - startedAt },
+          { ...meta, durationMs: elapsedMsSince(startedAt) },
         ), null, 2));
       }
     } catch (error: unknown) {
@@ -230,66 +221,6 @@ export class UpgradeCommand extends BaseEvolithCommand {
         this.promptService.stopSpinner();
       }
       throw error;
-    }
-  }
-
-  private printUpgradePlan(plan: UpgradePlan): void {
-    console.log(chalk.bold('\n📋 Upgrade Plan\n'));
-    console.log(`${chalk.bold('Current Version:')} ${chalk.cyan(plan.currentVersion)}`);
-    console.log(`${chalk.bold('Target Version:')} ${chalk.cyan(plan.targetVersion)}`);
-    console.log(`${chalk.bold('Risk Level:')} ${plan.estimatedRisk === 'high' ? chalk.red(plan.estimatedRisk.toUpperCase()) : plan.estimatedRisk === 'medium' ? chalk.yellow(plan.estimatedRisk.toUpperCase()) : chalk.green(plan.estimatedRisk.toUpperCase())}`);
-    console.log(`${chalk.bold('Total Changes:')} ${plan.changes.length}`);
-
-    if (plan.breakingChanges.length > 0) {
-      console.log(`${chalk.red('⚠ Breaking Changes:')} ${plan.breakingChanges.length}`);
-    }
-
-    // GT-673: the three classes, each by file, so the operator sees what will
-    // be written, what is theirs, and what needs a decision.
-    const upstreamOnly = plan.upstreamOnly ?? [];
-    const localOnly = plan.localOnly ?? [];
-    const conflicts = plan.conflicts ?? [];
-
-    console.log(chalk.cyan(`\nUpstream-only (applied): ${upstreamOnly.length}`));
-    for (const change of upstreamOnly) {
-      const breaking = change.breaking ? chalk.red(' [BREAKING]') : '';
-      console.log(`  ${this.getChangeIcon(change.type)} ${change.description}${breaking}`);
-    }
-
-    console.log(chalk.cyan(`\nLocal-only (kept, never applied): ${localOnly.length}`));
-    for (const change of localOnly) {
-      console.log(`  ${chalk.green('=')} ${change.description}`);
-    }
-
-    console.log(chalk.cyan(`\nConflicts (not applied without --overwrite-local): ${conflicts.length}`));
-    for (const change of conflicts) {
-      const breaking = change.breaking ? chalk.red(' [BREAKING]') : '';
-      const reason = change.reason === 'no-fingerprint' ? chalk.yellow(' [no fingerprint]') : '';
-      console.log(`  ${chalk.red('!')} ${change.description}${reason}${breaking}`);
-    }
-
-    if (plan.manifestPresent === false && conflicts.some(c => c.reason === 'no-fingerprint')) {
-      console.log(chalk.yellow(`\n${NO_FINGERPRINT_HINT}`));
-    }
-
-    console.log('');
-  }
-
-  private getChangeIcon(type: string): string {
-    switch (type) {
-      case 'add': return chalk.green('+');
-      case 'modify': return chalk.yellow('~');
-      case 'remove': return chalk.red('-');
-      case 'migrate': return chalk.blue('»');
-      default: return '?';
-    }
-  }
-
-  private getRiskColor(risk: string): string {
-    switch (risk) {
-      case 'high': return 'high';
-      case 'medium': return 'medium';
-      default: return 'low';
     }
   }
 

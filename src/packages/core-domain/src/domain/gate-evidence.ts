@@ -165,6 +165,17 @@ export function startEnvelopeClock(): EnvelopeClock {
 }
 
 /**
+ * The same rounding for sites that keep an epoch-millisecond `startedAt`
+ * (`Date.now()`) rather than a clock: whole milliseconds elapsed, and never 0
+ * for a run that produced an envelope — at millisecond resolution a sub-
+ * millisecond run rounds UP to 1, which is the ceiling of its true duration,
+ * not a stand-in. `0` stays reserved for "nothing ran".
+ */
+export function elapsedMsSince(startedAtEpochMs: number): number {
+  return Math.max(1, Date.now() - startedAtEpochMs);
+}
+
+/**
  * Builds an {@link OutputMeta} whose `executedAt` and `durationMs` come from a
  * running clock rather than from the caller. Everything else is passed
  * through; `schemaVersion` defaults to the current envelope version.

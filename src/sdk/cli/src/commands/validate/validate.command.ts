@@ -15,6 +15,7 @@ import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { CLI_EXIT_CODES, exitCodeForErrorCode, exitWith } from '../../infrastructure/cli/exit-codes';
 
@@ -191,7 +192,6 @@ export class ValidateCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith validate',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -231,7 +231,7 @@ export class ValidateCommand extends BaseEvolithCommand {
         'Nothing was evaluated and nothing was scanned. Run from inside the satellite, ' +
         'pass --satellite <path>, or set one with `evolith config`.';
       if (json) {
-        console.log(JSON.stringify(createErrorEnvelope('NOT_A_SATELLITE', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('NOT_A_SATELLITE', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         this.promptService.showError(message);
         this.promptService.showOutro('Validation aborted: no satellite found.');
@@ -255,7 +255,7 @@ export class ValidateCommand extends BaseEvolithCommand {
       // ADR-0073 error envelope to stdout — previously it printed human text and
       // exited 1 with an empty stdout, breaking machine consumers.
       if (json) {
-        console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         process.exit(1);
       }
       this.promptService.showError(message);
@@ -289,7 +289,7 @@ export class ValidateCommand extends BaseEvolithCommand {
             'composition cannot be honoured here. Re-run without --composable/--adr/--file for the ' +
             'composition, or pass a single -t.';
           if (json) {
-            console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           } else {
             this.promptService.showError(message);
           }
@@ -459,7 +459,7 @@ export class ValidateCommand extends BaseEvolithCommand {
         // GT-485: emit an ADR-0073 error envelope in json mode instead of an
         // empty stdout + exit 1.
         if (json) {
-          console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', error.message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', error.message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         } else {
           this.promptService.showError((error as Error).message);
           this.promptService.showOutro('❌ Validation aborted: no Core ruleset resolved.');
@@ -535,7 +535,7 @@ export class ValidateCommand extends BaseEvolithCommand {
     const formatter = new OutputFormatterService();
 
     if (json) {
-      const output = JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2);
+      const output = JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2);
       // --output routes the ADR-0073 envelope to a file instead of stdout so
       // machine consumers can capture the report; stdout stays the default sink.
       if (options?.output) {

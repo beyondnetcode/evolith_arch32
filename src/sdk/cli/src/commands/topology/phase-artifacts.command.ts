@@ -14,6 +14,7 @@ import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
@@ -64,7 +65,6 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith topology phase-artifacts',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -74,7 +74,7 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
       const message = `--phase must be one of: ${DOWNSTREAM_PHASES.join(', ')}`;
       if (json) {
         process.exitCode = exitCodeForErrorCode('INVALID_PHASE');
-        console.log(JSON.stringify(createErrorEnvelope('INVALID_PHASE', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INVALID_PHASE', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
       throw new Error(message);
@@ -96,7 +96,7 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
       const result = new PhaseArtifactProfileService().evaluate(phase, topologies, declared, getPhaseProfile);
 
       if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
 
@@ -105,7 +105,7 @@ export class PhaseArtifactsCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
       throw error; // Let BaseEvolithCommand render the failure.

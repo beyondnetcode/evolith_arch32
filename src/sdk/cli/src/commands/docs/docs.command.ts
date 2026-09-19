@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface DocsCommandOptions {
@@ -132,7 +132,6 @@ export class DocsCommand extends BaseEvolithCommand {
     const meta = {
       command: commandId,
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -163,7 +162,7 @@ export class DocsCommand extends BaseEvolithCommand {
           updated: 0,
           skipped: filesSkipped.length,
           files: filesSkipped.map(t => t.filename),
-        }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        }, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
       this.promptService.showInfo('All documentation files already exist. Use --force to overwrite.');
@@ -193,7 +192,7 @@ export class DocsCommand extends BaseEvolithCommand {
         updated,
         skipped: filesSkipped.length,
         files: [...filesToCreate, ...filesToUpdate].map(t => t.filename),
-      }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      }, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       return;
     }
 

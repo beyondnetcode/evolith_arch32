@@ -2,7 +2,7 @@ import * as path from 'path';
 import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import type { IFileSystem } from '../../domain/interfaces';
-import { probeRulesetsLocation } from '../paths/rulesets-location';
+import { describeRulesetsResolutionFailure, probeRulesetsLocation } from '../paths/rulesets-location';
 import type { RuleOverridesDocument, RuleOverridesInput } from './rule-overrides';
 
 /**
@@ -134,12 +134,20 @@ export class RuleOverridesLoader {
     const cached = this.validators.get(corePath);
     if (cached) return cached;
 
-    const { rulesetsRoot } = await probeRulesetsLocation(
+    const { rulesetsRoot, probes } = await probeRulesetsLocation(
       corePath,
       { exists: (p) => this.fs.exists(p), readdirNames: (p) => this.fs.readdirNames(p) },
       path.sep,
     );
-    const schemaPath = path.join(rulesetsRoot ?? path.join(corePath, 'rulesets'), 'schema', RULE_OVERRIDES_SCHEMA_FILE);
+    if (!rulesetsRoot) {
+      // Fail closed with the probe trail rather than guessing a layout: a
+      // hand-built `<core>/rulesets` fallback is the dead-path family GT-566
+      // closed, and a document nobody could validate would be applied on faith.
+      throw new RuleOverridesInvalidError(
+        `Cannot validate an override document: ${describeRulesetsResolutionFailure(corePath, probes)}`,
+      );
+    }
+    const schemaPath = path.join(rulesetsRoot, 'schema', RULE_OVERRIDES_SCHEMA_FILE);
 
     let schema: unknown;
     try {

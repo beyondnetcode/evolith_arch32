@@ -1,6 +1,7 @@
 import { IFileSystem } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
 import { InitProjectInput } from './use-case.types';
+import * as path from 'path';
 
 /**
  * The commit types GIT-08 itself enumerates, in its own `pattern`. Kept in the
@@ -185,7 +186,11 @@ evolith sdlc gate-status
   </PropertyGroup>
 </Project>
 `;
-    await this.fs.writeFile(`${projectDir}/${input.name}.csproj`, csproj);
+    // The .csproj takes its name from the directory the use case already
+    // validated and built (`${cwd}/${name}`), not from a second read of
+    // `input.name`: same string, but CodeQL only sees the sanitizer on the
+    // variable, and this property read kept js/path-injection open on the sink.
+    await this.fs.writeFile(`${projectDir}/${path.basename(projectDir)}.csproj`, csproj);
     await this.fs.ensureDir(`${projectDir}/src`);
   }
 

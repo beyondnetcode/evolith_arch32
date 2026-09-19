@@ -626,6 +626,82 @@ const OUTPUT = expected('maturityReports', 'maturity-reconciliation.json');
 const EVIDENCE_STATUSES = new Set(['PASS', 'BLOCKED', 'RESOLVED']);
 const REQUIRED_CHECKS = new Set(['cli-baseline', 'coverage', 'documentation', 'release']);
 
+// GT-711: the 0..30 day window on runtime evidence is the point — evidence that ages out
+// is re-taken, not extended — but the only thing that ever noticed the window closing was
+// the REQUIRED `Validate documentation` check going red on whichever PR happened to be
+// open that morning. Twice: a promotion on 2026-08-18 and a README-only PR (#724) on
+// 2026-09-19, neither of which had touched the evidence. Expiry is a date known thirty
+// days in advance, so it is announced as one: every check inside EVIDENCE_WARN_DAYS of
+// turning stale is reported with the day it turns, on every invocation, and
+// `--freshness` turns that report into an exit code a scheduled workflow can act on
+// BEFORE the day it starts blocking merges. The window itself does not move.
+export const EVIDENCE_MAX_AGE_DAYS = 30;
+export const EVIDENCE_WARN_DAYS = 7;
+
+function isoDate(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+/**
+ * Age every check against the window and say, per check, when it turns stale. The day it
+ * turns stale is `observedAt + EVIDENCE_MAX_AGE_DAYS + 1`, the first day on which
+ * `validateRuntimeEvidence` rejects it — the same arithmetic, not a second opinion.
+ * `state` is `fresh`, `expiring` (stale within EVIDENCE_WARN_DAYS, today included),
+ * `stale` (already rejected) or `future` (observedAt after today, also rejected).
+ */
+export function assessEvidenceFreshness(evidence, now = new Date()) {
+  const checks = Array.isArray(evidence?.checks) ? evidence.checks : [];
+  return checks.map((check) => {
+    const observedAt = /^\d{4}-\d{2}-\d{2}$/.test(check?.observedAt || '') ? check.observedAt : null;
+    if (!observedAt) return { id: check?.id, observedAt: check?.observedAt, ageDays: null, staleFrom: null, daysLeft: null, state: 'invalid' };
+    const observed = new Date(`${observedAt}T00:00:00Z`);
+    const ageDays = Math.floor((now - observed) / 86400000);
+    const staleFrom = isoDate(new Date(observed.getTime() + (EVIDENCE_MAX_AGE_DAYS + 1) * 86400000));
+    const daysLeft = EVIDENCE_MAX_AGE_DAYS - ageDays;
+    let state = 'fresh';
+    if (ageDays < 0) state = 'future';
+    else if (ageDays > EVIDENCE_MAX_AGE_DAYS) state = 'stale';
+    else if (daysLeft <= EVIDENCE_WARN_DAYS) state = 'expiring';
+    return { id: check?.id, observedAt, ageDays, staleFrom, daysLeft, state };
+  });
+}
+
+/** One line per check, in the shape a human reads in a log or an issue body. */
+export function formatEvidenceFreshness(rows) {
+  const width = Math.max(...rows.map((row) => String(row.id).length), 2);
+  return rows.map((row) => {
+    const id = String(row.id).padEnd(width);
+    if (row.state === 'invalid') return `❌ ${id}  observedAt ${row.observedAt}: not a date`;
+    if (row.state === 'future') return `❌ ${id}  observed ${row.observedAt}: in the future — a date, not an observation`;
+    if (row.state === 'stale') return `❌ ${id}  observed ${row.observedAt}: STALE since ${row.staleFrom} (${row.ageDays} days old) — Validate documentation is red on every PR until it is re-observed`;
+    if (row.state === 'expiring') return `⚠️  ${id}  observed ${row.observedAt}: turns stale on ${row.staleFrom} (${row.daysLeft === 0 ? 'today is the last valid day' : `${row.daysLeft} day(s) left`}) — re-observe it before then`;
+    return `✅ ${id}  observed ${row.observedAt}: ${row.daysLeft} day(s) left, turns stale on ${row.staleFrom}`;
+  });
+}
+
+/**
+ * `--freshness`: read the evidence alone, print its ages, and exit 1 when any check is
+ * within the warning band or past it. Deliberately cheaper than the reconciliation — no
+ * board, no git, no ISO audit — so the scheduled workflow that runs it needs a shallow
+ * checkout and nothing else.
+ */
+function reportEvidenceFreshness(now = new Date()) {
+  const evidence = JSON.parse(fs.readFileSync(RUNTIME_EVIDENCE, 'utf8'));
+  const rows = assessEvidenceFreshness(evidence, now);
+  console.log(`Runtime maturity evidence on ${isoDate(now)} — window ${EVIDENCE_MAX_AGE_DAYS} days, warning ${EVIDENCE_WARN_DAYS} days before it closes:`);
+  for (const line of formatEvidenceFreshness(rows)) console.log(line);
+  const failing = rows.filter((row) => row.state !== 'fresh');
+  if (failing.length) {
+    console.log(
+      `\n${failing.length} of ${rows.length} check(s) need re-observing. The procedure is the one in commit 3e5aac80 / 2ee3f9a0:\n`
+      + '  take a fresh green run of each workflow, rewrite observedAt/commit/source/summary as a NEW observation\n'
+      + '  (never a date bump), then `node .harness/scripts/ci/09-reconcile-maturity.mjs` and commit both files.',
+    );
+    process.exit(1);
+  }
+  console.log(`\nAll ${rows.length} checks are inside the window with more than ${EVIDENCE_WARN_DAYS} days to spare.`);
+}
+
 function countFiles(directory, pattern, excludePattern) {
   if (!fs.existsSync(directory)) return 0;
   return fs.readdirSync(directory, { withFileTypes: true }).reduce((total, entry) => {
@@ -686,7 +762,7 @@ export function validateRuntimeEvidence(evidence, board, root = ROOT, now = new 
       errors.push(`${check?.id} has invalid observedAt`);
     } else {
       const ageDays = Math.floor((now - new Date(`${check.observedAt}T00:00:00Z`)) / 86400000);
-      if (ageDays < 0 || ageDays > 30) errors.push(`${check.id} evidence is stale or future-dated`);
+      if (ageDays < 0 || ageDays > EVIDENCE_MAX_AGE_DAYS) errors.push(`${check.id} evidence is stale or future-dated`);
     }
     if (!/^[0-9a-f]{7,40}$/i.test(check?.commit || '') || !commitExists(root, check.commit)) {
       errors.push(`${check?.id} references an unavailable commit`);
@@ -774,6 +850,20 @@ function serialize(snapshot) {
 }
 
 function run() {
+  // GT-711: the freshness report is its own mode so the scheduled workflow can run it on a
+  // shallow checkout; it reads one file and never touches the reconciliation.
+  if (process.argv.includes('--freshness')) {
+    // `--now=YYYY-MM-DD` asks what the report will say on a given day, so the red path can
+    // be observed on demand (workflow_dispatch) instead of waited for.
+    const asOf = process.argv.find((arg) => arg.startsWith('--now='))?.slice('--now='.length);
+    if (asOf && !/^\d{4}-\d{2}-\d{2}$/.test(asOf)) {
+      console.error(`❌ --now expects YYYY-MM-DD, got "${asOf}"`);
+      process.exit(2);
+    }
+    reportEvidenceFreshness(asOf ? new Date(`${asOf}T12:00:00Z`) : new Date());
+    return;
+  }
+
   // GT-576/GT-596: prove both rules still bite BEFORE trusting their verdict on the real
   // document. A guard that has never been observed failing is the defect, not the control.
   const { assertions } = selfTestValidatedEvidenceRule();
@@ -811,6 +901,20 @@ function run() {
   );
 
   const expected = serialize(buildSnapshot());
+
+  // GT-711: buildSnapshot has just accepted the evidence, so nothing here can be stale —
+  // but it can be about to be. Say so on every run, in the log a PR author actually reads,
+  // with the date; the scheduled `--freshness` run is what turns this into an issue.
+  const expiring = assessEvidenceFreshness(JSON.parse(fs.readFileSync(RUNTIME_EVIDENCE, 'utf8')))
+    .filter((row) => row.state === 'expiring');
+  if (expiring.length) {
+    console.warn(
+      `⚠️  ${expiring.length} runtime maturity check(s) turn stale within ${EVIDENCE_WARN_DAYS} days — `
+      + 'from that day `Validate documentation` is red on every PR until they are re-observed:\n'
+      + formatEvidenceFreshness(expiring).map((line) => `   ${line}`).join('\n'),
+    );
+  }
+
   if (process.argv.includes('--check')) {
     if (!fs.existsSync(OUTPUT) || fs.readFileSync(OUTPUT, 'utf8') !== expected) {
       console.error('❌ Maturity reconciliation is stale. Run: node .harness/scripts/ci/09-reconcile-maturity.mjs');

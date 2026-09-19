@@ -65,23 +65,30 @@ export class InitializeProjectUseCase {
         return { success: false, artifacts, warnings, errors };
       }
 
+      // The guard above sanitises the local `name`, not the `name` field inside
+      // `input`: CodeQL tracks the object's field separately, and the scaffolder
+      // reads `input.name` again to name files (`${projectDir}/${input.name}.csproj`).
+      // Rebuilding the input from the checked value is what makes every downstream
+      // read provably the same string the guard accepted — alert #226 on
+      // node-filesystem.provider.ts:50 was exactly that second read.
+      const safeInput: InitProjectInput = { ...input, name };
       const projectDir = `${cwd}/${name}`;
       await this.fs.ensureDir(projectDir);
 
-      await this.projectScaffolder.scaffoldEvolithYaml(input, projectDir);
-      artifacts.push(`${input.name}/evolith.yaml`);
+      await this.projectScaffolder.scaffoldEvolithYaml(safeInput, projectDir);
+      artifacts.push(`${name}/evolith.yaml`);
 
-      await this.projectScaffolder.scaffoldReadme(input, projectDir);
-      artifacts.push(`${input.name}/README.md`, `${input.name}/README.es.md`);
+      await this.projectScaffolder.scaffoldReadme(safeInput, projectDir);
+      artifacts.push(`${name}/README.md`, `${name}/README.es.md`);
 
-      await this.projectScaffolder.scaffoldByRuntime(input, projectDir);
-      artifacts.push(`${input.name}/package.json`);
+      await this.projectScaffolder.scaffoldByRuntime(safeInput, projectDir);
+      artifacts.push(`${name}/package.json`);
 
       // GIT-08 — after the runtime scaffold, so the commitlint devDependencies
       // merge into the package.json that scaffold just wrote rather than racing it.
-      const commitArtifacts = await this.projectScaffolder.scaffoldCommitConventions(input, projectDir);
+      const commitArtifacts = await this.projectScaffolder.scaffoldCommitConventions(safeInput, projectDir);
       for (const artifact of commitArtifacts) {
-        const qualified = `${input.name}/${artifact}`;
+        const qualified = `${name}/${artifact}`;
         if (!artifacts.includes(qualified)) artifacts.push(qualified);
       }
       if (!input.features.includes('hooks')) {
@@ -95,19 +102,19 @@ export class InitializeProjectUseCase {
       if (input.features.includes('adr')) {
         await this.fs.ensureDir(`${projectDir}/reference/architecture/adrs`);
         await this.fs.writeJson(`${projectDir}/reference/architecture/adrs/adr-matrix.json`, { adrs: [] });
-        artifacts.push(`${input.name}/reference/architecture/adrs/adr-matrix.json`);
+        artifacts.push(`${name}/reference/architecture/adrs/adr-matrix.json`);
       }
 
       if (input.features.includes('hooks')) {
         await this.fs.ensureDir(`${projectDir}/.husky`);
         await this.fs.writeFile(`${projectDir}/.husky/pre-commit`, '#!/bin/sh\nevolution validate --pre-commit\n');
-        artifacts.push(`${input.name}/.husky/pre-commit`);
+        artifacts.push(`${name}/.husky/pre-commit`);
       }
 
       if (input.features.includes('acl')) {
         await this.fs.ensureDir(`${projectDir}/rulesets/acl`);
         await this.fs.writeJson(`${projectDir}/rulesets/acl/anti-corruption-layer.rules.json`, { version: '1.0.0', principles: [] });
-        artifacts.push(`${input.name}/rulesets/acl/anti-corruption-layer.rules.json`);
+        artifacts.push(`${name}/rulesets/acl/anti-corruption-layer.rules.json`);
       }
 
       const platformCheck = await this.projectScaffolder.checkRuntimePlatform(input.runtime);

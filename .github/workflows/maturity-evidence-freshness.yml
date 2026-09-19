@@ -1,0 +1,124 @@
+name: Maturity Evidence Freshness (GT-711)
+
+# The four runtime checks in `maturity-evidence.json` are valid for 30 days; after that
+# `09-reconcile-maturity.mjs --check` rejects them and `Validate documentation` — a REQUIRED
+# check — goes red on every open PR, whatever the PR touched. That is by design: evidence
+# that ages out is re-taken, not extended. What was not by design is HOW the expiry got
+# noticed: twice (2026-08-18, 2026-09-19) by a PR author whose change had nothing to do with
+# it, on the day it started blocking merges. The expiry date is known thirty days ahead, so
+# this workflow reads it daily and opens ONE issue a week before, with the date and the
+# procedure. Nothing here moves the window or touches the evidence.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  schedule:
+    # 06:45 UTC daily — after opa-parity (06:00) and the published canary (06:30), so a
+    # red morning still has one cause per thread.
+    - cron: '45 6 * * *'
+  workflow_dispatch:
+    inputs:
+      now:
+        description: 'Ask what the report will say on this day (YYYY-MM-DD); empty = today'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  freshness:
+    name: Report when the runtime evidence turns stale
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # The evidence is re-observed on `develop` and reaches `main` by promotion, so the
+      # branch to read is the one where the fix is authored. A shallow checkout is enough:
+      # `--freshness` reads one JSON file and never calls git.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: develop
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '20'
+
+      - name: Age the four checks against the 30-day window
+        id: freshness
+        run: |
+          node .harness/scripts/ci/09-reconcile-maturity.mjs --freshness \
+            ${{ inputs.now && format('--now={0}', inputs.now) || '' }} \
+            2>&1 | tee freshness.log
+          exit "${PIPESTATUS[0]}"
+
+      # A warning nobody is subscribed to is the failure mode this workflow exists to end
+      # (the Actions tab was already red for the canary and nobody looked — GT-635). The
+      # issue is UPDATED rather than duplicated, so seven days of warning is one thread.
+      - name: Open or update the freshness issue
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const fs = require('fs');
+            const log = fs.existsSync('freshness.log') ? fs.readFileSync('freshness.log', 'utf8') : '(no log captured)';
+            const today = new Date().toISOString().slice(0, 10);
+            const title = 'Runtime maturity evidence turns stale soon — re-observe it before Validate documentation goes red';
+            const body = [
+              `Checked on ${today} against \`develop\`.`,
+              '',
+              'From the day named below, `09-reconcile-maturity.mjs --check` rejects the evidence and',
+              '**`Validate documentation` (required) is red on every PR**, whatever the PR touched.',
+              '',
+              '```',
+              log.slice(-4000),
+              '```',
+              '',
+              '**Procedure** (the one in `3e5aac80` and `2ee3f9a0`): for each of the four checks take a',
+              'fresh green run of its workflow, rewrite `observedAt` / `commit` / `source` / `summary` in',
+              '`reference/core/control-center/maturity-reports/maturity-evidence.json` as a NEW observation',
+              '(what the run shows, never a date bump), run `node .harness/scripts/ci/09-reconcile-maturity.mjs`',
+              'to regenerate the reconciliation, and open a PR to `develop`; promote to `main` afterwards.',
+              '',
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            ].join('\n');
+
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'maturity-evidence',
+            });
+            if (existing.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.data[0].number, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['maturity-evidence'],
+              });
+            }
+
+      # Once re-observed, the thread says so and closes itself; an issue nobody closes is an
+      # issue nobody believes.
+      - name: Close the freshness issue once the evidence is fresh again
+        if: success() && github.event_name == 'schedule'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'maturity-evidence',
+            });
+            for (const issue of existing.data) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number,
+                body: `Fresh again on ${new Date().toISOString().slice(0, 10)} — all four checks are inside the window with more than seven days to spare.`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, state: 'closed',
+              });
+            }

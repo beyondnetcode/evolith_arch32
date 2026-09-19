@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "asOf": "2026-09-05",
+  "asOf": "2026-09-19",
   "checks": [
     {
       "id": "cli-baseline",

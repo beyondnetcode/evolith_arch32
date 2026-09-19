@@ -10207,3 +10207,43 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
   - [ ] **FALSIFIABILITY:** a PR carrying an undeclared HIGH advisory comes out `BLOCKED` rather than `UNSTABLE`, observed and not assumed.
   - [~] The decision on `Trivy` and `build-and-test` is written down — required too, or a recorded reason why not. **DECIDED by the owner 2026-09-05: both required.** Only half is executable, and the other half is not laziness but a measured deadlock: **`Trivy Container Scan` is safe to require** because it lives in `sdk-cli-ci.yml`, which carries **no `paths` filter** — and whose comment says it must never carry one, because of the block `CodeQL SAST` caused on PR #218 once it became required — so it reports on every PR. **`build-and-test` CANNOT be required as it stands:** it lives in `sdk-cli-release.yml`, whose `pull_request` trigger does filter on `src/sdk/cli/**`, `src/packages/**`, `.github/workflows/sdk-cli-release.yml` and `.harness/**`. A required check behind a path filter **never reports** on a PR that misses those paths, and GitHub reads "never reported" as "not satisfied": the PR is unmergeable forever with everything green. That is exactly what would have happened to [#690](https://github.com/beyondnetcode/evolith_arch32/pull/690), which touched only `reference/`. **A precondition, not an alternative:** drop the `paths` filter from `sdk-cli-release.yml`'s `pull_request` — the same fix already applied to `sdk-cli-ci.yml` — and only then add it to the required set. **On the name:** the check to require is `Trivy Container Scan`, the job name; the bare `Trivy` check published by `aquasecurity/trivy-action` shows on `main` but not on `develop`'s head, so requiring that name would reintroduce the same deadlock by another route.
 - **Status:** `PENDING`
+#### GT-711
+
+**Title:** The maturity-evidence window closes on a date known thirty days ahead, and the first to learn it was whoever opened a PR that morning
+
+- **Purpose:** Learn the expiry of the four runtime checks a week ahead, in an issue, instead of on the day, in a red required check on an unrelated PR.
+- **Evidence, measured 2026-09-19 against the evidence file and the Actions history:**
+
+  | fact | value |
+  |---|---|
+  | rule | `validateRuntimeEvidence` in `09-reconcile-maturity.mjs` rejects a check whose `observedAt` is more than 30 days old |
+  | where it runs | `Validate documentation`, a required context on `main` and `develop`, with `--check` |
+  | the four checks were observed | 2026-08-18 (`3e5aac80`) |
+  | last valid day / first stale day | 2026-09-17 / 2026-09-18 |
+  | last green on `develop` | run 34998373244, 2026-09-15, at 28 days |
+  | first red | [#724](https://github.com/beyondnetcode/evolith_arch32/pull/724), 2026-09-19, at 32 days — a positioning change to the two READMEs |
+  | previous occurrence | 2026-08-18: `documentation` crossed 31 days on a promotion, recorded in the evidence file's own summary |
+  | what looked at the calendar before that day | nothing |
+
+- **The window is not the defect.** Evidence that ages out is meant to be re-taken, not extended — both re-observations (`3e5aac80`, `2ee3f9a0`) say so in their summaries and neither is a date bump. The defect is that a date known thirty days in advance was being learned on the day it started blocking merges, by whoever happened to open a PR, with no relation between the change and the red.
+- **What closes it, in `30065070`:**
+  - `assessEvidenceFreshness(evidence, now)` names, per check, the first day `validateRuntimeEvidence` will reject it — `observedAt + EVIDENCE_MAX_AGE_DAYS + 1`, the same constant and the same arithmetic, not a second opinion — and classifies it `fresh`, `expiring` (within `EVIDENCE_WARN_DAYS = 7`, today included), `stale` or `future`.
+  - Every reconciler run, `--check` included, prints the expiring checks with their date after accepting the evidence. It does not block: the window does not move.
+  - `--freshness [--now=YYYY-MM-DD]` prints the report and exits 1 inside the band or past it; `--now` lets the red path be observed on demand instead of waited for.
+  - `maturity-evidence-freshness.yml` runs it daily at 06:45 UTC against `develop` (the branch where re-observations are authored) and opens one issue labelled `maturity-evidence` with the log and the procedure; the thread is updated, not duplicated, and closes itself once the checks are fresh again. Same shape as the published-artifact canary (GT-671), for the same reason: a red Actions tab nobody is subscribed to is not a signal.
+- **Use cases:**
+  - A contributor opens a documentation PR and `Validate documentation` is red over four JSON entries the PR never touched.
+  - A promotion to `main` is blocked on the morning the evidence crosses the window, with nobody having planned the re-observation.
+- **Impact:** Twice in a month a required check went red on unrelated work, on the day it started blocking, with the fix being a re-observation nobody had scheduled.
+- **Expected outcome:** An issue a week before the window closes, naming the date and the four checks; the re-observation lands before any PR sees red.
+- **Files affected:** `.harness/scripts/ci/09-reconcile-maturity.mjs`, `.harness/scripts/reconcile-maturity.test.mjs`, `.github/workflows/maturity-evidence-freshness.yml`, `.github/workflows/docs.yml`
+- **Component:** `Infra` · **Criticality:** P2 · **Complexity:** S
+- **Principal:** `XS` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-09-19 while merging [#724](https://github.com/beyondnetcode/evolith_arch32/pull/724): the PR changed two READMEs and came out red on `Validate documentation`; reading the log showed `cli-baseline evidence is stale or future-dated` four times, and the evidence file's own summaries showed the same thing had happened on 2026-08-18.
+- **Acceptance criteria:**
+  - [x] The first stale day the report names is the first day `validateRuntimeEvidence` rejects the check, proven at both sides of the boundary. **MET** — the self-test replays the real incident: observed 2026-08-18, accepted at 2026-09-17T23:59Z, rejected at 2026-09-18T00:00Z, report says `turns stale on 2026-09-18`.
+  - [x] The warning band has all four edges tested: last fresh day, first expiring day, last valid day (0 left), first stale day, plus future-dated. **MET** — 24 cases in `reconcile-maturity.test.mjs`, 3 new.
+  - [x] The window and the re-observation rule are unchanged. **MET** — `EVIDENCE_MAX_AGE_DAYS = 30` is the same `30` the rejection used, now shared; the report's own text says "never a date bump".
+  - [x] **FALSIFIABILITY:** the red path was observed, not assumed. **MET** — `--freshness --now=2026-10-13` prints four `turns stale on 2026-10-20 (6 day(s) left)` lines and exits 1; `--now=2026-10-20` prints four `STALE since 2026-10-20` lines and exits 1; today exits 0.
+  - [x] What cannot be observed yet is written down as such, not claimed: the scheduled run opening the issue is first observable on 2026-10-13 (the first day inside the band for the evidence observed 2026-09-19) and closing it after the re-observation. **MET as a statement of what is NOT claimed** — the date is recorded here and in the closure record; the issue steps are the published canary's (GT-671), which have the same not-yet-fired status.
+- **Status:** `DONE`

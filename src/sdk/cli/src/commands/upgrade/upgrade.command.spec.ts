@@ -1,6 +1,9 @@
 import { UpgradeCommand } from './upgrade.command';
 
 jest.mock('@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service', () => ({
+  // GT-673: the command also imports NO_FINGERPRINT_HINT from this module; keep
+  // the real exports and replace only the service.
+  ...jest.requireActual('@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service'),
   SatelliteUpgradeService: jest.fn().mockImplementation(() => ({
     planUpgrade: jest.fn(),
     executeUpgrade: jest.fn(),
@@ -35,6 +38,41 @@ const mockGetUpgradeReport = jest.fn();
   getUpgradeReport: mockGetUpgradeReport,
 }));
 
+// GT-673: plans carry the three classes; derive them from `changes` so the
+// pre-existing fixtures keep their shape and gain the new fields in one place.
+type Change = {
+  type: string; sourcePath: string; targetPath: string; description: string; breaking: boolean;
+  classification?: 'upstream-only' | 'local-only' | 'conflict'; reason?: 'no-fingerprint' | 'both-changed'; relativePath?: string;
+};
+function makePlan(partial: { changes?: Change[]; currentVersion?: string; targetVersion?: string; estimatedRisk?: string; manifestPresent?: boolean; breakingChanges?: Change[] }) {
+  const changes = (partial.changes ?? []).map((c, i) => ({
+    classification: 'upstream-only' as const,
+    relativePath: `rulesets/file-${i}.json`,
+    ...c,
+  }));
+  const upstreamOnly = changes.filter(c => c.classification === 'upstream-only');
+  const localOnly = changes.filter(c => c.classification === 'local-only');
+  const conflicts = changes.filter(c => c.classification === 'conflict');
+  return {
+    currentVersion: partial.currentVersion ?? '1.0.0',
+    targetVersion: partial.targetVersion ?? '1.1.0',
+    estimatedRisk: partial.estimatedRisk ?? 'low',
+    changes,
+    breakingChanges: partial.breakingChanges ?? [...upstreamOnly, ...conflicts].filter(c => c.breaking),
+    backupRequired: upstreamOnly.length + conflicts.length > 0,
+    upstreamOnly,
+    localOnly,
+    conflicts,
+    manifestPresent: partial.manifestPresent ?? true,
+  };
+}
+function makeResult(plan: ReturnType<typeof makePlan>, partial: Record<string, unknown> = {}) {
+  return {
+    success: true, changesApplied: 0, changesSkipped: 0, errors: [], warnings: [], backupPath: null,
+    overwrittenFiles: [], baselinedFiles: [], plan, ...partial,
+  };
+}
+
 describe('UpgradeCommand', () => {
   let command: UpgradeCommand;
   let logSpy: jest.SpyInstance;
@@ -59,13 +97,13 @@ describe('UpgradeCommand', () => {
 
   describe('run', () => {
     it('should show intro and plan upgrade', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [],
         breakingChanges: [],
         currentVersion: '1.0.0',
         targetVersion: '1.0.0',
         estimatedRisk: 'low',
-      });
+      }));
 
       await command.run([], {});
 
@@ -74,13 +112,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should show already up to date when no changes', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [],
         breakingChanges: [],
         currentVersion: '1.0.0',
         targetVersion: '1.0.0',
         estimatedRisk: 'low',
-      });
+      }));
 
       await command.run([], {});
 
@@ -95,13 +133,13 @@ describe('UpgradeCommand', () => {
     // threw a raw stack trace. The service must be built with an injected
     // filesystem + logger, and the command must reach a plan without crashing.
     it('GT-459: constructs the upgrade service with an injected filesystem and logger', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [],
         breakingChanges: [],
         currentVersion: '1.0.0',
         targetVersion: '1.0.0',
         estimatedRisk: 'low',
-      });
+      }));
 
       await expect(command.run([], { dryRun: true })).resolves.not.toThrow();
 
@@ -114,13 +152,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should run dry run when dryRun option is set', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'test', breaking: false }],
         breakingChanges: [],
         currentVersion: '1.0.0',
         targetVersion: '1.1.0',
         estimatedRisk: 'low',
-      });
+      }));
       mockExecuteUpgrade.mockResolvedValue({
         success: true,
         changesApplied: 0,
@@ -129,6 +167,8 @@ describe('UpgradeCommand', () => {
         warnings: [],
         plan: { changes: [], breakingChanges: [], currentVersion: '1.0.0', targetVersion: '1.1.0', estimatedRisk: 'low', backupRequired: false },
         backupPath: null,
+        overwrittenFiles: [],
+        baselinedFiles: [],
       });
       mockGetUpgradeReport.mockResolvedValue('report');
 
@@ -143,13 +183,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should cancel upgrade on breaking changes without force', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [{ type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'breaking', breaking: true }],
         breakingChanges: [{ type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'breaking', breaking: true }],
         currentVersion: '1.0.0',
         targetVersion: '1.1.0',
         estimatedRisk: 'medium',
-      });
+      }));
 
       await command.run([], {});
 
@@ -160,13 +200,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should proceed with breaking changes when force is set', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [{ type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'breaking', breaking: true }],
         breakingChanges: [{ type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'breaking', breaking: true }],
         currentVersion: '1.0.0',
         targetVersion: '1.1.0',
         estimatedRisk: 'medium',
-      });
+      }));
       promptServiceMock.confirm.mockResolvedValue(true);
       mockExecuteUpgrade.mockResolvedValue({
         success: true,
@@ -176,6 +216,8 @@ describe('UpgradeCommand', () => {
         warnings: [],
         plan: { changes: [], breakingChanges: [], currentVersion: '1.0.0', targetVersion: '1.1.0', estimatedRisk: 'medium', backupRequired: true },
         backupPath: '/backup',
+        overwrittenFiles: [],
+        baselinedFiles: [],
       });
       mockGetUpgradeReport.mockResolvedValue('report');
 
@@ -187,13 +229,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should cancel upgrade when user declines confirmation', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'test', breaking: false }],
         breakingChanges: [],
         currentVersion: '1.0.0',
         targetVersion: '1.1.0',
         estimatedRisk: 'low',
-      });
+      }));
       promptServiceMock.confirm.mockResolvedValue(false);
 
       await command.run([], {});
@@ -204,13 +246,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should show success message on successful upgrade', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'test', breaking: false }],
         breakingChanges: [],
         currentVersion: '1.0.0',
         targetVersion: '1.1.0',
         estimatedRisk: 'low',
-      });
+      }));
       promptServiceMock.confirm.mockResolvedValue(true);
       mockExecuteUpgrade.mockResolvedValue({
         success: true,
@@ -220,6 +262,8 @@ describe('UpgradeCommand', () => {
         warnings: [],
         plan: { changes: [], breakingChanges: [], currentVersion: '1.0.0', targetVersion: '1.1.0', estimatedRisk: 'low', backupRequired: false },
         backupPath: null,
+        overwrittenFiles: [],
+        baselinedFiles: [],
       });
       mockGetUpgradeReport.mockResolvedValue('report');
 
@@ -232,13 +276,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should show error message on failed upgrade', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'test', breaking: false }],
         breakingChanges: [],
         currentVersion: '1.0.0',
         targetVersion: '1.1.0',
         estimatedRisk: 'low',
-      });
+      }));
       promptServiceMock.confirm.mockResolvedValue(true);
       mockExecuteUpgrade.mockResolvedValue({
         success: false,
@@ -248,6 +292,8 @@ describe('UpgradeCommand', () => {
         warnings: [],
         plan: { changes: [], breakingChanges: [], currentVersion: '1.0.0', targetVersion: '1.1.0', estimatedRisk: 'low', backupRequired: false },
         backupPath: null,
+        overwrittenFiles: [],
+        baselinedFiles: [],
       });
       mockGetUpgradeReport.mockResolvedValue('report');
 
@@ -277,13 +323,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should use custom core path when provided', async () => {
-      mockPlanUpgrade.mockResolvedValue({
+      mockPlanUpgrade.mockResolvedValue(makePlan({
         changes: [],
         breakingChanges: [],
         currentVersion: '1.0.0',
         targetVersion: '1.0.0',
         estimatedRisk: 'low',
-      });
+      }));
 
       await command.run([], { core: '/custom/core' });
 
@@ -295,7 +341,7 @@ describe('UpgradeCommand', () => {
 
   describe('printUpgradePlan', () => {
     it('should print upgrade plan with changes', () => {
-      const plan = {
+      const plan = makePlan({
         currentVersion: '1.0.0',
         targetVersion: '1.1.0',
         estimatedRisk: 'low',
@@ -304,7 +350,7 @@ describe('UpgradeCommand', () => {
           { type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'Modify feature', breaking: false },
         ],
         breakingChanges: [],
-      };
+      });
 
       (command as any).printUpgradePlan(plan);
 
@@ -323,13 +369,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should print high risk level', () => {
-      const plan = {
+      const plan = makePlan({
         currentVersion: '1.0.0',
         targetVersion: '2.0.0',
         estimatedRisk: 'high',
         changes: [],
         breakingChanges: [],
-      };
+      });
 
       (command as any).printUpgradePlan(plan);
 
@@ -339,13 +385,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should print medium risk level', () => {
-      const plan = {
+      const plan = makePlan({
         currentVersion: '1.0.0',
         targetVersion: '1.5.0',
         estimatedRisk: 'medium',
         changes: [],
         breakingChanges: [],
-      };
+      });
 
       (command as any).printUpgradePlan(plan);
 
@@ -355,13 +401,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should show breaking changes count', () => {
-      const plan = {
+      const plan = makePlan({
         currentVersion: '1.0.0',
         targetVersion: '2.0.0',
         estimatedRisk: 'high',
         changes: [{ type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'breaking', breaking: true }],
         breakingChanges: [{ type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'breaking', breaking: true }],
-      };
+      });
 
       (command as any).printUpgradePlan(plan);
 
@@ -371,13 +417,13 @@ describe('UpgradeCommand', () => {
     });
 
     it('should show breaking indicator on changes', () => {
-      const plan = {
+      const plan = makePlan({
         currentVersion: '1.0.0',
         targetVersion: '2.0.0',
         estimatedRisk: 'high',
         changes: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'breaking change', breaking: true }],
         breakingChanges: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'breaking change', breaking: true }],
-      };
+      });
 
       (command as any).printUpgradePlan(plan);
 
@@ -454,6 +500,137 @@ describe('UpgradeCommand', () => {
   describe('parseReport', () => {
     it('should return true', () => {
       expect(command.parseReport()).toBe(true);
+    });
+  });
+
+  // GT-673: the upgrade tells a tenant edit from an upstream change and reports
+  // the three classes on both surfaces; conflicts need --overwrite-local.
+  describe('GT-673: classification, --overwrite-local, --accept-local', () => {
+    const upstream: Change = { type: 'modify', sourcePath: '/c/a', targetPath: '/s/a', relativePath: 'rulesets/a.json', description: 'Update ruleset: a.json', breaking: false, classification: 'upstream-only' };
+    const local: Change = { type: 'modify', sourcePath: '/c/b', targetPath: '/s/b', relativePath: 'rulesets/b.json', description: 'Local edit kept: b.json', breaking: false, classification: 'local-only' };
+    const conflict: Change = { type: 'modify', sourcePath: '/c/c', targetPath: '/s/c', relativePath: 'rulesets/c.json', description: 'Conflict (both changed): c.json', breaking: false, classification: 'conflict', reason: 'both-changed' };
+
+    const envelopeFromLog = () => JSON.parse(logSpy.mock.calls.map(c => String(c[0])).find(l => l.trim().startsWith('{'))!);
+
+    it('--dry-run --format json is the divergence report: plan plus the three classes, nothing executed for real', async () => {
+      const plan = makePlan({ changes: [upstream, local, conflict] });
+      mockPlanUpgrade.mockResolvedValue(plan);
+      mockExecuteUpgrade.mockResolvedValue(makeResult(plan, { changesSkipped: 3, warnings: ['Dry run mode - no changes were applied'] }));
+
+      await command.run([], { dryRun: true, format: 'json' });
+
+      expect(mockExecuteUpgrade).toHaveBeenCalledWith(expect.objectContaining({ dryRun: true }));
+      const envelope = envelopeFromLog();
+      expect(envelope.success).toBe(true);
+      expect(envelope.data.dryRun).toBe(true);
+      expect(envelope.data.divergence).toEqual({
+        manifestPresent: true,
+        upstreamOnly: ['rulesets/a.json'],
+        localOnly: ['rulesets/b.json'],
+        conflicts: [{ path: 'rulesets/c.json', reason: 'both-changed' }],
+      });
+      expect(envelope.data.plan.conflicts).toHaveLength(1);
+      expect(envelope.data.plan.localOnly).toHaveLength(1);
+      expect(envelope.data.plan.upstreamOnly).toHaveLength(1);
+    });
+
+    it('without --overwrite-local a plan with only local/conflict changes prompts for nothing and applies nothing', async () => {
+      const plan = makePlan({ changes: [local, conflict] });
+      mockPlanUpgrade.mockResolvedValue(plan);
+      mockExecuteUpgrade.mockResolvedValue(makeResult(plan, { changesSkipped: 2 }));
+      mockGetUpgradeReport.mockResolvedValue('report');
+
+      await command.run([], {});
+
+      expect(promptServiceMock.confirm).not.toHaveBeenCalled();
+      expect(promptServiceMock.showInfo).toHaveBeenCalledWith(expect.stringContaining('Nothing to apply'));
+      expect(mockExecuteUpgrade).toHaveBeenCalledWith(expect.objectContaining({ overwriteLocal: undefined }));
+    });
+
+    it('--overwrite-local names every file it will overwrite before asking, and forwards the flag', async () => {
+      const plan = makePlan({ changes: [upstream, conflict] });
+      mockPlanUpgrade.mockResolvedValue(plan);
+      promptServiceMock.confirm.mockResolvedValue(true);
+      mockExecuteUpgrade.mockResolvedValue(makeResult(plan, { changesApplied: 2, overwrittenFiles: ['rulesets/c.json'], backupPath: '/b' }));
+      mockGetUpgradeReport.mockResolvedValue('report');
+
+      await command.run([], { overwriteLocal: true });
+
+      expect(promptServiceMock.showWarning).toHaveBeenCalledWith(expect.stringContaining('OVERWRITE 1 local file(s)'));
+      expect(promptServiceMock.showWarning).toHaveBeenCalledWith(expect.stringContaining('rulesets/c.json'));
+      expect(promptServiceMock.confirm).toHaveBeenCalledWith('Apply 2 change(s)?', true);
+      expect(mockExecuteUpgrade).toHaveBeenCalledWith(expect.objectContaining({ overwriteLocal: true }));
+    });
+
+    it('--overwrite-local --format json: the envelope names the overwritten files', async () => {
+      const plan = makePlan({ changes: [conflict] });
+      mockPlanUpgrade.mockResolvedValue(plan);
+      mockExecuteUpgrade.mockResolvedValue(makeResult(plan, { changesApplied: 1, overwrittenFiles: ['rulesets/c.json'] }));
+
+      await command.run([], { overwriteLocal: true, format: 'json' });
+
+      const envelope = envelopeFromLog();
+      expect(envelope.data.overwrittenFiles).toEqual(['rulesets/c.json']);
+      expect(envelope.data.divergence.conflicts).toEqual([{ path: 'rulesets/c.json', reason: 'both-changed' }]);
+    });
+
+    it('a breaking conflict does not block a run that will not apply it (no --overwrite-local, no --force)', async () => {
+      const breakingConflict: Change = { ...conflict, breaking: true };
+      const plan = makePlan({ changes: [upstream, breakingConflict] });
+      mockPlanUpgrade.mockResolvedValue(plan);
+      promptServiceMock.confirm.mockResolvedValue(true);
+      mockExecuteUpgrade.mockResolvedValue(makeResult(plan, { changesApplied: 1, changesSkipped: 1 }));
+      mockGetUpgradeReport.mockResolvedValue('report');
+
+      await command.run([], {});
+
+      expect(promptServiceMock.showOutro).not.toHaveBeenCalledWith(expect.stringContaining('Upgrade cancelled'));
+      expect(mockExecuteUpgrade).toHaveBeenCalled();
+    });
+
+    it('--accept-local records the baseline through the service and copies nothing', async () => {
+      const plan = makePlan({ changes: [{ ...conflict, reason: 'no-fingerprint' }], manifestPresent: false });
+      mockPlanUpgrade.mockResolvedValue(plan);
+      promptServiceMock.confirm.mockResolvedValue(true);
+      mockExecuteUpgrade.mockResolvedValue(makeResult(plan, { baselinedFiles: ['rulesets/c.json'] }));
+
+      await command.run([], { acceptLocal: true });
+
+      expect(mockExecuteUpgrade).toHaveBeenCalledTimes(1);
+      expect(mockExecuteUpgrade).toHaveBeenCalledWith(expect.objectContaining({ acceptLocal: true }));
+      expect(promptServiceMock.showSuccess).toHaveBeenCalledWith(expect.stringContaining('Baseline recorded for 1 file(s)'));
+      expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--accept-local'));
+    });
+
+    it('--accept-local --format json carries baselinedFiles in the envelope', async () => {
+      const plan = makePlan({ changes: [{ ...conflict, reason: 'no-fingerprint' }], manifestPresent: false });
+      mockPlanUpgrade.mockResolvedValue(plan);
+      mockExecuteUpgrade.mockResolvedValue(makeResult(plan, { baselinedFiles: ['rulesets/c.json'] }));
+
+      await command.run([], { acceptLocal: true, format: 'json' });
+
+      const envelope = envelopeFromLog();
+      expect(envelope.data.baselinedFiles).toEqual(['rulesets/c.json']);
+      expect(envelope.data.divergence.manifestPresent).toBe(false);
+      expect(promptServiceMock.confirm).not.toHaveBeenCalled();
+    });
+
+    it('printUpgradePlan prints the three classes and the no-fingerprint hint', () => {
+      const plan = makePlan({ changes: [upstream, local, { ...conflict, reason: 'no-fingerprint' }], manifestPresent: false });
+
+      (command as any).printUpgradePlan(plan);
+
+      const printed = logSpy.mock.calls.map(c => String(c[0])).join('\n');
+      expect(printed).toContain('Upstream-only (applied): 1');
+      expect(printed).toContain('Local-only (kept, never applied): 1');
+      expect(printed).toContain('Conflicts (not applied without --overwrite-local): 1');
+      expect(printed).toContain('[no fingerprint]');
+      expect(printed).toContain('evolith upgrade --accept-local');
+    });
+
+    it('parseOverwriteLocal / parseAcceptLocal return true', () => {
+      expect(command.parseOverwriteLocal()).toBe(true);
+      expect(command.parseAcceptLocal()).toBe(true);
     });
   });
 });

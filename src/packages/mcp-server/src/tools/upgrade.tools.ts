@@ -1,6 +1,20 @@
 import type { IFileSystem, ILogger } from '@beyondnet/evolith-core';
-import { SatelliteUpgradeService } from '@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service';
+import { SatelliteUpgradeService, UpgradePlan } from '@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service';
 import { McpTool } from '../mcp/tool.interface';
+
+/**
+ * GT-673: the per-class summary, identical to the CLI's `data.divergence`
+ * (`upgrade.command.ts`), so the exploration tester sees the same shape on
+ * both surfaces.
+ */
+function divergenceOf(plan: UpgradePlan) {
+  return {
+    manifestPresent: plan.manifestPresent,
+    upstreamOnly: plan.upstreamOnly.map((c) => c.relativePath),
+    localOnly: plan.localOnly.map((c) => c.relativePath),
+    conflicts: plan.conflicts.map((c) => ({ path: c.relativePath, reason: c.reason ?? 'both-changed' })),
+  };
+}
 
 /**
  * Satellite upgrade tools — MCP parity with the CLI `upgrade` command.
@@ -12,6 +26,12 @@ import { McpTool } from '../mcp/tool.interface';
  *   - `evolith-upgrade-plan`  (read)     → `planUpgrade` — never touches disk.
  *   - `evolith-upgrade-apply` (mutative) → `executeUpgrade` — writes files, so
  *     the dispatch demands `{ apply:true, approvalToken }`.
+ *
+ * GT-673: both carry the three classes (`upstream-only` / `local-only` /
+ * `conflict`) the service computes against `.evolith/scaffold-manifest.json`.
+ * `apply` mirrors the CLI flags: `overwriteLocal` (apply conflicts too) and
+ * `acceptLocal` (record the baseline, copy nothing). Without `overwriteLocal`
+ * a conflict is never written — same default as `evolith upgrade`.
  *
  * Both delegate to the shared {@link SatelliteUpgradeService} from
  * `@beyondnet/evolith-core-domain` — the exact same service the CLI command
@@ -41,7 +61,7 @@ export function createUpgradeTools(fs: IFileSystem, logger: ILogger): McpTool[] 
       schema: {
         name: 'evolith-upgrade-plan',
         description:
-          'Plan a satellite upgrade against the upstream Evolith core (read-only / dry-run). Computes the change plan, breaking changes and estimated risk without writing any files.',
+          'Plan a satellite upgrade against the upstream Evolith core (read-only / dry-run). Computes the change plan, breaking changes and estimated risk without writing any files. Every change is classified as upstream-only (applied by upgrade-apply), local-only (a tenant edit, never applied) or conflict (both sides changed, or no fingerprint; applied only with overwriteLocal) — this is the satellite divergence report.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -67,6 +87,7 @@ export function createUpgradeTools(fs: IFileSystem, logger: ILogger): McpTool[] 
           return {
             upToDate: true,
             plan,
+            divergence: divergenceOf(plan),
             message: 'Satellite is already up to date',
           };
         }
@@ -75,6 +96,7 @@ export function createUpgradeTools(fs: IFileSystem, logger: ILogger): McpTool[] 
           upToDate: false,
           dryRun: true,
           plan,
+          divergence: divergenceOf(plan),
           breakingChanges: plan.breakingChanges.length,
           message: `Dry run complete — ${plan.changes.length} change(s) planned, no changes applied`,
         };
@@ -88,7 +110,7 @@ export function createUpgradeTools(fs: IFileSystem, logger: ILogger): McpTool[] 
       schema: {
         name: 'evolith-upgrade-apply',
         description:
-          'Apply a satellite upgrade from the upstream Evolith core. Writes files into the satellite. Set force=true to proceed when breaking changes are detected.',
+          'Apply a satellite upgrade from the upstream Evolith core. Writes files into the satellite. Applies upstream-only changes; local-only changes are never written and conflicts are written only with overwriteLocal=true (the result names every overwritten file). Set force=true to proceed when breaking changes are detected. acceptLocal=true records the current Core content as the scaffold baseline without copying anything (the migration path for a satellite with no .evolith/scaffold-manifest.json).',
         inputSchema: {
           type: 'object',
           properties: {
@@ -110,6 +132,16 @@ export function createUpgradeTools(fs: IFileSystem, logger: ILogger): McpTool[] 
               description: 'Skip creating a backup before applying changes (default false)',
               default: false,
             },
+            overwriteLocal: {
+              type: 'boolean',
+              description: 'GT-673: also apply conflicts, overwriting local edits; the result lists them in overwrittenFiles (default false)',
+              default: false,
+            },
+            acceptLocal: {
+              type: 'boolean',
+              description: 'GT-673: record the current Core content as the baseline (.evolith/scaffold-manifest.json) and copy nothing (default false)',
+              default: false,
+            },
           },
           required: [],
         },
@@ -119,17 +151,21 @@ export function createUpgradeTools(fs: IFileSystem, logger: ILogger): McpTool[] 
         const corePath = coreOf(args, satellitePath);
         const force = Boolean(args.force);
         const skipBackup = Boolean(args.skipBackup);
+        const overwriteLocal = Boolean(args.overwriteLocal);
+        const acceptLocal = Boolean(args.acceptLocal);
 
         const result = await service.executeUpgrade({
           satellitePath,
           corePath,
           force,
           skipBackup,
+          overwriteLocal,
+          acceptLocal,
         });
 
         const report = await service.getUpgradeReport(result);
 
-        return { result, report };
+        return { result, report, divergence: divergenceOf(result.plan) };
       },
     },
   ];

@@ -203,11 +203,11 @@ export const GENERATED_TOOLS: ApiEntry[] = [
   },
   {
     "name": "evolith-upgrade-apply",
-    "description": "Apply a satellite upgrade from the upstream Evolith core. Writes files into the satellite. Set force=true to proceed when breaking changes are detected."
+    "description": "Apply a satellite upgrade from the upstream Evolith core. Writes files into the satellite. Applies upstream-only changes; local-only changes are never written and conflicts are written only with overwriteLocal=true (the result names every overwritten file). Set force=true to proceed when breaking changes are detected. acceptLocal=true records the current Core content as the scaffold baseline without copying anything (the migration path for a satellite with no .evolith/scaffold-manifest.json)."
   },
   {
     "name": "evolith-upgrade-plan",
-    "description": "Plan a satellite upgrade against the upstream Evolith core (read-only / dry-run). Computes the change plan, breaking changes and estimated risk without writing any files."
+    "description": "Plan a satellite upgrade against the upstream Evolith core (read-only / dry-run). Computes the change plan, breaking changes and estimated risk without writing any files. Every change is classified as upstream-only (applied by upgrade-apply), local-only (a tenant edit, never applied) or conflict (both sides changed, or no fingerprint; applied only with overwriteLocal) — this is the satellite divergence report."
   },
   {
     "name": "evolith-validate",

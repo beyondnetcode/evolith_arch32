@@ -1099,29 +1099,52 @@ evolith-cli upgrade --satellite . --core ../evolith-core
 | `-s, --satellite <ruta>` | El satélite a actualizar (default: `evolith.yaml` más cercano hacia arriba desde el cwd). |
 | `-c, --core <ruta>` | Checkout del Core del que salen las reglas nuevas. |
 | `-d, --dry-run` | Calcula y muestra el plan **sin aplicar** ningún cambio. |
-| `-f, --force` | Aplica el upgrade **aunque haya breaking changes** (sin esto, el comando se detiene y te avisa). |
+| `-f, --force` | Aplica el upgrade **aunque haya breaking changes** (sin esto, el comando se detiene y te avisa). **No** sobrescribe tus ediciones: eso es `--overwrite-local`. |
+| `--overwrite-local` | Aplica también los **conflictos** — archivos que cambiaron tú y el Core — sobrescribiendo tu contenido con el del Core. El plan nombra cada archivo que va a sobrescribir y antes se toma un backup. |
+| `--accept-local` | Registra el contenido actual del Core como **línea base** en `.evolith/scaffold-manifest.json` sin copiar nada. Es la ruta de migración para un satélite anterior al manifiesto, y la forma de decir "me quedo con lo mío" tras un conflicto. |
 | `--report` | Muestra el reporte detallado del upgrade. |
 
 **Combinaciones típicas:**
 
 ```bash
-# Primero mira qué cambiaría, sin tocar nada
+# Primero mira qué cambiaría, sin tocar nada: ESTE es el reporte de divergencia
 evolith-cli upgrade --satellite . --core ../evolith-core --dry-run
 
-# Aplicar (te pide confirmación antes de escribir)
+# Aplicar (te pide confirmación antes de escribir). Solo se escriben los cambios upstream-only.
 evolith-cli upgrade --satellite . --core ../evolith-core
+
+# Tomar también la versión del Core de cada conflicto (el plan los lista; se toma un backup)
+evolith-cli upgrade --satellite . --core ../evolith-core --overwrite-local
+
+# Un satélite sin manifiesto: registra primero la línea base y luego actualiza
+evolith-cli upgrade --satellite . --core ../evolith-core --accept-local
 
 # Forzar aun con cambios que rompen compatibilidad, en JSON para CI
 evolith-cli upgrade -s . -c ../evolith-core --force --format json
 ```
 
 **Qué esperar.** Primero el **plan**: versión actual → versión objetivo, nivel de
-riesgo (`low`/`medium`/`high`), la lista de cambios (con `+`/`~`/`-`/`»` según se
-agregue, modifique, elimine o migre) y cuáles son *breaking*. Si el satélite ya
-está al día, te lo dice y no hace nada. Con `--dry-run` termina ahí. Si hay
-breaking changes y **no** pasaste `--force`, el upgrade se cancela para que
-revises. Al aplicar, un "Upgrade Report" con el número de cambios aplicados. En
-`--format json`, todo esto viaja en el envelope.
+riesgo (`low`/`medium`/`high`) y los cambios en **tres clases**, cada una listada
+por archivo. El comando distingue tus ediciones de los cambios upstream comparando
+ambos lados con la huella que `init` (y cada `upgrade` previo) registró en
+`.evolith/scaffold-manifest.json` — versiona ese archivo con el satélite:
+
+- **Upstream-only** (`~`/`+`): el Core se movió y tú nunca tocaste el archivo. Se aplica.
+- **Local-only** (`=`): editaste el archivo y el Core no lo movió. Se conserva; nunca se aplica.
+- **Conflictos** (`!`): se movieron ambos lados, o el archivo no tiene huella. **No se aplica** salvo que pases `--overwrite-local`.
+
+Si el satélite ya está al día, te lo dice y no hace nada. Con `--dry-run`
+termina tras el plan. Si un cambio que *sí se escribiría* es breaking y **no**
+pasaste `--force`, el upgrade se cancela para que revises (un conflicto breaking
+que no vas a sobrescribir no bloquea). Al aplicar, un "Upgrade Report" con las
+tres clases, el número de cambios aplicados y, con `--overwrite-local`, la lista
+de archivos sobrescritos. Un satélite sin manifiesto (creado antes de que
+existiera esta huella) ve cada diferencia como un conflicto marcado
+`[no fingerprint]` y una pista para correr `--accept-local`: nada se sobrescribe
+en silencio. En `--format json`, todo esto viaja en el envelope:
+`data.plan.upstreamOnly` / `localOnly` / `conflicts`, un resumen
+`data.divergence` con las mismas tres listas, y `data.overwrittenFiles` /
+`data.baselinedFiles` al aplicar.
 
 ## 8. Utilidades
 

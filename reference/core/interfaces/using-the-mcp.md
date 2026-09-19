@@ -922,7 +922,7 @@ This group covers the *lifecycle of the satellite itself*: creating or adopting 
 }
 ```
 
-**What to expect.** If the satellite is already current, the envelope with `data.upToDate: true` and the message "already up to date". If there are changes, `data.upToDate: false`, `data.dryRun: true`, `data.plan` (the full plan), `data.breakingChanges` (how many break compatibility) and a message with the count of planned but unapplied changes.
+**What to expect.** If the satellite is already current, the envelope with `data.upToDate: true` and the message "already up to date". If there are changes, `data.upToDate: false`, `data.dryRun: true`, `data.plan` (the full plan), `data.breakingChanges` (how many break compatibility) and a message with the count of planned but unapplied changes. Every change carries a `classification` — `upstream-only` (the Core moved, the tenant did not; `apply` writes it), `local-only` (a tenant edit; never written) or `conflict` (both moved, or `reason: "no-fingerprint"` when the satellite has no `.evolith/scaffold-manifest.json`; written only with `overwriteLocal`) — and the plan lists them in `data.plan.upstreamOnly` / `localOnly` / `conflicts`, summarised in `data.divergence`. This is the satellite's divergence report: it never writes, so it is the way to ask "how far is this satellite from upstream" without upgrading.
 
 ### 5.13. `evolith-upgrade-apply` — apply the satellite upgrade · **mutative**
 
@@ -934,8 +934,10 @@ This group covers the *lifecycle of the satellite itself*: creating or adopting 
 | --- | --- | --- | --- |
 | `satellitePath` | string | no | Path to the satellite project (default: the server's cwd). |
 | `corePath` | string | no | Path to the Evolith Core checkout (default: the `satellitePath`). |
-| `force` | boolean | no | Applies the upgrade **even when there are breaking changes** (default `false`; without it, it stops on breaking changes). |
+| `force` | boolean | no | Applies the upgrade **even when there are breaking changes** (default `false`; without it, it stops on breaking changes). It does **not** overwrite tenant edits. |
 | `skipBackup` | boolean | no | Skips creating the backup before applying (default `false`). |
+| `overwriteLocal` | boolean | no | Also applies the **conflicts**, overwriting the tenant's content with the Core's (default `false`). The result names every overwritten file in `data.result.overwrittenFiles`. |
+| `acceptLocal` | boolean | no | Records the current Core content as the baseline in `.evolith/scaffold-manifest.json` and copies **nothing** (default `false`). The migration path for a satellite with no manifest. |
 
 **Example:**
 
@@ -946,7 +948,7 @@ This group covers the *lifecycle of the satellite itself*: creating or adopting 
 }
 ```
 
-**What to expect.** The envelope with `data.result` (the upgrade result: changes applied, backup, and so on) and `data.report` (the readable upgrade report). Remember to run `evolith-upgrade-plan` first, to review the plan before applying it.
+**What to expect.** The envelope with `data.result` (the upgrade result: changes applied, backup, `overwrittenFiles`, `baselinedFiles`, and the plan with its three classes), `data.report` (the readable upgrade report) and `data.divergence` (the same per-class summary `evolith-upgrade-plan` returns). By default only `upstream-only` changes are written; `local-only` changes are kept and `conflict` changes are skipped and reported until you pass `overwriteLocal: true`. Remember to run `evolith-upgrade-plan` first, to review the plan before applying it.
 
 ### 5.14. `evolith-fixtures` — seed sample data · **mutative**
 

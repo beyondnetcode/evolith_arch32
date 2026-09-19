@@ -1,7 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
 import chalk from 'chalk';
-import { SatelliteUpgradeService, UpgradePlan } from '@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service';
+import { NO_FINGERPRINT_HINT, SatelliteUpgradeService, UpgradePlan } from '@beyondnet/evolith-core-domain/application/upgrade/satellite-upgrade.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
@@ -20,6 +20,19 @@ interface UpgradeCommandOptions {
   report?: boolean;
   satellite?: string;
   format?: string;
+  // GT-673
+  overwriteLocal?: boolean;
+  acceptLocal?: boolean;
+}
+
+/** GT-673: the per-class summary every envelope carries, next to the full plan. */
+function divergenceOf(plan: UpgradePlan) {
+  return {
+    manifestPresent: plan.manifestPresent,
+    upstreamOnly: plan.upstreamOnly.map(c => c.relativePath),
+    localOnly: plan.localOnly.map(c => c.relativePath),
+    conflicts: plan.conflicts.map(c => ({ path: c.relativePath, reason: c.reason ?? 'both-changed' })),
+  };
 }
 
 @Command({
@@ -74,8 +87,40 @@ export class UpgradeCommand extends BaseEvolithCommand {
         this.promptService.stopSpinner();
       }
 
+      // GT-673: `--accept-local` records the baseline and copies nothing. It
+      // has its own path because "no changes" is not "nothing to baseline".
+      if (options?.acceptLocal) {
+        if (!json) {
+          this.printUpgradePlan(plan);
+          const confirm = await this.promptService.confirm(
+            'Record the current Core content as the baseline for every tracked ruleset (nothing is copied)?',
+            true,
+          );
+          if (!confirm) {
+            this.promptService.showOutro('Upgrade cancelled.');
+            return;
+          }
+        }
+        const result = await service.executeUpgrade({ satellitePath, corePath, acceptLocal: true, dryRun: options?.dryRun });
+        if (json) {
+          console.log(JSON.stringify(createSuccessEnvelope(
+            { ...result, divergence: divergenceOf(result.plan), dryRun: Boolean(options?.dryRun) },
+            { ...meta, durationMs: Date.now() - startedAt },
+          ), null, 2));
+          return;
+        }
+        if (options?.dryRun) {
+          this.promptService.showInfo(`Dry run: would record the baseline for ${result.baselinedFiles.length} file(s)`);
+        } else {
+          this.promptService.showSuccess(`Baseline recorded for ${result.baselinedFiles.length} file(s)`);
+        }
+        result.baselinedFiles.forEach(f => this.promptService.showInfo(`  = ${f}`));
+        this.promptService.showOutro(options?.dryRun ? 'Dry run finished.' : 'Baseline finished. Run `evolith upgrade` again to apply upstream changes.');
+        return;
+      }
+
       if (plan.changes.length === 0) {
-        const result = { success: true, message: 'Satellite is already up to date' };
+        const result = { success: true, message: 'Satellite is already up to date', divergence: divergenceOf(plan) };
         if (json) {
           console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
           return;
@@ -90,14 +135,24 @@ export class UpgradeCommand extends BaseEvolithCommand {
       }
 
       if (options?.dryRun) {
-        const _result = await service.executeUpgrade({
+        // GT-673: the dry run IS the divergence report (criterion 5), so the
+        // envelope carries the plan and the three classes, not just a message.
+        const dryResult = await service.executeUpgrade({
           satellitePath,
           corePath,
           dryRun: true,
+          overwriteLocal: options?.overwriteLocal,
         });
 
         if (json) {
-          const result = { success: true, message: 'Dry run complete - no changes applied', dryRun: true };
+          const result = {
+            success: true,
+            message: 'Dry run complete - no changes applied',
+            dryRun: true,
+            plan: dryResult.plan,
+            divergence: divergenceOf(dryResult.plan),
+            warnings: dryResult.warnings,
+          };
           console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
           return;
         }
@@ -106,20 +161,39 @@ export class UpgradeCommand extends BaseEvolithCommand {
         return;
       }
 
-      if (plan.breakingChanges.length > 0 && !options?.force) {
+      // GT-673: what this run would write — conflicts only under --overwrite-local.
+      const toApply = options?.overwriteLocal ? [...plan.upstreamOnly, ...plan.conflicts] : plan.upstreamOnly;
+      const breakingToApply = toApply.filter(c => c.breaking);
+
+      if (breakingToApply.length > 0 && !options?.force) {
         if (!json) {
-          this.promptService.showWarning(`⚠ ${plan.breakingChanges.length} breaking change(s) detected`);
+          this.promptService.showWarning(`⚠ ${breakingToApply.length} breaking change(s) detected`);
           this.promptService.showInfo('Use --force to proceed with breaking changes');
           this.promptService.showOutro('Upgrade cancelled.');
+        } else {
+          const result = await service.executeUpgrade({ satellitePath, corePath, overwriteLocal: options?.overwriteLocal });
+          console.log(JSON.stringify(createSuccessEnvelope(
+            { ...result, divergence: divergenceOf(result.plan) },
+            { ...meta, durationMs: Date.now() - startedAt },
+          ), null, 2));
         }
         return;
       }
 
       if (!json) {
-        const confirm = await this.promptService.confirm(`Apply ${plan.changes.length} change(s)?`, true);
-        if (!confirm) {
-          this.promptService.showOutro('Upgrade cancelled.');
-          return;
+        if (options?.overwriteLocal && plan.conflicts.length > 0) {
+          // The plan names every file the flag will overwrite; the prompt repeats it.
+          this.promptService.showWarning(`--overwrite-local will OVERWRITE ${plan.conflicts.length} local file(s):`);
+          plan.conflicts.forEach(c => this.promptService.showWarning(`  ✗ ${c.relativePath}`));
+        }
+        if (toApply.length === 0) {
+          this.promptService.showInfo('Nothing to apply: every difference is a local edit or a conflict (see above).');
+        } else {
+          const confirm = await this.promptService.confirm(`Apply ${toApply.length} change(s)?`, true);
+          if (!confirm) {
+            this.promptService.showOutro('Upgrade cancelled.');
+            return;
+          }
         }
 
         this.promptService.startSpinner('Applying upgrade...');
@@ -129,6 +203,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
         satellitePath,
         corePath,
         force: options?.force,
+        overwriteLocal: options?.overwriteLocal,
       });
 
       if (!json) {
@@ -145,7 +220,10 @@ export class UpgradeCommand extends BaseEvolithCommand {
 
         this.promptService.showOutro(result.success ? 'Upgrade finished.' : 'Upgrade finished with errors.');
       } else {
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(
+          { ...result, divergence: divergenceOf(result.plan) },
+          { ...meta, durationMs: Date.now() - startedAt },
+        ), null, 2));
       }
     } catch (error: unknown) {
       if (!json) {
@@ -166,12 +244,32 @@ export class UpgradeCommand extends BaseEvolithCommand {
       console.log(`${chalk.red('⚠ Breaking Changes:')} ${plan.breakingChanges.length}`);
     }
 
-    console.log(chalk.cyan('\nChanges:'));
+    // GT-673: the three classes, each by file, so the operator sees what will
+    // be written, what is theirs, and what needs a decision.
+    const upstreamOnly = plan.upstreamOnly ?? [];
+    const localOnly = plan.localOnly ?? [];
+    const conflicts = plan.conflicts ?? [];
 
-    for (const change of plan.changes) {
-      const icon = this.getChangeIcon(change.type);
+    console.log(chalk.cyan(`\nUpstream-only (applied): ${upstreamOnly.length}`));
+    for (const change of upstreamOnly) {
       const breaking = change.breaking ? chalk.red(' [BREAKING]') : '';
-      console.log(`  ${icon} ${change.description}${breaking}`);
+      console.log(`  ${this.getChangeIcon(change.type)} ${change.description}${breaking}`);
+    }
+
+    console.log(chalk.cyan(`\nLocal-only (kept, never applied): ${localOnly.length}`));
+    for (const change of localOnly) {
+      console.log(`  ${chalk.green('=')} ${change.description}`);
+    }
+
+    console.log(chalk.cyan(`\nConflicts (not applied without --overwrite-local): ${conflicts.length}`));
+    for (const change of conflicts) {
+      const breaking = change.breaking ? chalk.red(' [BREAKING]') : '';
+      const reason = change.reason === 'no-fingerprint' ? chalk.yellow(' [no fingerprint]') : '';
+      console.log(`  ${chalk.red('!')} ${change.description}${reason}${breaking}`);
+    }
+
+    if (plan.manifestPresent === false && conflicts.some(c => c.reason === 'no-fingerprint')) {
+      console.log(chalk.yellow(`\n${NO_FINGERPRINT_HINT}`));
     }
 
     console.log('');
@@ -229,6 +327,22 @@ export class UpgradeCommand extends BaseEvolithCommand {
   })
   parseSatellite(val: string): string {
     return val;
+  }
+
+  @Option({
+    flags: '--overwrite-local',
+    description: 'GT-673: also apply conflicts, overwriting local edits (the plan names every file; a backup is taken)',
+  })
+  parseOverwriteLocal(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '--accept-local',
+    description: 'GT-673: record the current Core content as the baseline (.evolith/scaffold-manifest.json) without copying anything',
+  })
+  parseAcceptLocal(): boolean {
+    return true;
   }
 
   @Option({

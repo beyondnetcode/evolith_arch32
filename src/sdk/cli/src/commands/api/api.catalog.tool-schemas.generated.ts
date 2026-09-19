@@ -9,7 +9,7 @@
 import type { ToolSchema } from './api.catalog';
 
 /** sha256 of the manifest operation catalog these schemas were generated from. */
-export const GENERATED_TOOL_SCHEMAS_SHA256 = 'ad8b3dc9424cbbdabba1c752ff2248fcef38de88d37a89c5aac5c900b4bf91dc';
+export const GENERATED_TOOL_SCHEMAS_SHA256 = '5384696d77a7985340cc0caefcb289789eef1aae69dc5d2038a85c896c4cc5c5';
 
 export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
   "evolith-adr-create": {
@@ -8526,7 +8526,7 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
     }
   },
   "evolith-upgrade-apply": {
-    "description": "Apply a satellite upgrade from the upstream Evolith core. Writes files into the satellite. Set force=true to proceed when breaking changes are detected.",
+    "description": "Apply a satellite upgrade from the upstream Evolith core. Writes files into the satellite. Applies upstream-only changes; local-only changes are never written and conflicts are written only with overwriteLocal=true (the result names every overwritten file). Set force=true to proceed when breaking changes are detected. acceptLocal=true records the current Core content as the scaffold baseline without copying anything (the migration path for a satellite with no .evolith/scaffold-manifest.json).",
     "inputSchema": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
@@ -8547,6 +8547,16 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
         "skipBackup": {
           "type": "boolean",
           "description": "Skip creating a backup before applying changes (default false)",
+          "default": false
+        },
+        "overwriteLocal": {
+          "type": "boolean",
+          "description": "GT-673: also apply conflicts, overwriting local edits; the result lists them in overwrittenFiles (default false)",
+          "default": false
+        },
+        "acceptLocal": {
+          "type": "boolean",
+          "description": "GT-673: record the current Core content as the baseline (.evolith/scaffold-manifest.json) and copy nothing (default false)",
           "default": false
         },
         "baseSha": {
@@ -8698,7 +8708,7 @@ export const GENERATED_TOOL_SCHEMAS: Record<string, ToolSchema> = {
     }
   },
   "evolith-upgrade-plan": {
-    "description": "Plan a satellite upgrade against the upstream Evolith core (read-only / dry-run). Computes the change plan, breaking changes and estimated risk without writing any files.",
+    "description": "Plan a satellite upgrade against the upstream Evolith core (read-only / dry-run). Computes the change plan, breaking changes and estimated risk without writing any files. Every change is classified as upstream-only (applied by upgrade-apply), local-only (a tenant edit, never applied) or conflict (both sides changed, or no fingerprint; applied only with overwriteLocal) — this is the satellite divergence report.",
     "inputSchema": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",

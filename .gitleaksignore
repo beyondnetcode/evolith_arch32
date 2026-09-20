@@ -34,5 +34,5 @@ src/packages/agent-runtime/src/providers/gemini-provider.spec.ts:github-pat:228
 src/packages/agent-runtime/src/providers/gemini-provider.spec.ts:github-pat:234
 
 # `curl -H "Authorization: Bearer <token>"` examples in the MCP server README.
-src/packages/mcp-server/README.md:curl-auth-header:605
-src/packages/mcp-server/README.es.md:curl-auth-header:589
+src/packages/mcp-server/README.md:curl-auth-header:691
+src/packages/mcp-server/README.es.md:curl-auth-header:675

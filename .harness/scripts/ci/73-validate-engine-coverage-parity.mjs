@@ -23,10 +23,11 @@
  * the report states (`needs-supplied-facts`, `no-policy-in-bundle`, …) and, for the
  * OPA side, the facets its policy reads that a bare run does not supply.
  *
- * Two scenarios, because the sign flips between them (GT-716): this repository, where
- * the native engine decides 138 ADR-conformance rules no policy names, and a satellite
- * fresh from `evolith init`, where the policies that decide anything read facets nobody
- * supplied. A ratchet on one would let the other drift.
+ * Two scenarios, because they do not skip the same rules (GT-716): this repository,
+ * where native handlers decide the DoD, compliance-baseline, manifesto and taxonomy
+ * rules whose policies read a context nobody supplied, and a satellite fresh from
+ * `evolith init`, where almost everything either engine decides is decided by one of
+ * them. A ratchet on one would let the other drift.
  *
  * ## The baseline is a ratchet in both directions
  *
@@ -37,11 +38,23 @@
  * changed class fails (the same id, a different debt). A fix cannot land without its
  * entry, and an entry cannot outlive the difference it describes.
  *
+ * ## The tree that is measured is the COMMITTED one
+ *
+ * The first CI run of this guard disagreed with the laptop that wrote its baseline:
+ * EM-Y-01 and QT-01 were decided natively here (a `coverage/` directory from a local
+ * jest run) and skipped there; DRIFT-01 was decided here (git history) and skipped on
+ * a shallow clone; MCP-01..03 the other way round. None of that is the corpus — it is
+ * whatever happens to sit in the working tree. So both scenarios read the Core from an
+ * EXPORT of the tracked files (`git ls-files`, local modifications included) plus the
+ * compiled `policy.wasm`: no coverage directories, no dists, no `.git`, on every
+ * machine alike. A rule whose native verdict needs one of those is skipped identically
+ * everywhere, which is the fact the baseline should carry.
+ *
  * ## Anti-vacuous pass
  *
  * Both engine runs of both scenarios go through `assertScannedPerSource`; a missing
- * dist, an unbuilt bundle or an `init` that produced nothing fails loudly instead of
- * reporting "no differences".
+ * dist, an unbuilt bundle, an export with no corpus or an `init` that produced nothing
+ * fails loudly instead of reporting "no differences".
  *
  * Usage:
  *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs
@@ -54,8 +67,8 @@
  *   1 - an unregistered rule, a stale entry, a changed reason, or an engine that produced nothing
  */
 
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -239,6 +252,26 @@ function runEngine(engine, cwd, extra = []) {
   return parsed.data;
 }
 
+/**
+ * The Core as committed: every tracked file (with local modifications), nothing
+ * untracked, plus the compiled bundle the evaluator needs. See the header.
+ */
+function exportCore(root) {
+  const dir = mkdtempSync(join(tmpdir(), 'evolith-coverage-parity-core-'));
+  const listed = execFileSync('git', ['ls-files', '-z'], { cwd: root, maxBuffer: 256 * 1024 * 1024 });
+  const archive = execFileSync('tar', ['-c', '--null', '-T', '-', '-f', '-'], { cwd: root, input: listed, maxBuffer: 1024 * 1024 * 1024 });
+  execFileSync('tar', ['-x', '-f', '-', '-C', dir], { input: archive, maxBuffer: 1024 * 1024 * 1024 });
+  const wasm = WASM_CANDIDATES.find((r) => existsSync(resolve(root, r)));
+  for (const rel of WASM_CANDIDATES) {
+    mkdirSync(dirname(resolve(dir, rel)), { recursive: true });
+    copyFileSync(resolve(root, wasm), resolve(dir, rel));
+  }
+  if (!existsSync(join(dir, 'src', 'rulesets', 'schema', 'facets.json'))) {
+    throw new Error(`the export at ${dir} has no corpus vocabulary — \`git ls-files\` produced an incomplete tree`);
+  }
+  return dir;
+}
+
 /** A satellite exactly as `evolith init` leaves it, in a temporary directory. */
 function initSatellite() {
   const dir = mkdtempSync(join(tmpdir(), 'evolith-coverage-parity-'));
@@ -305,15 +338,17 @@ async function main() {
 
   const measured = {};
   let satellite = null;
+  let core = null;
   try {
+    core = exportCore(root);
     for (const scenario of SCENARIOS) {
       const runs = {};
       const started = Date.now();
       if (scenario === 'init-satellite') satellite = initSatellite();
       for (const engine of ENGINES) {
         runs[engine] = scenario === 'repository'
-          ? runEngine(engine, root)
-          : runEngine(engine, satellite, ['--core', root]);
+          ? runEngine(engine, core, ['--core', core])
+          : runEngine(engine, satellite, ['--core', core]);
       }
       measured[scenario] = measureScenario(scenario, runs, manifest, snapshot, corpus, vocabulary, emitted);
       measured[scenario].durationMs = Date.now() - started;
@@ -327,6 +362,7 @@ async function main() {
     process.exit(1);
   } finally {
     if (satellite) rmSync(satellite, { recursive: true, force: true });
+    if (core) rmSync(core, { recursive: true, force: true });
   }
 
   if (write) {
@@ -338,7 +374,7 @@ async function main() {
         '`why` is measured — the class the report states, the facets the policy reads — and `followUp` says what would REMOVE the entry.',
       ],
       measuredOn: new Date().toISOString().slice(0, 10),
-      method: 'evolith validate --engine {native,opa} --format json, on the repository root and on a satellite fresh from `evolith init` (with --core); outcomes per 68-validate-engine-verdict-parity.mjs.',
+      method: 'evolith validate --engine {native,opa} --format json, on an export of the tracked tree (git ls-files + policy.wasm) and on a satellite fresh from `evolith init` with --core pointed at that export; outcomes per 68-validate-engine-verdict-parity.mjs.',
       scenarios: Object.fromEntries(SCENARIOS.map((s) => [s, toBaselineScenario(measured[s])])),
     };
     writeFileSync(BASELINE_PATH, JSON.stringify(baseline, null, 2) + '\n');

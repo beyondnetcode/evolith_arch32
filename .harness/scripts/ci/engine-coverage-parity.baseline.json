@@ -6,7 +6,7 @@
     "`why` is measured — the class the report states, the facets the policy reads — and `followUp` says what would REMOVE the entry."
   ],
   "measuredOn": "2026-09-20",
-  "method": "evolith validate --engine {native,opa} --format json, on the repository root and on a satellite fresh from `evolith init` (with --core); outcomes per 68-validate-engine-verdict-parity.mjs.",
+  "method": "evolith validate --engine {native,opa} --format json, on an export of the tracked tree (git ls-files + policy.wasm) and on a satellite fresh from `evolith init` with --core pointed at that export; outcomes per 68-validate-engine-verdict-parity.mjs.",
   "scenarios": {
     "repository": {
       "nativeOnly": {
@@ -24,41 +24,6 @@
           "class": "supplied-facet-absent",
           "why": "The report states the policy reads adapter this run did not supply.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
-        },
-        "AI-0001-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "AI-0002-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "AI-0003-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "AI-0004-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "AI-0005-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "AI-0104-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "AND-0042-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
         },
         "CB-01": {
           "class": "supplied-facet-absent",
@@ -120,501 +85,6 @@
           "why": "The policy reads satellite.releaseReadiness, which the input builder does not emit on a bare run.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         },
-        "CORE-0001-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0006-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0009-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0011-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0013-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0014-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0015-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0016-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0017-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0019-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0020-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0024-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0025-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0028-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0030-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0031-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0033-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0034-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0035-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0036-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0037-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0039-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0041-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0044-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0045-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0046-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0047-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0048-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0049-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0051-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0052-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0053-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0054-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0055-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0056-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0057-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0058-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0067-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0068-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0069-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0070-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0071-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0072-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0073-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0074-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0075-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0076-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0077-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0078-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0079-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0080-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0081-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0082-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0083-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0084-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0085-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0086-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0087-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0088-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0089-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0090-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0091-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0092-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0093-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0094-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0095-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0096-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0097-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0098-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0099-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0100-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0101-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0102-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0103-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0104-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0105-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0106-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0107-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0108-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0109-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0110-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0111-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0112-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0113-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0115-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0116-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0117-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0118-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0119-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0120-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0121-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0122-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0123-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0124-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0125-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0126-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0127-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0128-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "CORE-0129-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
         "DOD-01": {
           "class": "supplied-facet-absent",
           "why": "The report states the policy reads context this run did not supply.",
@@ -660,66 +130,6 @@
           "why": "The policy reads satellite.scorecards, which the input builder does not emit on a bare run.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         },
-        "DOT-0041-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0060-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0061-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0062-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0063-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0064-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0065-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0066-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0069-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0070-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0071-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "DOT-0072-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
         "EM-D-01": {
           "class": "supplied-facet-absent",
           "why": "The policy reads duplicateCodeRatio, which the input builder does not emit on a bare run.",
@@ -763,11 +173,6 @@
         "EM-S-05": {
           "class": "supplied-facet-absent",
           "why": "The report states the policy reads domainImportsInfrastructure this run did not supply.",
-          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
-        },
-        "EM-Y-01": {
-          "class": "supplied-facet-absent",
-          "why": "The policy reads yagniViolations, which the input builder does not emit on a bare run.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         },
         "GIT-08": {
@@ -855,114 +260,9 @@
           "why": "No reachable policy in the compiled bundle emits this id.",
           "followUp": "Author the Rego twin, or record that the rule is native-only."
         },
-        "NODE-0003-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0004-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0007-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0008-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0012-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0021-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0022-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0023-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0026-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0027-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0029-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0038-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0043-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0044-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0045-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0046-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0047-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0048-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0074-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
-        "NODE-0075-01": {
-          "class": "no-policy-in-bundle",
-          "why": "No reachable policy in the compiled bundle emits this id.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
         "OCB-01": {
           "class": "supplied-facet-absent",
           "why": "The report states the policy reads satellite.openCore this run did not supply.",
-          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
-        },
-        "QT-01": {
-          "class": "supplied-facet-absent",
-          "why": "The report states the policy reads coverage_percentage this run did not supply.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         },
         "QT-05": {
@@ -1095,6 +395,16 @@
           "why": "The report states the policy reads repository this run did not supply.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         },
+        "TAX-07": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-08": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
         "TAX-09": {
           "class": "supplied-facet-absent",
           "why": "The report states the policy reads repository this run did not supply.",
@@ -1127,30 +437,25 @@
           "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
           "followUp": "Write the native handler — the rule declares an observed fact."
         },
-        "MCP-04": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: core.cli, repository.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
-        },
         "MCP-05": {
           "class": "handler-declined",
           "why": "The declaration gives `handler-declined`; declared facts: core.cli, repository.",
           "followUp": "The native handler found nothing to judge here; a fixture with the subject would decide it."
         },
         "OBS-EVD-01": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: satellite.packageJson, traces.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
+          "class": "needs-runtime",
+          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
+          "followUp": "An adapter that observes the running system, through the enforcer seam."
         },
         "OBS-EVD-02": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: satellite.packageJson, traces.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
+          "class": "needs-runtime",
+          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
+          "followUp": "An adapter that observes the running system, through the enforcer seam."
         },
         "OBS-EVD-03": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: satellite.packageJson, telemetryBackend.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
+          "class": "needs-external-system",
+          "why": "The report states `needs-external-system`; declared facts: satellite.packageJson, telemetryBackend.",
+          "followUp": "An adapter over the external system, through the enforcer seam."
         }
       }
     },
@@ -1209,11 +514,6 @@
         "DOD-10": {
           "class": "supplied-facet-absent",
           "why": "The report states the policy reads context this run did not supply.",
-          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
-        },
-        "DRIFT-01": {
-          "class": "supplied-facet-absent",
-          "why": "The policy reads satellite.scorecards, which the input builder does not emit on a bare run.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         },
         "EM-D-01": {
@@ -1408,6 +708,21 @@
         }
       },
       "opaOnly": {
+        "MCP-01": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
+        "MCP-02": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
+        "MCP-03": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
         "MCP-05": {
           "class": "handler-declined",
           "why": "The declaration gives `handler-declined`; declared facts: core.cli, repository.",

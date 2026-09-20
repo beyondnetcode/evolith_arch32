@@ -19,6 +19,12 @@ export const envSchema = z.object({
   // (migration-safe) unless CORE_API_AUTH_REQUIRED=true forces fail-closed.
   EVOLITH_API_KEY: z.string().optional(),
   CORE_API_AUTH_REQUIRED: z.string().optional(),
+  // GT-715: the JSON body ceiling. Express's default is 100 KB and the Tracker's
+  // inline evaluation context (`evaluationInput.files`) is capped at ~1 MB of
+  // file content, so the default silently rejected every real repository. 2 MiB
+  // leaves headroom for JSON escaping over that cap; raise it per deployment,
+  // never per request.
+  EVOLITH_MAX_BODY_BYTES: z.coerce.number().int().positive().default(2 * 1024 * 1024),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

@@ -2,19 +2,27 @@
 /**
  * generate-readme-demo.mjs — the animated terminal on the front page.
  *
- * Emits `docs/assets/evolith-demo.svg` (EN caption) and `docs/assets/evolith-demo.es.svg`
- * (ES caption): a self-contained SVG that replays the two-command first run and
- * what it prints. No GIF, no recorder, no binary in git — CSS keyframes inside the
- * SVG, which GitHub renders animated inside an `<img>`.
+ * Emits two animated terminals, each with an EN and an ES caption:
+ *
+ *   docs/assets/evolith-demo{,.es}.svg        the two-command first run (`init`, `validate`)
+ *   docs/assets/evolith-gates-demo{,.es}.svg  the phase gate (`gate evaluate`, `phase advance`)
+ *
+ * A self-contained SVG that replays the commands and what they print. No GIF, no
+ * recorder, no binary in git — CSS keyframes inside the SVG, which GitHub renders
+ * animated inside an `<img>`.
  *
  * Every line of terminal output below is a verbatim row of a real run of the
- * published CLI (`npx -y @beyondnet/evolith-cli@1.3.2`, 2026-09-14) on a freshly
- * `git init`-ed directory: `docs/evidence/first-run-capture.md` carries the full
- * 71-row table this scene abridges. The only lines that are NOT output are the
- * `…` elision row and the caption under the terminal, and both are styled so a
- * reader cannot mistake them for something the tool printed.
+ * published CLI (`npx -y @beyondnet/evolith-cli@1.3.2`) on a freshly `git init`-ed
+ * directory. The first scene is the 2026-09-14 run whose full 71-row table is in
+ * `docs/evidence/first-run-capture.md`; the second is the 2026-09-20 run in
+ * `docs/evidence/phase-gate-capture.md`, made in a clean `node:20` container with
+ * a checkout of this repository mounted at `../evolith` — the published tarball
+ * does not carry the gate definitions, so `--core` is not optional yet (GT-714).
+ * The only lines that are NOT output are the `⋯` elision rows and the caption
+ * under the terminal, and both are styled so a reader cannot mistake them for
+ * something the tool printed.
  *
- * Regenerate after changing the scene or the capture:
+ * Regenerate after changing a scene or a capture:
  *   node .harness/scripts/generate-readme-demo.mjs
  */
 import { writeFileSync, mkdirSync } from 'node:fs';
@@ -43,7 +51,7 @@ const FONT = 12;
 const LH = 21; // line height
 const PAD_X = 24;
 const TOP = 56; // below the title bar
-const LOOP = 24; // seconds per cycle, including the hold at the end
+const LOOP = 24; // seconds per cycle, including the hold at the end (first-run scene)
 
 // --- Scene ------------------------------------------------------------------
 // Each entry: { at: seconds, kind, ... }. `type` entries reveal word by word.
@@ -94,12 +102,84 @@ const CAPTIONS = {
   ],
 };
 
+// --- Scene 2: the phase gate ---------------------------------------------------
+// Verbatim rows of `docs/evidence/phase-gate-capture.md` (2026-09-20, 1.3.2, in a
+// clean container: `/work/my-project` next to `/work/evolith`). The gate names six
+// missing Discovery artifacts; two are shown and four elided, the second command
+// repeats the same six and is elided down to its verdict.
+const GATES_LOOP = 22;
+const ART = 'Artifact not found: /work/my-project/docs/';
+const gatesScene = (caption) => [
+  { at: 0.4, kind: 'type', prompt: true, text: 'npx -y @beyondnet/evolith-cli gate evaluate --phase discovery --core ../evolith' },
+  { at: 2.6, kind: 'line', spans: [[C.dim, '┌  '], [C.text, 'Gate business-sign-off — phase discovery']] },
+  { at: 3.4, kind: 'line', spans: [[C.dim, '●  '], [C.text, 'Verdict: '], [C.red, 'FAILED'], [C.text, ' (ruleset rulesets/sdlc/phase-gates.rules.json@2.0.0)']] },
+  { at: 3.9, kind: 'line', spans: [[C.yellow, '▲  '], [C.red, '[error]'], [C.text, ' PG-1-EVIDENCE-prd @ PRD: '], [C.dim, `${ART}prd.md`]] },
+  { at: 4.2, kind: 'line', spans: [[C.yellow, '▲  '], [C.red, '[error]'], [C.text, ' PG-1-EVIDENCE-discovery-canvas @ Discovery Canvas: '], [C.dim, `${ART}discovery-canvas.md`]] },
+  { at: 4.5, kind: 'line', spans: [[C.dim, '  ⋯  4 more — technical-feasibility-canvas, ballpark-estimation, moscow-prioritization-matrix, build-versus-compose-analysis']], italic: true },
+  { at: 4.9, kind: 'line', spans: [[C.dim, '└  '], [C.text, 'Evaluated by human at 2026-09-20T03:45:10.277Z']] },
+  { at: 5.5, kind: 'blank' },
+  { at: 5.7, kind: 'type', prompt: true, text: 'echo $?' },
+  { at: 6.3, kind: 'line', spans: [[C.red, '2']], bold: true },
+  { at: 6.9, kind: 'blank' },
+  { at: 7.1, kind: 'type', prompt: true, text: 'npx -y @beyondnet/evolith-cli phase advance --from discovery --to design --core ../evolith' },
+  { at: 9.3, kind: 'line', spans: [[C.dim, '┌  '], [C.text, 'Phase Transition Proposal: discovery -> design']] },
+  { at: 10.0, kind: 'line', spans: [[C.dim, '●  '], [C.text, 'Transition is '], [C.red, 'NOT RECOMMENDED']] },
+  { at: 10.4, kind: 'line', spans: [[C.dim, '●  '], [C.text, 'Evidence Verdict: '], [C.red, 'FAILED'], [C.text, ' (ruleset rulesets/sdlc/phase-gates.rules.json@2.0.0)']] },
+  { at: 10.7, kind: 'line', spans: [[C.dim, '  ⋯  the same six [error] rows']], italic: true },
+  { at: 11.0, kind: 'line', spans: [[C.dim, '└  '], [C.text, 'Proposed at 2026-09-20T03:45:12.501Z']] },
+  { at: 11.6, kind: 'blank' },
+  { at: 11.8, kind: 'type', prompt: true, text: 'echo $?' },
+  { at: 12.4, kind: 'line', spans: [[C.red, '2']], bold: true },
+  { at: 13.2, kind: 'blank' },
+  { at: 13.6, kind: 'caption', spans: caption[0] },
+  { at: 14.2, kind: 'caption', spans: caption[1] },
+  { at: 14.8, kind: 'caption', spans: caption[2] },
+  { at: 15.6, kind: 'cursor' },
+];
+
+const GATES_CAPTIONS = {
+  en: [
+    [[C.dim, '# '], [C.text, 'six Discovery artifacts missing → the gate '], [C.red, 'FAILED'], [C.text, ' and discovery → design is '], [C.red, 'NOT RECOMMENDED'], [C.text, '.']],
+    [[C.dim, '# '], [C.text, 'nothing moved: '], [C.green, 'phase advance'], [C.text, ' proposes and leaves the evidence; a human — or the Tracker — decides.']],
+    [[C.dim, '# '], [C.green, '--core ../evolith'], [C.text, ' = a checkout of this repository. The tarball does not carry the gate definitions yet (GT-714).']],
+  ],
+  es: [
+    [[C.dim, '# '], [C.text, 'faltan seis artefactos de Discovery → el gate '], [C.red, 'FAILED'], [C.text, ' y discovery → design '], [C.red, 'NOT RECOMMENDED'], [C.text, '.']],
+    [[C.dim, '# '], [C.text, 'nada avanzó: '], [C.green, 'phase advance'], [C.text, ' propone y deja la evidencia; decide un humano — o el Tracker.']],
+    [[C.dim, '# '], [C.green, '--core ../evolith'], [C.text, ' = un checkout de este repositorio. El tarball aún no trae las definiciones de gate (GT-714).']],
+  ],
+};
+
+const SCENES = {
+  'evolith-demo': {
+    build: scene,
+    captions: CAPTIONS,
+    loop: LOOP,
+    title: { en: 'my-project — evolith (first run)', es: 'my-project — evolith (primera ejecución)' },
+    label: {
+      en: 'Terminal: evolith init, evolith validate; 133 rules evaluated, 26 skipped, 9 blocking rules not evaluated reported as failures; exit 2',
+      es: 'Terminal: evolith init, evolith validate; 133 reglas evaluadas, 26 omitidas, 9 bloqueantes no evaluadas reportadas como fallo; exit 2',
+    },
+  },
+  'evolith-gates-demo': {
+    build: gatesScene,
+    captions: GATES_CAPTIONS,
+    loop: GATES_LOOP,
+    title: { en: 'my-project — evolith (phase gate)', es: 'my-project — evolith (compuerta de fase)' },
+    label: {
+      en: 'Terminal: evolith gate evaluate --phase discovery reports the gate FAILED with six missing artifacts, exit 2; evolith phase advance --from discovery --to design answers NOT RECOMMENDED, exit 2',
+      es: 'Terminal: evolith gate evaluate --phase discovery reporta el gate FAILED con seis artefactos ausentes, exit 2; evolith phase advance --from discovery --to design responde NOT RECOMMENDED, exit 2',
+    },
+  },
+};
+
 // --- Rendering ---------------------------------------------------------------
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const pct = (s) => ((s / LOOP) * 100).toFixed(2);
 
-function render(lang) {
-  const items = scene(CAPTIONS[lang]);
+function render(lang, sceneDef) {
+  const LOOP = sceneDef.loop;
+  const pct = (s) => ((s / LOOP) * 100).toFixed(2);
+  const items = sceneDef.build(sceneDef.captions[lang]);
   const styles = [];
   const body = [];
   let row = 0;
@@ -151,15 +231,11 @@ function render(lang) {
   }
 
   const H = TOP + row * LH + 8;
-  const title = lang === 'es' ? 'my-project — evolith (primera ejecución)' : 'my-project — evolith (first run)';
+  const title = sceneDef.title[lang];
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated by .harness/scripts/generate-readme-demo.mjs — do not edit by hand. -->
-<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(
-    lang === 'es'
-      ? 'Terminal: evolith init, evolith validate; 133 reglas evaluadas, 26 omitidas, 9 bloqueantes no evaluadas reportadas como fallo; exit 2'
-      : 'Terminal: evolith init, evolith validate; 133 rules evaluated, 26 skipped, 9 blocking rules not evaluated reported as failures; exit 2',
-  )}">
+<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(sceneDef.label[lang])}">
   <style>
     text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;font-size:${FONT}px;white-space:pre}
     .blink{animation:blink 1s steps(1,end) infinite}
@@ -177,11 +253,13 @@ function render(lang) {
 }
 
 mkdirSync(OUT_DIR, { recursive: true });
-for (const [lang, file] of [
-  ['en', 'evolith-demo.svg'],
-  ['es', 'evolith-demo.es.svg'],
-]) {
-  const svg = render(lang);
-  writeFileSync(join(OUT_DIR, file), svg);
-  console.log(`wrote docs/assets/${file} (${(svg.length / 1024).toFixed(1)} kB, ${LOOP}s loop)`);
+for (const [name, sceneDef] of Object.entries(SCENES)) {
+  for (const [lang, file] of [
+    ['en', `${name}.svg`],
+    ['es', `${name}.es.svg`],
+  ]) {
+    const svg = render(lang, sceneDef);
+    writeFileSync(join(OUT_DIR, file), svg);
+    console.log(`wrote docs/assets/${file} (${(svg.length / 1024).toFixed(1)} kB, ${sceneDef.loop}s loop)`);
+  }
 }

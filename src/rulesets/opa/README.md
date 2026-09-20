@@ -14,13 +14,13 @@ In short: Markdown explains, Native `*.rules.json` defines, and OPA + the Native
 
 - Script: [`.harness/scripts/compile-opa-wasm.mjs`](../../../.harness/scripts/compile-opa-wasm.mjs), invoked via `npm run build:policy`.
 - It downloads OPA `v1.19.0`, then runs `opa build -t wasm` over `rulesets/opa/` with `--ignore=schemas`.
-- **Wasm entrypoints:** `evolith/main/violations` and `evolith/abac/violations`.
+- **Wasm entrypoints (3):** `evolith/main/violations`, `evolith/abac/violations` and `evolith/manifest/declared_rule_ids`. The third is generated at build time (GT-675): the script writes a `manifest.rego` into a staging directory listing every rule id the reachable policies can decide, so the evaluator can tell "evaluated, clean" from "nothing here decides this". It is not a file in this directory and must not be committed.
 - The extracted `policy.wasm` is installed to `sdk/cli/rulesets/opa/policy.wasm` for the Evolith CLI evaluator.
-- `evolith.main` ([main.rego](./main.rego)) aggregates the `violations` sets of the individual policies. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) is **dual-published**: it is imported and unioned into `evolith/main/violations` (`main.rego` line 10 imports `data.evolith.abac.violations` and line 62 unions it), *and* it is also exposed as the dedicated `evolith/abac/violations` entrypoint for runtime MCP tool-access decisions.
+- `evolith.main` ([main.rego](./main.rego)) aggregates the `violations` sets of the individual policies. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) is **dual-published**: it is imported and unioned into `evolith/main/violations` (`main.rego` imports `data.evolith.abac.violations` and unions it), *and* it is also exposed as the dedicated `evolith/abac/violations` entrypoint for runtime MCP tool-access decisions.
 
 ## Aggregated enforcement policies
 
-These policies are imported and unioned by [`main.rego`](./main.rego) into the `evolith/main/violations` Wasm entrypoint. Each has a co-located `*.test.rego` and (unless noted) an input schema under `schemas/`.
+These 35 policies are imported and unioned by [`main.rego`](./main.rego) into the `evolith/main/violations` Wasm entrypoint. Each has a co-located `*.test.rego` and (unless noted) an input schema under `schemas/`. The authoritative list is the `import data.evolith.*` block of `main.rego`; the build refuses a policy that emits rule ids without being imported there.
 
 | Policy | Package | Input schema | Enforces |
 |---|---|---|---|
@@ -53,6 +53,12 @@ These policies are imported and unioned by [`main.rego`](./main.rego) into the `
 | [telemetry-evidence.rego](./telemetry-evidence.rego) | `evolith.telemetry_evidence` | _none_ | Observability/telemetry evidence presence. |
 | [infrastructure/helm-enforcement.rego](./infrastructure/helm-enforcement.rego) | `evolith.infrastructure.helm` | _none_ | Helm chart enforcement. |
 | [infrastructure/opa-sidecar-bundle.rego](./infrastructure/opa-sidecar-bundle.rego) | `evolith.infrastructure.opa_sidecar` | _none_ | OPA sidecar bundle requirements. |
+| [phase-gates.rego](./phase-gates.rego) | `evolith.phase_gates` | yes | SDLC phase-gate evaluation: mandatory evidence, blocking criteria, waivers. |
+| [sdlc/coverage.rego](./sdlc/coverage.rego) | `evolith.sdlc.coverage` | _none_ | Gate F3 quality thresholds (QT-01..08). |
+| [capability-source-interface.rego](./capability-source-interface.rego) | `evolith.capability_source_interface` | _none_ | Mirrors the Agent Runtime `GovernancePosture.allowedSourceInterfaces` guard. |
+| [cli-exit-code-taxonomy.rego](./cli-exit-code-taxonomy.rego) | `evolith.cli_exit_code_taxonomy` | _none_ | The CLI exit-code taxonomy as policy (GT-580), over the facts document of `exit-code-taxonomy-facts.mjs`. |
+| [probabilistic-evidence-admissibility.rego](./probabilistic-evidence-admissibility.rego) | `evolith.probabilistic_evidence_admissibility` | _none_ | Probabilistic evidence may not reach a blocking verdict unmeasured (GT-584, ADR-0111). |
+| [topology-composition.rego](./topology-composition.rego) | `evolith.topology_composition` | _none_ | Rules that discriminate on the confirmed topology composition (GT-688). |
 
 ## Second Wasm entrypoint
 
@@ -64,12 +70,12 @@ These policies are present in the directory but are **not** imported by `main.re
 
 | Policy | Package | Input schema | Notes |
 |---|---|---|---|
-| [phase-gates.rego](./phase-gates.rego) | `evolith.phase_gates` | _none_ | SDLC phase-gate evaluation; not yet wired into `main.rego`. |
 | [rbac/gate-role-enforcement.rego](./rbac/gate-role-enforcement.rego) | `evolith.rbac.gate` | _none_ | Gate role enforcement (RBAC). |
-| [sdlc/coverage.rego](./sdlc/coverage.rego) | `evolith.sdlc.coverage` | _none_ | SDLC coverage checks. |
 | [sdlc/pyramid-distribution.rego](./sdlc/pyramid-distribution.rego) | `evolith.sdlc.pyramid` | _none_ | SDLC testing-pyramid distribution. |
+| [engine-routing.rego](./engine-routing.rego) | `evolith.engine_routing` | _none_ | Fail-closed routing of a request to an engine (`stub` unless risk signals say otherwise); a decision, not a `violations` set. |
+| [architecture-planning-gate.rego](./architecture-planning-gate.rego) | `evolith.governance.architecture_planning` | _none_ | Derives the SDLC mode (`minimal` … `rejected`) an architecture plan must follow; a decision, not a `violations` set. |
 
-> **Inventory:** 34 `.rego` files (excluding `*.test.rego` and `main_test.rego`); `main.rego` is the aggregator. There are 26 input schemas under `schemas/`. Policies listed with input schema **_none_** validate their input inline or are not yet schema-pinned — see [Brechas / parity backlog](../../../reference/core/control-center/gaps/gap-tracking.md).
+> **Inventory (2026-09-20):** 39 policy `.rego` files plus `main.rego`, the aggregator (excluding `*.test.rego` and `main_test.rego`): 35 aggregated above, 4 standalone here. There are 27 input schemas under `schemas/`. Re-derive with `node .harness/scripts/pages/derive-page-metrics.mjs` (`corpus.opaPolicies`, `corpus.opaEntrypoints`). Policies listed with input schema **_none_** validate their input inline or are not yet schema-pinned — see [Brechas / parity backlog](../../../reference/core/control-center/gaps/gap-tracking.md).
 
 ## Running policy tests
 

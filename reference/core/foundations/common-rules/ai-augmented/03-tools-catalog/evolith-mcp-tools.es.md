@@ -10,7 +10,7 @@ Este documento cataloga todas las herramientas MCP proporcionadas por Evolith CL
 
 ## Especificaciones de Herramientas
 
-> **Subconjunto curado heredado — en proceso de ser superado.** Las especificaciones detalladas de abajo son anteriores a la superficie actual de 47 herramientas: varias documentan **nombres de herramientas obsoletos que ya no existen** (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`). La lista autoritativa y completa es la tabla **Tool Inventory** enlazada arriba. La regeneración completa de las especificaciones por herramienta desde la fuente es un follow-on (GT-445).
+> **Subconjunto curado heredado — en proceso de ser superado.** Las especificaciones detalladas de abajo son anteriores a la superficie actual de 55 herramientas: varias documentan **nombres de herramientas obsoletos que ya no existen** (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`). La lista autoritativa y completa es la tabla **Tool Inventory** enlazada arriba. La regeneración completa de las especificaciones por herramienta desde la fuente es un follow-on (GT-445).
 
 ### evolith-agent-handoff
 

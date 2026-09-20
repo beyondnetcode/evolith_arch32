@@ -1020,7 +1020,7 @@ Verifica `initialize`, `tools/list`, `resources/list`, `prompts/list` y un `tool
 
 ### Herramientas MCP Disponibles
 
-El servidor incluido registra **27 herramientas**. El conjunto vigente y autoritativo siempre se puede explorar con `evolith-cli api --list --category tools`; la tabla siguiente refleja el registro actual de `@beyondnet/evolith-mcp`.
+El servidor incluido registra **55 herramientas** (el conteo lo deriva el [Inventario de Superficie de Producto](../../../product/products/smart-cli/product-inventory.es.md) generado). El conjunto vigente y autoritativo siempre se puede explorar con `evolith-cli api --list --category tools`; la tabla siguiente lista las principales por área, y el [README de `@beyondnet/evolith-mcp`](../../packages/mcp-server/README.es.md#herramientas-disponibles-55) nombra todas.
 
 **Validación y arquitectura**
 

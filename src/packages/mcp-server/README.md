@@ -14,8 +14,8 @@ Decouples the MCP server from the CLI. It is a first-class product that exposes 
 2. [Transports](#transports)
 3. [Installation and configuration](#installation-and-configuration)
 4. [Authentication](#authentication)
-5. [Available tools (47)](#available-tools-47)
-6. [Available resources (9 + dynamic)](#available-resources-9--dynamic)
+5. [Available tools (55)](#available-tools-55)
+6. [Available resources (12 + dynamic)](#available-resources-12--dynamic)
 7. [Available prompts (8)](#available-prompts-8)
 8. [Mutative operations](#mutative-operations)
 9. [Internal architecture](#internal-architecture)
@@ -204,9 +204,11 @@ The `AbacEvaluator` controls which tools each user may invoke, based on their ro
 
 ---
 
-## Available tools (47)
+## Available tools (55)
 
 The tools are obtained at runtime via `tools/list`. All of them return raw data, which the Gateway wraps in a `SuccessEnvelope` or an `ErrorEnvelope`.
+
+> The count is derived from the registration sources by the generated [Product Surface Inventory](../../../product/products/smart-cli/product-inventory.md) (`tools/*.ts`, `resources.service.ts`, `prompts.service.ts`); the tables below name every tool, grouped by area. When they disagree, `tools/list` and the inventory win.
 
 ### Validation
 
@@ -234,12 +236,33 @@ Modes are enabled by combining fields. Several of them can be used in a single c
 
 ---
 
+### Evaluation (ADR-0101)
+
+| Tool | Description | Mutative |
+|---|---|---|
+| `evolith-evaluate` | Evaluates a canonical `EvaluationContext` (gates, artifacts, rules, compliance) and returns an `EvaluationResult` in the ADR-0073 envelope. Stateless: product, tenant and initiative are opaque context | No |
+| `evolith-ruleset-list` | Lists the ruleset packs this Core can evaluate — the canonical refs accepted by `evolith-validate`'s `select`, with the rule count per pack | No |
+
+---
+
 ### Architecture
 
 | Tool | Description | Mutative |
 |---|---|---|
 | `evolith-architecture-validate` | Validates a satellite project against the architecture rules | No |
 | `evolith-drift-detect` | Detects drift between the declared architecture and the real one | No |
+| `evolith-topology-recommend` | Recommends a topology composition from technical signals (advisory, ADR-0104): the Core recommends, the tenant confirms | No |
+| `evolith-phase-artifacts-evaluate` | Measures downstream-phase artifact completeness for a confirmed topology composition (advisory, ADR-0104) | No |
+
+---
+
+### Patterns
+
+| Tool | Description | Mutative |
+|---|---|---|
+| `evolith-pattern-list` | Lists the canonical patterns and anti-patterns (`PAT-NNNN`), optionally filtered by category, kind or applicable topology | No |
+| `evolith-pattern-get` | Gets one pattern by id: problem, forces, solution, applicability per topology, governing ADRs | No |
+| `evolith-pattern-list-by-topology` | Lists the patterns that apply to a topology, how strongly (required → recommended → optional) and which rules each one imposes | No |
 
 ---
 
@@ -289,6 +312,7 @@ Modes are enabled by combining fields. Several of them can be used in a single c
 | `evolith-sdlc-status` | Gets the current SDLC phase state of the repository | No |
 | `evolith-sdlc-handoff` | Runs the phase handoff, generating the evidence manifest | **Yes** |
 | `evolith-dora-metrics` | Approximates DORA metrics from the Git history: deployment frequency, lead time (approx.), total and merge commits within the window (`days`, default 90) | No |
+| `evolith-sdlc-generate` | Generates a Hexagonal Architecture scaffold from a Mermaid `classDiagram` in a Markdown DDD model (parity with `sdlc generate`) | **Yes** |
 
 ---
 
@@ -296,15 +320,27 @@ Modes are enabled by combining fields. Several of them can be used in a single c
 
 | Tool | Description | Mutative |
 |---|---|---|
-| `evolith-moscow-create` | Creates a MoSCoW matrix for a phase of the project | No² |
+| `evolith-moscow-create` | Creates a MoSCoW matrix for a phase of the project | **Yes** |
 | `evolith-moscow-load` | Loads an existing MoSCoW matrix | No |
-| `evolith-moscow-update` | Updates items in the MoSCoW matrix | No² |
-| `evolith-moscow-remove` | Removes items from the matrix | No² |
+| `evolith-moscow-update` | Updates items in the MoSCoW matrix | **Yes** |
+| `evolith-moscow-remove` | Removes items from the matrix | **Yes** |
 | `evolith-moscow-list` | Lists the MoSCoW matrices of the project | No |
 | `evolith-moscow-validate` | Validates that the matrix is well formed | No |
 | `evolith-moscow-report` | Generates a MoSCoW prioritization report | No |
 
-> ² The MoSCoW tools write to `.evolith/moscow/{phase}.json` but do **not** declare `mutative: true` in the code (`moscow.tools.ts`), so the dispatcher does **not** demand `apply`/`approvalToken`. Treat them as write operations that are not protected by the mutative guard.
+> ² The three MoSCoW tools that write to `.evolith/moscow/{phase}.json` (`create`, `update`, `remove`) declare `mutative: true` in `moscow.tools.ts` since 2026-07-11, so the dispatcher demands `apply`/`approvalToken` for them; `load`, `list`, `validate` and `report` are reads.
+
+---
+
+### ADRs
+
+| Tool | Description | Mutative |
+|---|---|---|
+| `evolith-adr-list` | Lists every Architecture Decision Record (id, title, status, date) | No |
+| `evolith-adr-get` | Gets the full details of one ADR by id (`ADR-0001`) or number | No |
+| `evolith-adr-matrix` | Gets the ADR matrix summary (totals by status, recent ADRs) | No |
+| `evolith-adr-create` | Creates an ADR: writes `reference/architecture/adrs/<id>.md` and updates the matrix | **Yes** |
+| `evolith-adr-update` | Updates the status of an ADR (Proposed, Accepted, Deprecated, Superseded, Amended) | **Yes** |
 
 ---
 
@@ -317,6 +353,46 @@ Modes are enabled by combining fields. Several of them can be used in a single c
 | `evolith-agent-validate` | Validates the configuration of an agent | No |
 | `evolith-agent-upgrade` | Upgrades an agent to the latest version of the template | **Yes** |
 | `evolith-agent-remove` | Removes an agent from the repository | **Yes** |
+| `evolith-agent-run` | Runs an intent through the Agent Runtime pipeline | **Yes** |
+
+---
+
+### Satellites
+
+| Tool | Description | Mutative |
+|---|---|---|
+| `evolith-satellite-list` | Lists the registered satellites from the local `satellite-registry.json` | No |
+| `evolith-satellite-status` | Gets the status and details of a registered satellite by id | No |
+| `evolith-satellite-create` | Creates a satellite repository on GitHub and registers it (ADR-0073 envelope) | **Yes** |
+| `evolith-satellite-adopt` | Adopts an existing GitHub repository as a satellite (ADR-0073 envelope) | **Yes** |
+
+---
+
+### Scaffolding and initialization
+
+| Tool | Description | Mutative |
+|---|---|---|
+| `evolith-init-batch` | Non-interactive (batch/CI) initialization of a satellite; parity with `init --config <json>` / `init --yes`, without prompts | **Yes** |
+| `evolith-scaffold` | Scaffolds a satellite along the progressive maturity axis (phase 1 modular-monolith → 2 distributed-modules → 3 microservices) | **Yes** |
+| `evolith-docs-scaffold` | Scaffolds the base documentation Evolith requires (`README.md`, `AGENTS.md`, `MASTER_INDEX.md`, `evolith.yaml`); mirrors the `docs` command | **Yes** |
+| `evolith-fixtures` | Seeds reproducible fixtures and sample data (`evolith.yaml`, ADRs, rulesets) for demos and tests | **Yes** |
+
+---
+
+### Upgrades
+
+| Tool | Description | Mutative |
+|---|---|---|
+| `evolith-upgrade-plan` | Plans a satellite upgrade against the upstream Core (dry-run): change plan, breaking changes, estimated risk, nothing written | No |
+| `evolith-upgrade-apply` | Applies a satellite upgrade from the upstream Core; upstream-only changes are written, local-only changes never are | **Yes** |
+
+---
+
+### Knowledge
+
+| Tool | Description | Mutative |
+|---|---|---|
+| `evolith-knowledge-search` | Searches the architecture knowledge corpus (ADRs, rulesets, standards) with BM25-first hybrid retrieval; ranked chunks with citations | No |
 
 ---
 
@@ -355,7 +431,7 @@ Three CLI commands that had no MCP counterpart, ported as read-only tools over t
 
 ---
 
-## Available resources (9 + dynamic)
+## Available resources (12 + dynamic)
 
 Resources are obtained via `resources/list` and read via `resources/read`.
 
@@ -372,6 +448,9 @@ Resources are obtained via `resources/list` and read via `resources/read`.
 | `evolith://repository/config` | Repository Config | Contents of the current repository's `evolith.yaml` |
 | `evolith://moscow/phase-0` | MoSCoW Phase 0 | MoSCoW matrix for the discovery phase |
 | `evolith://architecture/topologies` | Architecture Topologies | List of every available topology |
+| `evolith://architecture/patterns` | Architecture Patterns | Canonical patterns and anti-patterns (`PAT-NNNN`) with their applicability and enforcing rules |
+| `evolith://capabilities` | Capability Manifest | Versioned capability manifest of the evaluation engine (`evaluationKinds`, engines, surfaces, `supportedConsumers`) |
+| `evolith://contracts` | Machine Contracts | Machine-readable schema/contract set the Core publishes for external consumers |
 
 ### Dynamic URIs (reachable via `resources/read`)
 
@@ -428,11 +507,18 @@ Tools marked as mutative (`mutative: true`) require **explicit approval** in ord
 | `evolith-agent-install` | Writes the agent files into the repository |
 | `evolith-agent-upgrade` | Overwrites the agent configuration |
 | `evolith-agent-remove` | Deletes the agent directory |
+| `evolith-agent-run` | Runs an intent through the Agent Runtime (skills may write) |
 | `evolith-config-set` | Modifies `evolith.yaml` |
 | `evolith-sdlc-handoff` | Generates the handoff manifest and writes state |
+| `evolith-sdlc-generate` | Writes a hexagonal scaffold from a DDD model |
 | `evolith-auto-fix` | Applies automatic fixes to the code |
+| `evolith-adr-create` / `evolith-adr-update` | Write an ADR file and the ADR matrix |
+| `evolith-moscow-create` / `evolith-moscow-update` / `evolith-moscow-remove` | Write `.evolith/moscow/{phase}.json` |
+| `evolith-satellite-create` / `evolith-satellite-adopt` | Create or link a GitHub repository and write the local satellite registry |
+| `evolith-init-batch` / `evolith-scaffold` / `evolith-docs-scaffold` / `evolith-fixtures` | Write a satellite's files, documentation base or fixtures |
+| `evolith-upgrade-apply` | Writes upstream changes into the satellite |
 
-> Exactly **6** tools declare `mutative: true` in the code (`config-set`, `sdlc-handoff`, `agent-install`, `agent-upgrade`, `agent-remove`, `auto-fix`). The MoSCoW tools do write to disk but are **not** marked as mutative, so the `apply`/`approvalToken` guard does **not** apply to them.
+> Exactly **20** tools declare `mutative: true` in the code (2026-09-20; the other 35 are reads). The set is what the dispatcher protects by construction — a tool is guarded because it is mutative, not because it is listed here. `evolith-upgrade-plan` and `evolith-phase-advance` are deliberately reads: they compute and propose, they do not write.
 
 ---
 
@@ -628,7 +714,7 @@ curl -X POST http://localhost:49100/mcp \
 | Auth | No auth | ABAC + API keys over HTTP |
 | Cache | No cache | Optional Redis |
 | Observability | Basic logs | Pino + OTEL + audit logger |
-| Tools | A subset | The full 47 tools |
+| Tools | A subset | The full 55 tools |
 
 ---
 

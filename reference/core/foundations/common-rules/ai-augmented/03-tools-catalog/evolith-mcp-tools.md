@@ -14,7 +14,7 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-agent-install` | Agents | Install a new Evolith agent | Yes |
 | `evolith-agent-list` | Agents | List all installed Evolith agents | No |
 | `evolith-agent-remove` | Agents | Remove an Evolith agent | Yes |
-| `evolith-agent-run` | Agents | Run an intent through the Agent Runtime pipeline | No |
+| `evolith-agent-run` | Agents | Run an intent through the Agent Runtime pipeline | Yes |
 | `evolith-agent-upgrade` | Agents | Upgrade an existing Evolith agent | Yes |
 | `evolith-agent-validate` | Agents | Validate a specific agent ruleset | No |
 | `evolith-architecture-validate` | Architecture | Validate repository architecture along the progressive maturity axis | No |
@@ -34,12 +34,12 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-evaluate` | Evaluate.tool | Evaluate a canonical EvaluationContext (gates, artifacts, rules, co… | No |
 | `evolith-fixtures` | Fixtures | Seed reproducible fixtures and sample data (evolith.yaml, ADRs, rul… | Yes |
 | `evolith-upgrade-apply` | Governance | Apply a satellite upgrade from the upstream Evolith core. Writes fi… | Yes |
-| `evolith-upgrade-plan` | Governance | Plan a satellite upgrade against the upstream Evolith core (read-on… | Yes |
+| `evolith-upgrade-plan` | Governance | Plan a satellite upgrade against the upstream Evolith core (read-on… | No |
 | `evolith-history` | History | Read the CLI command history (list, get, search, stats) from the same store `evolith history` reads. | No |
 | `evolith-init-batch` | Init | Non-interactive (batch/CI) initialization of an Evolith satellite. … | Yes |
 | `evolith-knowledge-search` | Knowledge | Search the Evolith architecture knowledge corpus (ADRs, rulesets, s… | No |
 | `evolith-metrics` | Metrics.tool | Get MCP server metrics (per-tool call counts, latency, failures) | No |
-| `evolith-phase-advance` | Phase-advance | Propose an SDLC phase transition by evaluating the current phase ex… | Yes |
+| `evolith-phase-advance` | Phase-advance | Propose an SDLC phase transition by evaluating the current phase ex… | No |
 | `evolith-moscow-create` | Planning | Create a new MoSCoW prioritization analysis | Yes |
 | `evolith-moscow-list` | Planning | List all MoSCoW analyses in a repository | No |
 | `evolith-moscow-load` | Planning | Load an existing MoSCoW analysis | No |
@@ -62,13 +62,13 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-standards` | Standards | List the corporate standards under `<path>/reference/standards` (optional category filter) or get one by id. | No |
 | `evolith-validate` | Validate.tool | Validate a satellite repository against Evolith rules. Supports end… | No |
 
-> **Derived from source (GT-445).** The inventory above is the complete set of **55** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
+> **Derived from source (GT-445).** The inventory above is the complete set of **55** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is the `mutative: true` declaration in the tool source (20 of 55 on 2026-09-20 — the same set the dispatcher guards with `apply`/`approvalToken`), not a verb heuristic: `evolith-phase-advance` and `evolith-upgrade-plan` *propose* and *plan* without writing, and `evolith-agent-run` is mutative although its description does not say so. Regenerate when tools change.
 
 ---
 
 ## Tool Specifications
 
-> **Legacy curated subset — being superseded.** The detailed specs below predate the current 52-tool surface: several document **obsolete tool names that no longer exist** (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`). The authoritative, complete list is the **Tool Inventory** table above. Full per-tool spec regeneration from source is a follow-on (GT-445).
+> **Legacy curated subset — being superseded.** The detailed specs below predate the current 55-tool surface: several document **obsolete tool names that no longer exist** (`evolith-agent-handoff`, `evolith-architecture-evaluate`, `evolith-gate-status`, `evolith-moscow-analyze`, `evolith-moscow-export`, `evolith-alias`, `evolith-schema`). The authoritative, complete list is the **Tool Inventory** table above. Full per-tool spec regeneration from source is a follow-on (GT-445).
 
 ### evolith-agent-handoff
 

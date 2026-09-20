@@ -14,13 +14,13 @@ En resumen: Markdown explica, los `*.rules.json` Native definen, y OPA + el eval
 
 - Script: [`.harness/scripts/compile-opa-wasm.mjs`](../../../.harness/scripts/compile-opa-wasm.mjs), invocado vía `npm run build:policy`.
 - Descarga OPA `v1.19.0` y luego ejecuta `opa build -t wasm` sobre `rulesets/opa/` con `--ignore=schemas`.
-- **Entrypoints Wasm:** `evolith/main/violations` y `evolith/abac/violations`.
+- **Entrypoints Wasm (3):** `evolith/main/violations`, `evolith/abac/violations` y `evolith/manifest/declared_rule_ids`. El tercero se genera en tiempo de build (GT-675): el script escribe un `manifest.rego` en un directorio de staging con cada rule id que las políticas alcanzables pueden decidir, para que el evaluador distinga "evaluado, limpio" de "nada aquí decide esto". No es un fichero de este directorio y no debe commitearse.
 - El `policy.wasm` extraído se instala en `sdk/cli/rulesets/opa/policy.wasm` para el evaluador del Evolith CLI.
-- `evolith.main` ([main.rego](./main.rego)) agrega los conjuntos `violations` de las políticas individuales. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) se **publica de forma dual**: se importa y se une en `evolith/main/violations` (`main.rego` línea 10 importa `data.evolith.abac.violations` y la línea 62 lo une), *y además* se expone como el entrypoint dedicado `evolith/abac/violations` para decisiones de acceso a herramientas MCP en runtime.
+- `evolith.main` ([main.rego](./main.rego)) agrega los conjuntos `violations` de las políticas individuales. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) se **publica de forma dual**: se importa y se une en `evolith/main/violations` (`main.rego` importa `data.evolith.abac.violations` y lo une), *y además* se expone como el entrypoint dedicado `evolith/abac/violations` para decisiones de acceso a herramientas MCP en runtime.
 
 ## Políticas de enforcement agregadas
 
-Estas políticas son importadas y unidas por [`main.rego`](./main.rego) en el entrypoint Wasm `evolith/main/violations`. Cada una tiene un `*.test.rego` co-ubicado y (salvo indicación) un schema de entrada en `schemas/`.
+Estas 35 políticas son importadas y unidas por [`main.rego`](./main.rego) en el entrypoint Wasm `evolith/main/violations`. Cada una tiene un `*.test.rego` co-ubicado y (salvo indicación) un schema de entrada en `schemas/`. La lista autoritativa es el bloque `import data.evolith.*` de `main.rego`; el build rechaza una política que emite rule ids sin estar importada allí.
 
 | Política | Paquete | Schema de entrada | Aplica |
 |---|---|---|---|
@@ -53,6 +53,12 @@ Estas políticas son importadas y unidas por [`main.rego`](./main.rego) en el en
 | [telemetry-evidence.rego](./telemetry-evidence.rego) | `evolith.telemetry_evidence` | _ninguno_ | Presencia de evidencia de observabilidad/telemetría. |
 | [infrastructure/helm-enforcement.rego](./infrastructure/helm-enforcement.rego) | `evolith.infrastructure.helm` | _ninguno_ | Enforcement de chart Helm. |
 | [infrastructure/opa-sidecar-bundle.rego](./infrastructure/opa-sidecar-bundle.rego) | `evolith.infrastructure.opa_sidecar` | _ninguno_ | Requisitos de bundle de sidecar OPA. |
+| [phase-gates.rego](./phase-gates.rego) | `evolith.phase_gates` | sí | Evaluación de phase-gates SDLC: evidencia obligatoria, criterios bloqueantes, waivers. |
+| [sdlc/coverage.rego](./sdlc/coverage.rego) | `evolith.sdlc.coverage` | _ninguno_ | Umbrales de calidad del gate F3 (QT-01..08). |
+| [capability-source-interface.rego](./capability-source-interface.rego) | `evolith.capability_source_interface` | _ninguno_ | Espejo del guard `GovernancePosture.allowedSourceInterfaces` del Agent Runtime. |
+| [cli-exit-code-taxonomy.rego](./cli-exit-code-taxonomy.rego) | `evolith.cli_exit_code_taxonomy` | _ninguno_ | La taxonomía de exit codes de la CLI como política (GT-580), sobre el documento de hechos de `exit-code-taxonomy-facts.mjs`. |
+| [probabilistic-evidence-admissibility.rego](./probabilistic-evidence-admissibility.rego) | `evolith.probabilistic_evidence_admissibility` | _ninguno_ | La evidencia probabilística no puede alcanzar un veredicto bloqueante sin medirse (GT-584, ADR-0111). |
+| [topology-composition.rego](./topology-composition.rego) | `evolith.topology_composition` | _ninguno_ | Reglas que discriminan sobre la composición de topología confirmada (GT-688). |
 
 ## Segundo entrypoint Wasm
 
@@ -64,12 +70,12 @@ Estas políticas están presentes en la carpeta pero **no** son importadas por `
 
 | Política | Paquete | Schema de entrada | Notas |
 |---|---|---|---|
-| [phase-gates.rego](./phase-gates.rego) | `evolith.phase_gates` | _ninguno_ | Evaluación de phase-gates SDLC; aún no conectada a `main.rego`. |
 | [rbac/gate-role-enforcement.rego](./rbac/gate-role-enforcement.rego) | `evolith.rbac.gate` | _ninguno_ | Enforcement de rol de gate (RBAC). |
-| [sdlc/coverage.rego](./sdlc/coverage.rego) | `evolith.sdlc.coverage` | _ninguno_ | Chequeos de cobertura SDLC. |
 | [sdlc/pyramid-distribution.rego](./sdlc/pyramid-distribution.rego) | `evolith.sdlc.pyramid` | _ninguno_ | Distribución de pirámide de pruebas SDLC. |
+| [engine-routing.rego](./engine-routing.rego) | `evolith.engine_routing` | _ninguno_ | Enrutamiento fail-closed de una petición a un motor (`stub` salvo que las señales de riesgo digan otra cosa); una decisión, no un conjunto `violations`. |
+| [architecture-planning-gate.rego](./architecture-planning-gate.rego) | `evolith.governance.architecture_planning` | _ninguno_ | Deriva el modo SDLC (`minimal` … `rejected`) que debe seguir un plan de arquitectura; una decisión, no un conjunto `violations`. |
 
-> **Inventario:** 34 archivos `.rego` (excluyendo `*.test.rego` y `main_test.rego`); `main.rego` es el agregador. Hay 26 schemas de entrada en `schemas/`. Las políticas con schema **_ninguno_** validan su entrada en línea o aún no están fijadas a schema — ver el [backlog de paridad](../../../reference/core/control-center/gaps/gap-tracking.md).
+> **Inventario (2026-09-20):** 39 archivos `.rego` de política más `main.rego`, el agregador (excluyendo `*.test.rego` y `main_test.rego`): 35 agregadas arriba, 4 standalone aquí. Hay 27 schemas de entrada en `schemas/`. Re-derivar con `node .harness/scripts/pages/derive-page-metrics.mjs` (`corpus.opaPolicies`, `corpus.opaEntrypoints`). Las políticas con schema **_ninguno_** validan su entrada en línea o aún no están fijadas a schema — ver el [backlog de paridad](../../../reference/core/control-center/gaps/gap-tracking.md).
 
 ## Ejecutar pruebas de políticas
 

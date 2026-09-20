@@ -47,7 +47,7 @@ The "LLM proposes, a deterministic verifier disposes" half is a documented direc
 
 ## Network egress
 
-Local-first: the CLI, the rules, the OPA policies and the evaluation Core run on your machine, and your code is never uploaded. There is exactly **one** outbound integration (`GeminiProvider`, Google Gemini API), it is **off by default**, and no command in the published CLI reaches it today. The tarballs on the registry predate that hardening: **treat the published `GeminiProvider` as ungoverned and do not wire it up.**
+Local-first: the CLI, the rules, the OPA policies and the evaluation Core run on your machine, and your code is never uploaded. There are exactly **two** outbound integrations — the LLM transports of the provider catalog (`ClaudeProvider`, Anthropic Messages API; `GeminiProvider`, Google Gemini API; ADR-0128) — with **no default provider**, both **off by default** behind one switch, and no command in the published CLI reaches either today. The tarballs on the registry predate that hardening: **treat the published `GeminiProvider` as ungoverned and do not wire it up** (`ClaudeProvider` is not in any published tarball yet).
 
 Full disclosure — sub-processors, credential, limits, redaction, what leaves and what does not, and the known limitations of these controls: [Network Egress and Data Handling](../SECURITY.md#network-egress-and-data-handling). Report an egress defect there, never in a public issue.
 

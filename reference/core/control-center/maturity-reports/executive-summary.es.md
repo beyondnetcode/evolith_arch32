@@ -28,7 +28,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435) |
 | 2 | Área de mayor riesgo | `Governance` tiene la mayor carga ponderada abierta. | [GT-670](../gaps/gap-reference-catalog.es.md#gt-670), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), [GT-669](../gaps/gap-reference-catalog.es.md#gt-669), [GT-672](../gaps/gap-reference-catalog.es.md#gt-672), [GT-689](../gaps/gap-reference-catalog.es.md#gt-689), [GT-588](../gaps/gap-reference-catalog.es.md#gt-588), +1 |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-684](../gaps/gap-reference-catalog.es.md#gt-684), [GT-710](../gaps/gap-reference-catalog.es.md#gt-710), [GT-714](../gaps/gap-reference-catalog.es.md#gt-714) |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-684](../gaps/gap-reference-catalog.es.md#gt-684), [GT-710](../gaps/gap-reference-catalog.es.md#gt-710), [GT-714](../gaps/gap-reference-catalog.es.md#gt-714), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-670](../gaps/gap-reference-catalog.es.md#gt-670), [GT-680](../gaps/gap-reference-catalog.es.md#gt-680), [GT-681](../gaps/gap-reference-catalog.es.md#gt-681), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), +2 |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-684](../gaps/gap-reference-catalog.es.md#gt-684), [GT-710](../gaps/gap-reference-catalog.es.md#gt-710), [GT-714](../gaps/gap-reference-catalog.es.md#gt-714), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-670](../gaps/gap-reference-catalog.es.md#gt-670), [GT-680](../gaps/gap-reference-catalog.es.md#gt-680), [GT-681](../gaps/gap-reference-catalog.es.md#gt-681), [GT-585](../gaps/gap-reference-catalog.es.md#gt-585), +3 |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-444](../gaps/gap-reference-catalog.es.md#gt-444), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-674](../gaps/gap-reference-catalog.es.md#gt-674), [GT-687](../gaps/gap-reference-catalog.es.md#gt-687), [GT-692](../gaps/gap-reference-catalog.es.md#gt-692), [GT-536](../gaps/gap-reference-catalog.es.md#gt-536), +6 |
 
 ## Bloqueadores Actuales
@@ -42,13 +42,13 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-09-20 |
-| Gaps totales | 713 |
+| Gaps totales | 714 |
 | Gaps cerrados | 687 |
-| Gaps pendientes | 26 |
+| Gaps pendientes | 27 |
 | P0 abiertos | 1 |
-| P1 abiertos | 10 |
+| P1 abiertos | 11 |
 | P2 abiertos | 12 |
-| Cierre total | 96.4% |
+| Cierre total | 96.2% |
 | Registros de evidencia de cierre | 669 |
 | Readiness registrado | 4 PASS |
 
@@ -58,7 +58,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | `Cross` | 3 | 1 | 1 | [GT-435](../gaps/gap-reference-catalog.es.md#gt-435), [GT-448](../gaps/gap-reference-catalog.es.md#gt-448), [GT-651](../gaps/gap-reference-catalog.es.md#gt-651) |
 | `MCP Server` | 3 | 0 | 3 | [GT-684](../gaps/gap-reference-catalog.es.md#gt-684), [GT-680](../gaps/gap-reference-catalog.es.md#gt-680), [GT-681](../gaps/gap-reference-catalog.es.md#gt-681) |
 | `Infra` | 4 | 0 | 2 | [GT-710](../gaps/gap-reference-catalog.es.md#gt-710), [GT-324](../gaps/gap-reference-catalog.es.md#gt-324), [GT-464](../gaps/gap-reference-catalog.es.md#gt-464), [GT-692](../gaps/gap-reference-catalog.es.md#gt-692) |
-| `Evolith CLI` | 1 | 0 | 1 | [GT-714](../gaps/gap-reference-catalog.es.md#gt-714) |
+| `Core Domain` | 3 | 0 | 1 | [GT-716](../gaps/gap-reference-catalog.es.md#gt-716), [GT-674](../gaps/gap-reference-catalog.es.md#gt-674), [GT-687](../gaps/gap-reference-catalog.es.md#gt-687) |
 
 ## Fuente y Regla de Actualización
 

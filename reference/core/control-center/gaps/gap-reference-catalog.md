@@ -10396,3 +10396,59 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
   - [x] **FALSIFIABILITY:** the specs are red against the previous filter. **MET** — 4 failed / 3 passed with `git show HEAD:…filter.ts` in place, 7 passed after.
   - [x] The UAT Tracker's `evaluate-architecture` returns a real verdict. **MET after the promotion** — Promoted in #778 (`9c5deedf`) and redeployed by the `Deploy UAT (Coolify)` job of run 35490911533 on 2026-09-20; measured right after: the same `evaluate-architecture` call answers `200`, `provenance: core`, `status: COMPLETED`, `resultDecision: FAILED` — a real verdict on 150 files (gates f1–f5 failed for missing phase artifacts), 174 ms in the Core. The front page keeps the phase-gate capture; this verdict is recorded here and in `known-limitations`.
 - **Status:** `DONE`
+
+#### GT-716
+
+**Title:** On a bare `validate` the coverage gap between the two engines is mostly verdicts on facets nobody supplied, and nothing in CI pins the gap in either direction
+
+- **Purpose:** Make the two engines skip the same rule for the same stated reason, derive that reason from one declaration per rule instead of two unrelated tables, and turn whatever coverage difference remains into a per-rule baseline CI fails on — so that "parity" means one thing on the front page, in the report and in the guard.
+- **Evidence, measured 2026-09-20 with the CLI built from this tree (`@beyondnet/evolith-cli` 1.4.0 at `b3df7e96`, `policy.wasm` recompiled the same day), one `evolith validate --engine <e> --format json` per engine and scenario, crossed rule by rule on `skippedRuleIds` / `nonExecutableRuleIds` / `issues` with the outcome precedence of `68-validate-engine-verdict-parity.mjs`:**
+
+  | scenario | native decides / skips | OPA decides / skips | decided by OPA only | …of which read a supplied facet | decided by native only | decided by neither | verdict conflicts |
+  |---|---|---|---|---|---|---|---|
+  | satellite fresh from `init` (159 in scope) | 56 / 103 | 133 / 26 | 76 | **73** | 11 | 7 (+ `ISO5055-*` ×4, enforcer produced nothing) | 8 |
+  | this repository, whole corpus (358 in scope, 57 not applicable) | 247 / 111 | 187 / 171 | 91 | 81 (+ 6 mixed) | 164 | 7 | 11 |
+
+  What "decided by OPA only" is made of on the fresh satellite — the facet is what the `.rego` body reads, taken from the source, and none of them is emitted by `opa-input-builder.ts` for a bare run:
+
+  | rules | facet read | family |
+  |---|---|---|
+  | `GIT-01..07`, `GIT-09`, `GIT-10` (9) | `input.satellite.git` | supplied (GT-694) |
+  | `RUNT-01..08` (8) | `input.satellite.runtime` | supplied |
+  | `TPY-01..07` (7) | `input.satellite.testing` | supplied |
+  | `MTN-01..04`, `MTN-06..08` (7) | `input.satellite.multiTenancy` | supplied |
+  | `CICD-01..07` (7) | `input.satellite.ci`, `input.satellite.findings` | supplied |
+  | `DORA-01..04`, `SPACE-01..03`, `OBS-EVD-03/04` (9) | `input.satellite.scorecards` | supplied |
+  | `PROT-01/02/04/05/07` (5) | `input.satellite.protocol` | supplied |
+  | `QT-01..04`, `QT-07`, `QT-08` (6) | top-level metrics (`coverage_percentage`, `maxCyclomaticComplexity`, `criticalCveCount`…) | supplied |
+  | `ACL-02/03/05` (3) | `input.adapter` | supplied |
+  | `HXA-03/06/07` (3) | `input.satellite.layers` | supplied — the one GT-694 drew the line at: static analysis belongs to the enforcer |
+  | `SVC-02/05/06` (3) | `input.satellite.contracts` | supplied |
+  | `ABAC-01..03` (3) | `input.user`, `input.tool_name` | supplied |
+  | `DOD-02/08` (2), `EM-Y-01` (1) | `input.context.dod`, `input.yagniViolations` | supplied |
+  | `MCP-05`, `OBS-EVD-01`, `OBS-EVD-02` (3) | `input.core.cli.mcpServerSource`, `input.satellite.packageJson` | **observed** — the real handler backlog |
+
+  An absent supplied facet is not skipped: a Rego body whose fact is missing is undefined, so the rule comes back `passed` (`GIT-01`, `TPY-03`…), or the policy tests `not input.x` and it comes back `failed` (`ACL-01`, `DORA-01`, `SVC-01`). Six of the fresh satellite's eight verdict conflicts (`ACL-01`, `ACL-04`, `SPACE-04`, `SPACE-05`, `SVC-01`, `INH-02`) and seven of the corpus's eleven are exactly this, and `engine-verdict-parity.baseline.json` already names the family: `supplied-facet-absent`, every entry ending in "decide what a SUPPLIED facet means when nothing supplied it".
+
+  The rest of the gap, both scenarios: **11** rules native decides and the bundle declares no policy for (`SSDF-PO.3.1`, `SSDF-PS.3.2`, `SSDF-PW.4.1`, `SSDF-PW.4.4`, `SSDF-PW.7.2`, `SSDF-RV.1.2`, `SSDF-RV.1.3`, `SEC-RL-01`, `SEC-RL-02`, `QT-05`, `SLSA-HOSTED-L2`); **7** decided by neither (`SEC-INJ-01/02`, `SEC-PATH-01/02`, `SEC-TIMING-01/02`, `SEC-RL-03` — `unimplemented-native` and `no-policy-in-bundle` at once); and **12** that `RULE_TRIAGE` classes `documentation-only` or `underspecified` — no check expressible, no `validationQuery` — while a reachable policy decides them (`KI-R01..07`, `INH-03..05`, `PROT-03`, `PROT-06`; `OCB-07` joins them over the corpus). Over the whole corpus the sign flips because `AdrConformanceRuleHandler` claims **138** generated ADR-conformance rules and `MM-R*` (11) that no `.rego` names.
+
+- **Why it is structural and not a backlog:** the native engine's reason for skipping comes from `rule-evaluability.ts` (`RULE_TRIAGE`, a hand-kept table keyed by rule id); the OPA engine's from `evolith/manifest/declared_rule_ids`, which `compile-opa-wasm.mjs` extracts from the policy ASTs. Neither reads the other, neither reads the rule's own file, and the only rules whose two implementations agree by construction are `PEA-01..04`, whose handler delegates to the same admissibility function as the `.rego`. `68-validate-engine-verdict-parity.mjs` computes `coverageOnly.nativeDecidedOpaDidNot` and `opaDecidedNativeDidNot` on every run, prints them, and gates on neither — ADR-0041 never promised equal coverage, but it did not promise to ignore it either.
+- **What it is not:** not a request for equal coverage — complementary reach is legitimate (ADR-0041, GT-704). Not #628 — the default command now names its engine and its coverage (`GOV-ENGINE-COVERAGE`, `ruleset-validator.service.ts`). Not GT-694 — that row opened the channel through which a caller CAN supply these facets; this row is about what both engines say when the channel carries nothing. Not an argument for `--engine opa` as the default: on a fresh repository its extra reach is mostly not reach.
+- **Use cases:**
+  - A reader compares the two counts on the front page, chooses `--engine opa` because it "checks more", and gets 73 verdicts about their repository that were decided without looking at it.
+  - A tenant runs the default engine in CI, sees `KI-R02` skipped as "no check to implement yet", switches engines and gets it failed.
+  - A `.rego` gains a rule the native engine has no handler for, or a handler lands without its `.rego`; the coverage gap moves and no check goes red.
+- **Impact:** The engines' published coverage is not comparable, the page that compares it describes an artifact, and the mechanism that would keep the two in step (one source of "what does this rule need") does not exist.
+- **Expected outcome:** On the fresh satellite the two engines skip the same rules for the same reason with at most the named exceptions; every rule carries one evaluability declaration that both engines derive from; and the remaining coverage difference is a baseline CI fails on in both directions, on both scenarios.
+- **Affected files:** `src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts`, `.harness/scripts/compile-opa-wasm.mjs`, `src/packages/core-domain/src/application/validators/rule-evaluability.ts`, `src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts` and `handlers/`, `src/packages/core-domain/src/application/validators/evaluators/opa-input-coverage.spec.ts`, `src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts`, `src/rulesets/**/*.rules.json` and the rule schema, `.harness/scripts/ci/68-validate-engine-verdict-parity.mjs`, `.harness/scripts/ci/engine-verdict-parity.baseline.json`, `docs/known-limitations.md`
+- **Component:** `Core Domain` · **Criticality:** P1 · **Complexity:** L
+- **Principal:** `L` · **Interest:** `MED` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-09-20 from the owner's question over the known-limitations table ("how do we reach parity"), after running both engines over both scenarios and crossing every one-engine rule against the policy body that decides it. The published figures (41 / 133 on 1.3.2) are not disputed; the 56 here is the same measurement on the current tree.
+- **Acceptance criteria:**
+  - [ ] **An absent supplied facet is `skipped` on OPA, never a verdict.** The bundle manifest carries, per rule id, the input paths its policy reads (`compile-opa-wasm.mjs` already parses each policy's AST), and `OpaEvaluator` reports `skipped` with a class that names the missing facet when the input does not carry it. **FALSIFIABILITY:** on the fresh satellite `--engine opa` moves from 133 decided to at most 60, the seven `supplied-facet-absent` entries of `engine-verdict-parity.baseline.json` are removed because guard 68 reports them stale, and supplying the facet through GT-694's channel still returns `MTN-01` — a real evaluation, not a fixed answer. Both outputs recorded.
+  - [ ] **One evaluability declaration per rule, and both engines derive from it.** Each rule in `*.rules.json` declares the facts it needs and their provenance (`observed` / `supplied` / `runtime` / `external` / `none`); `RULE_TRIAGE` becomes a projection of it (or a check against it), and so does the bundle manifest. A guard fails when a `.rego` reads a facet its rule does not declare, when a native handler claims a rule declared non-executable, and when the two engines class the same rule differently. **FALSIFIABILITY:** the 12 rules native classes non-executable and OPA decides today (`KI-R01..07`, `INH-03..05`, `PROT-03`, `PROT-06`) turn it red until one side changes; `PEA-01..04` stay green untouched.
+  - [ ] **The coverage difference is a per-rule ratchet, both directions, both scenarios.** `68-validate-engine-verdict-parity.mjs` (or a sibling reusing its `deriveOutcomes`) baselines every id in `coverageOnly` with its own measured reason and follow-up, over the repository root AND a satellite produced by `init`; an unregistered one-engine rule fails, and a registered one that both engines now decide fails until its entry is removed. **FALSIFIABILITY:** removing one `import` from `main.rego` turns it red naming the ids the bundle stopped deciding; restoring it turns it green.
+  - [ ] **The named backlog is implemented or declared, none of it left in `coverageOnly` by omission:** native handlers for `MCP-05`, `OBS-EVD-01`, `OBS-EVD-02` (and, over the corpus, `MCP-01..04`, `DEP-08`, `TAX-07/08`); a `.rego` for the 11 `no-policy-in-bundle` rules named above; both for the 7 neither engine decides; and one recorded decision for the 138 ADR-conformance rules and `MM-R*` — a generated `.rego` twin, or `documentation-only` on both engines.
+  - [ ] **The report and the page say the same thing.** `GOV-ENGINE-COVERAGE` and `docs/known-limitations.md` state coverage per engine with the supplied-facet split, and the front page either stops needing `--engine opa` for coverage reasons or says which reason remains.
+- **Dependencies:** GT-694 (the supplied-facet channel, DONE), GT-675 (the bundle manifest, DONE), GT-704 (the verdict baseline this extends, DONE); the enforcer seam (GT-514) for `satellite.layers`.
+- **Status:** `PENDING`

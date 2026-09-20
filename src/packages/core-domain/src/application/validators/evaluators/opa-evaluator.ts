@@ -20,6 +20,82 @@ const globalSchemaCache = new Map<string, any>();
 export const DECLARED_RULE_IDS_ENTRYPOINT = 'evolith/manifest/declared_rule_ids';
 
 /**
+ * GT-716 AC1 — the entrypoint through which the bundle states, per rule id, which
+ * `input.…` paths the policy deciding that rule reads. Built by `compile-opa-wasm.mjs`
+ * from the compiler's AST (`.harness/scripts/lib/rego-rule-inputs.mjs`), never from a
+ * table kept here; `27-opa-parity-gate` fails if a bundle stops exposing it.
+ */
+export const RULE_INPUT_PATHS_ENTRYPOINT = 'evolith/manifest/rule_input_paths';
+
+/**
+ * GT-716 AC1 — facets whose ABSENCE is itself a fact, by the design of the policies
+ * that read them, so a rule reading only these is evaluated rather than skipped when
+ * they are missing.
+ *
+ * `qualityEvidence` / `qualityAdmissibilityPolicy` / `evaluationDate`: ADR-0111 — "the
+ * consumer presented no evidence" and "presented an empty set" are the same verdict,
+ * and both engines already agree on it (`PEA-01..04` pass on a bare run, natively and
+ * in Rego). `evidence` / `waiver`: phase gates — nothing presented and nothing waived
+ * are exactly what the gate must fail on, not a reason to abstain. `tenantId`: an audit
+ * echo, never a premise.
+ *
+ * This is the one hand-kept list AC1 tolerates; GT-716 AC2 moves the declaration into
+ * each rule's own file and this set goes with it.
+ */
+export const ABSENCE_IS_A_FACT: ReadonlySet<string> = new Set([
+  'input.qualityEvidence',
+  'input.qualityAdmissibilityPolicy',
+  'input.evaluationDate',
+  'input.evidence',
+  'input.waiver',
+  'input.tenantId',
+]);
+
+/**
+ * The FACET an input path belongs to: the first segment under `input`, or the second
+ * under the two containers the builder always emits (`satellite`, `core`). This is the
+ * granularity at which "supplied or not" is decided (GT-694): `input.satellite.git` is
+ * a facet a caller sends whole, `input.satellite.git.branchNameInvalid` is a field of
+ * it. `null` for a path that names no facet (`input`, `input.satellite`).
+ */
+export function facetOfInputPath(path: string): string | null {
+  const segments = path.split('.');
+  if (segments[0] !== 'input' || segments.length < 2) return null;
+  if (segments[1] === 'satellite' || segments[1] === 'core') {
+    return segments.length >= 3 ? segments.slice(0, 3).join('.') : null;
+  }
+  return segments.slice(0, 2).join('.');
+}
+
+/**
+ * The facets among `paths` that `input` does not carry, sorted and de-duplicated.
+ *
+ * Presence is "the key exists", not "the value is truthy": the builder emits every
+ * observed key even when what it observed is `null` or `false` — that IS the fact — and
+ * a caller who supplied `{ multiTenancy: { applicationFiltering: false } }` supplied the
+ * facet. A key the builder never set and no caller sent is the one case that means the
+ * bundle was asked about something nobody stated.
+ */
+export function absentFacets(input: unknown, paths: readonly string[]): string[] {
+  const missing = new Set<string>();
+  for (const path of paths) {
+    const facet = facetOfInputPath(path);
+    if (!facet || ABSENCE_IS_A_FACT.has(facet)) continue;
+    let node: unknown = input;
+    let present = true;
+    for (const segment of facet.split('.').slice(1)) {
+      if (node === null || typeof node !== 'object' || !Object.prototype.hasOwnProperty.call(node, segment)) {
+        present = false;
+        break;
+      }
+      node = (node as Record<string, unknown>)[segment];
+    }
+    if (!present) missing.add(facet);
+  }
+  return [...missing].sort();
+}
+
+/**
  * GT-382, superseded by GT-693 — kept ONLY to read bundles compiled before the
  * provenance change, and deliberately not extended.
  *
@@ -86,6 +162,35 @@ export function violationBelongsToRule(
   const prefix = CONTEXT_AWARE_VIOLATION_PREFIXES[ruleId];
   if (prefix) return typeof violation.id === 'string' && violation.id.startsWith(prefix);
   return false;
+}
+
+/**
+ * GT-716 AC1 — the `skipped` a rule gets when the policy deciding it reads a facet
+ * this run did not supply, or `null` when every facet it reads is present.
+ *
+ * A Rego body whose fact is missing is undefined: `not input.adapter.x` FIRES and
+ * `input.satellite.git.y` never matches, so before this the same absence came back as
+ * `failed` (ACL-01, DORA-01, SVC-01) or as `passed` (GIT-01, TPY-03) depending on how
+ * the policy happened to be written. Measured on a satellite fresh from `init` the day
+ * it landed: the bundle went from 133 rules "decided" to 10, and the 123 it stopped
+ * deciding were all verdicts on input nobody had supplied.
+ */
+function skippedForAbsentFacets(
+  rule: NormalizedRule,
+  input: unknown,
+  inputPaths: ReadonlyMap<string, readonly string[]>,
+): RuleEvaluationResult | null {
+  const missing = absentFacets(input, inputPaths.get(rule.id) ?? []);
+  if (missing.length === 0) return null;
+  return {
+    rule,
+    result: 'skipped',
+    evaluability: 'supplied-facet-absent',
+    message:
+      `Not evaluated: the policy deciding '${rule.id}' reads ${missing.map((f) => `\`${f}\``).join(', ')}, `
+      + `and this run supplied no such fact${missing.length > 1 ? 's' : ''}. An absent fact is not a verdict `
+      + 'about the repository — supply it through the evaluation context (`facts`, GT-694) to have the rule decided.',
+  };
 }
 
 export class OpaEvaluator implements IRuleEvaluatorStrategy {
@@ -193,6 +298,44 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
     }
   }
 
+  /**
+   * GT-716 AC1 — ask the BUNDLE what each rule reads.
+   *
+   * Same contract as `readDeclaredRuleIds`: built at compile time from the AST, read
+   * here, and `null` when the bundle cannot answer — a `policy.wasm` compiled before the
+   * entrypoint existed, or the sidecar. That case keeps the previous behaviour (an absent
+   * fact is reported as a verdict) and says so, because degrading silently is the defect
+   * this method exists to end.
+   */
+  private readRuleInputPaths(policyCache: any, opaUrl?: string): ReadonlyMap<string, readonly string[]> | null {
+    // The sidecar case is already announced by readDeclaredRuleIds on the same run.
+    if (opaUrl) return null;
+    try {
+      const entrypoints = policyCache?.entrypoints;
+      if (!entrypoints || !Object.prototype.hasOwnProperty.call(entrypoints, RULE_INPUT_PATHS_ENTRYPOINT)) {
+        this.logger.warn(
+          `OPA bundle does not expose '${RULE_INPUT_PATHS_ENTRYPOINT}' — it predates GT-716. `
+          + 'A rule whose fact this run did not supply will be reported as a verdict. Recompile with `npm run build:policy`.',
+        );
+        return null;
+      }
+      const resultSet: any = policyCache.evaluate({}, RULE_INPUT_PATHS_ENTRYPOINT);
+      const table = resultSet?.[0]?.result;
+      if (!table || typeof table !== 'object' || Array.isArray(table) || Object.keys(table).length === 0) {
+        this.logger.warn('OPA bundle declared an empty rule-input table — treating every declared rule as decidable.');
+        return null;
+      }
+      const byRule = new Map<string, readonly string[]>();
+      for (const [id, paths] of Object.entries(table)) {
+        byRule.set(id, Array.isArray(paths) ? paths.map(String) : []);
+      }
+      return byRule;
+    } catch (err) {
+      this.logger.warn(`OPA bundle could not report the input paths its rules read: ${err instanceof Error ? err.message : String(err)}`);
+      return null;
+    }
+  }
+
   async evaluateAll(
     rules: NormalizedRule[],
     ctx: WorkspaceEvaluationContext,
@@ -295,12 +438,20 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
         // whole time — the outcome existed in the type and was unreachable in the
         // class.
         const declared = this.readDeclaredRuleIds(policyCache, opaUrl);
+        // GT-716 AC1 — and what each of them reads, so an absent fact is a skip below.
+        const inputPaths = declared ? this.readRuleInputPaths(policyCache, opaUrl) : null;
 
         opaResults = passedRules.map(rule => {
           const ruleViolations = violations.filter((v: Record<string, unknown>) =>
             violationBelongsToRule(v, rule.id),
           );
           for (const v of ruleViolations) claimed.add(v);
+          // GT-716 AC1 — an absent fact is not a verdict. Checked BEFORE the violations
+          // are read, because a violation raised on a missing premise is the case, not
+          // an exception to it; the violations were claimed above so they are not
+          // reported as orphans of a rule that was never asked.
+          const unasked = declared?.has(rule.id) && inputPaths ? skippedForAbsentFacets(rule, input, inputPaths) : null;
+          if (unasked) return unasked;
           if (ruleViolations.length > 0) {
             return {
               rule,

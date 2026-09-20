@@ -41,6 +41,8 @@ Rules: 133 checked / 26 skipped / 0 errored / 159 total
 exit code 2
 ```
 
+Esas cifras son de la 1.3.0 publicada. Qué decide cada motor, y por qué el motor OPA reporta como `skipped` una regla cuyos hechos no suministraste en vez de decidirla (GT-716), está en la página de [estado real](../known-limitations.es.md#los-dos-motores-no-cubren-lo-mismo).
+
 ## Qué significan los números
 
 **Espera hallazgos en la primera ejecución.** Un satélite recién inicializado es una línea

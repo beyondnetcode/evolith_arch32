@@ -1,4 +1,12 @@
-import { DECLARED_RULE_IDS_ENTRYPOINT, OpaEvaluator, violationBelongsToRule } from './opa-evaluator';
+import {
+  ABSENCE_IS_A_FACT,
+  DECLARED_RULE_IDS_ENTRYPOINT,
+  OpaEvaluator,
+  RULE_INPUT_PATHS_ENTRYPOINT,
+  absentFacets,
+  facetOfInputPath,
+  violationBelongsToRule,
+} from './opa-evaluator';
 import { createMockFileSystem, createMockLogger } from '../../../test/mocks';
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext } from './evaluator.interface';
@@ -706,5 +714,186 @@ describe('a rule the bundle cannot decide is skipped, never passed · GT-675', (
 
     expect(result.result).toBe('passed');
     expect(logger.getLogsByLevel('WARN').map((l: any) => l.message ?? String(l)).join(' ')).toMatch(/declared an empty rule-id set/);
+  });
+});
+
+/**
+ * GT-716 AC1 — an absent fact is not a verdict.
+ *
+ * Before this, a rule whose policy read a facet the run never supplied came back
+ * DECIDED: `not input.adapter.schemaValidated` fired (`failed`), `input.satellite.git.x`
+ * never matched (`passed`). Measured on a satellite fresh from `init` the day the gap was
+ * registered: 73 of the 76 rules only the OPA engine decided were exactly that, and
+ * six of the run's eight verdict conflicts with the native engine. The bundle now states
+ * what each rule reads (`rule_input_paths`, from the compiler's AST) and the evaluator
+ * refuses to call an absent facet a verdict — while a facet the builder OBSERVED, or one
+ * whose absence is a fact by design, still decides.
+ */
+describe('a rule whose fact this run did not supply is skipped, not decided · GT-716 AC1', () => {
+  const wasmMock = require('@open-policy-agent/opa-wasm');
+  const wasmPath = path.join('/core', 'rulesets', 'opa', 'policy.wasm');
+  const ctx: WorkspaceEvaluationContext = { satellitePath: '/satellite', corePath: '/core' };
+  let seq = 0;
+
+  const rule = (id: string): NormalizedRule => ({
+    id,
+    severity: 'MUST',
+    category: 'governance',
+    title: `rule ${id}`,
+    description: '',
+    blocking: true,
+    sourceFile: 'rules.json',
+  });
+
+  /** A bundle built the way `compile-opa-wasm.mjs` builds it since GT-716: ids AND what they read. */
+  function bundle(opts: {
+    declared: string[];
+    inputs: Record<string, string[]> | null;
+    violations?: Array<Record<string, unknown>>;
+  }) {
+    const fs = createMockFileSystem();
+    const logger = createMockLogger();
+    fs.setFile(wasmPath, `fake-wasm-gt716-${++seq}`);
+    const entrypoints: Record<string, number> = { 'evolith/main/violations': 0, [DECLARED_RULE_IDS_ENTRYPOINT]: 2 };
+    if (opts.inputs !== null) entrypoints[RULE_INPUT_PATHS_ENTRYPOINT] = 3;
+    (wasmMock.loadPolicy as jest.Mock).mockResolvedValueOnce({
+      entrypoints,
+      evaluate: (_input: unknown, entrypoint?: string | number) => {
+        if (entrypoint === DECLARED_RULE_IDS_ENTRYPOINT) return [{ result: opts.declared }];
+        if (entrypoint === RULE_INPUT_PATHS_ENTRYPOINT) return [{ result: opts.inputs }];
+        return [{ result: opts.violations ?? [] }];
+      },
+    });
+    return { evaluator: new OpaEvaluator(fs, logger), logger };
+  }
+  const fired = (id: string, policy: string) => ({ id, message: `${id} fired`, policy });
+  const logged = (logger: any, level: string) =>
+    logger.getLogsByLevel(level).map((l: any) => l.message ?? String(l)).join(' ');
+
+  it('(a) a declared rule whose facet is absent is SKIPPED even though its policy fired', async () => {
+    const { evaluator, logger } = bundle({
+      declared: ['ACL-01'],
+      inputs: { 'ACL-01': ['input.adapter.schemaValidated'] },
+      violations: [fired('ACL-01', 'opa-anti-corruption-layer')],
+    });
+
+    const [result] = await evaluator.evaluateAll([rule('ACL-01')], ctx);
+
+    expect(result.result).toBe('skipped');
+    expect(result.evaluability).toBe('supplied-facet-absent');
+    expect(result.message).toMatch(/reads `input\.adapter`/);
+    expect(result.message).toMatch(/not a verdict about the repository/);
+    // The violation raised on the missing premise is claimed, not reported as an orphan
+    // of a rule the run never asked about.
+    expect(logged(logger, 'DEBUG')).not.toMatch(/matched no evaluated rule/);
+  });
+
+  it('(b) …and one whose policy did NOT fire is skipped too, not passed', async () => {
+    const { evaluator } = bundle({ declared: ['GIT-01'], inputs: { 'GIT-01': ['input.satellite.git.branchNameInvalid'] } });
+
+    const [result] = await evaluator.evaluateAll([rule('GIT-01')], ctx);
+
+    expect(result.result).toBe('skipped');
+    expect(result.message).toMatch(/`input\.satellite\.git`/);
+  });
+
+  it('(c) the SAME rule is a real verdict once the caller supplies the facet — failed when it fires', async () => {
+    const { evaluator } = bundle({
+      declared: ['GIT-01'],
+      inputs: { 'GIT-01': ['input.satellite.git.branchNameInvalid'] },
+      violations: [fired('GIT-01', 'opa-gitflow-branching')],
+    });
+
+    const [result] = await evaluator.evaluateAll([rule('GIT-01')], {
+      ...ctx,
+      facts: { satellite: { git: { branchNameInvalid: true } } },
+    });
+
+    expect(result.result).toBe('failed');
+  });
+
+  it('(c′) …and passed when it does not — a facet supplied as `false` is still supplied', async () => {
+    const { evaluator } = bundle({ declared: ['GIT-01'], inputs: { 'GIT-01': ['input.satellite.git.branchNameInvalid'] } });
+
+    const [result] = await evaluator.evaluateAll([rule('GIT-01')], {
+      ...ctx,
+      facts: { satellite: { git: { branchNameInvalid: false } } },
+    });
+
+    expect(result.result).toBe('passed');
+  });
+
+  it('(d) a facet the builder OBSERVES never blocks a verdict, whatever it observed', async () => {
+    // `satellite.files` is always emitted (an empty listing is a fact) and
+    // `satellite.packageJson` is `null` when there is none — both are answers.
+    const { evaluator } = bundle({
+      declared: ['INH-06', 'OBS-EVD-01'],
+      inputs: {
+        'INH-06': ['input.satellite.files', 'input.satellitePath'],
+        'OBS-EVD-01': ['input.satellite.packageJson.dependencies'],
+      },
+      violations: [fired('INH-06', 'opa-governance')],
+    });
+
+    const results = await evaluator.evaluateAll([rule('INH-06'), rule('OBS-EVD-01')], ctx);
+
+    expect(results.map((r) => r.result)).toEqual(['failed', 'passed']);
+  });
+
+  it('(e) a facet whose absence is a fact by design is evaluated, not skipped', async () => {
+    // ADR-0111: "no evidence presented" and "an empty set" are the same verdict, on
+    // both engines — skipping PEA-01 here would have moved a rule that agrees today.
+    const { evaluator } = bundle({ declared: ['PEA-01'], inputs: { 'PEA-01': ['input.qualityEvidence', 'input.evaluationDate'] } });
+
+    const [result] = await evaluator.evaluateAll([rule('PEA-01')], ctx);
+
+    expect(result.result).toBe('passed');
+    expect([...ABSENCE_IS_A_FACT]).toEqual(
+      expect.arrayContaining(['input.qualityEvidence', 'input.evaluationDate', 'input.evidence', 'input.waiver']),
+    );
+  });
+
+  it('(f) a bundle without the entrypoint keeps the old behaviour and SAYS SO', async () => {
+    const { evaluator, logger } = bundle({
+      declared: ['ACL-01'],
+      inputs: null,
+      violations: [fired('ACL-01', 'opa-anti-corruption-layer')],
+    });
+
+    const [result] = await evaluator.evaluateAll([rule('ACL-01')], ctx);
+
+    expect(result.result).toBe('failed');
+    expect(logged(logger, 'WARN')).toMatch(/predates GT-716/);
+  });
+
+  it('(g) a rule the bundle does not decide is still `no-policy-in-bundle`, not a facet problem', async () => {
+    const { evaluator } = bundle({ declared: ['ACL-01'], inputs: { 'ACL-01': ['input.adapter.schemaValidated'] } });
+
+    const [result] = await evaluator.evaluateAll([rule('SEC-INJ-01')], ctx);
+
+    expect(result.result).toBe('skipped');
+    expect(result.evaluability).toBe('no-policy-in-bundle');
+  });
+
+  describe('the facet of an input path', () => {
+    it('is the first segment under input, or the second under the satellite/core containers', () => {
+      expect(facetOfInputPath('input.adapter.schemaValidated')).toBe('input.adapter');
+      expect(facetOfInputPath('input.satellite.git.branchNameInvalid')).toBe('input.satellite.git');
+      expect(facetOfInputPath('input.core.cli.mcpServerSource')).toBe('input.core.cli');
+      expect(facetOfInputPath('input.coverage_percentage')).toBe('input.coverage_percentage');
+      expect(facetOfInputPath('input.satellite')).toBeNull();
+      expect(facetOfInputPath('input')).toBeNull();
+    });
+
+    it('is present when the key exists, whatever its value — null, false and undefined are answers', () => {
+      const input = { satellite: { files: [], packageJson: null, git: undefined }, adapter: false };
+      expect(absentFacets(input, ['input.satellite.files', 'input.satellite.packageJson.x', 'input.satellite.git.y', 'input.adapter.z'])).toEqual([]);
+      expect(absentFacets(input, [
+        'input.satellite.multiTenancy.a',
+        'input.user.id',
+        'input.satellite.multiTenancy.b',
+        'input.qualityEvidence', // absence is a fact — never reported
+      ])).toEqual(['input.satellite.multiTenancy', 'input.user']);
+    });
   });
 });

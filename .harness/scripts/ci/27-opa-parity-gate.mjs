@@ -38,6 +38,8 @@ const ROOT = REPO_ROOT;
 
 /** Must equal `DECLARED_RULE_IDS_ENTRYPOINT` in `opa-evaluator.ts`; the assertion below is what keeps them equal. */
 const DECLARED_RULE_IDS_ENTRYPOINT = 'evolith/manifest/declared_rule_ids';
+/** GT-716 — must equal `RULE_INPUT_PATHS_ENTRYPOINT` in `opa-evaluator.ts`, same reason. */
+const RULE_INPUT_PATHS_ENTRYPOINT = 'evolith/manifest/rule_input_paths';
 // GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
 const TOPO_ROOT_KEYS = ['topologiesReference', 'topologiesRulesets'];
 // Full/scheduled run evaluates all accepted topologies; otherwise scope to changed.
@@ -162,6 +164,19 @@ async function checkDeclaredScope() {
         continue;
       }
       declared = policy.evaluate({}, DECLARED_RULE_IDS_ENTRYPOINT)?.[0]?.result ?? [];
+      // GT-716 AC1: the bundle must also say what each rule READS, or an absent fact goes
+      // back to being reported as a verdict — silently, since the evaluator degrades.
+      if (!Object.prototype.hasOwnProperty.call(policy.entrypoints ?? {}, RULE_INPUT_PATHS_ENTRYPOINT)) {
+        findings.push(`${rel}: does not expose '${RULE_INPUT_PATHS_ENTRYPOINT}'. A rule whose fact a run did not supply will be reported as a verdict (GT-716). Rebuild with \`npm run build:policy\`.`);
+        continue;
+      }
+      const inputPaths = policy.evaluate({}, RULE_INPUT_PATHS_ENTRYPOINT)?.[0]?.result ?? {};
+      const statedBy = Object.keys(inputPaths).length;
+      if (statedBy === 0) {
+        findings.push(`${rel}: '${RULE_INPUT_PATHS_ENTRYPOINT}' is empty — no rule states what it reads (GT-716).`);
+        continue;
+      }
+      console.log(`   ✓ ${rel}: ${statedBy} rule id(s) state the input paths they read.`);
     } catch (err) {
       findings.push(`${rel}: could not be executed to read its declared scope — ${err.message}`);
       continue;

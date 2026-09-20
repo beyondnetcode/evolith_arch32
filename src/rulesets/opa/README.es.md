@@ -14,9 +14,21 @@ En resumen: Markdown explica, los `*.rules.json` Native definen, y OPA + el eval
 
 - Script: [`.harness/scripts/compile-opa-wasm.mjs`](../../../.harness/scripts/compile-opa-wasm.mjs), invocado vía `npm run build:policy`.
 - Descarga OPA `v1.19.0` y luego ejecuta `opa build -t wasm` sobre `rulesets/opa/` con `--ignore=schemas`.
-- **Entrypoints Wasm (3):** `evolith/main/violations`, `evolith/abac/violations` y `evolith/manifest/declared_rule_ids`. El tercero se genera en tiempo de build (GT-675): el script escribe un `manifest.rego` en un directorio de staging con cada rule id que las políticas alcanzables pueden decidir, para que el evaluador distinga "evaluado, limpio" de "nada aquí decide esto". No es un fichero de este directorio y no debe commitearse.
+- **Entrypoints Wasm (4):** `evolith/main/violations`, `evolith/abac/violations`, `evolith/manifest/declared_rule_ids` y `evolith/manifest/rule_input_paths`. Los dos últimos se generan en tiempo de build desde el AST de las políticas: el script escribe un `manifest.rego` en un directorio de staging con cada rule id que las políticas alcanzables pueden decidir (GT-675 — para que el evaluador distinga "evaluado, limpio" de "nada aquí decide esto") y, por id de regla, las rutas `input.…` que lee su política (GT-716 — para que `OpaEvaluator` reporte una regla cuyo hecho la ejecución no suministró como `skipped` / `supplied-facet-absent` en vez de como veredicto; ver *Cuando falta un hecho* más abajo). No es un fichero de este directorio y no debe commitearse.
 - El `policy.wasm` extraído se instala en `sdk/cli/rulesets/opa/policy.wasm` para el evaluador del Evolith CLI.
 - `evolith.main` ([main.rego](./main.rego)) agrega los conjuntos `violations` de las políticas individuales. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) se **publica de forma dual**: se importa y se une en `evolith/main/violations` (`main.rego` importa `data.evolith.abac.violations` y lo une), *y además* se expone como el entrypoint dedicado `evolith/abac/violations` para decisiones de acceso a herramientas MCP en runtime.
+
+## Cuando falta un hecho (GT-716)
+
+Un cuerpo Rego cuyo hecho falta queda *indefinido*: `not input.adapter.schemaValidated` dispara, `input.satellite.git.branchNameInvalid` nunca coincide. Ninguno de los dos es un veredicto sobre el repositorio, así que `OpaEvaluator` no reporta uno:
+
+- En tiempo de build el bundle registra, por id de regla, las rutas `input.…` que lee su política (`evolith/manifest/rule_input_paths`, extraídas del AST del compilador por [`.harness/scripts/lib/rego-rule-inputs.mjs`](../../../.harness/scripts/lib/rego-rule-inputs.mjs) — lecturas directas, cabeceras, reglas auxiliares seguidas transitivamente).
+- En tiempo de evaluación, una regla declarada cuyo input no lleva **nada** de una faceta que lee vuelve `skipped` con evaluabilidad `supplied-facet-absent` y la faceta nombrada. La faceta es el primer segmento bajo `input`, o el segundo bajo `satellite` / `core`: `input.satellite.git` es una faceta que un llamador envía entera, `input.satellite.git.branchNameInvalid` es un campo de ella.
+- Presencia es «la clave existe», no «el valor es verdadero»: una faceta que el constructor de input **observó** decide lo que sea que observó (`null`, `false`, `[]` son respuestas), y una faceta que un llamador suministró como `false` fue suministrada.
+- `ABSENCE_IS_A_FACT` (en `opa-evaluator.ts`) exime las facetas cuya ausencia es en sí un hecho por diseño de las políticas que las leen — `qualityEvidence`, `qualityAdmissibilityPolicy`, `evaluationDate` (ADR-0111: no presentar nada es el veredicto), `evidence`, `waiver` (compuertas de fase), `tenantId`. Es la única lista mantenida a mano; el AC2 de GT-716 lleva la declaración al fichero de cada regla.
+- Un bundle compilado antes de que existiera este entrypoint conserva el comportamiento anterior y lo dice en `WARN`; `27-opa-parity-gate` hace fallar un bundle que deje de exponerlo.
+
+Para que una regla se decida, suministra la faceta por el contexto de evaluación (`facts.satellite.<faceta>`, GT-694). Medido sobre un satélite recién salido de `init` el día que esto aterrizó: `--engine opa` pasó de 133 reglas «decididas» a 10, y las 123 que dejó de decidir eran todas veredictos sobre input que nadie había suministrado.
 
 ## Políticas de enforcement agregadas
 

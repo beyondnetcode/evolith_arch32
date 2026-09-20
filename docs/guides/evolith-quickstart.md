@@ -41,6 +41,8 @@ Rules: 133 checked / 26 skipped / 0 errored / 159 total
 exit code 2
 ```
 
+Those figures are the published 1.3.0's. What each engine decides, and why the OPA engine reports a rule whose facts you did not supply as `skipped` rather than deciding it (GT-716), is on the [known limitations](../known-limitations.md#the-two-engines-do-not-cover-the-same-ground) page.
+
 ## What the numbers mean
 
 **Expect findings on the first run.** A freshly initialized satellite is a baseline, not a

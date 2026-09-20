@@ -435,7 +435,7 @@
 <text x="64" y="1838" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">generated 2026-09-20</text>
 <rect x="430" y="1796" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
 <text x="438" y="1810" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">10 required checks · 18 workflows</text>
-<text x="438" y="1824" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">73 guards + 31 self-tests</text>
+<text x="438" y="1824" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">74 guards + 32 self-tests</text>
 <text x="438" y="1838" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">enforce_admins</text>
 <rect x="804" y="1796" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
 <text x="812" y="1810" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Security tab 0 · 0 · 0 · 0</text>

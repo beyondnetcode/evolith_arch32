@@ -251,7 +251,11 @@ function processTrackingFile(filePath, isSpanish) {
     const oldTotals = lines[totalsLineIndex];
     let newTotals = '';
     if (isSpanish) {
-      newTotals = `**Progreso:** ${stats.completados} / ${stats.total} completados · ${stats.enProgreso} en progreso · ${stats.pendientes} pendientes · ${stats.diferidos} diferidos`;
+      // Spanish nouns agree in number; the always-plural form wrote `1 pendientes`
+      // over a hand-corrected `1 pendiente` on every push, and the bilingual guard
+      // (66) then flagged the ES-only churn. English is invariant here.
+      const word = (count, one, many) => (count === 1 ? one : many);
+      newTotals = `**Progreso:** ${stats.completados} / ${stats.total} ${word(stats.completados, 'completado', 'completados')} · ${stats.enProgreso} en progreso · ${stats.pendientes} ${word(stats.pendientes, 'pendiente', 'pendientes')} · ${stats.diferidos} ${word(stats.diferidos, 'diferido', 'diferidos')}`;
     } else {
       newTotals = `**Progress:** ${stats.completados} / ${stats.total} done · ${stats.enProgreso} in progress · ${stats.pendientes} pending · ${stats.diferidos} deferred`;
     }

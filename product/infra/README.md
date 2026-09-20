@@ -53,6 +53,17 @@ docker-compose -f product/infra/docker-compose.yml up -d
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 ```
 
+## The knowledge store the MCP gateway answers from (GT-685)
+
+`docker-compose.fullstack.yml` brings up two more services next to `mcp`, so `evolith-knowledge-search` answers instead of refusing (`NOT_IMPLEMENTED`) as it did when nothing set `EVOLITH_RAG_PG_URL`:
+
+| Service | Role |
+| :--- | :--- |
+| `rag-postgres` | pgvector, provisioned on first start with `.harness/scripts/ci/rag-pgvector.schema.sql` (mounted — the single source of the DDL) |
+| `rag-seed` | one-shot: the EN `reference/` corpus through the same indexer CI uses (`15-rag-index-backfill.mjs`) in **lexical-only mode** (ADR-0112 §6: chunk text in, `embedding = NULL`, BM25 answers); exits 0 once the store answers |
+
+`mcp` receives `EVOLITH_RAG_PG_URL` from the same file and no `EVOLITH_RAG_EMBED_URL`: the reader is BM25-first and attaches the dense reranker only when a sidecar exists. Dense reranking is an upgrade, not a precondition — bring up the sidecar of `docker-compose.yml` (`--profile rag`), re-run the backfill with `EVOLITH_RAG_EMBED_URL` set, and give `mcp` the same URL. It is not the default because it was measured: the `text-embeddings-inference` CPU images are amd64-only, and a CPU sidecar embedded 10 of the corpus's 5 698 chunks in 413 s on 2026-09-19. Stop `rag-postgres` and the tool refuses again, explicitly.
+
 ---
 
 ## Service Ports

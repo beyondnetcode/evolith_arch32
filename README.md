@@ -17,15 +17,31 @@
 
 </div>
 
-Evolith is an architecture linter for CI. It reads your repository — structure, workflows, manifests, architecture decisions — and checks it against a library of rules: layering, dependencies, security, CI/CD. If a blocking rule fails, the PR fails.
+Architecture decisions tend to live in documents nobody reads again. Evolith turns them into rules that are checked automatically every time someone opens a pull request.
 
-What sets it apart from other linters: **it also counts the rules it could not evaluate.** A blocking rule that never ran fails the PR exactly as one that failed. Coverage and compliance are never painted the same green.
+**What it does**
 
-And it is not only a linter: **the rules are tied to the product's SDLC phase.** Evolith knows where a product is (Discovery → Design → Construction → QA → Delivery), evaluates the gates of that phase (`evolith gate evaluate --phase`) and blocks the move to the next one until they pass (`evolith phase advance`), leaving machine-readable evidence of every transition. Architecture decisions live in the same loop: `evolith adr create` drafts them and many rules are derived from them.
+It reads your repository — folders, workflows, manifests, architecture decisions — and compares it against a library of rules about layering, dependencies, security and CI/CD. If a blocking rule is not met, the PR does not pass. It is a linter, but for architecture.
 
-It is for engineering teams that want their architecture decisions enforced in CI rather than reviewed by hand, for platform teams blocking non-conformant artifacts before production, and for AI agents that need to validate their own output against the same rules.
+**What makes it different**
 
-[Try it](#try-it-in-two-minutes) · [Four terms](#four-terms-you-need) · [In CI](#in-ci) · [What is inside](#what-is-inside) · [How it compares](#how-it-compares) · [What it is not](#what-it-is-not) · [Documentation](#documentation) · [Interactive atlas](https://beyondnetcode.github.io/evolith_arch32/)
+1. **It counts what it could not check.** A regular linter only reports what failed. Evolith also reports the rules it never got to evaluate; if one of them is blocking, the PR fails just the same. So "all green" never means "nothing was checked".
+
+2. **It follows the product lifecycle.** Every product is in a phase: Discovery → Design → Construction → QA → Delivery. Evolith evaluates the gates of the current phase and does not let you move to the next one until they pass, keeping evidence of every step. Architecture decisions (ADRs) are written with the same tool and many rules derive from them.
+
+**Who it is for**
+
+- **Teams** that want their architecture decisions enforced automatically, not reviewed by hand.
+- **Platforms** that need to block non-conformant artifacts before they reach production.
+- **AI agents** that must validate their own output against the same rules as the human team.
+
+**Where to start**
+
+1. [Try it in two minutes](#try-it-in-two-minutes) — one `npx` and you see your first result.
+2. [Four terms you need](#four-terms-you-need) — rule, pack, topology and phase.
+3. [Use it in CI](#in-ci) — so it runs on every PR.
+
+Want more context? [What is inside](#what-is-inside) · [How it compares](#how-it-compares) · [What it is not](#what-it-is-not) · [Documentation](#documentation) · [Interactive atlas](https://beyondnetcode.github.io/evolith_arch32/)
 
 ---
 

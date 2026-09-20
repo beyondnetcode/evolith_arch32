@@ -116,6 +116,8 @@ export async function syncIndex({ adapter, changed = [], deleted = [], corpusVer
     corpusVersion: effectiveCorpusVersion,
     provider: adapter.name,
     durable: !!adapter.durable,
+    // GT-685 — what the index holds: `dense` vectors, or `lexical` (text only).
+    mode: adapter.lexicalOnly ? 'lexical' : 'dense',
     upserted: [],
     deleted: [],
     files: {},
@@ -137,12 +139,19 @@ export async function syncIndex({ adapter, changed = [], deleted = [], corpusVer
 
     for (let i = 0; i < chunks.length; i += batchSize) {
       const batch = chunks.slice(i, i + batchSize);
-      const vectors = await adapter.embed(batch.map((c) => c.text));
-      receipt.telemetry.embedCalls += 1;
-      if (!Array.isArray(vectors) || vectors.length !== batch.length) {
-        throw new Error('embedding returned an unexpected vector count');
+      let records;
+      if (adapter.lexicalOnly) {
+        // GT-685 / ADR-0112 §6 — a lexical-only index embeds nothing: the chunk
+        // text goes in, `content_tsv` answers, and the vector column stays NULL.
+        records = batch.map((c) => ({ id: c.chunk_id, vector: null, metadata: metadataOf(c) }));
+      } else {
+        const vectors = await adapter.embed(batch.map((c) => c.text));
+        receipt.telemetry.embedCalls += 1;
+        if (!Array.isArray(vectors) || vectors.length !== batch.length) {
+          throw new Error('embedding returned an unexpected vector count');
+        }
+        records = batch.map((c, j) => ({ id: c.chunk_id, vector: vectors[j], metadata: metadataOf(c) }));
       }
-      const records = batch.map((c, j) => ({ id: c.chunk_id, vector: vectors[j], metadata: metadataOf(c) }));
       await adapter.upsert(records);
       receipt.upserted.push(...batch.map((c) => c.chunk_id));
       receipt.telemetry.batches += 1;

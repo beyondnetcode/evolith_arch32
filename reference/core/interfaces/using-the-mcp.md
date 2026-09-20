@@ -1410,7 +1410,7 @@ Retrieval is **hybrid, BM25 first**. That is not a preference, it is a fit to ho
 
 `retrievalMode` is `hybrid` when both retrievers ran and `lexical-only` when there is no embedding sidecar configured — or when the dense side failed and the search degraded to BM25 rather than returning nothing.
 
-**When it is not available.** The corpus lives in a pgvector store (`EVOLITH_RAG_PG_URL`) populated by the delta-sync workflow. With no store configured the tool **fails explicitly** rather than returning an empty result set, because an agent handed "no matches" from an unconfigured corpus will conclude the corpus is silent on the subject and act on that.
+**When it is not available.** The corpus lives in a pgvector store (`EVOLITH_RAG_PG_URL`) populated by the delta-sync workflow. With no store configured the tool **fails explicitly** rather than returning an empty result set, because an agent handed "no matches" from an unconfigured corpus will conclude the corpus is silent on the subject and act on that. The local full-stack bring-up (`product/infra/docker-compose.fullstack.yml`) provisions the store and seeds it in **lexical-only mode** (ADR-0112 §6, GT-685): BM25 over the chunk text, `embedding = NULL`, `retrievalMode: "lexical-only"` in every answer; dense reranking is attached only where an embedding sidecar is configured.
 
 ### 6.18. `evolith-history` — read the CLI command history
 

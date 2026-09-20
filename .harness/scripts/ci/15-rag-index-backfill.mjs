@@ -20,7 +20,9 @@
  * Usage:
  *   node .harness/scripts/ci/15-rag-index-backfill.mjs            # dry-run
  *   EVOLITH_RAG_SYNC=true EVOLITH_RAG_PROVIDER=pgvector \
- *     node .harness/scripts/ci/15-rag-index-backfill.mjs          # live
+ *     node .harness/scripts/ci/15-rag-index-backfill.mjs          # live, dense (needs EVOLITH_RAG_EMBED_URL)
+ *   EVOLITH_RAG_SYNC=true EVOLITH_RAG_PROVIDER=pgvector EVOLITH_RAG_MODE=lexical \
+ *     node .harness/scripts/ci/15-rag-index-backfill.mjs          # live, lexical-only (GT-685 / ADR-0112 §6)
  *
  * Fail-closed exactly like the delta path: an unavailable adapter, a non-durable
  * provider in live mode, or a sync error aborts non-zero rather than reporting a
@@ -33,7 +35,7 @@ import { join, relative, sep } from 'node:path';
 import { createRagAdapter } from './rag-port.mjs';
 import { syncIndex } from './rag-sync.mjs';
 // Side-effect import: registers the durable pgvector adapter (GT-538 / ADR-0112).
-import './rag-pgvector.mjs';
+import { HASH_EMBED_MODEL_ID } from './rag-pgvector.mjs';
 
 const ROOT = process.cwd();
 const CORPUS_DIR = 'reference';
@@ -41,6 +43,10 @@ const RAG_SYNC_ENABLED = process.env.EVOLITH_RAG_SYNC === 'true';
 const RECEIPT_PATH = 'rag-backfill-receipt.json';
 
 function getCorpusVersion() {
+  // GT-685 — a seed that runs inside a deployment (no .git in the image) is
+  // handed the revision it was built from; the checkout case reads git.
+  const declared = process.env.EVOLITH_RAG_CORPUS_VERSION?.trim();
+  if (declared) return declared;
   try {
     return execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim().slice(0, 12);
   } catch {
@@ -90,7 +96,7 @@ async function run() {
 
   let adapter;
   try {
-    adapter = createRagAdapter({ provider: process.env.EVOLITH_RAG_PROVIDER });
+    adapter = createRagAdapter({ provider: process.env.EVOLITH_RAG_PROVIDER, mode: process.env.EVOLITH_RAG_MODE });
   } catch (err) {
     return failClosed(`RAG adapter unavailable — failing closed: ${err.message}`);
   }
@@ -99,6 +105,18 @@ async function run() {
     return failClosed(
       `EVOLITH_RAG_SYNC=true but provider [${adapter.name}] is not durable. ` +
         'A live backfill into a non-durable store would be discarded — failing closed.',
+    );
+  }
+
+  // GT-685 / ADR-0112 §6 — a LIVE run is either dense (a sidecar is configured)
+  // or explicitly lexical (EVOLITH_RAG_MODE=lexical). The sha256 pseudo-embedding
+  // is a dry-run/test stand-in: writing it into a durable store would fill the
+  // vector column with numbers that look like embeddings and are not, and a
+  // dense reader attached later would rank on noise. Refuse, by name.
+  if (RAG_SYNC_ENABLED && adapter.embeddingModelId === HASH_EMBED_MODEL_ID) {
+    return failClosed(
+      'Live sync with no embedding sidecar would persist the non-semantic hash pseudo-embedding. ' +
+        'Set EVOLITH_RAG_EMBED_URL (dense) or EVOLITH_RAG_MODE=lexical (text-only index, ADR-0112 §6). Failing closed.',
     );
   }
 
@@ -119,7 +137,7 @@ async function run() {
 
   console.log(
     `\n   ${receipt.counts.files} file(s) · ${receipt.counts.upserted} chunk(s) upserted · ` +
-      `provider [${receipt.provider}] durable=${receipt.durable}`,
+      `provider [${receipt.provider}] durable=${receipt.durable} mode=${receipt.mode}`,
   );
   console.log(`   Telemetry: ${receipt.telemetry.batches} batch(es) · ~${receipt.telemetry.estTokens} tokens`);
 

@@ -10901,6 +10901,41 @@
         "EXPECTED OF THE PREVIOUS COMMAND: the variable declared once with a 2 MiB default, read once at bootstrap into useBodyParser('json') and useBodyParser('urlencoded'), and documented in the README's variable table",
         "MEASURED IN UAT AFTER THE PROMOTION, 2026-09-20 05:23 UTC (main 9c5deedf, run 35490911533, job 'Deploy UAT (Coolify)' green): POST https://tracker.beyondnet.cloud/api/v1/products/10c8006a-d2dc-43bf-9edd-18aec2c93391/evaluate-architecture -> HTTP 200, evaluation.status COMPLETED, resultDecision FAILED, provenance core, coreEndpoint /api/v1/evaluate, durationMs 174, fileCount 150 (branch main, 35 binaries and 1 oversize file skipped by the Tracker's own caps), responseResult.gates f1..f5 all 'failed'. The same call was HTTP 502 with provenance synthetic six hours earlier. The 'CD is off' half of the original row was wrong: VPS_DEPLOY_ENABLED has been true since 2026-08-22."
       ]
+    },
+    {
+      "id": "GT-717",
+      "closedAt": "2026-09-20",
+      "closureCommit": "a09a1fc7",
+      "dependencyDisposition": "none",
+      "evidence": [
+        ".harness/scripts/pages/build-pages.mjs",
+        ".harness/scripts/pages/derive-page-metrics.mjs",
+        ".harness/scripts/pages/validate-map.mjs",
+        ".harness/scripts/pages/interpolate.mjs",
+        ".harness/scripts/pages/build-pages.test.mjs",
+        ".harness/scripts/ci/45-validate-port-inventory-honesty.mjs",
+        "reference/core/architecture/demos/architecture-map.json",
+        "reference/core/architecture/demos/observed-facts.json",
+        "reference/core/sdlc/assets/master-view.svg",
+        ".github/workflows/pages.yml",
+        ".github/workflows/docs.yml"
+      ],
+      "validationCommands": [
+        "MEASURED FIRST (RED), 2026-09-20, on develop 6491c3bc: git show 6491c3bc:reference/core/sdlc/assets/master-view.svg | grep -o '12 hexagonal ports[^<]*\\|26 tools[^<]*\\|20 commands\\|8 controllers' -> '8 controllers' / '26 tools · 9 resources' / '20 commands'. The ports line was not in the SVG at all: git show 6491c3bc:.harness/scripts/generate-master-view.mjs prints '12 hexagonal ports · 30 adapters' at line 149 while the tracked SVG line 152 said '11 of 20 ports on the hot path · 53 adapters' under a '<!-- port-inventory: 11 hot / 21 declared -->' annotation the generator never emitted (grep -c port-inventory on the script = 0) — the tracked file and its generator already disagreed. The same SVG also printed 'PWA · Web · Mobile', '5 KindEvaluators · OPA dual-engine parity (Native TS + OPA/WASM)' and the header 'ADR-0101 · 0074 · 0075 · 0102'; the tree measures 21 declared port interfaces (20 files) · 11 hot (7+4) · 47 adapter classes · 55 tools · 12 resources · 8 prompts · 38 command files · 12 controllers · 33 endpoints · 12 kinds / 7 evaluators, and the Tracker is .NET 10 + React 19.",
+        "RED, dead docs paths in the tree's own model: git show 6491c3bc:reference/core/architecture/demos/architecture-map.json > old-map.json && node -e '<collect every docs/sourceDocs string, fs.existsSync each>' old-map.json -> '10 of 20 unique docs paths do not exist in the tree' (reference/core/architecture/C4-MASTER-ARCHITECTURE.md, reference/platforms/ci-cd/github-actions-profile.md, reference/product-suite/vision/evolith-product-vision-master.md, reference/products/{core-api,evolith-tracker,mcp-services,smart-cli,ums-reference}/README.md, rulesets/README.md, rulesets/opa/README.md). The deployed copy, git show origin/gh-pages:architecture-map.json (2c8f487a): 21 unique paths, 18 dead; scenarios=4, explanations=0, no ES strings.",
+        "RED, publication: git grep -l gh-pages 6491c3bc -- .github/workflows -> nothing (exit 1); git log -1 --format='%h %ad %s' --date=short origin/gh-pages -> '2c8f487a 2026-07-07 pages: add SVG download + 1x/2x/4x resolution selector to the viewer'.",
+        "node .harness/scripts/pages/build-pages.mjs --check",
+        "EXPECTED OF THE PREVIOUS COMMAND: guard 45 prints 'port interfaces declared ... 21', 'on the hot path ............ 11 (7 required, 4 optional)', 'declared, not reached ...... 10', 'adapter files .............. 63', then '✓ build-pages --check: model valid (45 nodes, 11 chapters), reference/core/sdlc/assets/master-view.svg and reference/core/architecture/demos/tokens.css match the tree' (observed 2026-09-20 on 7eac8445, exit 0)",
+        "node --test .harness/scripts/pages/build-pages.test.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: tests 8 / pass 8 / fail 0 — the authored model is valid as tracked; an unknown edge endpoint, a dead doc path and a half-translated chapter are refused; a narration over its word budget is refused; every placeholder the model names resolves against the derived metrics; an unknown placeholder is reported, never printed as text; numbers are grouped per language; tracked tokens.css is what tokens.json renders; the ports split the metrics print is the split guard 45 enforces",
+        "node .harness/scripts/ci/45-validate-port-inventory-honesty.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: '✓ 45-validate-port-inventory-honesty: 1 document(s) publishing an inventory state what the runtime actually reaches.' with 21 declared / 11 hot (7 required, 4 optional) / 10 declared-not-reached / 63 adapter files, exit 0",
+        "OBSERVED RED BEFORE TRUSTED (the check itself): 7eac8445 — merging origin/develop (release 1.4.0) under a09a1fc7 made `build-pages.mjs --check` exit 1 with 'generated files are stale — run: node .harness/scripts/pages/build-pages.mjs --write-svg' naming reference/core/sdlc/assets/master-view.svg; `--write-svg` then changed 15 lines (git show 7eac8445 --stat: 15 insertions, 15 deletions): '@beyondnet/evolith-cli 1.3.2' -> '1.4.0', '@beyondnet/evolith-mcp 1.3.3' -> '1.4.0', 'numbers as of 2026-09-19' -> '2026-09-20' (git show 7eac8445 | grep '^[-+]<text'). No number was typed.",
+        "node .harness/scripts/pages/build-pages.mjs --out <scratch>/dist-pages && grep -c '\\.\\./' <scratch>/dist-pages/*.html <scratch>/dist-pages/*.js <scratch>/dist-pages/*.json <scratch>/dist-pages/*.css",
+        "EXPECTED OF THE PREVIOUS COMMAND: 14 files, every count 0 (writeSite refuses the build otherwise; observed 2026-09-20). Placeholder count: grep -o '{{[^}]*}}' reference/core/architecture/demos/architecture-map.json | sort -u | wc -l -> 129. Shape: node -e on the map -> 45 nodes, 62 edges, 11 chapters with narration.{executive,architect,engineer}.{en,es}, i18n.ui 197 strings.",
+        "grep -n 'build-pages' .github/workflows/docs.yml && grep -n 'branches\\|permissions\\|contents:' .github/workflows/pages.yml",
+        "EXPECTED OF THE PREVIOUS COMMAND: docs.yml runs `node .harness/scripts/pages/build-pages.mjs --check` and `node --test .harness/scripts/pages/build-pages.test.mjs` inside the `validate` job (name: Validate documentation, required); pages.yml triggers on push to main with `contents: read` at the top and `contents: write` only on the publish job"
+      ]
     }
   ]
 }

@@ -1,0 +1,111 @@
+/* viewer.css — the Vision poster page (master-view.html). Shell tokens/classes come from
+   tokens.css + pages.css; this file only owns the stage, the toolbar, the tour drawer and
+   the transcript. The poster itself stays light in every theme (it is the README image),
+   so its two overlay colours are the LIGHT accent/bg tokens, fixed on purpose. */
+
+:root { --poster-accent: #B45309; --poster-dim: #F4F6F8; --header-h: 56px; --strip-h: 28px; }
+@media (max-width: 899px) { :root { --header-h: 48px; } }
+
+html, body { height: 100%; }
+body { overflow-x: hidden; }
+
+/* ---------- layout ---------- */
+.viewer {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  height: calc(100dvh - var(--header-h) - var(--strip-h)); min-height: 360px;
+}
+@media (min-width: 1200px) { body[data-tour] .viewer { grid-template-columns: minmax(0, 1fr) 320px; } }
+
+.stage-wrap { position: relative; min-width: 0; overflow: hidden; }
+.stage {
+  position: absolute; inset: 0; overflow: hidden; touch-action: none; cursor: grab; outline: none;
+  background: radial-gradient(1200px 600px at 50% -10%, var(--surface-2) 0%, var(--bg) 60%), var(--bg);
+}
+.stage.grabbing { cursor: grabbing; }
+.stage:focus-visible { box-shadow: inset 0 0 0 3px var(--focus); border-radius: 0; }
+#pz { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
+#pz svg { display: block; background: #fff; border-radius: 10px; box-shadow: var(--shadow-2); }
+.tour-dim { fill: var(--poster-dim); fill-opacity: .65; pointer-events: none; }
+.tour-ring { fill: none; stroke: var(--poster-accent); stroke-width: 2.5; pointer-events: none; }
+
+/* ---------- toolbar ---------- */
+.toolbar {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 5;
+  display: flex; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 4px 6px;
+  max-width: calc(100% - 24px); padding: 6px; border: 1px solid var(--line); border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(10px); box-shadow: var(--shadow-2);
+}
+.tb-group { display: inline-flex; align-items: center; gap: 4px; }
+.tb-group + .tb-group { border-left: 1px solid var(--line); padding-left: 6px; margin-left: 2px; }
+.toolbar .btn { min-height: 40px; height: 40px; padding: 0 10px; font-size: 15px; }
+.toolbar .btn-icon { width: 40px; padding: 0; }
+.toolbar .btn.dl { font-size: 12px; letter-spacing: .04em; }
+.toolbar .zoom { min-width: 54px; text-align: center; font-size: 12px; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.toolbar .res { height: 40px; padding: 0 8px; border: 1px solid var(--line); border-radius: var(--r-control); background: var(--surface); font-size: 12px; font-weight: 600; }
+.toolbar .btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+@media (pointer: coarse) { .toolbar .btn, .toolbar .btn-icon, .toolbar .res { min-height: 44px; height: 44px; } .toolbar .btn-icon { width: 44px; } }
+@media (max-width: 899px) {
+  .toolbar { flex-wrap: wrap; bottom: 12px; }
+  /* While the tour sheet is open it owns the bottom; the toolbar moves back up. */
+  body[data-tour] .toolbar { top: 12px; bottom: auto; }
+}
+
+.ticks { display: inline-flex; align-items: center; gap: 2px; list-style: none; margin: 0; padding: 0 4px; }
+.ticks button { position: relative; width: 16px; height: 28px; border: 0; background: transparent; padding: 0; border-radius: 6px; }
+.ticks button::before { content: ""; position: absolute; left: 5px; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); transition: transform var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out); }
+.ticks button:hover::before { background: var(--ink); }
+.ticks button[aria-current="step"]::before { background: var(--accent); transform: scale(1.5); }
+@media (max-width: 899px) { .ticks { display: none; } }
+
+.hint { position: absolute; right: 12px; bottom: 8px; margin: 0; z-index: 4; font-size: 11px; line-height: 14px; color: var(--ink-3); }
+@media (max-width: 899px) { .hint { display: none; } }
+
+/* ---------- tour drawer ---------- */
+.drawer {
+  display: flex; flex-direction: column; min-width: 0; background: var(--surface);
+  border-left: 1px solid var(--line); overflow: auto;
+}
+.drawer-head { position: sticky; top: 0; z-index: 2; display: grid; gap: 8px; padding: 12px 16px 8px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.drawer-head .counter { margin: 0; }
+.drawer-actions { display: flex; gap: 6px; align-items: center; }
+.drawer-actions .spacer { flex: 1; }
+.progress { height: 2px; background: var(--surface-2); border-radius: 1px; overflow: hidden; }
+.progress .bar { height: 100%; width: 0; background: var(--accent); }
+.drawer-body { padding: 12px 16px 24px; display: grid; gap: 12px; align-content: start; overflow-x: hidden; }
+/* A long unbreakable token (a path, a mono chip) must wrap, never widen the drawer past its 320 px track. */
+.drawer-body > * { min-width: 0; overflow-wrap: anywhere; }
+.drawer-body h2 { margin: 0; outline: none; }
+.drawer-body h2:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--focus); border-radius: 4px; }
+.drawer-body .hook { margin: 0; font-style: italic; color: var(--ink-2); }
+.drawer-body .narration { margin: 0; }
+.drawer-body .narration code, .drawer-body .narration .mono { font-family: var(--font-mono); font-size: .92em; }
+.drawer-body .sources { margin: 0; font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.drawer-body .sources a { font-family: var(--font-mono); font-size: 12px; word-break: break-all; }
+.drawer-body .atlas-link { justify-self: start; text-decoration: none; }
+.sheet-handle { display: none; }
+@media (max-width: 1199px) {
+  .drawer {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; max-height: 50dvh;
+    border-left: 0; border-top: 1px solid var(--line); border-radius: var(--r-panel) var(--r-panel) 0 0; box-shadow: var(--shadow-2);
+    transition: max-height var(--dur-sheet) var(--ease-out);
+  }
+  .drawer.is-full { max-height: 92dvh; }
+  .drawer.is-peek { max-height: 112px; }
+  .drawer.is-peek .drawer-body { overflow: hidden; }
+  .sheet-handle { display: flex; flex: none; }
+  .drawer-head { top: 0; }
+}
+
+/* ---------- status strip + transcript ---------- */
+.poster-strip { position: relative; z-index: 3; min-height: var(--strip-h); }
+.poster-strip .caption { flex: 1; min-width: 0; }
+.poster-transcript { max-width: 860px; margin: 16px auto 40px; padding: 0 16px; }
+.poster-transcript > summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
+.poster-transcript section { margin: 20px 0; }
+.poster-transcript h2 { font-size: 16px; line-height: 22px; margin: 0 0 6px; }
+.poster-transcript p { margin: 0 0 4px; font-size: 13px; line-height: 18px; color: var(--ink-2); }
+
+@media print {
+  .shell-header, .stage-wrap, .toolbar, .drawer, .poster-strip, .skip-link, .toast { display: none !important; }
+  .poster-transcript { max-width: none; }
+}

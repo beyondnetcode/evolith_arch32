@@ -1,293 +1,469 @@
 <!-- port-inventory: 11 hot / 21 declared -->
-<!-- GT-621: a bare count reads as delivered capability. 11 ports are reachable
-     from AgentRuntimeService (7 required, 4 optional); the other 8 are declared
-     seams the execution pass never calls. Derived and enforced by
-     .harness/scripts/ci/45-validate-port-inventory-honesty.mjs — do not hand-edit
-     these numbers, they will be checked against the tree. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1240" font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1936" role="img" aria-labelledby="mvTitle mvDesc" font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+<!-- port-inventory: 11 hot / 21 declared -->
+<!-- GT-621 — the split above is what .harness/scripts/ci/45-validate-port-inventory-honesty.mjs checks against the tree: 21 port interfaces are declared, 11 are reachable from AgentRuntimeService (7 required + 4 optional). A port count is a surface, not a capability claim; the band-4 sentence prints the same numbers. -->
+<title id="mvTitle">Evolith — E2E Product Vision (numbers as of 2026-09-20)</title>
+<desc id="mvDesc">Band 1, four doors: the CLI, the GitHub Action, the MCP server and the REST Core API apply the same rules and return the same envelope. Band 2, the Core: a stateless evaluation engine that turns an EvaluationContext into an EvaluationResult, beside the Constitution of 144 ADRs, 184 rule packs and 50 schemas, and the strip of who can say yes. Band 3, Evolith Tracker: the commercial control plane that decides gates and owns state, with the five SDLC phases and their gates and the topology axis beside them. Band 4, governed agents: the experimental agent runtime with 21 declared port interfaces of which 11 are on the hot path, the LLM providers a tenant chooses, and the governed-composition rail of ports, adapters and anti-corruption layers. Band 5, federated governance: the Core as level 0, satellites as level 1 inheritors, and the Architecture Board approving upstream proposals. Band 6, evidence: eight generated, dated and linked tiles on how honest this picture is.</desc>
 <defs>
-<marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5b6b7b"/></marker>
-<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfcfe"/><stop offset="1" stop-color="#eef2f7"/></linearGradient>
-<linearGradient id="domg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a4570"/><stop offset="1" stop-color="#102c47"/></linearGradient>
-<filter id="sh" x="-4%" y="-4%" width="108%" height="112%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1c2b3a" flood-opacity="0.14"/></filter>
+<marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B6B7B"/></marker>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F4F6F8"/></linearGradient>
+<linearGradient id="domg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3D4E5F"/><stop offset="1" stop-color="#14212E"/></linearGradient>
 </defs>
-<rect x="0" y="0" width="1600" height="1240" rx="0" fill="url(#bg)" stroke="none" stroke-width="1"/>
-<path d="M40,42 L66,30 L92,42 L66,54 Z" fill="#2a9d8f"/>
-<path d="M40,56 L66,44 L92,56 L66,68 Z" fill="#1f7a6b"/>
-<path d="M40,70 L66,58 L92,70 L66,82 Z" fill="#155e53"/>
-<text x="108" y="52" font-size="34" fill="#14212e" font-weight="800" text-anchor="start" letter-spacing="1">EVOLITH</text>
-<text x="300" y="52" font-size="30" fill="#55677a" font-weight="300" text-anchor="start" letter-spacing="0.5">·  E2E PRODUCT VISION</text>
-<text x="110" y="80" font-size="13.5" fill="#0e7d72" font-weight="600" text-anchor="start">Governed Composition  ·  Stateless Evaluation Core  ·  Federated Five-Phase SDLC</text>
-<text x="1560" y="52" font-size="13" fill="#55677a" font-weight="600" text-anchor="end">repo · evolith_arch32</text>
-<text x="1560" y="72" font-size="11.5" fill="#9fb0c0" font-weight="600" text-anchor="end">ADR-0101 · 0074 · 0075 · 0102</text>
-<rect x="36" y="106" width="1528" height="106" rx="14" fill="#eaecf8" stroke="#c3c8ec" stroke-width="1.2"/>
-<circle cx="66" cy="127" r="10" fill="#3a46a0"/>
-<text x="66" y="131" font-size="12.5" fill="#fff" font-weight="700" text-anchor="middle">1</text>
-<text x="84" y="132" font-size="14.5" fill="#3a46a0" font-weight="700" text-anchor="start" letter-spacing="0.6">FEDERATED GOVERNANCE · HUB-AND-SPOKE (INH-04)</text>
-<rect x="72" y="148" width="300" height="44" rx="10" fill="#fff" stroke="#b9c0e6" stroke-width="1.3"/>
-<text x="222" y="166" font-size="13" fill="#2c3690" font-weight="700" text-anchor="middle">Evolith Core — Level 0</text>
-<text x="222" y="183" font-size="11.5" fill="#55677a" font-weight="400" text-anchor="middle">the Constitution</text>
-<rect x="614" y="148" width="320" height="44" rx="10" fill="#fff" stroke="#b9c0e6" stroke-width="1.3"/>
-<text x="774" y="166" font-size="13" fill="#2c3690" font-weight="700" text-anchor="middle">Satellite Products — Level 1</text>
-<text x="774" y="183" font-size="11.5" fill="#55677a" font-weight="400" text-anchor="middle">e.g., UMS · other trackers</text>
-<rect x="1176" y="148" width="316" height="44" rx="10" fill="#fff" stroke="#b9c0e6" stroke-width="1.3"/>
-<text x="1334" y="166" font-size="13" fill="#2c3690" font-weight="700" text-anchor="middle">Architecture Board</text>
-<text x="1334" y="183" font-size="11.5" fill="#55677a" font-weight="400" text-anchor="middle">approves upstream promotion</text>
-<line x1="372" y1="170" x2="614" y2="170" stroke="#3a46a0" stroke-width="2.4" marker-end="url(#arr)"/>
-<text x="493" y="162" font-size="11" fill="#3a46a0" font-weight="600" text-anchor="middle">Rule Heritage (inherit)</text>
-<line x1="934" y1="170" x2="1176" y2="170" stroke="#3a46a0" stroke-width="2.4" marker-end="url(#arr)"/>
-<text x="1055" y="162" font-size="11" fill="#3a46a0" font-weight="600" text-anchor="middle">Upstream Proposal</text>
-<text x="810" y="205" font-size="11.5" fill="#55677a" font-weight="400" text-anchor="middle" font-style="italic">Approved promotions flow upstream through evidence-backed review; every satellite re-inherits the evolved Constitution.</text>
-<rect x="36" y="224" width="1528" height="116" rx="14" fill="#eef1f5" stroke="#c8d2dd" stroke-width="1.2"/>
-<circle cx="66" cy="245" r="10" fill="#5a6b7f"/>
-<text x="66" y="249" font-size="12.5" fill="#fff" font-weight="700" text-anchor="middle">2</text>
-<text x="84" y="250" font-size="14.5" fill="#5a6b7f" font-weight="700" text-anchor="start" letter-spacing="0.6">CONSUMPTION · AI-NATIVE  (Convention over Configuration)</text>
-<rect x="72" y="264" width="720" height="62" rx="10" fill="#e9f2fb" stroke="#9cc2e6" stroke-width="1.2"/>
-<text x="88" y="283" font-size="12" fill="#1f5c96" font-weight="700" text-anchor="start">HUMAN-DRIVEN</text>
-<rect x="88" y="294" width="166" height="22" rx="6" fill="#fff" stroke="#bcd7ef" stroke-width="1"/>
-<text x="171" y="309" font-size="11.5" fill="#1f5c96" font-weight="500" text-anchor="middle">Tracker PWA (Web · Mobile)</text>
-<rect x="264" y="294" width="166" height="22" rx="6" fill="#fff" stroke="#bcd7ef" stroke-width="1"/>
-<text x="347" y="309" font-size="11.5" fill="#1f5c96" font-weight="500" text-anchor="middle">VS Code / IDEs</text>
-<rect x="440" y="294" width="166" height="22" rx="6" fill="#fff" stroke="#bcd7ef" stroke-width="1"/>
-<text x="523" y="309" font-size="11.5" fill="#1f5c96" font-weight="500" text-anchor="middle">CI / CD</text>
-<rect x="616" y="294" width="166" height="22" rx="6" fill="#fff" stroke="#bcd7ef" stroke-width="1"/>
-<text x="699" y="309" font-size="11.5" fill="#1f5c96" font-weight="500" text-anchor="middle">Enterprise integrations</text>
-<rect x="808" y="264" width="736" height="62" rx="10" fill="#efe9f6" stroke="#c3b0dd" stroke-width="1.2"/>
-<text x="824" y="283" font-size="12" fill="#5a3d86" font-weight="700" text-anchor="start">AGENT-DRIVEN</text>
-<rect x="824" y="294" width="228" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
-<text x="938" y="309" font-size="11.5" fill="#5a3d86" font-weight="500" text-anchor="middle">Claude Desktop</text>
-<rect x="1062" y="294" width="228" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
-<text x="1176" y="309" font-size="11.5" fill="#5a3d86" font-weight="500" text-anchor="middle">Open-Source LLMs (free &amp; paid)</text>
-<rect x="1300" y="294" width="228" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
-<text x="1414" y="309" font-size="11.5" fill="#5a3d86" font-weight="500" text-anchor="middle">Autonomous Agents / MCP clients</text>
-<text x="800" y="335" font-size="11" fill="#55677a" font-weight="400" text-anchor="middle" font-style="italic">The chatbox is an intermediary, not the source of authority — LLMs and agents consume approved context, rulesets, skills and permissions through Evolith contracts.</text>
-<line x1="320" y1="340" x2="320" y2="352" stroke="#5a6b7f" stroke-width="2.4" marker-end="url(#arr)"/>
-<text x="360" y="348" font-size="10" fill="#5a6b7f" font-weight="600" text-anchor="start">humans → Tracker PWA</text>
-<rect x="36" y="352" width="1528" height="300" rx="14" fill="#e3f1ef" stroke="#a6d5cf" stroke-width="1.3"/>
-<circle cx="66" cy="373" r="10" fill="#0e7d72"/>
-<text x="66" y="377" font-size="12.5" fill="#fff" font-weight="700" text-anchor="middle">3</text>
-<text x="84" y="378" font-size="14.5" fill="#0e7d72" font-weight="700" text-anchor="start" letter-spacing="0.6">EVOLITH TRACKER · repo evolith_tracker — SaaS SDLC ORCHESTRATOR &amp; AUDITOR  (external client)</text>
-<rect x="72" y="392" width="300" height="40" rx="9" fill="#fff" stroke="#a6d5cf" stroke-width="1.2"/>
-<text x="222" y="416" font-size="12.5" fill="#0e7d72" font-weight="700" text-anchor="middle">PWA · Web · Mobile</text>
-<rect x="388" y="392" width="520" height="40" rx="9" fill="#fff" stroke="#a6d5cf" stroke-width="1.2"/>
-<text x="648" y="410" font-size="12.5" fill="#0e7d72" font-weight="700" text-anchor="middle">BFF · Application Gateway (NestJS · ADR-0075)</text>
-<text x="648" y="425" font-size="10.5" fill="#55677a" font-weight="400" text-anchor="middle">device payloads · PII stripping · session / cookies</text>
-<rect x="924" y="392" width="620" height="40" rx="9" fill="#d6ede9" stroke="#a6d5cf" stroke-width="1.2"/>
-<text x="1234" y="410" font-size="12" fill="#0d6b62" font-weight="700" text-anchor="middle">Owns runtime governance state</text>
-<text x="1234" y="425" font-size="10.3" fill="#55677a" font-weight="400" text-anchor="middle">phases · gates · evidence · exceptions · agent runs · immutable audit</text>
-<text x="810" y="447" font-size="12.5" fill="#0e7d72" font-weight="700" text-anchor="middle" letter-spacing="3">SDLC EXECUTION ENGINE  ·  orchestrated by Tracker  ·  evaluated by Core</text>
-<polygon points="56,450 332,450 356,516 332,582 56,582 80,516" fill="#4a90c2" filter="url(#sh)"/>
-<text x="88" y="470" font-size="10" fill="#ffffff" font-weight="700" text-anchor="start" letter-spacing="1">PHASE 1</text>
-<text x="222" y="492" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">DISCOVERY</text>
-<text x="222" y="509" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">&amp; IDEATION</text>
-<rect x="130" y="520" width="184" height="20" rx="10" fill="#ffffff" stroke="none" stroke-width="1"/>
-<circle cx="144" cy="530" r="6" fill="#4a90c2"/><path d="M141,530 l2,2 l4,-4" stroke="#fff" stroke-width="1.5" fill="none"/>
-<text x="230" y="534" font-size="11" fill="#4a90c2" font-weight="700" text-anchor="middle">Gate: Business Sign-Off</text>
-<text x="222" y="558" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Discovery Canvas</text>
-<text x="222" y="572" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Build-vs-Compose</text>
-<polygon points="354,450 630,450 654,516 630,582 354,582 378,516" fill="#2f9e8f" filter="url(#sh)"/>
-<text x="386" y="470" font-size="10" fill="#ffffff" font-weight="700" text-anchor="start" letter-spacing="1">PHASE 2</text>
-<text x="520" y="492" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">ARCHITECTURE</text>
-<text x="520" y="509" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">SPEC-DRIVEN</text>
-<rect x="428" y="520" width="184" height="20" rx="10" fill="#ffffff" stroke="none" stroke-width="1"/>
-<circle cx="442" cy="530" r="6" fill="#2f9e8f"/><path d="M439,530 l2,2 l4,-4" stroke="#fff" stroke-width="1.5" fill="none"/>
-<text x="528" y="534" font-size="11" fill="#2f9e8f" font-weight="700" text-anchor="middle">Gate: Design Baseline</text>
-<text x="520" y="558" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Contracts · ADRs</text>
-<text x="520" y="572" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Threat &amp; risk</text>
-<polygon points="652,450 928,450 952,516 928,582 652,582 676,516" fill="#7fae3f" filter="url(#sh)"/>
-<text x="684" y="470" font-size="10" fill="#ffffff" font-weight="700" text-anchor="start" letter-spacing="1">PHASE 3</text>
-<text x="818" y="492" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">CONSTRUCTION</text>
-<text x="818" y="509" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">TRACKING</text>
-<rect x="726" y="520" width="184" height="20" rx="10" fill="#ffffff" stroke="none" stroke-width="1"/>
-<circle cx="740" cy="530" r="6" fill="#7fae3f"/><path d="M737,530 l2,2 l4,-4" stroke="#fff" stroke-width="1.5" fill="none"/>
-<text x="826" y="534" font-size="11" fill="#7fae3f" font-weight="700" text-anchor="middle">Gate: Successful Build</text>
-<text x="818" y="558" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">CI · DoD</text>
-<text x="818" y="572" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Architecture drift</text>
-<polygon points="950,450 1226,450 1250,516 1226,582 950,582 974,516" fill="#46a06e" filter="url(#sh)"/>
-<text x="982" y="470" font-size="10" fill="#ffffff" font-weight="700" text-anchor="start" letter-spacing="1">PHASE 4</text>
-<text x="1116" y="492" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">AUTOMATED QA</text>
-<text x="1116" y="509" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">&amp; INTEGRATION</text>
-<rect x="1024" y="520" width="184" height="20" rx="10" fill="#ffffff" stroke="none" stroke-width="1"/>
-<circle cx="1038" cy="530" r="6" fill="#46a06e"/><path d="M1035,530 l2,2 l4,-4" stroke="#fff" stroke-width="1.5" fill="none"/>
-<text x="1124" y="534" font-size="11" fill="#46a06e" font-weight="700" text-anchor="middle">Gate: RC Stamped</text>
-<text x="1116" y="558" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Tests · Coverage</text>
-<text x="1116" y="572" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Security · Contracts</text>
-<polygon points="1248,450 1524,450 1548,516 1524,582 1248,582 1272,516" fill="#e0863a" filter="url(#sh)"/>
-<text x="1280" y="470" font-size="10" fill="#ffffff" font-weight="700" text-anchor="start" letter-spacing="1">PHASE 5</text>
-<text x="1414" y="492" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">DYNAMIC</text>
-<text x="1414" y="509" font-size="14.5" fill="#fff" font-weight="800" text-anchor="middle">RELEASE PLANNER</text>
-<rect x="1322" y="520" width="184" height="20" rx="10" fill="#ffffff" stroke="none" stroke-width="1"/>
-<circle cx="1336" cy="530" r="6" fill="#e0863a"/><path d="M1333,530 l2,2 l4,-4" stroke="#fff" stroke-width="1.5" fill="none"/>
-<text x="1422" y="534" font-size="11" fill="#e0863a" font-weight="700" text-anchor="middle">Gate: Production Live</text>
-<text x="1414" y="558" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Rollout · Rollback</text>
-<text x="1414" y="572" font-size="11" fill="#f2f8ff" font-weight="500" text-anchor="middle">Observability</text>
-<text x="810" y="612" font-size="11.5" fill="#0d6b62" font-weight="600" text-anchor="middle">Granularity = Initiatives — no tasks / backlog / epics / user-stories.  Agile work items are ExternalReferenceContext ingested via ACL.</text>
-<text x="810" y="632" font-size="11.5" fill="#55677a" font-weight="400" text-anchor="middle" font-style="italic">Tracker decides every phase transition · Core recommendations are non-binding.</text>
-<rect x="36" y="660" width="1144" height="100" rx="14" fill="#e7f0fb" stroke="#a9caea" stroke-width="1.3"/>
-<circle cx="66" cy="681" r="10" fill="#2b6cb0"/>
-<text x="66" y="685" font-size="12.5" fill="#fff" font-weight="700" text-anchor="middle">4</text>
-<text x="84" y="686" font-size="14.5" fill="#2b6cb0" font-weight="700" text-anchor="start" letter-spacing="0.6">CORE API EXPOSURE LAYER · product-neutral (ADR-0074)</text>
-<rect x="72" y="698" width="356" height="40" rx="9" fill="#fff" stroke="#a9caea" stroke-width="1.2"/>
-<text x="250" y="715" font-size="13" fill="#2b6cb0" font-weight="800" text-anchor="middle">apps/core-api</text>
-<text x="250" y="730" font-size="11" fill="#55677a" font-weight="400" text-anchor="middle">REST · 8 controllers</text>
-<rect x="444" y="698" width="356" height="40" rx="9" fill="#fff" stroke="#a9caea" stroke-width="1.2"/>
-<text x="622" y="715" font-size="13" fill="#2b6cb0" font-weight="800" text-anchor="middle">mcp-server</text>
-<text x="622" y="730" font-size="11" fill="#55677a" font-weight="400" text-anchor="middle">MCP · 26 tools · 9 resources</text>
-<rect x="816" y="698" width="356" height="40" rx="9" fill="#fff" stroke="#a9caea" stroke-width="1.2"/>
-<text x="994" y="715" font-size="13" fill="#2b6cb0" font-weight="800" text-anchor="middle">smart-cli</text>
-<text x="994" y="730" font-size="11" fill="#55677a" font-weight="400" text-anchor="middle">CLI · 20 commands</text>
-<text x="56" y="752" font-size="11" fill="#55677a" font-weight="400" text-anchor="start" font-style="italic">Tracker BFF consumes this surface as an external client — ADR-0074 explicitly rejected placing the BFF inside Core.</text>
-<line x1="608" y1="652" x2="608" y2="660" stroke="#0e7d72" stroke-width="2.4" marker-end="url(#arr)"/>
-<text x="620" y="648" font-size="10" fill="#0e7d72" font-weight="600" text-anchor="start">REST · MCP · CLI</text>
-<line x1="500" y1="760" x2="500" y2="806" stroke="#2b6cb0" stroke-width="2.4" marker-end="url(#arr)"/>
-<text x="512" y="786" font-size="10" fill="#2b6cb0" font-weight="600" text-anchor="start">delegate evaluation</text>
-<line x1="720" y1="806" x2="720" y2="760" stroke="#123a5c" stroke-width="2.4" marker-end="url(#arr)"/>
-<text x="732" y="786" font-size="10" fill="#123a5c" font-weight="600" text-anchor="start">EvaluationResult</text>
-<rect x="36" y="772" width="1144" height="442" rx="14" fill="#eef2f7" stroke="#16334f" stroke-width="1.6"/>
-<circle cx="66" cy="793" r="10" fill="#16334f"/>
-<text x="66" y="797" font-size="12.5" fill="#fff" font-weight="700" text-anchor="middle">5</text>
-<text x="84" y="798" font-size="14.5" fill="#16334f" font-weight="700" text-anchor="start" letter-spacing="0.6">EVOLITH CORE · repo evolith_arch32 — the Constitution &amp; stateless engine</text>
-<rect x="56" y="808" width="1104" height="92" rx="11" fill="#efe9f6" stroke="#c3b0dd" stroke-width="1.3"/>
-<text x="72" y="830" font-size="13.5" fill="#5a3d86" font-weight="800" text-anchor="start">AGENT RUNTIME · @beyondnet/evolith-agent-runtime (ADR-0102)</text>
-<text x="72" y="852" font-size="12" fill="#14212e" font-weight="400" text-anchor="start">AgentRuntimeService — 11 of 20 ports on the hot path · 53 adapters</text>
-<text x="72" y="872" font-size="12" fill="#14212e" font-weight="700" text-anchor="start">InteractionAdapters:</text>
-<rect x="196" y="861" width="84" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
-<text x="238" y="876" font-size="11.5" fill="#5a3d86" font-weight="500" text-anchor="middle">CLI</text>
-<rect x="288" y="861" width="84" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
-<text x="330" y="876" font-size="11.5" fill="#5a3d86" font-weight="500" text-anchor="middle">Chat</text>
-<rect x="380" y="861" width="84" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
-<text x="422" y="876" font-size="11.5" fill="#5a3d86" font-weight="500" text-anchor="middle">Hermes</text>
-<rect x="472" y="861" width="84" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
-<text x="514" y="876" font-size="11.5" fill="#5a3d86" font-weight="500" text-anchor="middle">MCP</text>
-<rect x="564" y="861" width="84" height="22" rx="6" fill="#fff" stroke="#d3c4e6" stroke-width="1"/>
-<text x="606" y="876" font-size="11.5" fill="#5a3d86" font-weight="500" text-anchor="middle">External</text>
-<rect x="700" y="858" width="250" height="26" rx="8" fill="#fff" stroke="#c3b0dd" stroke-width="1"/>
-<text x="825" y="875" font-size="11.5" fill="#5a3d86" font-weight="700" text-anchor="middle">Governed orchestration: OPA + HITL</text>
-<text x="972" y="852" font-size="10.5" fill="#55677a" font-weight="400" text-anchor="start" font-style="italic">Agents are replaceable</text>
-<text x="972" y="866" font-size="10.5" fill="#55677a" font-weight="400" text-anchor="start" font-style="italic">executors, not authorities.</text>
-<rect x="56" y="910" width="1104" height="134" rx="11" fill="url(#domg)" stroke="#0e2a44" stroke-width="1.3"/>
-<text x="72" y="934" font-size="13.5" fill="#eaf3ff" font-weight="800" text-anchor="start">DOMAIN · @beyondnet/evolith-core-domain — STATELESS EVALUATION ENGINE (ADR-0101)</text>
-<text x="72" y="956" font-size="12" fill="#c7dcf2" font-weight="400" text-anchor="start">EvaluationOrchestrator · 5 KindEvaluators · OPA dual-engine parity (Native TS + OPA/WASM)</text>
-<text x="72" y="980" font-size="11" fill="#9fc2e6" font-weight="700" text-anchor="start">Kinds</text>
-<rect x="120" y="970" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="179" y="985" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">gate</text>
-<rect x="248" y="970" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="307" y="985" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">artifact</text>
-<rect x="376" y="970" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="435" y="985" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">evidence</text>
-<rect x="504" y="970" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="563" y="985" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">architecture</text>
-<rect x="632" y="970" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="691" y="985" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">blueprint</text>
-<rect x="120" y="998" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="179" y="1013" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">topology</text>
-<rect x="248" y="998" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="307" y="1013" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">checkpoint</text>
-<rect x="376" y="998" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="435" y="1013" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">deployment</text>
-<rect x="504" y="998" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="563" y="1013" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">rule</text>
-<rect x="632" y="998" width="118" height="22" rx="6" fill="#1e4a73" stroke="#3a6a97" stroke-width="1"/>
-<text x="691" y="1013" font-size="11.5" fill="#eaf3ff" font-weight="700" text-anchor="middle">compliance</text>
-<rect x="786" y="966" width="358" height="62" rx="10" fill="#0c2338" stroke="#3a6a97" stroke-width="1.2"/>
-<text x="965" y="990" font-size="13" fill="#8fe3c9" font-weight="800" text-anchor="middle">EvaluationContext  →  EvaluationResult</text>
-<text x="965" y="1010" font-size="10.5" fill="#c7dcf2" font-weight="400" text-anchor="middle">non-binding verdicts + recommendations</text>
-<text x="72" y="1032" font-size="11" fill="#9fc2e6" font-weight="400" text-anchor="start" font-style="italic">Does not persist — Tracker owns governance state at runtime.</text>
-<rect x="56" y="1054" width="1104" height="150" rx="11" fill="#e6f4ee" stroke="#8fcbb5" stroke-width="1.3"/>
-<text x="72" y="1077" font-size="13.5" fill="#1f6e57" font-weight="800" text-anchor="start">REFERENCE CORPUS · Constitution</text>
-<text x="320" y="1077" font-size="11" fill="#55677a" font-weight="400" text-anchor="start" font-style="italic">human-readable · machine-consumable</text>
-<rect x="72" y="1092" width="348" height="26" rx="6" fill="#fff" stroke="#a9dcc8" stroke-width="1"/>
-<text x="246" y="1109" font-size="12" fill="#1f6e57" font-weight="500" text-anchor="middle">ADRs · core · platform · ai-augmented</text>
-<rect x="434" y="1092" width="348" height="26" rx="6" fill="#fff" stroke="#a9dcc8" stroke-width="1"/>
-<text x="608" y="1109" font-size="12" fill="#1f6e57" font-weight="500" text-anchor="middle">Rulesets · 26 categories</text>
-<rect x="796" y="1092" width="348" height="26" rx="6" fill="#fff" stroke="#a9dcc8" stroke-width="1"/>
-<text x="970" y="1109" font-size="12" fill="#1f6e57" font-weight="500" text-anchor="middle">Standards &amp; Taxonomies</text>
-<rect x="72" y="1126" width="348" height="26" rx="6" fill="#fff" stroke="#a9dcc8" stroke-width="1"/>
-<text x="246" y="1143" font-size="12" fill="#1f6e57" font-weight="500" text-anchor="middle">Artifact &amp; Evidence Schemas</text>
-<rect x="434" y="1126" width="348" height="26" rx="6" fill="#fff" stroke="#a9dcc8" stroke-width="1"/>
-<text x="608" y="1143" font-size="12" fill="#1f6e57" font-weight="500" text-anchor="middle">Phase Gate Definitions</text>
-<rect x="796" y="1126" width="348" height="26" rx="6" fill="#fff" stroke="#a9dcc8" stroke-width="1"/>
-<text x="970" y="1143" font-size="12" fill="#1f6e57" font-weight="500" text-anchor="middle">Adapter &amp; Integration Contracts</text>
-<rect x="72" y="1162" width="1072" height="32" rx="8" fill="#d6f0e4" stroke="#3fa07f" stroke-width="1.4"/>
-<text x="88" y="1182" font-size="12.5" fill="#176b50" font-weight="800" text-anchor="start">Knowledge OS</text>
-<text x="210" y="1182" font-size="11.5" fill="#1f6e57" font-weight="400" text-anchor="start">— canonical glossary · executable-test oracle · CI freshness gate  ·  "memory for the product, not the AI"</text>
-<rect x="1052" y="1167" width="82" height="22" rx="11" fill="#2e9d5b"/><text x="1093" y="1182" font-size="11" fill="#fff" font-weight="800" text-anchor="middle">NEW · M0+M1</text>
-<rect x="1200" y="660" width="364" height="554" rx="14" fill="#fbf1e3" stroke="#e5b878" stroke-width="1.4"/>
-<circle cx="1226" cy="681" r="10" fill="#b5670f"/>
-<text x="1226" y="685" font-size="12.5" fill="#fff" font-weight="700" text-anchor="middle">6</text>
-<text x="1244" y="686" font-size="14.5" fill="#b5670f" font-weight="700" text-anchor="start" letter-spacing="0.6">GOVERNED COMPOSITION</text>
-<text x="1216" y="706" font-size="11" fill="#55677a" font-weight="400" text-anchor="start" font-style="italic">Build the kernel · compose commodities</text>
-<text x="1216" y="720" font-size="11" fill="#55677a" font-weight="400" text-anchor="start" font-style="italic">behind replaceable Ports &amp; ACLs.</text>
-<rect x="1216" y="732" width="332" height="150" rx="10" fill="#fff" stroke="#e5b878" stroke-width="1.1"/>
-<text x="1232" y="752" font-size="12" fill="#b5670f" font-weight="800" text-anchor="start">Provider Ports (Adapter Taxonomy)</text>
-<rect x="1232" y="760" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1269" y="775" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Work</text>
-<rect x="1312" y="760" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1349" y="775" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Repository</text>
-<rect x="1392" y="760" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1429" y="775" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">CI/CD</text>
-<rect x="1472" y="760" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1509" y="775" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Testing</text>
-<rect x="1232" y="788" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1269" y="803" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Security</text>
-<rect x="1312" y="788" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1349" y="803" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Deployment</text>
-<rect x="1392" y="788" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1429" y="803" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Analytics</text>
-<rect x="1472" y="788" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1509" y="803" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">LLM Obs.</text>
-<rect x="1232" y="816" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1269" y="831" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Agent Exec</text>
-<rect x="1312" y="816" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1349" y="831" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Collab</text>
-<rect x="1392" y="816" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1429" y="831" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Memory</text>
-<rect x="1472" y="816" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1509" y="831" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Approval</text>
-<rect x="1232" y="844" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1269" y="859" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Scheduler</text>
-<rect x="1312" y="844" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1349" y="859" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Harness</text>
-<rect x="1392" y="844" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1429" y="859" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Core Eval</text>
-<rect x="1472" y="844" width="74" height="22" rx="6" fill="#fdf6ea" stroke="#ecd3aa" stroke-width="1"/>
-<text x="1509" y="859" font-size="10" fill="#8a5210" font-weight="500" text-anchor="middle">Policy Val</text>
-<rect x="1216" y="892" width="332" height="42" rx="9" fill="#f6e2c4" stroke="#e5b878" stroke-width="1.3"/>
-<text x="1382" y="910" font-size="12" fill="#8a5210" font-weight="800" text-anchor="middle">Anti-Corruption Layers (ACLs)</text>
-<text x="1382" y="926" font-size="9.8" fill="#55677a" font-weight="400" text-anchor="middle">preserve lineage · map to canonical · reject non-compliant</text>
-<rect x="1216" y="944" width="332" height="132" rx="10" fill="#eef1f5" stroke="#c3cdd8" stroke-width="1.1"/>
-<text x="1232" y="964" font-size="12" fill="#475569" font-weight="800" text-anchor="start">External Tools Cluster</text>
-<rect x="1232" y="972" width="152" height="21" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
-<text x="1308" y="986.5" font-size="10.5" fill="#475569" font-weight="500" text-anchor="middle">Jira</text>
-<rect x="1392" y="972" width="152" height="21" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
-<text x="1468" y="986.5" font-size="10.5" fill="#475569" font-weight="500" text-anchor="middle">GitHub / GitLab</text>
-<rect x="1232" y="997" width="152" height="21" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
-<text x="1308" y="1011.5" font-size="10.5" fill="#475569" font-weight="500" text-anchor="middle">CI/CD runners</text>
-<rect x="1392" y="997" width="152" height="21" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
-<text x="1468" y="1011.5" font-size="10.5" fill="#475569" font-weight="500" text-anchor="middle">Test runners</text>
-<rect x="1232" y="1022" width="152" height="21" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
-<text x="1308" y="1036.5" font-size="10.5" fill="#475569" font-weight="500" text-anchor="middle">Security scanners</text>
-<rect x="1392" y="1022" width="152" height="21" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
-<text x="1468" y="1036.5" font-size="10.5" fill="#475569" font-weight="500" text-anchor="middle">Observability</text>
-<rect x="1232" y="1047" width="152" height="21" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
-<text x="1308" y="1061.5" font-size="10.5" fill="#475569" font-weight="500" text-anchor="middle">Deployment</text>
-<rect x="1392" y="1047" width="152" height="21" rx="6" fill="#fff" stroke="#cbd5e1" stroke-width="1"/>
-<text x="1468" y="1061.5" font-size="10.5" fill="#475569" font-weight="500" text-anchor="middle">Doc engines</text>
-<text x="1216" y="1096" font-size="11" fill="#b5670f" font-weight="700" text-anchor="start">Disposition per capability</text>
-<rect x="1216" y="1104" width="106" height="22" rx="6" fill="#fff" stroke="#e5b878" stroke-width="1"/>
-<text x="1269" y="1119" font-size="10.5" fill="#8a5210" font-weight="700" text-anchor="middle">Adopt</text>
-<rect x="1328" y="1104" width="106" height="22" rx="6" fill="#fff" stroke="#e5b878" stroke-width="1"/>
-<text x="1381" y="1119" font-size="10.5" fill="#8a5210" font-weight="700" text-anchor="middle">Embed</text>
-<rect x="1440" y="1104" width="106" height="22" rx="6" fill="#fff" stroke="#e5b878" stroke-width="1"/>
-<text x="1493" y="1119" font-size="10.5" fill="#8a5210" font-weight="700" text-anchor="middle">Integrate</text>
-<rect x="1216" y="1130" width="106" height="22" rx="6" fill="#fff" stroke="#e5b878" stroke-width="1"/>
-<text x="1269" y="1145" font-size="10.5" fill="#8a5210" font-weight="700" text-anchor="middle">Extend</text>
-<rect x="1328" y="1130" width="106" height="22" rx="6" fill="#fff" stroke="#e5b878" stroke-width="1"/>
-<text x="1381" y="1145" font-size="10.5" fill="#8a5210" font-weight="700" text-anchor="middle">Build</text>
-<rect x="1440" y="1130" width="106" height="22" rx="6" fill="#fff" stroke="#e5b878" stroke-width="1"/>
-<text x="1493" y="1145" font-size="10.5" fill="#8a5210" font-weight="700" text-anchor="middle">Reject</text>
-<text x="1382" y="1188" font-size="9.5" fill="#55677a" font-weight="400" text-anchor="middle" font-style="italic">Data ownership stays with the source of record; Tracker judges evidence.</text>
-<line x1="1200" y1="954" x2="1160" y2="954" stroke="#b5670f" stroke-width="2.4" marker-end="url(#arr)" marker-start="url(#arr)"/>
-<text x="1180" y="946" font-size="10" fill="#b5670f" font-weight="600" text-anchor="end">commands · events · evidence</text>
-<text x="1560" y="1224" font-size="10.5" fill="#9fb0c0" font-weight="400" text-anchor="end" font-style="italic">Source of truth: product/suite/vision/evolith-product-vision-master.md</text>
+<rect x="0" y="0" width="1600" height="1936" rx="0" fill="url(#bg)" stroke="none"/>
+<g id="header">
+<path d="M40,42 L66,30 L92,42 L66,54 Z" fill="#52a69c"/>
+<path d="M40,56 L66,44 L92,56 L66,68 Z" fill="#214d70"/>
+<path d="M40,70 L66,58 L92,70 L66,82 Z" fill="#17344d"/>
+<text x="108" y="52" font-size="34" fill="#14212E" font-weight="800" letter-spacing="1" data-role="title">EVOLITH</text>
+<text x="271.94" y="52" font-size="30" fill="#3D4E5F" font-weight="300" letter-spacing="0.5">·  E2E PRODUCT VISION</text>
+<text x="110" y="80" font-size="13.5" fill="#8A2A4C" font-weight="600">Governed Composition  ·  Stateless Evaluation Core  ·  Federated Five-Phase SDLC</text>
+<text x="1560" y="52" font-size="13" fill="#3D4E5F" font-weight="600" text-anchor="end">repo · evolith_arch32 · numbers as of 2026-09-20</text>
+<text x="1560" y="72" font-size="12" fill="#5B6B7B" font-weight="600" text-anchor="end">ADR-0101 · ADR-0074 · ADR-0102 · ADR-0116 · ADR-0125 · ADR-0128 · ADR-0129</text>
+</g>
+<g id="band-1" data-band="doors" data-bbox="36 108 1528 296">
+<rect x="36" y="108" width="1528" height="296" rx="14" fill="#FDF6E7" stroke="#E3C58A" stroke-width="1.2"/>
+<circle cx="66" cy="129" r="10" fill="#7A5210"/>
+<text x="66" y="133" font-size="12.5" fill="#FFFFFF" font-weight="700" text-anchor="middle">1</text>
+<text x="84" y="134" font-size="14.5" fill="#7A5210" font-weight="700" letter-spacing="0.6" data-role="title">FOUR DOORS — CLI · GitHub Action · MCP server · REST API · same rules, same envelope</text>
+<text x="1544" y="134" font-size="12" fill="#7A5210" font-weight="700" text-anchor="end" letter-spacing="1">WHO ARRIVES ↓</text>
+<g id="region-who-arrives" data-bbox="56 146 1488 24">
+<rect x="66" y="146" width="336" height="24" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="234" y="162" font-size="12" fill="#7A5210" font-weight="600" text-anchor="middle">Humans · terminal · IDE</text>
+<line x1="234" y1="170" x2="234" y2="191" stroke="#7A5210" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="443.33" y="146" width="336" height="24" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="611.33" y="162" font-size="12" fill="#7A5210" font-weight="600" text-anchor="middle">CI · pull request</text>
+<line x1="611.33" y1="170" x2="611.33" y2="191" stroke="#7A5210" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="820.67" y="146" width="336" height="24" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="988.67" y="162" font-size="12" fill="#7A5210" font-weight="600" text-anchor="middle">AI agents · MCP clients · Claude Code plugin</text>
+<line x1="988.67" y1="170" x2="988.67" y2="191" stroke="#7A5210" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="1198" y="146" width="336" height="24" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1366" y="162" font-size="12" fill="#7A5210" font-weight="600" text-anchor="middle">Tracker · external client</text>
+<line x1="1366" y1="170" x2="1366" y2="191" stroke="#7A5210" stroke-width="1.6" marker-end="url(#arr)"/>
+</g>
+<g id="region-doors" data-bbox="56 192 1488 134">
+<rect x="56" y="192" width="356" height="134" rx="12" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1.2"/>
+<rect x="62" y="204" width="4" height="110" rx="2" fill="#7A5210" stroke="none"/>
+<text x="74" y="214" font-size="17" fill="#7A5210" font-weight="700">Evolith CLI</text>
+<text x="74" y="236" font-size="15" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">npx -y @beyondnet/evolith-cli</text>
+<text x="74" y="254" font-size="15" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">  validate --engine opa</text>
+<text x="74" y="272" font-size="12" fill="#3D4E5F">@beyondnet/evolith-cli 1.4.0 · Node ≥ 18</text>
+<text x="74" y="286" font-size="12" fill="#3D4E5F">38 command files (generated inventory)</text>
+<text x="74" y="302" font-size="12" fill="#5B6B7B">exit 0 pass · 1 tool failed (no verdict)</text>
+<text x="74" y="316" font-size="12" fill="#5B6B7B">2 gate blocked · 3 invalid invocation</text>
+<rect x="433.33" y="192" width="356" height="134" rx="12" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1.2"/>
+<rect x="439.33" y="204" width="4" height="110" rx="2" fill="#7A5210" stroke="none"/>
+<text x="451.33" y="214" font-size="17" fill="#7A5210" font-weight="700">GitHub Action</text>
+<text x="451.33" y="236" font-size="15" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">uses:</text>
+<text x="451.33" y="254" font-size="15" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">beyondnetcode/evolith_arch32@v1</text>
+<text x="451.33" y="272" font-size="12" fill="#3D4E5F">Marketplace: Evolith Governance Validation</text>
+<text x="451.33" y="286" font-size="12" fill="#3D4E5F">fail-on-violation: true</text>
+<text x="451.33" y="302" font-size="12" fill="#5B6B7B">outputs compliance-status · exit-code</text>
+<text x="451.33" y="316" font-size="12" fill="#5B6B7B">&quot;Not evaluated&quot; in words</text>
+<rect x="810.67" y="192" width="356" height="134" rx="12" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1.2"/>
+<rect x="816.67" y="204" width="4" height="110" rx="2" fill="#7A5210" stroke="none"/>
+<text x="828.67" y="214" font-size="17" fill="#7A5210" font-weight="700">MCP server</text>
+<text x="828.67" y="236" font-size="15" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">npx -y @beyondnet/evolith-mcp</text>
+<text x="828.67" y="254" font-size="15" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">  (stdio · Streamable HTTP)</text>
+<text x="828.67" y="272" font-size="12" fill="#3D4E5F">@beyondnet/evolith-mcp 1.4.0</text>
+<text x="828.67" y="286" font-size="12" fill="#3D4E5F">55 tools · 12 resources · 8 prompts</text>
+<text x="828.67" y="302" font-size="12" fill="#5B6B7B">stdio JSON-RPC 2.0 · Streamable HTTP</text>
+<text x="828.67" y="316" font-size="12" fill="#5B6B7B">ABAC native AND OPA · approvalToken</text>
+<rect x="1188" y="192" width="356" height="134" rx="12" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1.2"/>
+<rect x="1194" y="204" width="4" height="110" rx="2" fill="#7A5210" stroke="none"/>
+<text x="1206" y="214" font-size="17" fill="#7A5210" font-weight="700">REST Core API</text>
+<text x="1206" y="236" font-size="15" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">POST /api/v1/evaluate</text>
+<text x="1206" y="254" font-size="15" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Bearer EVOLITH_API_KEY</text>
+<text x="1206" y="272" font-size="12" fill="#3D4E5F">12 controllers · 33 endpoints (measured)</text>
+<text x="1206" y="286" font-size="12" fill="#3D4E5F">ghcr.io/beyondnetcode/evolith-core-api</text>
+<text x="1206" y="302" font-size="12" fill="#5B6B7B">ADR-0073 envelope</text>
+<text x="1206" y="316" font-size="12" fill="#5B6B7B">{ success, data | error, meta }</text>
+</g>
+<g id="region-channels" data-bbox="56 332 1488 32">
+<text x="56" y="344" font-size="12" fill="#3D4E5F" font-weight="500">Channels: npm @beyondnet/evolith-cli 1.4.0 · @beyondnet/evolith-mcp 1.4.0 · GitHub Marketplace action v1 · MCP registry io.github.beyondnetcode/evolith</text>
+<text x="56" y="358" font-size="12" fill="#3D4E5F" font-weight="500">Claude Code plugin evolith / evolith-governance 1.3.1 · GHCR 3 images (core-api · mcp · agent-runtime)</text>
+</g>
+<g id="region-parity" data-bbox="56 364 1488 16">
+<text x="56" y="376" font-size="12" fill="#3D4E5F" font-style="italic">One parity matrix: 74 operations · CLI 43 · MCP 51 · REST 32 · 15 on all three (reviewed 2026-07-11) · guard 24 both ways · exploration suite in a required check · Node SDK @beyondnet/evolith-sdk 2.0.1</text>
+</g>
+<text x="56" y="394" font-size="12" fill="#5B6B7B" font-style="italic">The chatbox is an intermediary, not the source of authority — LLMs and agents consume approved context, rulesets, skills and permissions through Evolith contracts.</text>
+</g>
+<g id="link-doors-core">
+<line x1="96" y1="406" x2="96" y2="446" stroke="#5B6B7B" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="473.33" y1="406" x2="473.33" y2="446" stroke="#5B6B7B" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="1126.67" y1="406" x2="1126.67" y2="446" stroke="#5B6B7B" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="1504" y1="406" x2="1504" y2="446" stroke="#5B6B7B" stroke-width="2" marker-end="url(#arr)"/>
+<text x="800" y="430" font-size="12" fill="#3D4E5F" font-weight="600" text-anchor="middle">EvaluationContext ↓   ·   ↑ EvaluationResult — a verdict, never a decision (ADR-0101)</text>
+</g>
+<g id="band-2" data-band="core" data-bbox="36 460 1528 354">
+<rect x="36" y="460" width="1528" height="354" rx="14" fill="#EAF4F8" stroke="#9EC5D6" stroke-width="1.2"/>
+<circle cx="66" cy="481" r="10" fill="#155E78"/>
+<text x="66" y="485" font-size="12.5" fill="#FFFFFF" font-weight="700" text-anchor="middle">2</text>
+<text x="84" y="486" font-size="14.5" fill="#155E78" font-weight="700" letter-spacing="0.6" data-role="title">THE CORE · repo evolith_arch32 — stateless engine + the Constitution (ADR-0101)</text>
+<g id="region-engine" data-bbox="56 496 1024 250">
+<text x="56" y="508" font-size="13" fill="#155E78" font-weight="800">STATELESS EVALUATION ENGINE — @beyondnet/evolith-core-domain 1.4.0</text>
+<g id="region-formula" data-bbox="56 516 1024 48">
+<rect x="56" y="516" width="1024" height="48" rx="10" fill="url(#domg)" stroke="#155E78" stroke-width="1"/>
+<text x="72" y="546" font-size="22" fill="#A3D3B2" font-weight="800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">EvaluationContext → EvaluationResult</text>
+<text x="1064" y="536" font-size="12" fill="#9EC5D6" text-anchor="end">schema 1.0.0 → 2.0.0 · decisionRecommendation.binding: false</text>
+<text x="1064" y="552" font-size="12" fill="#9EC5D6" text-anchor="end">never persists tenant · product · initiative</text>
+</g>
+<rect x="56" y="572" width="326" height="70" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.2"/>
+<text x="68" y="594" font-size="15" fill="#155E78" font-weight="700">Native TS · 18 handlers</text>
+<text x="68" y="610" font-size="12" fill="#3D4E5F">handler throw → errored</text>
+<rect x="405" y="572" width="326" height="70" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.2"/>
+<text x="417" y="594" font-size="15" fill="#155E78" font-weight="700">OPA → Wasm · 35 policies</text>
+<text x="417" y="610" font-size="12" fill="#3D4E5F">OPA v1.19.0 · 3 entrypoints</text>
+<text x="417" y="624" font-size="12" fill="#3D4E5F">missing wasm → every rule failed</text>
+<rect x="754" y="572" width="326" height="70" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.2"/>
+<text x="766" y="594" font-size="15" fill="#155E78" font-weight="700">Enforcer · 6 sandboxed analysers</text>
+<text x="766" y="610" font-size="12" fill="#3D4E5F">dependency-cruiser · NetArchTest</text>
+<text x="766" y="624" font-size="12" fill="#3D4E5F">import-linter · checkov · trivy</text>
+<text x="766" y="638" font-size="12" fill="#3D4E5F">ISO 5055 SARIF</text>
+<g id="region-outcomes" data-bbox="56 650 1024 62">
+<rect x="56" y="656" width="76" height="22" rx="6" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1"/>
+<text x="94" y="671" font-size="12" fill="#155E78" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">passed</text>
+<rect x="140" y="656" width="76" height="22" rx="6" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1"/>
+<text x="178" y="671" font-size="12" fill="#155E78" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">failed</text>
+<rect x="224" y="656" width="76" height="22" rx="6" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1"/>
+<text x="262" y="671" font-size="12" fill="#155E78" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">skipped</text>
+<rect x="308" y="656" width="76" height="22" rx="6" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1"/>
+<text x="346" y="671" font-size="12" fill="#155E78" font-weight="600" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">errored</text>
+<text x="400" y="672" font-size="15" fill="#14212E" font-weight="700">A blocking rule that never ran fails the PR exactly as one that failed.</text>
+<text x="56" y="690" font-size="12" fill="#3D4E5F">blockingSkippedRuleIds · undeclared rule → skipped (no-policy-in-bundle)</text>
+<text x="56" y="704" font-size="12" fill="#3D4E5F">empty corpus → RulesetsNotFoundError · missing evolith.yaml → GOV-000</text>
+</g>
+<text x="56" y="722" font-size="12" fill="#3D4E5F">12 EvaluationKinds · 7 KindEvaluators (CLI · MCP) · evidence kind refused (UnsupportedEvaluationKindError)</text>
+<text x="56" y="738" font-size="12" fill="#155E78" font-weight="600">Markdown explains · *.rules.json defines · OPA + Native enforce (ADR-0041)</text>
+</g>
+<g id="region-constitution" data-bbox="1100 496 444 270">
+<text x="1100" y="508" font-size="13" fill="#155E78" font-weight="800">THE CONSTITUTION — read by every door</text>
+<rect x="1100" y="516" width="218" height="48" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.1"/>
+<text x="1110" y="546" font-size="28" fill="#155E78" font-weight="800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">144</text>
+<text x="1172.43" y="546" font-size="13" fill="#14212E" font-weight="600">ADRs</text>
+<text x="1110" y="560" font-size="12" fill="#3D4E5F">newest ADR-0129</text>
+<rect x="1326" y="516" width="218" height="48" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.1"/>
+<text x="1336" y="546" font-size="28" fill="#155E78" font-weight="800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">184</text>
+<text x="1398.43" y="546" font-size="13" fill="#14212E" font-weight="600">rule packs</text>
+<text x="1336" y="560" font-size="12" fill="#3D4E5F">21 categories · 417 rules</text>
+<rect x="1100" y="572" width="218" height="48" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.1"/>
+<text x="1110" y="602" font-size="28" fill="#155E78" font-weight="800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">50</text>
+<text x="1154.29" y="602" font-size="13" fill="#14212E" font-weight="600">schemas</text>
+<text x="1110" y="616" font-size="12" fill="#3D4E5F">phase-gate + contracts</text>
+<rect x="1326" y="572" width="218" height="48" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.1"/>
+<text x="1336" y="602" font-size="28" fill="#155E78" font-weight="800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">33</text>
+<text x="1380.29" y="602" font-size="13" fill="#14212E" font-weight="600">artifacts</text>
+<text x="1336" y="616" font-size="12" fill="#3D4E5F">24 binding (ADR-0125)</text>
+<rect x="1100" y="628" width="218" height="48" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.1"/>
+<text x="1110" y="658" font-size="28" fill="#155E78" font-weight="800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">8</text>
+<text x="1136.14" y="658" font-size="13" fill="#14212E" font-weight="600">topologies</text>
+<text x="1110" y="672" font-size="12" fill="#3D4E5F">5 dimensions ⟂ SDLC axis</text>
+<rect x="1326" y="628" width="218" height="48" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.1"/>
+<text x="1336" y="658" font-size="28" fill="#155E78" font-weight="800" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">3</text>
+<text x="1362.14" y="658" font-size="13" fill="#14212E" font-weight="600">standards packs</text>
+<text x="1336" y="672" font-size="12" fill="#3D4E5F">SSDF · ISO 5055 · SLSA</text>
+<text x="1100" y="692" font-size="12" fill="#3D4E5F">core 105 · nodejs 21 · dotnet 12 · android 1 · ai-augmented 5</text>
+<text x="1100" y="706" font-size="12" fill="#3D4E5F">NIST SSDF v1.1 · ISO/IEC 5055:2021 · SLSA v1.0 = 16 rules</text>
+<text x="1100" y="720" font-size="12" fill="#3D4E5F">Knowledge OS (M0) · OKF v0.1 (ADR-0105, Proposed)</text>
+<text x="1100" y="734" font-size="12" fill="#3D4E5F">RAG on pgvector (ADR-0112) · KO-* (ADR-0115, Proposed)</text>
+<text x="1100" y="748" font-size="12" fill="#3D4E5F">Security ADR-0119…0124 → generated conformance packs</text>
+<text x="1100" y="762" font-size="12" fill="#3D4E5F">inventory 2026-09-01 · cli 1.4.0: 177 packs · 412 rules</text>
+</g>
+<g id="region-authority-strip" data-bbox="56 772 1488 34">
+<rect x="56" y="772" width="1488" height="34" rx="8" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.2"/>
+<text x="68" y="786" font-size="13" fill="#155E78" font-weight="700">WHO CAN SAY YES (ADR-0116):</text>
+<text x="288.28" y="786" font-size="13" fill="#14212E" font-weight="600">human · custodian · board → accept · promote · ratify · waive · enforce</text>
+<text x="68" y="800" font-size="12" fill="#3D4E5F">agent · engine · ci → observe · recommend · attach-evidence · draft-candidate   |   mutative MCP tools need { apply: true, approvalToken }</text>
+</g>
+</g>
+<g id="band-3" data-band="suite" data-bbox="36 826 1528 358">
+<rect x="36" y="826" width="1528" height="358" rx="14" fill="#FBEFF3" stroke="#E1AFC0" stroke-width="1.2"/>
+<circle cx="66" cy="847" r="10" fill="#8A2A4C"/>
+<text x="66" y="851" font-size="12.5" fill="#FFFFFF" font-weight="700" text-anchor="middle">3</text>
+<text x="84" y="852" font-size="14.5" fill="#8A2A4C" font-weight="700" letter-spacing="0.6" data-role="title">EVOLITH TRACKER · repo evolith_tracker — SDLC GOVERNANCE CONTROL PLANE (external client · decides gates · owns state · commercial, not launched)</text>
+<g id="region-tracker-boxes" data-bbox="56 862 1488 56">
+<rect x="56" y="862" width="296" height="56" rx="9" fill="#FFFFFF" stroke="#E1AFC0" stroke-width="1.2"/>
+<text x="68" y="880" font-size="13" fill="#8A2A4C" font-weight="700">tracker-web</text>
+<text x="68" y="896" font-size="12" fill="#3D4E5F">React 19 + Vite 8 SPA (nginx)</text>
+<rect x="362" y="862" width="556" height="56" rx="9" fill="#FFFFFF" stroke="#E1AFC0" stroke-width="1.2"/>
+<text x="374" y="880" font-size="13" fill="#8A2A4C" font-weight="700">tracker-api · .NET 10 BFF (ASP.NET Core) — sole Core client</text>
+<text x="374" y="896" font-size="12" fill="#3D4E5F">UMS-delegated Bearer · TenantScope isolation (T-044)</text>
+<text x="374" y="912" font-size="12" fill="#3D4E5F">ACL to view-models · T-038 · T-046</text>
+<rect x="928" y="862" width="616" height="56" rx="9" fill="#FFFFFF" stroke="#E1AFC0" stroke-width="1.2"/>
+<text x="940" y="880" font-size="13" fill="#8A2A4C" font-weight="700">Owns runtime governance state</text>
+<text x="940" y="896" font-size="12" fill="#3D4E5F">gate policies (requiresCoreVerdict) · submissions · evidence · exceptions (T-039)</text>
+<text x="940" y="912" font-size="12" fill="#3D4E5F">ledger both ways (T-055) · HITL approvals · append-only audit</text>
+</g>
+<rect x="56" y="926" width="459.46" height="22" rx="6" fill="#FFFFFF" stroke="#E1AFC0" stroke-width="1"/>
+<text x="285.73" y="941" font-size="12" fill="#8A2A4C" font-weight="600" text-anchor="middle">58 local decisions (index) · UAT on Coolify since 2026-08-22</text>
+<rect x="527.46" y="926" width="473.97" height="22" rx="6" fill="#FFFFFF" stroke="#E1AFC0" stroke-width="1"/>
+<text x="764.44" y="941" font-size="12" fill="#8A2A4C" font-weight="600" text-anchor="middle">tracker-gateway · NestJS facade for external consumers (T-052)</text>
+<rect x="1013.43" y="926" width="437.68" height="22" rx="6" fill="#FFFFFF" stroke="#E1AFC0" stroke-width="1"/>
+<text x="1232.27" y="941" font-size="12" fill="#8A2A4C" font-weight="600" text-anchor="middle">UMS · tenant master (ADR-0129) · identity (T-040 · T-053)</text>
+<text x="698" y="966" font-size="12.5" fill="#8A2A4C" font-weight="700" text-anchor="middle" letter-spacing="3">SDLC EXECUTION ENGINE · orchestrated by Tracker · evaluated by Core</text>
+<g id="region-phases" data-bbox="56 974 1284 118">
+<polygon points="56,974 296,974 316,1033 296,1092 56,1092 76,1033" fill="#2F6EA5"/>
+<text x="84" y="990" font-size="12" fill="#FFFFFF" font-weight="700" letter-spacing="1">PHASE 1</text>
+<text x="292" y="990" font-size="12" fill="#FFFFFF" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">f1 · gate-f1</text>
+<text x="196" y="1010" font-size="14" fill="#FFFFFF" font-weight="800" text-anchor="middle" letter-spacing="0.5">CONCEPTION &amp; DISCOVERY</text>
+<rect x="80" y="1020" width="232" height="20" rx="10" fill="#FFFFFF" stroke="none"/>
+<text x="196" y="1034" font-size="12" fill="#2F6EA5" font-weight="700" text-anchor="middle">Gate: Business Sign-Off</text>
+<text x="196" y="1058" font-size="12" fill="#FFFFFF" text-anchor="middle">PRD</text>
+<text x="196" y="1074" font-size="12" fill="#FFFFFF" text-anchor="middle">Discovery Canvas</text>
+<polygon points="312,974 552,974 572,1033 552,1092 312,1092 332,1033" fill="#1F7F72"/>
+<text x="340" y="990" font-size="12" fill="#FFFFFF" font-weight="700" letter-spacing="1">PHASE 2</text>
+<text x="548" y="990" font-size="12" fill="#FFFFFF" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">f2 · gate-f2</text>
+<text x="452" y="1010" font-size="14" fill="#FFFFFF" font-weight="800" text-anchor="middle" letter-spacing="0.5">DESIGN &amp; ARCHITECTURE</text>
+<rect x="336" y="1020" width="232" height="20" rx="10" fill="#FFFFFF" stroke="none"/>
+<text x="452" y="1034" font-size="12" fill="#1F7F72" font-weight="700" text-anchor="middle">Gate: Design Baseline Approved</text>
+<text x="452" y="1058" font-size="12" fill="#FFFFFF" text-anchor="middle">ADR Registry</text>
+<text x="452" y="1074" font-size="12" fill="#FFFFFF" text-anchor="middle">Reference Blueprint Alignment</text>
+<polygon points="568,974 808,974 828,1033 808,1092 568,1092 588,1033" fill="#4F7F1F" stroke="#B45309" stroke-width="2"/>
+<text x="596" y="990" font-size="12" fill="#FFFFFF" font-weight="700" letter-spacing="1">PHASE 3</text>
+<text x="804" y="990" font-size="12" fill="#FFFFFF" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">f3 · gate-f3</text>
+<text x="708" y="1010" font-size="14" fill="#FFFFFF" font-weight="800" text-anchor="middle" letter-spacing="0.5">CONSTRUCTION</text>
+<rect x="592" y="1020" width="232" height="20" rx="10" fill="#FFFFFF" stroke="none"/>
+<text x="708" y="1034" font-size="12" fill="#4F7F1F" font-weight="700" text-anchor="middle">Gate: Successful Build</text>
+<text x="708" y="1058" font-size="12" fill="#FFFFFF" text-anchor="middle">CI Pipeline</text>
+<text x="708" y="1074" font-size="12" fill="#FFFFFF" text-anchor="middle">Definition of Done Checklist</text>
+<polygon points="824,974 1064,974 1084,1033 1064,1092 824,1092 844,1033" fill="#2F7F52"/>
+<text x="852" y="990" font-size="12" fill="#FFFFFF" font-weight="700" letter-spacing="1">PHASE 4</text>
+<text x="1060" y="990" font-size="12" fill="#FFFFFF" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">f4 · gate-f4</text>
+<text x="964" y="1010" font-size="14" fill="#FFFFFF" font-weight="800" text-anchor="middle" letter-spacing="0.5">VALIDATION &amp; QA</text>
+<rect x="848" y="1020" width="232" height="20" rx="10" fill="#FFFFFF" stroke="none"/>
+<text x="964" y="1034" font-size="12" fill="#2F7F52" font-weight="700" text-anchor="middle">Gate: RC Stamped</text>
+<text x="964" y="1058" font-size="12" fill="#FFFFFF" text-anchor="middle">Test Summary Report</text>
+<text x="964" y="1074" font-size="12" fill="#FFFFFF" text-anchor="middle">Acceptance Validation</text>
+<polygon points="1080,974 1320,974 1340,1033 1320,1092 1080,1092 1100,1033" fill="#B45309"/>
+<text x="1108" y="990" font-size="12" fill="#FFFFFF" font-weight="700" letter-spacing="1">PHASE 5</text>
+<text x="1316" y="990" font-size="12" fill="#FFFFFF" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">f5 · gate-f5</text>
+<text x="1220" y="1010" font-size="14" fill="#FFFFFF" font-weight="800" text-anchor="middle" letter-spacing="0.5">DELIVERY &amp; OPERATIONS</text>
+<rect x="1104" y="1020" width="232" height="20" rx="10" fill="#FFFFFF" stroke="none"/>
+<text x="1220" y="1034" font-size="12" fill="#B45309" font-weight="700" text-anchor="middle">Gate: Production Live</text>
+<text x="1220" y="1058" font-size="12" fill="#FFFFFF" text-anchor="middle">Release Notes</text>
+<text x="1220" y="1074" font-size="12" fill="#FFFFFF" text-anchor="middle">Observability Validation</text>
+</g>
+<rect x="478" y="1098" width="460" height="20" rx="10" fill="#FEF3C7" stroke="#B45309" stroke-width="1"/>
+<text x="708" y="1112" font-size="12" fill="#7C2D12" font-weight="700" text-anchor="middle">WEDGE (vision §1.5) · architecture conformance on every PR</text>
+<g id="region-topology-axis" data-bbox="1352 974 192 118">
+<rect x="1352" y="974" width="192" height="118" rx="10" fill="#FFFFFF" stroke="#E1AFC0" stroke-width="1.2"/>
+<line x1="1368" y1="986" x2="1368" y2="1080" stroke="#3D4E5F" stroke-width="2"/>
+<line x1="1362" y1="1004.8" x2="1374" y2="1004.8" stroke="#3D4E5F" stroke-width="2"/>
+<line x1="1362" y1="1033" x2="1374" y2="1033" stroke="#3D4E5F" stroke-width="2"/>
+<line x1="1362" y1="1061.2" x2="1374" y2="1061.2" stroke="#3D4E5F" stroke-width="2"/>
+<text x="1384" y="990" font-size="12" fill="#8A2A4C" font-weight="700">⟂  TOPOLOGY AXIS</text>
+<text x="1384" y="1004" font-size="12" fill="#3D4E5F">8 topologies</text>
+<text x="1384" y="1018" font-size="12" fill="#3D4E5F">5 dimensions</text>
+<text x="1384" y="1032" font-size="12" fill="#3D4E5F">guard 30 keeps the</text>
+<text x="1384" y="1046" font-size="12" fill="#3D4E5F">axes disjoint</text>
+<text x="1384" y="1060" font-size="12" fill="#3D4E5F">evolith drift</text>
+<text x="1384" y="1074" font-size="12" fill="#3D4E5F">measures this axis,</text>
+<text x="1384" y="1088" font-size="12" fill="#3D4E5F">not a gate</text>
+</g>
+<g id="region-tracker-footers" data-bbox="56 1118 1488 60">
+<text x="56" y="1130" font-size="12" fill="#3D4E5F">Granularity = Initiatives — no tasks / backlog / epics / user-stories. Agile work items are ExternalReferenceContext ingested via ACL.</text>
+<text x="56" y="1144" font-size="12" fill="#3D4E5F">Tracker decides every phase transition · Core recommendations are non-binding (ADR-0100 · ADR-0101 · ADR-0127). CLI-only deployments block locally: evolith gate evaluate --phase · evolith phase advance.</text>
+<text x="56" y="1158" font-size="12" fill="#3D4E5F">Two planes: process governance always on (no repo needed) · architecture conformance opt-in via requiresCoreVerdict (default false).</text>
+<text x="56" y="1172" font-size="12" fill="#3D4E5F">Tracker BFF consumes the Core API as an external client — ADR-0074 explicitly rejected placing the BFF inside Core.</text>
+</g>
+<g id="region-bus" data-bbox="1544 247 56 655">
+<path d="M 1544 267 H 1556 V 882 H 1547" fill="none" stroke="#8A2A4C" stroke-width="2" marker-end="url(#arr)"/>
+<path d="M 1544 898 H 1576 V 251 H 1547" fill="none" stroke="#8A2A4C" stroke-width="2" marker-end="url(#arr)"/>
+<text x="1567" y="574.5" font-size="12" fill="#8A2A4C" font-weight="600" text-anchor="middle" transform="rotate(-90 1567 574.5)">EvaluationResult (ADR-0073 envelope) · non-binding → ACL → GateDecision</text>
+<text x="1590" y="574.5" font-size="12" fill="#3D4E5F" font-weight="600" text-anchor="middle" transform="rotate(-90 1590 574.5)">POST /api/v1/evaluate · evaluationInput.files (inline) · Bearer</text>
+</g>
+</g>
+<g id="band-4" data-band="agents" data-bbox="36 1196 1528 352">
+<rect x="36" y="1196" width="1144" height="352" rx="14" fill="#EEF8F1" stroke="#A3D3B2" stroke-width="1.2"/>
+<circle cx="66" cy="1217" r="10" fill="#1E6B3A"/>
+<text x="66" y="1221" font-size="12.5" fill="#FFFFFF" font-weight="700" text-anchor="middle">4</text>
+<text x="84" y="1222" font-size="14.5" fill="#1E6B3A" font-weight="700" letter-spacing="0.6" data-role="title">GOVERNED AGENTS · AI ON THE TENANT'S TERMS</text>
+<g id="region-runtime" data-bbox="56 1232 1104 242">
+<text x="56" y="1244" font-size="13" fill="#1E6B3A" font-weight="800">AGENT RUNTIME · @beyondnet/evolith-agent-runtime 1.3.0 (ADR-0102) · Experimental</text>
+<text x="56" y="1266" font-size="15" fill="#14212E" font-weight="700">AgentRuntimeService — 20 port files · 21 declared port interfaces · 11 on the hot path (7 required + 4 optional)</text>
+<text x="56" y="1286" font-size="15" fill="#14212E" font-weight="700">47 adapter classes — a port count is not a capability count</text>
+<text x="56" y="1309" font-size="12" fill="#14212E" font-weight="700">InteractionAdapters:</text>
+<rect x="213.15" y="1294" width="128.86" height="22" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="277.58" y="1309" font-size="12" fill="#1E6B3A" font-weight="600" text-anchor="middle">ExternalTrigger</text>
+<rect x="350.02" y="1294" width="114.35" height="22" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="407.19" y="1309" font-size="12" fill="#1E6B3A" font-weight="600" text-anchor="middle">HermesChatBox</text>
+<rect x="472.36" y="1294" width="56.29" height="22" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="500.51" y="1309" font-size="12" fill="#1E6B3A" font-weight="600" text-anchor="middle">Mcp *</text>
+<rect x="536.65" y="1294" width="92.58" height="22" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="582.94" y="1309" font-size="12" fill="#1E6B3A" font-weight="600" text-anchor="middle">OpenCode *</text>
+<rect x="637.23" y="1294" width="107.09" height="22" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="690.77" y="1309" font-size="12" fill="#1E6B3A" font-weight="600" text-anchor="middle">SmartCliChat</text>
+<rect x="752.32" y="1294" width="128.86" height="22" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="816.75" y="1309" font-size="12" fill="#1E6B3A" font-weight="600" text-anchor="middle">SmartCliCommand</text>
+<text x="56" y="1326" font-size="12" fill="#5B6B7B" font-style="italic">* declared, not constructed by any surface (vision, verified 2026-07-28)</text>
+<text x="56" y="1344" font-size="12" fill="#3D4E5F">Engines behind IAgentEnginePort: Stub (default) · Hermes · Swarms · Cowork · Routing — &quot;Hermes is the engine, not the authority&quot;</text>
+<rect x="56" y="1352" width="858.62" height="22" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="485.31" y="1367" font-size="12" fill="#1E6B3A" font-weight="600" text-anchor="middle">Governed orchestration: ABAC native AND OPA (ADR-0087) · HITL POST /runtime-approvals · run-journal replay (GT-593)</text>
+<text x="56" y="1392" font-size="12" fill="#14212E" font-weight="700">Port files in code (20) · 21 declared interfaces · vision taxonomy 18 (§3.4) — the 20 *.port.ts files:</text>
+<rect x="56" y="1400" width="107.31" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="109.66" y="1414" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">agent-engine</text>
+<rect x="169.31" y="1400" width="115.09" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="226.86" y="1414" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">agent-runtime</text>
+<rect x="290.4" y="1400" width="76.21" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="328.5" y="1414" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">approval</text>
+<rect x="372.61" y="1400" width="169.52" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="457.37" y="1414" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">assistant-invocation</text>
+<rect x="548.13" y="1400" width="122.86" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="609.56" y="1414" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">c4-binding-map</text>
+<rect x="676.99" y="1400" width="177.3" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="765.64" y="1414" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">communication-gateway</text>
+<rect x="860.29" y="1400" width="130.64" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="925.61" y="1414" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">core-evaluation</text>
+<rect x="996.93" y="1400" width="68.43" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="1031.14" y="1414" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">harness</text>
+<rect x="56" y="1426" width="161.74" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="136.87" y="1440" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">interaction-adapter</text>
+<rect x="223.74" y="1426" width="83.98" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="265.74" y="1440" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">knowledge</text>
+<rect x="313.73" y="1426" width="115.09" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="371.27" y="1440" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">lexical-index</text>
+<rect x="434.82" y="1426" width="60.66" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="465.14" y="1440" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">memory</text>
+<rect x="501.47" y="1426" width="146.19" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="574.57" y="1440" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">policy-validation</text>
+<rect x="653.66" y="1426" width="192.85" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="750.09" y="1440" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">quality-signal-provider</text>
+<rect x="852.51" y="1426" width="99.54" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="902.28" y="1440" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">run-journal</text>
+<rect x="958.05" y="1426" width="83.98" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="1000.04" y="1440" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">scheduler</text>
+<rect x="56" y="1452" width="122.86" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="117.43" y="1466" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">skill-registry</text>
+<rect x="184.86" y="1452" width="161.74" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="265.74" y="1466" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">structural-reviewer</text>
+<rect x="352.61" y="1452" width="115.09" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="410.15" y="1466" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">tracker-trace</text>
+<rect x="473.7" y="1452" width="146.19" height="20" rx="6" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1"/>
+<text x="546.79" y="1466" font-size="12" fill="#1E6B3A" font-weight="500" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">workspace-context</text>
+</g>
+<g id="region-llm" data-bbox="56 1482 1104 56">
+<rect x="56" y="1482" width="1104" height="56" rx="10" fill="#FFFFFF" stroke="#A3D3B2" stroke-width="1.2"/>
+<text x="68" y="1500" font-size="13" fill="#1E6B3A" font-weight="700">LLM providers · ADR-0128 — claude · gemini · none → deterministic stub</text>
+<text x="68" y="1516" font-size="12" fill="#3D4E5F">off by default (EVOLITH_LLM_EGRESS) · HITL per call · 30 s Gemini / 60 s Claude · 60,000 bytes fail-closed · 8 redaction classes</text>
+<text x="68" y="1532" font-size="13" fill="#B45309" font-weight="800">The published CLI calls no LLM.</text>
+<text x="323.73" y="1532" font-size="12" fill="#3D4E5F">tenant chooses and pays</text>
+</g>
+<g id="region-composition" data-bbox="1200 1196 364 552">
+<rect x="1200" y="1196" width="364" height="552" rx="14" fill="#FEF3C7" stroke="#E3C58A" stroke-width="1.4"/>
+<text x="1216" y="1222" font-size="14.5" fill="#B45309" font-weight="700" letter-spacing="0.6" data-role="title">GOVERNED COMPOSITION</text>
+<text x="1216" y="1240" font-size="12" fill="#3D4E5F" font-style="italic">Build the irreducible governance kernel;</text>
+<text x="1216" y="1254" font-size="12" fill="#3D4E5F" font-style="italic">compose commodities behind replaceable</text>
+<text x="1216" y="1268" font-size="12" fill="#3D4E5F" font-style="italic">ports, adapters and ACLs.</text>
+<rect x="1212" y="1280" width="340" height="50" rx="9" fill="#E3C58A" stroke="none"/>
+<text x="1382" y="1298" font-size="12" fill="#7C2D12" font-weight="800" text-anchor="middle">Anti-Corruption Layers (ACLs)</text>
+<text x="1382" y="1312" font-size="12" fill="#7C2D12" text-anchor="middle">preserve lineage · map to canonical</text>
+<text x="1382" y="1326" font-size="12" fill="#7C2D12" text-anchor="middle">reject non-compliant</text>
+<rect x="1212" y="1340" width="340" height="130" rx="10" fill="#EEF2F5" stroke="#C9D3DC" stroke-width="1"/>
+<text x="1220" y="1356" font-size="12" fill="#3D4E5F" font-weight="800">External Tools Cluster</text>
+<rect x="1220" y="1364" width="158" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1299" y="1378" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Jira</text>
+<rect x="1386" y="1364" width="158" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1465" y="1378" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">GitHub / GitLab</text>
+<rect x="1220" y="1390" width="158" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1299" y="1404" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">CI/CD runners</text>
+<rect x="1386" y="1390" width="158" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1465" y="1404" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Test runners</text>
+<rect x="1220" y="1416" width="158" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1299" y="1430" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Security scanners</text>
+<rect x="1386" y="1416" width="158" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1465" y="1430" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Observability</text>
+<rect x="1220" y="1442" width="158" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1299" y="1456" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Deployment</text>
+<rect x="1386" y="1442" width="158" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1465" y="1456" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Doc engines</text>
+<text x="1216" y="1488" font-size="12" fill="#B45309" font-weight="700">Disposition per capability</text>
+<rect x="1212" y="1496" width="108" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1266" y="1510" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Adopt</text>
+<rect x="1328" y="1496" width="108" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1382" y="1510" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Embed</text>
+<rect x="1444" y="1496" width="108" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1498" y="1510" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Integrate</text>
+<rect x="1212" y="1522" width="108" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1266" y="1536" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Extend</text>
+<rect x="1328" y="1522" width="108" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1382" y="1536" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Build</text>
+<rect x="1444" y="1522" width="108" height="20" rx="6" fill="#FFFFFF" stroke="#E3C58A" stroke-width="1"/>
+<text x="1498" y="1536" font-size="12" fill="#7C2D12" font-weight="600" text-anchor="middle">Reject</text>
+<text x="1216" y="1560" font-size="12" fill="#3D4E5F">Quality signals · IQualitySignalProvider</text>
+<text x="1216" y="1574" font-size="12" fill="#3D4E5F">ADR-0111 Proposed · Lighthouse ADR-0113</text>
+<text x="1216" y="1588" font-size="12" fill="#3D4E5F">(Proposed)</text>
+<text x="1382" y="1722" font-size="12" fill="#5B6B7B" text-anchor="middle" font-style="italic">Data ownership stays with the source</text>
+<text x="1382" y="1736" font-size="12" fill="#5B6B7B" text-anchor="middle" font-style="italic">of record; Tracker judges evidence.</text>
+</g>
+<line x1="1200" y1="1305" x2="1148" y2="1305" stroke="#B45309" stroke-width="2" marker-end="url(#arr)" marker-start="url(#arr)"/>
+<text x="1156" y="1297" font-size="12" fill="#B45309" font-weight="600" text-anchor="end">commands · events · evidence</text>
+</g>
+<g id="band-5" data-band="federation" data-bbox="36 1560 1528 188">
+<rect x="36" y="1560" width="1144" height="188" rx="14" fill="#EAF4F8" stroke="#9EC5D6" stroke-width="1.2"/>
+<circle cx="66" cy="1581" r="10" fill="#155E78"/>
+<text x="66" y="1585" font-size="12.5" fill="#FFFFFF" font-weight="700" text-anchor="middle">5</text>
+<text x="84" y="1586" font-size="14.5" fill="#155E78" font-weight="700" letter-spacing="0.6" data-role="title">FEDERATED GOVERNANCE · HUB-AND-SPOKE (INH-01…INH-06)</text>
+<rect x="56" y="1596" width="340" height="58" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.3"/>
+<text x="68" y="1614" font-size="13" fill="#155E78" font-weight="700">Evolith Core — Level 0 (Authority)</text>
+<text x="68" y="1630" font-size="12" fill="#3D4E5F">the Constitution · a satellite of itself</text>
+<text x="68" y="1644" font-size="12" fill="#3D4E5F">evolith.yaml coreRef 1.0.0</text>
+<rect x="438" y="1596" width="340" height="58" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.3"/>
+<text x="450" y="1614" font-size="12" fill="#155E78" font-weight="700">Satellite Repository — Level 1 (Inheritor)</text>
+<text x="450" y="1630" font-size="12" fill="#3D4E5F">Evolith Tracker (.NET 10) · UMS (ADR-0129)</text>
+<text x="450" y="1644" font-size="12" fill="#3D4E5F">tenant master · any evolith.yaml</text>
+<line x1="398" y1="1625" x2="436" y2="1625" stroke="#155E78" stroke-width="2.2" marker-end="url(#arr)"/>
+<rect x="820" y="1596" width="340" height="58" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.3"/>
+<text x="832" y="1614" font-size="13" fill="#155E78" font-weight="700">Architecture Board</text>
+<text x="832" y="1630" font-size="12" fill="#3D4E5F">approves upstream promotion</text>
+<text x="832" y="1644" font-size="12" fill="#3D4E5F">UP-001 · UP-002 · UP-003 (PROPOSED)</text>
+<line x1="780" y1="1625" x2="818" y2="1625" stroke="#155E78" stroke-width="2.2" marker-end="url(#arr)"/>
+<text x="56" y="1672" font-size="12" fill="#155E78" font-weight="600">→ inherit · pinned coreRef.version (INH-01 · INH-02 · INH-03)     ·     Upstream Proposal UP-NNN → Architecture Board (INH-05)</text>
+<text x="56" y="1688" font-size="12" fill="#3D4E5F">approved promotion → Core evolves → every satellite re-inherits · INH-04 local ADRs tagged EvolithSatellite</text>
+<text x="56" y="1702" font-size="12" fill="#3D4E5F">INH-06 DECISIONS.md · Adopt · Extend · Override · Not Applicable — silence is not an option</text>
+<g id="region-day-zero" data-bbox="56 1710 1104 34">
+<text x="56" y="1722" font-size="12" fill="#14212E" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">evolith init --name &lt;x&gt; --yes → evolith.yaml · missing manifest → GOV-000 · evolith upgrade (INH-03) · satellite:create | satellite:adopt</text>
+<text x="56" y="1738" font-size="12" fill="#14212E" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">waiver → Verdict.WAIVE · rulesets.overrides: waivable, never removable (GT-678)</text>
+</g>
+</g>
+<g id="band-6" data-band="evidence" data-bbox="36 1760 1528 140">
+<rect x="36" y="1760" width="1528" height="140" rx="14" fill="#F2F2F2" stroke="#BDBDBD" stroke-width="1.2"/>
+<circle cx="66" cy="1781" r="10" fill="#3F3F46"/>
+<text x="66" y="1785" font-size="12.5" fill="#FFFFFF" font-weight="700" text-anchor="middle">6</text>
+<text x="84" y="1786" font-size="14.5" fill="#3F3F46" font-weight="700" letter-spacing="0.6" data-role="title">EVIDENCE — how honest is this picture (generated · dated · linked)</text>
+<rect x="56" y="1796" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="64" y="1810" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Gap board 688 / 714 · 26 not done</text>
+<text x="64" y="1824" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">P0 GT-435 · NO-GO</text>
+<text x="64" y="1838" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">generated 2026-09-20</text>
+<rect x="430" y="1796" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="438" y="1810" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">10 required checks · 18 workflows</text>
+<text x="438" y="1824" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">73 guards + 31 self-tests</text>
+<text x="438" y="1838" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">enforce_admins</text>
+<rect x="804" y="1796" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="812" y="1810" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Security tab 0 · 0 · 0 · 0</text>
+<text x="812" y="1824" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">on c5547114 (2026-09-19)</text>
+<text x="812" y="1838" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">37 fixed · 58 dismissed with reason</text>
+<rect x="1178" y="1796" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="1186" y="1810" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">OpenSSF Scorecard 5.1</text>
+<text x="1186" y="1824" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">with committed floors</text>
+<text x="1186" y="1838" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">(2026-08-04)</text>
+<rect x="56" y="1848" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="64" y="1862" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Tests 107 suites · 1,492 tests</text>
+<text x="64" y="1876" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">87.33% statements · 87.68% lines</text>
+<text x="64" y="1890" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">(2026-09-20)</text>
+<rect x="430" y="1848" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="438" y="1862" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Engines on this repo: opa 133/159</text>
+<text x="438" y="1876" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">native 41/159</text>
+<text x="438" y="1890" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">(2026-08-21, cli 1.4.0)</text>
+<rect x="804" y="1848" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="812" y="1862" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">1,109 npm downloads · Linux-only CI install</text>
+<text x="812" y="1876" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">2026-07-21 → 2026-08-19</text>
+<text x="812" y="1890" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">no confirmed external adoption</text>
+<rect x="1178" y="1848" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
+<text x="1186" y="1862" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Evidence window 30 days · observed 2026-09-19</text>
+<text x="1186" y="1876" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">stale from 2026-10-20</text>
+<text x="1186" y="1890" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">7/8 packages attested (2026-07-30)</text>
+</g>
+<g id="footer">
+<text x="1564" y="1914" font-size="12" fill="#5B6B7B" text-anchor="end" font-style="italic">Source of truth: product/suite/vision/evolith-product-vision-master.md · counts from generated inventories (inventory-summary.md 2026-09-01 · product-inventory.md · maturity-reconciliation.json 2026-09-20)</text>
+<text x="1564" y="1928" font-size="12" fill="#5B6B7B" text-anchor="end" font-style="italic">and tree measurements · rendered 2026-09-20</text>
+</g>
 </svg>

@@ -16,11 +16,11 @@ La superficie instalable exacta se genera desde las fuentes del CLI y no debe ma
 
 | Capacidad | Conteo | Ejemplos |
 |---|:---:|---|
-| **Tools** | 27 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
-| **Resources** | 9 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://core/version` |
+| **Tools** | 55 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
+| **Resources** | 12 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://capabilities`, `evolith://contracts` |
 | **Prompts** | 8 | `evolith/validate-repository`, `evolith/architecture-review`, `evolith/sdlc-handoff`, `evolith/moscow-prioritization` |
 
-> Los conteos se verifican contra el [Inventario de Superficie del Producto](../smart-cli/product-inventory.es.md) generado y las fuentes del servidor MCP (`tools/*.tool.ts`, `resources.service.ts`, `prompts.service.ts`); no los edites a mano sin re-derivarlos desde esas fuentes.
+> Los conteos se verifican contra el [Inventario de Superficie del Producto](../smart-cli/product-inventory.es.md) generado y las fuentes del servidor MCP (`tools/*.ts`, `resources.service.ts`, `prompts.service.ts`); no los edites a mano sin re-derivarlos desde esas fuentes. Última re-derivación 2026-09-20 (los 27 / 9 anteriores eran la superficie del 2026-07-17).
 
 ### GT-312: Motor de Validación Composable
 

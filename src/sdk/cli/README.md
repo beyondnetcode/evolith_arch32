@@ -1089,7 +1089,7 @@ Verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`, and a rea
 
 ### Available MCP Tools
 
-The bundled server registers **47 tools**. The live, authoritative set is always browsable with `evolith-cli api --list --category tools`; the table below mirrors the current `@beyondnet/evolith-mcp` registry.
+The bundled server registers **55 tools** (the count is derived by the generated [Product Surface Inventory](../../../product/products/smart-cli/product-inventory.md)). The live, authoritative set is always browsable with `evolith-cli api --list --category tools`; the table below lists the principal ones by area, and the [`@beyondnet/evolith-mcp` README](../../packages/mcp-server/README.md#available-tools-55) names every tool.
 
 **Validation & architecture**
 

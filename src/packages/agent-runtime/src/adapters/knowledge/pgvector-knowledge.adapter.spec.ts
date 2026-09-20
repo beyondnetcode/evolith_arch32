@@ -107,6 +107,8 @@ describe('PgVectorKnowledgeAdapter (GT-540)', () => {
 
     const searchCall = calls.find(c => c.text.includes('<=>'))!;
     expect(searchCall.text).toContain('WHERE');
+    // GT-685 — rows of a lexical-only corpus (embedding = NULL) are never ranked here.
+    expect(searchCall.text).toContain('embedding IS NOT NULL');
     expect(searchCall.text).toContain('language = $2');
     expect(searchCall.text).toContain('adr_id LIKE $3');
     expect(searchCall.text).toContain('source_file LIKE $4');

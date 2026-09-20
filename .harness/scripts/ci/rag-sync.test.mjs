@@ -94,3 +94,35 @@ test('syncIndex fails closed when embeddings do not match the batch', async () =
     /unexpected vector count/,
   );
 });
+
+// GT-685 / ADR-0112 §6 — a lexical-only adapter is synced without a single embed call.
+test('syncIndex with a lexical-only adapter embeds nothing and upserts NULL vectors', async () => {
+  const upserts = [];
+  const adapter = {
+    name: 'stub-lexical',
+    durable: true,
+    lexicalOnly: true,
+    embeddingModelId: 'lexical',
+    async embed() {
+      throw new Error('embed must not be called in lexical mode');
+    },
+    async upsert(records) {
+      upserts.push(...records);
+      return { upserted: records.length };
+    },
+    async delete() {
+      return { deleted: 0 };
+    },
+  };
+  const receipt = await syncIndex({
+    adapter,
+    changed: [{ sourceFile: 'reference/x.md', content: '# T\n\n## A\n\nalpha beta\n\n## B\n\ngamma delta\n' }],
+    corpusVersion: 'abc',
+  });
+  assert.equal(receipt.mode, 'lexical');
+  assert.equal(receipt.corpusVersion, 'abc+lexical');
+  assert.equal(receipt.telemetry.embedCalls, 0);
+  assert.ok(upserts.length > 0);
+  assert.ok(upserts.every((r) => r.vector === null));
+  assert.ok(upserts.every((r) => typeof r.metadata.text === 'string' && r.metadata.text.length > 0));
+});

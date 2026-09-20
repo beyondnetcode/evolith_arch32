@@ -10843,6 +10843,64 @@
         "EXPECTED OF THE PREVIOUS COMMAND: 0"
       ],
       "dependencyRationale": "No dependency. The REST controllers use Date.now() differences (the pattern the row itself blesses); the clock helper rounds up so only the CLI and MCP surfaces carry the ≥1 guarantee, which the executed check exercises on the CLI."
+    },
+    {
+      "id": "GT-685",
+      "closedAt": "2026-09-19",
+      "closureCommit": "fdcdf15f",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "reference/core/architecture/adrs/core/0112-rag-embedding-and-vector-store-platform.md",
+        ".harness/scripts/ci/rag-pgvector.schema.sql",
+        ".harness/scripts/ci/rag-pgvector.mjs",
+        ".harness/scripts/ci/rag-sync.mjs",
+        ".harness/scripts/ci/15-rag-index-backfill.mjs",
+        "product/infra/docker-compose.fullstack.yml",
+        "product/infra/rag-seed.Dockerfile",
+        "src/packages/agent-runtime/src/adapters/knowledge/pgvector-knowledge.adapter.ts",
+        "src/packages/agent-runtime/package.json",
+        "product/infra/README.md"
+      ],
+      "validationCommands": [
+        "MEASURED BEFORE DECIDING: the EN corpus is 527 files / 5 698 chunks / 1.35 M tokens (dry-run receipt of 15-rag-index-backfill.mjs); the text-embeddings-inference CPU images are amd64-only (cpu-1.5 dies with 'relative URL without a base', cpu-1.8 needs --auto-truncate and was OOM-killed at warm-up under emulation after 8 min); Ollama arm64 (qwen3-embedding:0.6b, 1024 dims) embedded 10 chunks in 413 s. A dense seed inside the deployment is tens of CPU-hours; ADR-0112 section 4 forbids a hosted embeddings API. So the store may hold the corpus without vectors: ADR-0112 section 6.",
+        "OBSERVED ON THE BUILT IMAGES (docker compose -f product/infra/docker-compose.fullstack.yml up rag-postgres rag-seed mcp): rag-seed indexed '527 file(s) · 5701 chunk(s) upserted · provider [pgvector] durable=true mode=lexical' in 46 s and exited 0; SELECT count(*), count(embedding), count(content_tsv), min(corpus_version) -> 5680 | 0 | 5680 | unknown+lexical. tools/call evolith-knowledge-search {query:'ADR-0112 pgvector embedding dimension', maxResults:3} over HTTP (initialize + mcp-session-id + Bearer) -> success true, retrievalMode lexical-only, returned 3, totalChunks 5680, first chunk sourceFile reference/core/architecture/adrs/core/0112-rag-embedding-and-vector-store-platform.md retrievedBy [bm25], meta.durationMs 1429.",
+        "FALSIFIED WITH THE STORE STOPPED: docker compose stop rag-postgres; same session, same call -> isError true, success false, error INTERNAL_ERROR 'getaddrinfo ENOTFOUND rag-postgres'. A surfaced connection error, not a zero-result success.",
+        "FOUND BY THE E2E, NOT BY ANY SPEC: the first call against the seeded store answered \"Cannot find package 'pg' imported from /repo/src/packages/agent-runtime/dist/adapters/knowledge/pg-lexical-index.adapter.js\" — pg was only a root devDependency and `npm prune --omit=dev` (GT-692) stripped it from the runtime image, so the tool could never have answered even with a store. Now a pinned dependency of @beyondnet/evolith-agent-runtime; the image rebuilt and the call above succeeded.",
+        "node --test .harness/scripts/ci/rag-pgvector.test.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 14 pass — lexical mode tags the corpus 'lexical', has no embedder, stores embedding = NULL and refuses a vector; dense mode refuses NULL; the DDL is nullable and lifts the old NOT NULL",
+        "node --test .harness/scripts/ci/rag-sync.test.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 10 pass — a lexical-only adapter is synced with zero embed calls, NULL vectors and corpus_version '<rev>+lexical'",
+        "npx jest --config src/packages/agent-runtime/jest.config.js src/packages/agent-runtime/src/adapters/knowledge",
+        "EXPECTED OF THE PREVIOUS COMMAND: the dense adapter's SQL carries 'embedding IS NOT NULL'",
+        "node .harness/scripts/ci/rag-eval.mjs",
+        "node .harness/scripts/ci/56-validate-docker-workspace-closure.mjs",
+        "grep -rn \"mcp start\" docs/guides"
+      ],
+      "dependencyRationale": "No dependency. Dense reranking is an upgrade performed by a re-index with a configured sidecar (docker-compose.yml --profile rag), not a precondition; the amd64-only sidecar and its CPU cost are recorded on the row and in ADR-0112 section 6."
+    },
+    {
+      "id": "GT-715",
+      "closedAt": "2026-09-20",
+      "closureCommit": "3b276c9a",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/apps/core-api/src/main.ts",
+        "src/apps/core-api/src/infrastructure/config/env.validation.ts",
+        "src/apps/core-api/src/infrastructure/filters/http-exception.filter.ts",
+        "src/apps/core-api/src/infrastructure/filters/http-exception.filter.spec.ts",
+        "src/apps/core-api/README.md",
+        "docs/known-limitations.md"
+      ],
+      "validationCommands": [
+        "MEASURED FIRST, 2026-09-20, on ghcr.io/beyondnetcode/evolith-core-api:latest (main@142b8324, the UAT image), run locally with EVOLITH_API_KEY set: the Tracker-shaped inline payload POST /api/v1/evaluate with 14 files / 99,797 bytes -> 200; 15 files / 101,578 bytes -> 500 INTERNAL_ERROR 'An unexpected error occurred'; a synthetic 92,956-byte body -> 200 and 126,556 bytes -> 500; no SecurityAudit line and no stack in `docker logs` for the 500s. The same call from the UAT Tracker (POST /products/{id}/evaluate-architecture, 150 files) had recorded provenance:synthetic, resultDecision:BLOCKED, CoreEvaluation.HttpError 'Core evaluation failed with HTTP 500.'",
+        "OBSERVED RED FIRST: http-exception.filter.spec.ts against the previous filter (git show HEAD:src/apps/core-api/src/infrastructure/filters/http-exception.filter.ts swapped in) -> 4 failed / 3 passed of 7: a PayloadTooLargeError answered 500 not 413, a parse error answered 500 not 400, a parser error whose message says 'invalid' was reclassified, and nothing was logged for a 5xx. After 3b276c9a -> 7 passed.",
+        "npx jest --config src/apps/core-api/jest.config.js src/apps/core-api/src/infrastructure/filters",
+        "EXPECTED OF THE PREVIOUS COMMAND: 7 passed — GT-678's two plus GT-715's five: 413 PAYLOAD_TOO_LARGE naming 126556 received / 102400 limit / EVOLITH_MAX_BODY_BYTES, a parse error kept at 400 BAD_REQUEST, message matchers not reclassifying a parser error, Logger.prototype.error called once for a 500 with the stack, and not called for a 413",
+        "END TO END ON THE BUILT core-api (npm run build in src/apps/core-api; NODE_ENV=production PORT=3011 EVOLITH_API_KEY=… CORE_PATH=<checkout> node dist/main.js): the identical 150-file / 1,118,034-byte payload -> 200 with overallVerdict FAIL and gate-f1's six missing artifacts; a 3,146,294-byte body -> 413 PAYLOAD_TOO_LARGE 'Request body too large: 3146294 bytes received, the limit is 2097152 bytes (EVOLITH_MAX_BODY_BYTES).' with X-Problem-Format rfc9457.",
+        "grep -n 'EVOLITH_MAX_BODY_BYTES' src/apps/core-api/src/infrastructure/config/env.validation.ts src/apps/core-api/src/main.ts src/apps/core-api/README.md",
+        "EXPECTED OF THE PREVIOUS COMMAND: the variable declared once with a 2 MiB default, read once at bootstrap into useBodyParser('json') and useBodyParser('urlencoded'), and documented in the README's variable table",
+        "MEASURED IN UAT AFTER THE PROMOTION, 2026-09-20 05:23 UTC (main 9c5deedf, run 35490911533, job 'Deploy UAT (Coolify)' green): POST https://tracker.beyondnet.cloud/api/v1/products/10c8006a-d2dc-43bf-9edd-18aec2c93391/evaluate-architecture -> HTTP 200, evaluation.status COMPLETED, resultDecision FAILED, provenance core, coreEndpoint /api/v1/evaluate, durationMs 174, fileCount 150 (branch main, 35 binaries and 1 oversize file skipped by the Tracker's own caps), responseResult.gates f1..f5 all 'failed'. The same call was HTTP 502 with provenance synthetic six hours earlier. The 'CD is off' half of the original row was wrong: VPS_DEPLOY_ENABLED has been true since 2026-08-22."
+      ]
     }
   ]
 }

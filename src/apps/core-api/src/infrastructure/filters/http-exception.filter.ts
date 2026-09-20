@@ -4,6 +4,7 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import {
@@ -30,6 +31,8 @@ const STATUS_TO_CODE: Record<number, string> = {
   [HttpStatus.NOT_FOUND]: 'NOT_FOUND',
   [HttpStatus.CONFLICT]: 'CONFLICT',
   [HttpStatus.UNPROCESSABLE_ENTITY]: 'UNPROCESSABLE_ENTITY',
+  [HttpStatus.PAYLOAD_TOO_LARGE]: 'PAYLOAD_TOO_LARGE',
+  [HttpStatus.UNSUPPORTED_MEDIA_TYPE]: 'UNSUPPORTED_MEDIA_TYPE',
   [HttpStatus.TOO_MANY_REQUESTS]: 'TOO_MANY_REQUESTS',
   [HttpStatus.SERVICE_UNAVAILABLE]: 'SERVICE_UNAVAILABLE',
   [HttpStatus.INTERNAL_SERVER_ERROR]: 'INTERNAL_ERROR',
@@ -42,9 +45,48 @@ const STATUS_TO_TITLE: Record<number, string> = {
   [HttpStatus.FORBIDDEN]: 'Forbidden',
   [HttpStatus.NOT_FOUND]: 'Not Found',
   [HttpStatus.UNPROCESSABLE_ENTITY]: 'Unprocessable Entity',
+  [HttpStatus.PAYLOAD_TOO_LARGE]: 'Payload Too Large',
+  [HttpStatus.UNSUPPORTED_MEDIA_TYPE]: 'Unsupported Media Type',
   [HttpStatus.TOO_MANY_REQUESTS]: 'Too Many Requests',
   [HttpStatus.SERVICE_UNAVAILABLE]: 'Service Unavailable',
 };
+
+/**
+ * GT-715: what express's body parser throws. It is a plain `Error` decorated by
+ * `http-errors` — `type` names the cause, `status` is the code the client
+ * deserves, `expose` says the message is safe to return — and none of that is an
+ * `HttpException`, so before this the filter classified it by message and
+ * answered 500 "An unexpected error occurred". Measured with an inline
+ * evaluation context of 126 KB against the 100 KB default: a masked 500, no log.
+ */
+interface BodyParserError extends Error {
+  type?: string;
+  status?: number;
+  expose?: boolean;
+  limit?: number;
+  length?: number;
+}
+
+function isBodyParserError(e: Error): e is BodyParserError {
+  const candidate = e as BodyParserError;
+  return (
+    typeof candidate.type === 'string' &&
+    /^(entity|encoding|charset|request)\./.test(candidate.type) &&
+    typeof candidate.status === 'number' &&
+    candidate.status >= 400 &&
+    candidate.status < 500
+  );
+}
+
+/** The 413 says what was received and what the ceiling is; a bare "too large" sends the caller guessing. */
+function describeBodyParserError(e: BodyParserError): string {
+  if (e.type === 'entity.too.large') {
+    const received = typeof e.length === 'number' ? `${e.length} bytes received` : 'request body';
+    const ceiling = typeof e.limit === 'number' ? `${e.limit} bytes` : 'the configured ceiling';
+    return `Request body too large: ${received}, the limit is ${ceiling} (EVOLITH_MAX_BODY_BYTES).`;
+  }
+  return e.message;
+}
 
 /**
  * Exception classifier — maps Error instances to HTTP status codes.
@@ -95,6 +137,17 @@ const EXCEPTION_MATCHERS: ExceptionMatcher[] = [
 ];
 
 function classifyException(exception: Error): { status: number; title: string; domainCode: string } {
+  if (isBodyParserError(exception)) {
+    // GT-715: checked BEFORE the registry — the parser already chose the status
+    // (413, 400, 415…) and the message matchers below ("invalid", "required")
+    // must never get a chance to reclassify a 413 into a 422.
+    const status = exception.status as number;
+    return {
+      status,
+      title: STATUS_TO_TITLE[status] ?? 'Bad Request',
+      domainCode: STATUS_TO_CODE[status] ?? 'BAD_REQUEST',
+    };
+  }
   for (const matcher of EXCEPTION_MATCHERS) {
     if (matcher.match(exception)) {
       return { status: matcher.getStatus(), title: matcher.getTitle(), domainCode: matcher.getDomainCode() };
@@ -105,6 +158,8 @@ function classifyException(exception: Error): { status: number; title: string; d
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(HttpExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -135,7 +190,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         }
       }
     } else if (exception instanceof Error) {
-      detail = exception.message;
+      detail = isBodyParserError(exception) ? describeBodyParserError(exception) : exception.message;
       const classified = classifyException(exception);
       status = classified.status;
       title = classified.title;
@@ -144,6 +199,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const isProduction = process.env.NODE_ENV === 'production';
     const correlationId = request.headers['x-correlation-id'] as string;
+
+    this.logIfServerError(status, exception, request);
 
     const problem: ProblemDetails = {
       type: this.getTypeUri(status),
@@ -178,6 +235,21 @@ export class HttpExceptionFilter implements ExceptionFilter {
       .setHeader('Content-Type', 'application/json')
       .setHeader('X-Problem-Format', 'rfc9457')
       .json(envelope);
+  }
+
+  /**
+   * GT-715: a 5xx the client sees as "An unexpected error occurred" must be
+   * readable by the operator somewhere. The masking in `catch` is right for the
+   * wire and was, until now, the only place the error went.
+   */
+  private logIfServerError(status: number, exception: unknown, request: Request): void {
+    if (status < 500) return;
+    const correlationId = request.headers['x-correlation-id'];
+    const named = exception instanceof Error ? `${exception.name}: ${exception.message}` : String(exception);
+    this.logger.error(
+      `${request.method} ${request.url} -> ${status} ${named}${correlationId ? ` (correlationId ${String(correlationId)})` : ''}`,
+      exception instanceof Error ? exception.stack : undefined,
+    );
   }
 
   private getTypeUri(status: number): string {

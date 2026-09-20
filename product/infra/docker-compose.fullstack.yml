@@ -91,6 +91,14 @@ services:
       EVOLITH_MCP_ALLOW_NO_AUTH: "false"
       CORE_PATH: /app/corpus
       WORKSPACE_ROOT: /app/corpus
+      # GT-685 — the knowledge store `evolith-knowledge-search` answers from (lexical
+      # index, ADR-0112 §6). Without it the tool is advertised and refuses every
+      # call (NOT_IMPLEMENTED). No EVOLITH_RAG_EMBED_URL on purpose: the reader is
+      # BM25-first and attaches the dense reranker only when a sidecar exists.
+      EVOLITH_RAG_PG_URL: postgres://evolith:${RAG_PG_PASSWORD:-evolith}@rag-postgres:5432/evolith_rag
+    depends_on:
+      rag-postgres:
+        condition: service_healthy
     ports:
       - "3002:3000"
     healthcheck:
@@ -99,6 +107,57 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
+    networks: [evolith]
+
+  # ─── Engine: RAG knowledge store (GT-685, ADR-0112 §6) ─────────────────
+  # `evolith-knowledge-search` needs a store. This file used to set none for
+  # `mcp`, so the tool was registered and refused every call. Two services close
+  # that, and neither needs an embedding sidecar:
+  #
+  #   rag-postgres   pgvector, provisioned with the SAME DDL CI and the unit tests
+  #                  pin (mounted, never copied — it is the single source).
+  #   rag-seed       one-shot: the whole EN reference/ corpus through the ONE
+  #                  indexer CI uses (15-rag-index-backfill.mjs) in LEXICAL-ONLY
+  #                  mode — chunk text in, embedding = NULL, BM25 answers. Exits 0
+  #                  once the store answers; a failed write exits non-zero.
+  #
+  # Dense reranking is an upgrade, not a precondition: bring up the sidecar of
+  # docker-compose.yml (`--profile rag`) and re-run the backfill with
+  # EVOLITH_RAG_EMBED_URL set, then give `mcp` the same URL. Measured 2026-09-19,
+  # that costs tens of CPU-hours on a laptop (5 698 chunks; 413 s per 10 on CPU),
+  # which is why the seed here is lexical. `rag_pg_data` keeps the index.
+  rag-postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: evolith
+      POSTGRES_PASSWORD: ${RAG_PG_PASSWORD:-evolith}
+      POSTGRES_DB: evolith_rag
+    volumes:
+      - rag_pg_data:/var/lib/postgresql/data
+      # Applied by the postgres entrypoint on first init of the volume.
+      - ../../.harness/scripts/ci/rag-pgvector.schema.sql:/docker-entrypoint-initdb.d/10-rag-pgvector.schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evolith -d evolith_rag"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [evolith]
+
+  rag-seed:
+    build:
+      context: ../..
+      dockerfile: product/infra/rag-seed.Dockerfile
+    image: evolith-rag-seed:local
+    restart: "no"
+    environment:
+      EVOLITH_RAG_PG_URL: postgres://evolith:${RAG_PG_PASSWORD:-evolith}@rag-postgres:5432/evolith_rag
+      # The image carries no .git; name the revision the corpus was copied from
+      # (`RAG_CORPUS_VERSION=$(git rev-parse --short=12 HEAD) docker compose … up`).
+      EVOLITH_RAG_CORPUS_VERSION: ${RAG_CORPUS_VERSION:-unknown}
+    depends_on:
+      rag-postgres:
+        condition: service_healthy
     networks: [evolith]
 
   # ─── Engine: Agent Runtime (uses the REAL Core over HTTP, GT-438) ────────
@@ -273,3 +332,4 @@ networks:
 
 volumes:
   tracker_pg_data:
+  rag_pg_data:

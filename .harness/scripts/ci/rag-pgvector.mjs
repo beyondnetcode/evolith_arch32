@@ -37,6 +37,14 @@ export const RAG_EMBEDDING_DIM = 1024;
 /** Offline/test default model id — deterministic sha256 pseudo-embedding at the store dim. */
 export const HASH_EMBED_MODEL_ID = `hash-sha256@${RAG_EMBEDDING_DIM}`;
 
+/**
+ * GT-685 / ADR-0112 §6 — the corpus-identity tag of a LEXICAL-ONLY index: chunks
+ * stored with `embedding = NULL`, answered through `content_tsv` (BM25) alone.
+ * It occupies the same `corpus_version` slot a model id would, because "no
+ * model" is a corpus identity too: a dense re-index changes the tag.
+ */
+export const LEXICAL_MODE_ID = 'lexical';
+
 /** Chunk table name (matches the DDL). */
 export const RAG_PGVECTOR_TABLE = 'rag_chunks';
 
@@ -101,14 +109,25 @@ function resolveEmbedder(config) {
   };
 }
 
-/** Factory: `config -> durable pgvector adapter`. */
+/**
+ * Factory: `config -> durable pgvector adapter`.
+ *
+ * `config.mode === 'lexical'` (GT-685 / ADR-0112 §6) builds a LEXICAL-ONLY writer:
+ * no embedder is resolved, `embed()` refuses, `upsert()` stores `embedding = NULL`
+ * and `embeddingModelId` is {@link LEXICAL_MODE_ID} so the sync tags the corpus.
+ * Measured 2026-09-19: the EN corpus is 5 698 chunks / 1.35 M tokens and a CPU
+ * sidecar embedded 10 chunks in 413 s, so a store that must answer on the
+ * hardware people develop on cannot wait for dense vectors — and must never
+ * pretend to have them.
+ */
 export function pgvectorAdapter(config = {}) {
   let clientPromise = null;
   const getClient = () => {
     if (!clientPromise) clientPromise = resolveClient(config);
     return clientPromise;
   };
-  const embedder = resolveEmbedder(config);
+  const lexicalOnly = config.mode === LEXICAL_MODE_ID;
+  const embedder = lexicalOnly ? null : resolveEmbedder(config);
 
   return {
     name: 'pgvector',
@@ -116,10 +135,18 @@ export function pgvectorAdapter(config = {}) {
     dim: RAG_EMBEDDING_DIM,
     ddl: PGVECTOR_DDL,
     // Effective embedding model id — the sync folds this into corpus_version so
-    // a model swap invalidates the cache (ADR-0090 §3 / ADR-0112 §1).
-    embeddingModelId: embedder.modelId,
+    // a model swap invalidates the cache (ADR-0090 §3 / ADR-0112 §1). A lexical
+    // index tags itself the same way.
+    embeddingModelId: lexicalOnly ? LEXICAL_MODE_ID : embedder.modelId,
+    lexicalOnly,
 
     async embed(texts) {
+      if (lexicalOnly) {
+        throw new RagPortError(
+          'lexical-only pgvector adapter has no embedder: chunks are stored with embedding = NULL ' +
+            '(ADR-0112 §6); run a dense re-index to attach vectors',
+        );
+      }
       const vectors = await embedder.embed(texts);
       // Defense in depth: the store column is vector(1024) — refuse anything else,
       // even from an injected embedder (fail closed on dimension drift).
@@ -142,7 +169,15 @@ export function pgvectorAdapter(config = {}) {
           throw new RagPortError('pgvector upsert record requires a string id');
         }
         const vec = r.vector;
-        if (!Array.isArray(vec) || vec.length !== RAG_EMBEDDING_DIM) {
+        // Lexical mode stores NULL and nothing else; dense mode stores a 1024-dim
+        // vector and nothing else. Neither accepts the other's shape.
+        if (lexicalOnly) {
+          if (vec !== null && vec !== undefined) {
+            throw new RagPortError(
+              `lexical-only pgvector upsert refuses a vector for id "${r.id}": a lexical index carries no embeddings`,
+            );
+          }
+        } else if (!Array.isArray(vec) || vec.length !== RAG_EMBEDDING_DIM) {
           throw new RagPortError(
             `pgvector upsert expects a ${RAG_EMBEDDING_DIM}-dim vector for id "${r.id}" ` +
               `(got ${Array.isArray(vec) ? vec.length : typeof vec})`,
@@ -159,7 +194,7 @@ export function pgvectorAdapter(config = {}) {
           m.adr_id ?? null,
           m.language ?? null,
           m.corpus_version ?? null,
-          toVectorLiteral(vec),
+          lexicalOnly ? null : toVectorLiteral(vec),
         ]);
         upserted += 1;
       }

@@ -44,6 +44,15 @@ El modelo corre detrás de un **servicio de inferencia local en el mismo períme
 - **Write-side (ingesta):** el re-embed delta en commits a `reference/` (ADR-0090 §4) es offline/batch — calidad primero; correr `4B`/`8B` donde el hardware lo permita.
 - **Query-side (retrieval, GT-540):** sensible a latencia; `0.6B` basta dado el corpus pequeño. El query-side **DEBE** usar el mismo modelo y dimensión que el write-side, o los vectores no son comparables.
 
+### 6. Modo de corpus solo léxico (enmendado 2026-09-19, GT-685)
+Un despliegue PUEDE albergar el corpus **sin vectores densos**. En modo solo léxico cada chunk se almacena con `embedding = NULL` y se recupera a través del índice `content_tsv` (BM25, [GT-592](../../../control-center/gaps/gap-reference-catalog.es.md#gt-592)); el `corpus_version` lleva el sufijo `+lexical` en la misma ranura que ocuparía un id de modelo, porque «sin modelo» también es una identidad de corpus. Reglas:
+
+- **El almacén responde con lo que tiene.** El lado de lectura es BM25-primero por construcción: el índice léxico siempre está conectado; el reordenador denso se conecta solo cuando hay un sidecar configurado **y** solo ordena filas con `embedding IS NOT NULL`. Un lector denso sobre un almacén solo léxico degrada a léxico y lo reporta en la traza de recuperación.
+- **Una sincronización en vivo es densa o explícitamente léxica.** El lado de escritura acepta `EVOLITH_RAG_MODE=lexical` (sin embedder, vectores `NULL`) o un sidecar configurado (`EVOLITH_RAG_EMBED_URL`); el pseudo-embedding sha256 determinista sigue siendo un sustituto para pruebas y ensayos en seco, y una ejecución en vivo que fuera a persistirlo se rechaza por su nombre. Un índice léxico y uno denso nunca mezclan formas: el escritor léxico rechaza un vector, el denso rechaza `NULL`.
+- **El reordenado denso es una mejora, no un requisito.** Añadir vectores es un reindexado (`+lexical` → `+<modelo>@<dim>`), el mismo disparador de reindexado completo que §5 ya define para un cambio de modelo.
+
+Por qué esta enmienda: medido el 2026-09-19, el corpus EN son 5 698 chunks / 1,35 M tokens; las imágenes CPU de `text-embeddings-inference` son solo amd64 y un sidecar CPU (Ollama, arm64) embebió 10 chunks en 413 s, así que sembrar el índice denso en el hardware donde la gente desarrolla cuesta decenas de horas de CPU. El «sin egreso del corpus» de §4 descarta una API de embeddings alojada. La tool que anuncia la pasarela (`evolith-knowledge-search`) estaba por tanto registrada en todos los despliegues y no respondía en ninguno; un índice solo léxico la hace respondible donde corra un PostgreSQL, y sobre un corpus cargado de identificadores BM25 es la mitad que aporta el recall ([GT-592](../../../control-center/gaps/gap-reference-catalog.es.md#gt-592) lo midió).
+
 ## Alternativas Consideradas
 | Opción | Licencia | Veredicto |
 |---|---|---|
@@ -66,6 +75,7 @@ El modelo corre detrás de un **servicio de inferencia local en el mismo períme
 
 ### Neutras
 - La elección concreta vive en el registro de modelos del ADR-0003 y en el `corpus_version` de cada chunk; migrar a un proveedor gestionado después es un swap de adaptador documentado más un re-index, no un rewrite.
+- Un índice solo léxico (§6) es un despliegue de primera clase, no uno degradado: es lo que siembra el arranque local del full-stack, y un reindexado denso lo mejora en el sitio.
 
 ## Referencias
 - [ADR-0090: Gobernanza de Conocimiento RAG](./0090-rag-knowledge-governance.es.md) — el contrato gobernante que esta plataforma realiza

@@ -21,8 +21,16 @@ CREATE TABLE IF NOT EXISTS rag_chunks (
   adr_id          TEXT,
   language        TEXT NOT NULL,
   corpus_version  TEXT NOT NULL,
-  embedding       vector(1024) NOT NULL
+  -- GT-685 / ADR-0112 §6 — NULLABLE on purpose. A lexical-only corpus stores its
+  -- chunks with no dense vector and answers through content_tsv (BM25); dense
+  -- reranking is an upgrade performed by a re-index, not a precondition for the
+  -- store to answer. A dense reader must skip rows where this is NULL.
+  embedding       vector(1024)
 );
+
+-- Stores provisioned before GT-685 carried NOT NULL; lift it idempotently so a
+-- lexical-only sync into an existing store does not fail on the constraint.
+ALTER TABLE rag_chunks ALTER COLUMN embedding DROP NOT NULL;
 
 -- Approximate nearest-neighbour search — cosine distance (ADR-0112 §3).
 CREATE INDEX IF NOT EXISTS rag_chunks_embedding_hnsw

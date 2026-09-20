@@ -1,17 +1,17 @@
 {
   "schemaVersion": "1.0.0",
   "scope": "evolith-core",
-  "asOf": "2026-09-19",
+  "asOf": "2026-09-20",
   "gaps": {
-    "total": 711,
-    "done": 685,
-    "pending": 1,
+    "total": 713,
+    "done": 687,
+    "pending": 2,
     "inProgress": 3,
-    "deferred": 22
+    "deferred": 21
   },
   "evidence": {
-    "closureRecords": 667,
-    "cliPackage": "@beyondnet/evolith-cli@1.3.2",
+    "closureRecords": 669,
+    "cliPackage": "@beyondnet/evolith-cli@1.4.0",
     "adrCount": 144,
     "rulesetCount": 184,
     "schemaCount": 50

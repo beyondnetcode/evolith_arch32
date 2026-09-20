@@ -16,6 +16,14 @@ import {
 } from './ruleset-validator.types';
 import { loadRulesetById } from './ruleset-id-loader';
 import type { RulesetSelection } from './ruleset-selection';
+import {
+  FATAL_OVERRIDE_CODES,
+  OverrideIssue,
+  OverridesReport,
+  emptyOverridesReport,
+} from './rule-overrides';
+import type { RuleOverridesInput } from './rule-overrides';
+import { RuleOverridesLoader, readRuleOverridesRef } from './rule-overrides.loader';
 import type { RulesetCatalog } from './ruleset-catalog';
 import { runArchitectureValidation } from './architecture-validator';
 import type { NotApplicableRule, RuleApplicabilityFilter } from './rule-evaluation-engine';
@@ -73,6 +81,12 @@ export class RulesetValidatorService {
    * Keeping the object means the rebuild spreads it and cannot under-fill.
    */
   private readonly options: RulesetValidatorOptions;
+  /**
+   * GT-678 — reads and schema-checks the satellite's `spec.rulesets.overrides`
+   * document. Built from the same `IFileSystem` as everything else here, so the
+   * REST surface's materialised workspace (OverlayFileSystem) serves it too.
+   */
+  private readonly overridesLoader: RuleOverridesLoader;
 
   constructor(@Optional() @Inject(RULESET_VALIDATOR_OPTIONS) options?: RulesetValidatorOptions) {
     if (!options?.fileSystem) throw new Error('IFileSystem is required');
@@ -90,6 +104,7 @@ export class RulesetValidatorService {
     this.processRunner = options.processRunner;
     this.metrics = options.metrics;
     this.rulesetRepo = options.rulesetRepo;
+    this.overridesLoader = new RuleOverridesLoader(this.fs);
     // #628: the report has to be able to say WHICH engine produced it. The two
     // do not cover the same ground, and the default is the one that covers less.
     this.engineType = options.engineType === 'opa' ? 'opa' : 'native';
@@ -153,17 +168,32 @@ export class RulesetValidatorService {
       source: 'core-default', requested: [], matched: [], unmatched: [],
       rulesSelected: 0, corpusTotal: 0,
     };
+    // GT-678 — seeded EMPTY, never absent: a run that dies before the engine
+    // returns still states that no override changed it.
+    let overridesReport: OverridesReport = emptyOverridesReport();
 
     const resolvedCorePath = corePath || this.findCorePath(satellitePath);
     const evolithYamlPath = path.join(satellitePath, 'evolith.yaml');
 
     let coreRefVersion: string | null = null;
     let coreRefPath: string | null = null;
+    let overridesInput: RuleOverridesInput | undefined;
 
     if (await this.fs.exists(evolithYamlPath)) {
       const evolithYaml = await this.loadEvolithYaml(evolithYamlPath);
       coreRefVersion = evolithYaml.coreRef?.version || null;
       coreRefPath = evolithYaml.coreRef?.path || null;
+      // GT-678 — the satellite's per-rule delta. Read and schema-checked HERE,
+      // outside the engine's try/catch on purpose: a document that is named
+      // and cannot be honoured (missing, malformed, off-schema) must abort the
+      // run as `RuleOverridesInvalidError`, which the surfaces map to
+      // SCHEMA_INVALID. Letting it fall into the catch below would log a
+      // warning and evaluate WITHOUT the tenant's configuration — an
+      // unchanged run that looks configured, the precise defect of this row.
+      const overridesRef = readRuleOverridesRef(evolithYaml);
+      if (overridesRef) {
+        overridesInput = await this.overridesLoader.load(satellitePath, overridesRef, resolvedCorePath);
+      }
     } else {
       issues.push({
         ruleId: 'GOV-000',
@@ -191,15 +221,18 @@ export class RulesetValidatorService {
 
     try {
       const filter = await this.buildApplicabilityFilter(applicabilityContext, resolvedCorePath);
-      const { results: engineResults, notApplicable: excluded, selection: applied } =
+      const { results: engineResults, notApplicable: excluded, selection: applied, overrides: softened } =
         await this.engine.discoverAndEvaluate(
           satellitePath,
           resolvedCorePath,
           filter,
           selection,
           declared?.facts,
+          overridesInput,
         );
       notApplicable = excluded;
+      overridesReport = softened;
+      issues.push(...this.overrideIssues(softened));
 
       // GT-661 — `applied` is present ONLY when the caller restricted the run
       // (see `discoverAndEvaluate`), so its absence is exactly the
@@ -286,6 +319,8 @@ export class RulesetValidatorService {
       engine: this.engineType,
       // GT-661 — WHY this scope, not just how much of it.
       selection: selectionReport,
+      // GT-678 — WHICH rules were softened inside it, and which softenings were refused.
+      overrides: overridesReport,
       issues,
       coreRef: { version: coreRefVersion, path: coreRefPath },
       timestamp: new Date().toISOString(),
@@ -325,6 +360,62 @@ export class RulesetValidatorService {
       );
       return undefined;
     }
+  }
+
+  /**
+   * GT-678 — a refused softening is a finding, not a log line.
+   *
+   * `OVR-BLOCKING-REMOVED` (and its severity twin `OVR-UNAPPROVED-DOWNGRADE`)
+   * are BLOCKING: the tenant asked for a blocking criterion to go away without
+   * the approval and expiry that make it a waiver, and the one answer that run
+   * must never produce is a green built on the Core values it silently kept.
+   * The rule itself is still evaluated at those values — nothing was loosened —
+   * so failing the run is the only way the refusal reaches an exit code. Same
+   * construction as `SEL-01` (GT-659) for a ref that matched nothing.
+   *
+   * Every other code (expired, unknown rule, not selected, no-op, invalid
+   * severity) describes an override that changed NOTHING, leaving the run at
+   * least as strict as the corpus: one non-blocking advisory names them all,
+   * so a typo in a rule id is still visible without pretending it loosened a
+   * gate.
+   */
+  private overrideIssues(report: OverridesReport): ValidationIssue[] {
+    const issues: ValidationIssue[] = [];
+    const fatal = report.rejected.filter(r => FATAL_OVERRIDE_CODES.has(r.code));
+    const advisory = report.rejected.filter(r => !FATAL_OVERRIDE_CODES.has(r.code));
+
+    const byCode = new Map<OverrideIssue['code'], OverrideIssue[]>();
+    for (const r of fatal) byCode.set(r.code, [...(byCode.get(r.code) ?? []), r]);
+    for (const [code, rs] of byCode) {
+      issues.push({
+        ruleId: code,
+        severity: 'MUST',
+        category: 'rule-overrides',
+        title:
+          code === 'OVR-BLOCKING-REMOVED'
+            ? `${rs.length} override(s) would remove a blocking criterion without approver and expiry`
+            : `${rs.length} override(s) lower a blocking rule's severity without an approver`,
+        description:
+          rs.map(r => `${r.ruleId} (${r.source}): ${r.message}`).join(' ') +
+          ' The Core values were kept and evaluated; this run fails so the refusal cannot pass as a clean verdict.',
+        blocking: true,
+      });
+    }
+
+    if (advisory.length > 0) {
+      issues.push({
+        ruleId: 'OVR-IGNORED',
+        severity: 'SHOULD',
+        category: 'rule-overrides',
+        title: `${advisory.length} override(s) changed nothing and were ignored`,
+        description:
+          advisory.map(r => `[${r.code}] ${r.ruleId} (${r.source}): ${r.message}`).join(' ') +
+          ' None of them loosened a rule; the run is at least as strict as the corpus.',
+        blocking: false,
+      });
+    }
+
+    return issues;
   }
 
   /**

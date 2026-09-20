@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Injectable, Inject } from '@nestjs/common';
 import { RulesetValidatorService } from '@beyondnet/evolith-core';
-import { createSuccessEnvelope } from '@beyondnet/evolith-core-domain';
+import { createSuccessEnvelope, startEnvelopeClock } from '@beyondnet/evolith-core-domain';
 import type { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
 import {
   NestLoggerProvider,
@@ -73,6 +73,9 @@ export class EvaluateTool implements McpTool {
   ) {}
 
   async execute(args: Record<string, unknown>): Promise<unknown> {
+    // GT-686 — started before any work so `meta.durationMs` is the wall clock of
+    // the evaluation, not a literal. `executedAt` stays the engine's own stamp.
+    const clock = startEnvelopeClock();
     const corePath = args.corePath as string | undefined;
 
     const ctx: EvaluationContext = {
@@ -165,12 +168,14 @@ export class EvaluateTool implements McpTool {
       surface: 'mcp',
       producerVersion: `evolith-mcp@${CORE_VERSION}`,
       correlationId,
+      // GT-686 — the ledger row carries the duration this surface MEASURED.
+      durationMs: clock.elapsedMs(),
     });
 
     return createSuccessEnvelope(result, {
       command: 'evolith-evaluate',
       executedAt: result.evaluatedAt,
-      durationMs: 0,
+      durationMs: clock.elapsedMs(),
       correlationId,
       schemaVersion: result.schemaVersion,
     });

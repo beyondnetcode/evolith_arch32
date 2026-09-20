@@ -1110,30 +1110,52 @@ evolith-cli upgrade --satellite . --core ../evolith-core
 | `-s, --satellite <path>` | The satellite to update (default: nearest-ancestor `evolith.yaml` from cwd). |
 | `-c, --core <path>` | The Core checkout the new rules come from. |
 | `-d, --dry-run` | Computes and shows the plan **without applying** any change. |
-| `-f, --force` | Applies the upgrade **even when there are breaking changes** (without it, the command stops and warns you). |
+| `-f, --force` | Applies the upgrade **even when there are breaking changes** (without it, the command stops and warns you). It does **not** overwrite your edits: that is `--overwrite-local`. |
+| `--overwrite-local` | Also applies the **conflicts** — files both you and the Core changed — overwriting your content with the Core's. The plan names every file it will overwrite, and a backup is taken first. |
+| `--accept-local` | Records the current Core content as the **baseline** in `.evolith/scaffold-manifest.json` without copying anything. The migration path for a satellite that predates the manifest, and the way to say "keep mine" after a conflict. |
 | `--report` | Shows the detailed upgrade report. |
 
 **Typical combinations:**
 
 ```bash
-# First look at what would change, touching nothing
+# First look at what would change, touching nothing: this IS the divergence report
 evolith-cli upgrade --satellite . --core ../evolith-core --dry-run
 
-# Apply (it asks for confirmation before writing)
+# Apply (it asks for confirmation before writing). Only upstream-only changes are written.
 evolith-cli upgrade --satellite . --core ../evolith-core
+
+# Take the Core's version of every conflict too (the plan lists them; a backup is taken)
+evolith-cli upgrade --satellite . --core ../evolith-core --overwrite-local
+
+# A satellite without a manifest: record the baseline first, then upgrade
+evolith-cli upgrade --satellite . --core ../evolith-core --accept-local
 
 # Force even with breaking changes, as JSON for CI
 evolith-cli upgrade -s . -c ../evolith-core --force --format json
 ```
 
 **What to expect.** First the **plan**: current version → target version, risk
-level (`low`/`medium`/`high`), the list of changes (with `+`/`~`/`-`/`»`
-according to whether something is added, modified, removed or migrated) and
-which ones are breaking. If the satellite is already current, it says so and
-does nothing. With `--dry-run` it ends there. If there are breaking changes and
-you did **not** pass `--force`, the upgrade is cancelled so you can review. On
-apply, an "Upgrade Report" with the number of changes applied. Under
-`--format json`, all of this travels inside the envelope.
+level (`low`/`medium`/`high`), and the changes in **three classes**, each listed
+by file. The command tells your edits from upstream changes by comparing both
+sides with the fingerprint that `init` (and every previous `upgrade`) recorded
+in `.evolith/scaffold-manifest.json` — commit that file with the satellite:
+
+- **Upstream-only** (`~`/`+`): the Core moved and you never touched the file. Applied.
+- **Local-only** (`=`): you edited the file and the Core did not move it. Kept; never applied.
+- **Conflicts** (`!`): both sides moved, or the file has no fingerprint. **Not applied** unless you pass `--overwrite-local`.
+
+If the satellite is already current, it says so and does nothing. With
+`--dry-run` it ends after the plan. If a change that *would be written* is
+breaking and you did **not** pass `--force`, the upgrade is cancelled so you can
+review (a breaking conflict you are not overwriting does not block). On apply,
+an "Upgrade Report" with the three classes, the number of changes applied and,
+under `--overwrite-local`, the list of overwritten files. A satellite with no
+manifest (scaffolded before this fingerprint existed) sees every difference as a
+conflict marked `[no fingerprint]` and a hint to run `--accept-local`: nothing is
+overwritten silently. Under `--format json`, all of this travels inside the
+envelope: `data.plan.upstreamOnly` / `localOnly` / `conflicts`, a
+`data.divergence` summary with the same three lists, and `data.overwrittenFiles`
+/ `data.baselinedFiles` on apply.
 
 ## 8. Utilities
 

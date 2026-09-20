@@ -1,35 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  PROFILE_STORE_CONFIG_NAME,
+  PROFILE_STORE_DEFAULTS,
+  PROFILE_STORE_FILE_EXTENSION,
+  PROFILE_STORE_PROJECT_NAME,
+  getProfileConfig,
+  listProfileNames,
+  resolveActiveProfile,
+  resolveProfileStoreDir,
+  type ProfileConfig,
+  type ProfileStoreGetter,
+} from '@beyondnet/evolith-core-domain/application/services/profile-store.service';
 import { Conf, type ConfInstance } from './conf-module';
+
+// GT-682 (#760) — `ProfileConfig` (and the GT-661 note on `select`) moved to
+// core-domain with the profile-store reader, so the MCP `evolith-profile` tool
+// and this service type the same record. Re-exported: every command that
+// imported it from here keeps compiling unchanged.
+export type { ProfileConfig };
 
 export interface SyncConfig {
   upstreamRoot: string;
   files: string[];
-}
-
-export interface ProfileConfig {
-  core?: string;
-  satellite?: string;
-  tenant?: string;
-  initiative?: string;
-  /**
-   * GT-661 — the ruleset refs THIS TENANT has adopted.
-   *
-   * The principle the Core is built to: **the Core PROPOSES; the Tracker, CLI
-   * and MCP configure and select.** Until this field existed the CLI could only
-   * pass a selection somebody typed on the command line, which is not
-   * configuration — it is a flag a person has to remember on every invocation,
-   * and one they will eventually forget on the run that mattered.
-   *
-   * `--select` still wins when given: an explicit argument is a deliberate act
-   * and must be able to override a stored default, including to widen it.
-   * Absent from both, the Core evaluates its whole corpus and SAYS SO
-   * (`selection.source: 'core-default'`) — the default is not changed here,
-   * because a default that stopped blocking would silently disarm every gate
-   * working today.
-   *
-   * Read `evolith rulesets` for the refs this Core accepts.
-   */
-  select?: string[];
 }
 
 export interface EvolithConfig {
@@ -40,7 +32,7 @@ export interface EvolithConfig {
   sync: SyncConfig;
 }
 
-const DEFAULT_PROFILE = 'default';
+const DEFAULT_PROFILE = PROFILE_STORE_DEFAULTS.activeProfile;
 
 @Injectable()
 export class ConfigService {
@@ -49,8 +41,17 @@ export class ConfigService {
 
   constructor() {
     this.config = new Conf<Record<string, unknown>>({
-      projectName: 'evolith-cli',
-      fileExtension: 'yaml',
+      projectName: PROFILE_STORE_PROJECT_NAME,
+      // GT-682 (#760) — the location is DECIDED by core-domain's profile-store
+      // reader and handed to `conf` as `cwd`, instead of letting `conf` derive it
+      // from `projectName` on its own. Same directory as before — the reader
+      // reproduces `env-paths`, and `profile-store-location.spec.ts` proves it
+      // against the real package on the running platform. What changed is that
+      // the MCP `evolith-profile` tool now reads the same file by calling the
+      // same function, not by re-deriving it.
+      cwd: resolveProfileStoreDir(),
+      configName: PROFILE_STORE_CONFIG_NAME,
+      fileExtension: PROFILE_STORE_FILE_EXTENSION,
       defaults: {
         version: '1.0.0',
         telemetryEnabled: true,
@@ -66,10 +67,8 @@ export class ConfigService {
             '.harness/rules/global-rules.md',
           ],
         },
-        activeProfile: DEFAULT_PROFILE,
-        profiles: {
-          [DEFAULT_PROFILE]: {},
-        },
+        activeProfile: PROFILE_STORE_DEFAULTS.activeProfile,
+        profiles: { ...PROFILE_STORE_DEFAULTS.profiles },
       },
     });
     this.logger.debug(`Config loaded from: ${this.config.path}`);
@@ -95,15 +94,20 @@ export class ConfigService {
     return this.config.path;
   }
 
+  /**
+   * GT-682 (#760) — the reads below go through core-domain's profile-store
+   * resolvers, fed by this live `conf` instance. The MCP `evolith-profile` tool
+   * calls the same resolvers over a parsed snapshot of the same file, so the
+   * `EVOLITH_PROFILE` > stored > `default` precedence exists in one place.
+   */
+  private readonly storeGetter: ProfileStoreGetter = (key) => this.config.get(key);
+
   activeProfile(): string {
-    const envProfile = process.env.EVOLITH_PROFILE;
-    if (envProfile) return envProfile;
-    return (this.config.get('activeProfile') as string) || DEFAULT_PROFILE;
+    return resolveActiveProfile(this.storeGetter, process.env);
   }
 
   listProfiles(): string[] {
-    const profiles = this.config.get('profiles') as Record<string, ProfileConfig> | undefined;
-    return Object.keys(profiles || { [DEFAULT_PROFILE]: {} });
+    return listProfileNames(this.storeGetter);
   }
 
   profileExists(name: string): boolean {
@@ -143,9 +147,7 @@ export class ConfigService {
   }
 
   getProfile(name?: string): ProfileConfig {
-    const profileName = name || this.activeProfile();
-    const profiles = (this.config.get('profiles') as Record<string, ProfileConfig>) || {};
-    return profiles[profileName] || {};
+    return getProfileConfig(this.storeGetter, name, process.env);
   }
 
   setProfileValue(name: string, key: string, value: unknown): void {

@@ -6,6 +6,7 @@ import { GitHubApiAdapter } from '@beyondnet/evolith-infra-providers';
 import {
   createSuccessEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
@@ -43,7 +44,6 @@ export class SatelliteCreateCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith satellite:create',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -104,7 +104,7 @@ export class SatelliteCreateCommand extends BaseEvolithCommand {
           JSON.stringify(
             createSuccessEnvelope(
               { success: false, error },
-              { ...meta, durationMs: Date.now() - startedAt },
+              { ...meta, durationMs: elapsedMsSince(startedAt) },
             ),
             null,
             2,
@@ -144,7 +144,7 @@ export class SatelliteCreateCommand extends BaseEvolithCommand {
       if (json) {
         console.log(
           JSON.stringify(
-            createSuccessEnvelope({ satellite }, { ...meta, durationMs: Date.now() - startedAt }),
+            createSuccessEnvelope({ satellite }, { ...meta, durationMs: elapsedMsSince(startedAt) }),
             null,
             2,
           ),

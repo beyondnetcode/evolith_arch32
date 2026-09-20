@@ -241,6 +241,27 @@ describe('Cross-surface exploration agent (F1)', () => {
     expect(withEnvelope.length).toBe(3);
   });
 
+  // GT-682 (#759/#760/#761) — three CLI commands that had no MCP counterpart.
+  // The bindings above are `verified: true`, so any disagreement is already a
+  // confirmed finding; what this adds is the POSITIVE half: both surfaces
+  // actually ran, both answered with a success envelope, and nothing was filed
+  // against them. A binding that quietly lost its MCP half would otherwise keep
+  // the suite green — one surface cannot disagree with itself.
+  it.each(['history', 'profile', 'standards-crud'])(
+    'GT-682: %s is BOUND on CLI + MCP and the two surfaces agree (0 divergences)',
+    (operationId) => {
+      const results = run.byOperation[operationId] || [];
+      const surfaces = results.map((r) => r.surface).sort();
+      expect(surfaces).toEqual(['cli', 'mcp']);
+      for (const r of results) {
+        expect(r.envelope).not.toBeNull();
+        expect(r.envelope?.success).toBe(true);
+      }
+      const divergences = run.findings.filter((f) => f.operationId === operationId);
+      expect(divergences).toEqual([]);
+    },
+  );
+
   it('has NO confirmed cross-surface findings (verified bindings must agree)', () => {
     // A confirmed finding comes from a `verified: true` binding — a proven
     // equivalence — so any divergence there is a real cross-surface bug and must

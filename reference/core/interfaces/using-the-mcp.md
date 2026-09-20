@@ -922,7 +922,7 @@ This group covers the *lifecycle of the satellite itself*: creating or adopting 
 }
 ```
 
-**What to expect.** If the satellite is already current, the envelope with `data.upToDate: true` and the message "already up to date". If there are changes, `data.upToDate: false`, `data.dryRun: true`, `data.plan` (the full plan), `data.breakingChanges` (how many break compatibility) and a message with the count of planned but unapplied changes.
+**What to expect.** If the satellite is already current, the envelope with `data.upToDate: true` and the message "already up to date". If there are changes, `data.upToDate: false`, `data.dryRun: true`, `data.plan` (the full plan), `data.breakingChanges` (how many break compatibility) and a message with the count of planned but unapplied changes. Every change carries a `classification` — `upstream-only` (the Core moved, the tenant did not; `apply` writes it), `local-only` (a tenant edit; never written) or `conflict` (both moved, or `reason: "no-fingerprint"` when the satellite has no `.evolith/scaffold-manifest.json`; written only with `overwriteLocal`) — and the plan lists them in `data.plan.upstreamOnly` / `localOnly` / `conflicts`, summarised in `data.divergence`. This is the satellite's divergence report: it never writes, so it is the way to ask "how far is this satellite from upstream" without upgrading.
 
 ### 5.13. `evolith-upgrade-apply` — apply the satellite upgrade · **mutative**
 
@@ -934,8 +934,10 @@ This group covers the *lifecycle of the satellite itself*: creating or adopting 
 | --- | --- | --- | --- |
 | `satellitePath` | string | no | Path to the satellite project (default: the server's cwd). |
 | `corePath` | string | no | Path to the Evolith Core checkout (default: the `satellitePath`). |
-| `force` | boolean | no | Applies the upgrade **even when there are breaking changes** (default `false`; without it, it stops on breaking changes). |
+| `force` | boolean | no | Applies the upgrade **even when there are breaking changes** (default `false`; without it, it stops on breaking changes). It does **not** overwrite tenant edits. |
 | `skipBackup` | boolean | no | Skips creating the backup before applying (default `false`). |
+| `overwriteLocal` | boolean | no | Also applies the **conflicts**, overwriting the tenant's content with the Core's (default `false`). The result names every overwritten file in `data.result.overwrittenFiles`. |
+| `acceptLocal` | boolean | no | Records the current Core content as the baseline in `.evolith/scaffold-manifest.json` and copies **nothing** (default `false`). The migration path for a satellite with no manifest. |
 
 **Example:**
 
@@ -946,7 +948,7 @@ This group covers the *lifecycle of the satellite itself*: creating or adopting 
 }
 ```
 
-**What to expect.** The envelope with `data.result` (the upgrade result: changes applied, backup, and so on) and `data.report` (the readable upgrade report). Remember to run `evolith-upgrade-plan` first, to review the plan before applying it.
+**What to expect.** The envelope with `data.result` (the upgrade result: changes applied, backup, `overwrittenFiles`, `baselinedFiles`, and the plan with its three classes), `data.report` (the readable upgrade report) and `data.divergence` (the same per-class summary `evolith-upgrade-plan` returns). By default only `upstream-only` changes are written; `local-only` changes are kept and `conflict` changes are skipped and reported until you pass `overwriteLocal: true`. Remember to run `evolith-upgrade-plan` first, to review the plan before applying it.
 
 ### 5.14. `evolith-fixtures` — seed sample data · **mutative**
 
@@ -1409,3 +1411,63 @@ Retrieval is **hybrid, BM25 first**. That is not a preference, it is a fit to ho
 `retrievalMode` is `hybrid` when both retrievers ran and `lexical-only` when there is no embedding sidecar configured — or when the dense side failed and the search degraded to BM25 rather than returning nothing.
 
 **When it is not available.** The corpus lives in a pgvector store (`EVOLITH_RAG_PG_URL`) populated by the delta-sync workflow. With no store configured the tool **fails explicitly** rather than returning an empty result set, because an agent handed "no matches" from an unconfigured corpus will conclude the corpus is silent on the subject and act on that.
+
+### 6.18. `evolith-history` — read the CLI command history
+
+**What it does.** It reads the Evolith CLI command history — the same `$HOME/.evolith/history.jsonl` that `evolith history` reads, through the same `CommandHistoryService` — so an agent can see what an operator ran, when, and whether it succeeded. One tool with four read modes selected by `action`. Read-only: `--clear` and `--replay` stay on the CLI (GT-682).
+
+**Arguments.**
+
+| field | type | req | what for |
+| --- | --- | --- | --- |
+| `action` | string | no | `list` (default), `get`, `search` or `stats`. |
+| `limit` | number | no | `list`: how many of the most recent entries to return (`20` by default, the CLI's default). |
+| `id` | string | `get` | The entry id, e.g. `h-000042`. |
+| `query` | string | `search` | Case-insensitive text matched against the command and its arguments. |
+
+**Example.**
+
+```json
+{ "name": "evolith-history", "arguments": { "action": "search", "query": "gate evaluate" } }
+```
+
+**What to expect.** The same payloads `evolith history --format json` prints: `list` and `search` return an array of entries (`id`, `timestamp`, `command`, `args`, `exitCode`, `durationMs`, `success`), newest first; `get` returns one entry; `stats` returns `totalCommands`, `successRate`, `mostUsed` and `recentCommands`. An unknown id is a `PATH_NOT_FOUND` error envelope; a machine with no history answers an empty list.
+
+### 6.19. `evolith-profile` — read the active CLI profile
+
+**What it does.** It reads the named CLI profiles from the same store `evolith profile` uses, so an agent can learn which core/satellite/tenant/initiative context the operator's CLI is configured with. The store's location, format and the `EVOLITH_PROFILE` > stored > `default` precedence are resolved by one reader in core-domain, which the CLI now delegates to as well. Read-only: `create`, `switch` and `delete` stay on the CLI — switching the operator's profile from a gateway would be an action at a distance (GT-682).
+
+**Arguments.**
+
+| field | type | req | what for |
+| --- | --- | --- | --- |
+| `action` | string | no | `current` (default) or `list`. |
+
+**Example.**
+
+```json
+{ "name": "evolith-profile", "arguments": { "action": "list" } }
+```
+
+**What to expect.** `current` returns `{ name, core?, satellite?, tenant?, initiative?, select? }`; `list` returns `{ profiles: [...], active }` — the same payloads the CLI prints with `--format json`. A machine where the CLI has never run answers `default`, and nothing is created.
+
+### 6.20. `evolith-standards` — read the corporate standards
+
+**What it does.** It reads the standards registered under `<path>/reference/standards/standards-index.json` through the same `StandardsService` that `evolith standards` uses. Read-only: `--init`, `--validate` and `--export` stay on the CLI (GT-682).
+
+**Arguments.**
+
+| field | type | req | what for |
+| --- | --- | --- | --- |
+| `action` | string | no | `list` (default) or `get`. |
+| `category` | string | no | `list`: keep only `architecture`, `governance`, `operations` or `infrastructure`. |
+| `id` | string | `get` | The standard id. |
+| `path` | string | no | Workspace root containing `reference/standards` (the server's cwd by default, as the CLI defaults to its own). |
+
+**Example.**
+
+```json
+{ "name": "evolith-standards", "arguments": { "action": "list", "category": "governance", "path": "/repos/my-satellite" } }
+```
+
+**What to expect.** `list` returns `{ count, standards: [{ id, name, version, category, rulesCount }] }`; `get` returns the full standard with its `rules`. A workspace with no index answers `count: 0`; an unknown id is a `PATH_NOT_FOUND` error envelope.

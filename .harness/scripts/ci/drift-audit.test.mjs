@@ -93,6 +93,32 @@ test('accepted topology with an orphaned reference warns', () => {
   assert.ok(findings.some((f) => f.ruleId === 'TOPO-ORPHAN-REF' && f.severity === 'warning'));
 });
 
+// GT-690 — the progressive-axis manifests declare their ruleset under the corpus
+// root; the sibling convention must not be demanded of them, and the declared
+// path must exist.
+const DECLARING = {
+  metadata: { id: 'modular-monolith', status: 'accepted' },
+  spec: { artifacts: { rulesets: ['src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json'], adrs: [] } },
+};
+const refDir = 'reference/core/architecture/topologies/progressive-axis/modular-monolith';
+const declaringSet = new Set([
+  'src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json',
+  `${refDir}/modular-monolith.rego`,
+  `${refDir}/README.md`,
+  `${refDir}/README.es.md`,
+]);
+
+test('a manifest that declares its ruleset elsewhere passes without a sibling copy (GT-690)', () => {
+  assert.deepEqual(auditTopology(DECLARING, (p) => declaringSet.has(p), refDir), []);
+});
+
+test('a declared ruleset path that does not exist is flagged, sibling or not (GT-690)', () => {
+  const without = new Set(declaringSet);
+  without.delete('src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json');
+  const findings = auditTopology(DECLARING, (p) => without.has(p), refDir);
+  assert.ok(findings.some((f) => f.ruleId === 'TOPO-MISSING-ARTIFACT' && /declared by the manifest/.test(f.title)));
+});
+
 test('draft topologies are skipped', () => {
   const draft = { metadata: { id: 'x', status: 'draft' } };
   assert.deepEqual(auditTopology(draft, () => false, 'd'), []);

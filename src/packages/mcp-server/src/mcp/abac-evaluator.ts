@@ -138,6 +138,14 @@ const TOOL_CLASSIFICATION: Record<string, ToolClass> = {
   'evolith-upgrade-apply': 'write',
   'evolith-fixtures': 'write',
   'evolith-scaffold': 'write',
+
+  // GT-682 (#759/#760/#761) — CLI commands ported as read-only MCP tools. Each
+  // answers from a store the CLI already owns (command history, profile store,
+  // the workspace's standards index) and writes nothing; their write modes
+  // (clear/replay, create/switch/delete, init/validate/export) were NOT ported.
+  'evolith-history': 'read',
+  'evolith-profile': 'read',
+  'evolith-standards': 'read',
 };
 
 const READ_TOOLS = new Set([

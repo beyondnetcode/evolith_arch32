@@ -6,7 +6,7 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { Inject } from '@nestjs/common';
 import { IFileSystem } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, type ErrorCode } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, type ErrorCode, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { InitializeProjectUseCase } from '@beyondnet/evolith-core-domain/application/services';
 import { carriesCliExitCode, resolveExitCode } from '../../infrastructure/cli/exit-codes';
 
@@ -41,7 +41,6 @@ export class InitWizardCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith init-wizard',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       startedAt,
@@ -51,7 +50,7 @@ export class InitWizardCommand extends BaseEvolithCommand {
       const message = 'Use "evolith init" for standard initialization';
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         this.logger.log(message);
       }
@@ -165,7 +164,7 @@ export class InitWizardCommand extends BaseEvolithCommand {
               projectName: result.projectName,
               artifacts: initResult.artifacts,
             };
-            console.log(JSON.stringify(createSuccessEnvelope(response, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createSuccessEnvelope(response, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           } else {
             this.promptService.showSuccess(`Project ${result.projectName} created successfully!`);
             this.promptService.showInfo(`Artifacts: ${initResult.artifacts.length}`);
@@ -174,7 +173,7 @@ export class InitWizardCommand extends BaseEvolithCommand {
           const message = 'Failed to create project';
           if (json) {
             process.exitCode = 1;
-            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }, { errors: initResult.errors }), null, 2));
+            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }, { errors: initResult.errors }), null, 2));
           } else {
             this.promptService.showError(message);
           }
@@ -185,7 +184,7 @@ export class InitWizardCommand extends BaseEvolithCommand {
         const message = 'Initialization cancelled';
         if (json) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         } else {
           this.promptService.showInfo(message);
         }
@@ -201,7 +200,7 @@ export class InitWizardCommand extends BaseEvolithCommand {
           ? (error.envelopeErrorCode as ErrorCode)
           : 'INTERNAL_ERROR';
         process.exitCode = resolveExitCode(error);
-        console.log(JSON.stringify(createErrorEnvelope(code, message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope(code, message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         throw error;
       }

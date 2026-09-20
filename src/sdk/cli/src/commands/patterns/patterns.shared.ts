@@ -4,6 +4,7 @@ import {
   createSuccessEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
   type ErrorCode,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import type {
   PatternCategory,
@@ -36,10 +37,14 @@ export const PATTERN_CATEGORIES: readonly PatternCategory[] = [
 /** Values accepted by `--kind`. */
 export const PATTERN_KINDS: readonly PatternKind[] = ['pattern', 'anti-pattern'];
 
+/**
+ * The envelope meta WITHOUT `durationMs`: the reading is taken at emit time
+ * (`emitSuccess`/`emitError`) from `startedAt`, never carried as a placeholder
+ * (GT-686).
+ */
 export interface EnvelopeMeta {
   command: string;
   executedAt: string;
-  durationMs: number;
   correlationId: string;
   schemaVersion: string;
 }
@@ -48,7 +53,6 @@ export function buildMeta(command: string): EnvelopeMeta {
   return {
     command,
     executedAt: new Date().toISOString(),
-    durationMs: 0,
     correlationId: randomUUID(),
     schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
   };
@@ -57,7 +61,7 @@ export function buildMeta(command: string): EnvelopeMeta {
 /** Emits the sole success envelope on stdout. */
 export function emitSuccess(data: unknown, meta: EnvelopeMeta, startedAt: number): void {
   console.log(
-    JSON.stringify(createSuccessEnvelope(data, { ...meta, durationMs: Date.now() - startedAt }), null, 2),
+    JSON.stringify(createSuccessEnvelope(data, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2),
   );
 }
 
@@ -75,7 +79,7 @@ export function emitError(
 ): void {
   process.exitCode = 1;
   console.log(
-    JSON.stringify(createErrorEnvelope(code, message, { ...meta, durationMs: Date.now() - startedAt }), null, 2),
+    JSON.stringify(createErrorEnvelope(code, message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2),
   );
 }
 

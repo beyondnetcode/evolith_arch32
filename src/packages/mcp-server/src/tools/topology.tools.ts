@@ -9,7 +9,7 @@ import type {
   DownstreamPhase,
 } from '@beyondnet/evolith-core';
 import { TopologyCatalogService, TopologyRecommendationService, PhaseArtifactProfileService } from '@beyondnet/evolith-core';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
+import { createSuccessEnvelope, measuredMeta, startEnvelopeClock } from '@beyondnet/evolith-core-domain';
 import { resolveRulesetFilePath } from '@beyondnet/evolith-infra-providers';
 import { McpTool } from '../mcp/tool.interface';
 
@@ -117,6 +117,8 @@ export function createTopologyTools(
         },
       },
       execute: async (args) => {
+        // GT-686 — the clock starts with the call, so durationMs is a measurement.
+        const clock = startEnvelopeClock();
         const corePath = resolveCorePath(args.corePath as string | undefined);
         const signals = (args.signals as TopologyRecommendationSignals) || {};
         // Shared dual-probe resolver (src/rulesets | rulesets) — same resolution
@@ -125,14 +127,10 @@ export function createTopologyTools(
         try {
           const rules = JSON.parse(await fs.readFile(rulesPath)) as TopologyRecommendationRules;
           const result = recommendation.recommend(rules, signals);
-          const executedAt = new Date().toISOString();
-          return createSuccessEnvelope(result, {
-            command: 'evolith-topology-recommend',
-            executedAt,
-            durationMs: 0,
-            correlationId: `mcp-topology-recommend-${executedAt}`,
-            schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-          });
+          return createSuccessEnvelope(
+            result,
+            measuredMeta(clock, { command: 'evolith-topology-recommend', correlationId: `mcp-topology-recommend-${clock.executedAt}` }),
+          );
         } catch (error) {
           return {
             error: true,
@@ -163,6 +161,8 @@ export function createTopologyTools(
         },
       },
       execute: async (args) => {
+        // GT-686 — the clock starts with the call, so durationMs is a measurement.
+        const clock = startEnvelopeClock();
         const corePath = resolveCorePath(args.corePath as string | undefined);
         const phase = args.phase as DownstreamPhase;
         if (!DOWNSTREAM_PHASES.includes(phase)) {
@@ -180,14 +180,10 @@ export function createTopologyTools(
             profilesByTopo.get(topo)?.[p];
 
           const result = phaseArtifacts.evaluate(phase, topologies, declaredArtifacts, getPhaseProfile);
-          const executedAt = new Date().toISOString();
-          return createSuccessEnvelope(result, {
-            command: 'evolith-phase-artifacts-evaluate',
-            executedAt,
-            durationMs: 0,
-            correlationId: `mcp-phase-artifacts-evaluate-${executedAt}`,
-            schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-          });
+          return createSuccessEnvelope(
+            result,
+            measuredMeta(clock, { command: 'evolith-phase-artifacts-evaluate', correlationId: `mcp-phase-artifacts-evaluate-${clock.executedAt}` }),
+          );
         } catch (error) {
           return {
             error: true,

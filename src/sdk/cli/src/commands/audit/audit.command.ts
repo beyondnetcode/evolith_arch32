@@ -22,6 +22,7 @@ import {
   createErrorEnvelope,
   createSuccessEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { verifyReceiptChain } from '@beyondnet/evolith-core-domain/domain/transparency';
 import type {
@@ -89,7 +90,6 @@ export class AuditCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith audit verify',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -142,7 +142,7 @@ export class AuditCommand extends BaseEvolithCommand {
     if (json) {
       console.log(JSON.stringify(
         result.verdict === Verdict.PASS
-          ? createSuccessEnvelope(payload, { ...meta, durationMs: Date.now() - startedAt })
+          ? createSuccessEnvelope(payload, { ...meta, durationMs: elapsedMsSince(startedAt) })
           // GT-580 taxonomy: a ledger that does not verify is a BLOCKING governance
           // verdict (`GATE_BLOCKED` → exit 2), not malformed input. `VALIDATION_FAILED`
           // maps to exit 3 and would tell an agent harness to fix its invocation
@@ -155,7 +155,7 @@ export class AuditCommand extends BaseEvolithCommand {
           // wired anywhere.
           : createErrorEnvelope('GATE_BLOCKED', 'transparency ledger does not verify', {
             ...meta,
-            durationMs: Date.now() - startedAt,
+            durationMs: elapsedMsSince(startedAt),
           }, payload),
         null,
         2,

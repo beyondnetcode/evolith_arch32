@@ -659,8 +659,8 @@
         "command": "standards"
       },
       "mcp": {
-        "exposed": false,
-        "exempt": "standards content is embedded in validate/architecture-validate tool responses"
+        "exposed": true,
+        "tool": "evolith-standards"
       },
       "rest": {
         "exposed": false,
@@ -710,8 +710,8 @@
         "command": "history"
       },
       "mcp": {
-        "exposed": false,
-        "exempt": "CLI-process-local; not applicable to MCP"
+        "exposed": true,
+        "tool": "evolith-history"
       },
       "rest": {
         "exposed": false,
@@ -744,8 +744,8 @@
         "command": "profile"
       },
       "mcp": {
-        "exposed": false,
-        "exempt": "CLI-process-local; MCP uses its own auth context"
+        "exposed": true,
+        "tool": "evolith-profile"
       },
       "rest": {
         "exposed": false,

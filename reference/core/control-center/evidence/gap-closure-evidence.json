@@ -10716,6 +10716,133 @@
         "node -e \"const y=require('yaml');const d=y.parse(require('fs').readFileSync('.github/workflows/sdk-cli-ci.yml','utf8'));const p=d.on.push.paths;if(!p.includes('src/packages/**')||!p.includes('src/apps/**')||d.on.pull_request.paths)process.exit(1);console.log(p.join(' '))\"  # push filter spans every tree CodeQL scans; the PR trigger stays unfiltered",
         "node .harness/scripts/ci/40-validate-path-literals.mjs  # the workflow's paths resolve"
       ]
+    },
+    {
+      "id": "GT-690",
+      "closedAt": "2026-09-19",
+      "closureCommit": "965a5369",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+        "src/rulesets/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json",
+        "src/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
+        "reference/core/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json",
+        "reference/core/architecture/topologies/progressive-axis/distributed-modules/topology.manifest.json",
+        "reference/core/architecture/topologies/progressive-axis/microservices/topology.manifest.json",
+        "src/rulesets/governance/satellite-contracts.rules.json",
+        "src/apps/core-api/src/application/services/core-reference-query.service.spec.ts",
+        ".harness/scripts/ci/drift-audit.mjs"
+      ],
+      "validationCommands": [
+        "ESTABLISHED WITH ls, NOT AN IMPORT GRAPH: before 965a5369 each of the three progressive-axis rulesets existed at reference/core/architecture/topologies/progressive-axis/<t>/<t>.rules.json AND src/rulesets/topologies/progressive-axis/<t>/<t>.rules.json, differing in $schema, $id and the `topologies` key; every manifest, satellite-contracts.rules.json and five READMEs pointed at the reference/ copy, whose $schema resolved to a directory that does not exist, while the loader roots only at src/rulesets. The reference/ copies were removed with git rm and every reference repointed.",
+        "FALSIFIED BY EXECUTION: `validate --select topologies/progressive-axis/modular-monolith/modular-monolith.rules.json --format json` on a fixture satellite -> MM-R02 blocking:true (baseline); MM-R02.blocking=false in the surviving copy -> the issue reports blocking:false; the same edit written at the deleted reference/ path -> blocking:true, unchanged, because nothing reads it.",
+        "TWO CONSUMERS STILL ASSUMED A SIBLING COPY AND WENT RED ON INTEGRATION: core-api's reference listing appended the doc tree and listed each ruleset twice under two $ids (51f07f93: reads one root; the spec now asserts the doc tree carries no *.rules.json), and the drift audit demanded <manifest dir>/<id>.rules.json (4974c0ad: resolves spec.artifacts.rulesets). GT-566 is annotated in both catalogs: its 'exactly ONE place' criterion was false when it closed.",
+        "for t in modular-monolith distributed-modules microservices; do test ! -e reference/core/architecture/topologies/progressive-axis/$t/$t.rules.json && test -f src/rulesets/topologies/progressive-axis/$t/$t.rules.json && grep -q \"src/rulesets/topologies/progressive-axis/$t/$t.rules.json\" reference/core/architecture/topologies/progressive-axis/$t/topology.manifest.json; done",
+        "node .harness/scripts/generate-rule-coverage.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 3 topologies, Native 12/8/8 = OPA, PASS",
+        "node .harness/scripts/ci/25-operational-drift-audit.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 73 sources, 0 findings on the deduplicated tree",
+        "node --test .harness/scripts/ci/drift-audit.test.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 12 pass, incl. 'a manifest that declares its ruleset elsewhere passes without a sibling copy'",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: every repointed relative link resolves (1514 files)"
+      ],
+      "dependencyRationale": "No dependency: the change is a deletion plus repointing, verified by ls and by the guards that read the manifests."
+    },
+    {
+      "id": "GT-673",
+      "closedAt": "2026-09-19",
+      "closureCommit": "1d017ce1",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/application/upgrade/scaffold-manifest.ts",
+        "src/packages/core-domain/src/application/upgrade/satellite-upgrade-classify.ts",
+        "src/packages/core-domain/src/application/upgrade/satellite-upgrade-classify.spec.ts",
+        "src/packages/core-domain/src/application/upgrade/satellite-upgrade.local-edit.spec.ts",
+        "src/packages/core-domain/src/application/upgrade/satellite-upgrade-diff.ts",
+        "src/packages/core-domain/src/application/upgrade/satellite-upgrade-apply.ts",
+        "src/packages/core-domain/src/application/upgrade/satellite-upgrade.service.ts",
+        "src/packages/core-domain/src/application/use-cases/initialize-project.use-case.ts",
+        "src/sdk/cli/src/commands/upgrade/upgrade.command.ts",
+        "src/sdk/cli/src/commands/upgrade/upgrade.render.ts",
+        "src/sdk/cli/src/commands/upgrade/upgrade.integration.spec.ts",
+        "src/packages/mcp-server/src/tools/upgrade.tools.ts",
+        "reference/core/interfaces/using-the-cli.md"
+      ],
+      "validationCommands": [
+        "OBSERVED RED FIRST: satellite-upgrade.local-edit.spec.ts (real InitializeProjectUseCase + real SatelliteUpgradeService on a temp dir) against develop e5d66ba2 -> 5 failed / 5 total: the tenant's `\"maxCoupling\": 2` was gone and the Core's `\"version\": \"1.5.0\"` written over the edit. After 1d017ce1 -> 5 passed.",
+        "THE MANIFEST RECORDS THE CORE SIDE OF THE THREE-WAY MERGE: .evolith/scaffold-manifest.json holds what the Core delivered, so a tenant edit reads local-only now and conflict the moment upstream moves; recording the tenant's content instead would have re-created the defect on the next upgrade. --accept-local baselines a legacy satellite the same way. No manifest -> every difference is conflict/no-fingerprint, fail-closed.",
+        "npx jest --config src/packages/core-domain/jest.config.js src/packages/core-domain/src/application/upgrade",
+        "EXPECTED OF THE PREVIOUS COMMAND: classify table incl. no-fingerprint, local-edit survival, manifest kept current by apply",
+        "npx jest --config src/sdk/cli/jest.config.js src/sdk/cli/src/commands/upgrade src/sdk/cli/src/commands/init",
+        "EXPECTED OF THE PREVIOUS COMMAND: --overwrite-local names the file in overwrittenFiles, --dry-run writes nothing, divergence in the JSON envelope; 38 + 80 tests",
+        "npx jest --config src/packages/mcp-server/jest.config.js src/packages/mcp-server/src/tools/upgrade.tools.spec.ts",
+        "EXPECTED OF THE PREVIOUS COMMAND: evolith-upgrade-plan / -apply carry the same divergence summary"
+      ],
+      "dependencyRationale": "No dependency. SyncSatelliteUseCase (pushes rulesets to a remote via IGitHubApiClient) has no caller in CLI/MCP/core-api and cannot read a remote manifest, so it records no fingerprint — stated here rather than patched blindly."
+    },
+    {
+      "id": "GT-678",
+      "closedAt": "2026-09-19",
+      "closureCommit": "79885e6c",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/rule-overrides.ts",
+        "src/packages/core-domain/src/application/validators/rule-overrides.spec.ts",
+        "src/packages/core-domain/src/application/validators/rule-overrides.loader.ts",
+        "src/packages/core-domain/src/application/validators/rule-evaluation-engine.ts",
+        "src/packages/infra-providers/src/disk-ruleset.repository.ts",
+        "src/packages/infra-providers/src/disk-ruleset.repository.spec.ts",
+        "src/rulesets/schema/ruleset-standard.schema.json",
+        "src/rulesets/schema/rule-overrides.schema.json",
+        "src/rulesets/schema/evolith-yaml.schema.json",
+        "src/rulesets/tenants/README.md",
+        "src/rulesets/tenants/example/rule-overrides.json"
+      ],
+      "validationCommands": [
+        "OBSERVED RED FIRST: disk-ruleset.repository.spec.ts against develop with the real ruleset-standard.schema.json -> TOTAL RULES LOADED: 3, two ACL-02 (Core MUST/blocking:true AND tenant SHOULD/blocking:false), `enabled` absent from both, Expected length 1 / Received 2; a typo key `enabeld` loaded as a rule. After 79885e6c -> TOTAL RULES LOADED: 2, one ACL-02 carrying corpusOverride; the typo is a named rejection.",
+        "END TO END ON THE BUILT CLI: a temp satellite whose evolith.yaml references governance/rule-overrides.json waiving TAX-06 with approvedBy + expiresOn -> overrides.applied = [{ruleId:TAX-06, field:severity, from:MUST, to:SHOULD, approvedBy, expiresOn, source}, {field:blocking, from:true, to:false}], TAX-06 reported ONCE at SHOULD/non-blocking, blocking issues 90 -> 88. With approvedBy removed -> exit 2, status failed, rejected [{code:OVR-BLOCKING-REMOVED, ruleId:TAX-06}], TAX-06 kept at MUST/blocking:true. A malformed document -> SCHEMA_INVALID, exit 3.",
+        "ONE MECHANISM, CLOCK-FREE LOADER: the loader keeps the Core copy and attaches the tenant pack's authored delta; applyRuleOverrides(rules, doc, now) applies own-file enabled:false, tenant-pack deltas and the document under one policy after selectRules — so a cached corpus cannot freeze a waiver's expiry and a tenant pack cannot bypass the blocking protection. A hand-built <core>/rulesets fallback in the loader was caught by guard 47 and replaced with the probe trail (bd7103cf).",
+        "npx jest --config src/packages/infra-providers/jest.config.js src/packages/infra-providers/src/disk-ruleset.repository.spec.ts",
+        "EXPECTED OF THE PREVIOUS COMMAND: 29 tests: once + delta, Core-vs-Core duplicate throws, unknown key rejected by name, the whole real corpus loads under the closed schema",
+        "npx jest --config src/packages/core-domain/jest.config.js src/packages/core-domain/src/application/validators/rule-overrides",
+        "EXPECTED OF THE PREVIOUS COMMAND: OVR-BLOCKING-REMOVED observed failing, OVR-EXPIRED / OVR-UNKNOWN-RULE ignored, hardening always recorded, applied: [] on a clean run",
+        "node .harness/scripts/ci/32-validate-ruleset-schemas.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 179 passed, 0 failed under additionalProperties:false",
+        "node .harness/scripts/ci/71-validate-field-label-coverage.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: the new schemas' fields named in Spanish"
+      ],
+      "dependencyRationale": "No dependency. `overrides.applied` is reported on ValidationResult (validate) and refusals surface on the evaluate paths as a general-rulesets:OVR-* gap; adding the applied records to the pinned EvaluationResult 2.0.0 is a contract bump left as a follow-on, stated in the row."
+    },
+    {
+      "id": "GT-686",
+      "closedAt": "2026-09-19",
+      "closureCommit": "3b2695a5",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/domain/gate-evidence.ts",
+        "src/sdk/cli/src/infrastructure/cli/base-command.ts",
+        "src/packages/mcp-server/src/tools/pattern.tools.ts",
+        "src/packages/mcp-server/src/tools/evaluate.tool.ts",
+        "src/apps/core-api/src/presentation/controllers/evaluation.controller.ts",
+        "src/packages/contracts/src/ingest/evaluation-ingest.ts",
+        "src/packages/contracts/src/ingest/evaluation-ingest.spec.ts",
+        ".harness/scripts/ci/72-validate-measured-duration.mjs",
+        ".harness/scripts/ci/72-validate-measured-duration.test.mjs",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "COUNTED FIRST-HAND 2026-09-19: grep -rn 'durationMs: 0' src --include='*.ts' excluding node_modules, dist, coverage and specs -> 47 sites (the row said 46; one had been added since). After 4eb283ca + 3b2695a5 -> 0 across 735 non-spec sources, ALLOWED_ZERO_SITES empty.",
+        "FALSIFIED, PASTED: pattern.tools.ts:38 reverted to `durationMs: 0` -> node .harness/scripts/ci/72-validate-measured-duration.mjs exit 1: '✗ 1 file(s) ship the literal `durationMs: 0` (scanned 735): - src/packages/mcp-server/src/tools/pattern.tools.ts:38'. Restored -> '✅ every envelope duration is measured'.",
+        "OBSERVED STDOUT, BUILT CLI: `evolith evaluate --format json` -> meta.durationMs 194; `validate` -> 114; the guard's executed probe (`rulesets`) -> 77. `evolith profile current` reported a MEASURED 0 at millisecond resolution before elapsedMsSince rounded sub-millisecond runs up to 1 — indistinguishable from the literal, which is why 0 now means 'nothing ran'.",
+        "node --test .harness/scripts/ci/72-validate-measured-duration.test.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 6 pass: the literal in either spacing, comments ignored, specs/dist skipped, a zero VALUE from a fake CLI that spun 5 ms refused, an honest one accepted",
+        "npx jest --config src/packages/contracts/jest.config.js --runInBand src/packages/contracts/src/ingest/evaluation-ingest.spec.ts",
+        "EXPECTED OF THE PREVIOUS COMMAND: timing handed over (source: null), absent when unmeasured, durationMs 0 rejected as a stand-in, totalTokens/costUsd 0 with no modelRef rejected as invented cost",
+        "grep -rn 'durationMs: 0' src --include='*.ts' | grep -v node_modules | grep -v /dist/ | grep -v '\\.spec\\.ts' | grep -v /coverage/ | wc -l",
+        "EXPECTED OF THE PREVIOUS COMMAND: 0"
+      ],
+      "dependencyRationale": "No dependency. The REST controllers use Date.now() differences (the pattern the row itself blesses); the clock helper rounds up so only the CLI and MCP surfaces carry the ≥1 guarantee, which the executed check exercises on the CLI."
     }
   ]
 }

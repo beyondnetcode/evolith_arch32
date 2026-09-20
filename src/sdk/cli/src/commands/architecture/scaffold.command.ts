@@ -7,7 +7,7 @@ import { WorkspaceManagerStrategy } from '@beyondnet/evolith-core-domain/applica
 import { NxWorkspaceStrategy } from '@beyondnet/evolith-infra-providers';
 import { DotnetWorkspaceStrategy } from '../../infrastructure/architecture/dotnet-workspace.strategy';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { toProgressivePhase } from '../../infrastructure/architecture/topology-catalog';
 import {
   bootstrapNxWorkspace,
@@ -46,7 +46,6 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     const meta = {
       command: commandId,
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -78,7 +77,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
           console.log(JSON.stringify(createErrorEnvelope(
             'NOT_A_SATELLITE',
             workspaceError,
-            { ...meta, durationMs: Date.now() - startedAt },
+            { ...meta, durationMs: elapsedMsSince(startedAt) },
           ), null, 2));
           return;
         }
@@ -107,7 +106,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
           console.log(JSON.stringify(createErrorEnvelope(
             'VALIDATION_FAILED',
             'In --format json mode, --frontend, --orm, and --phase are required.',
-            { ...meta, durationMs: Date.now() - startedAt },
+            { ...meta, durationMs: elapsedMsSince(startedAt) },
           ), null, 2));
           process.exit(1);
         }
@@ -120,7 +119,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
             'VALIDATION_FAILED',
             `Unknown --phase "${rawPhase}". Use 1|2|3 or a progressive-axis id ` +
             `(modular-monolith, distributed-modules, microservices).`,
-            { ...meta, durationMs: Date.now() - startedAt },
+            { ...meta, durationMs: elapsedMsSince(startedAt) },
           ), null, 2));
           process.exit(1);
         }
@@ -165,10 +164,10 @@ export class ScaffoldCommand extends BaseEvolithCommand {
           nxWorkspace: nxWorkspace
             ? { action: nxWorkspace.action, files: nxWorkspace.files }
             : { action: 'skipped', files: [] },
-        }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        }, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         process.exit(1);
       }
       return;
@@ -433,7 +432,8 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     ctx: {
       dryRun: boolean;
       json: boolean;
-      meta: { command: string; executedAt: string; durationMs: number; correlationId: string; schemaVersion: string };
+      // GT-686 — no `durationMs` here: every emit below stamps `Date.now() - startedAt`.
+      meta: { command: string; executedAt: string; correlationId: string; schemaVersion: string };
       startedAt: number;
     },
   ): Promise<void> {
@@ -491,7 +491,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       };
 
       if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
       this.promptService.showSuccess(`✓ .NET satellite scaffolded at src/apps/${apiName} (${base}.sln)`);
@@ -507,7 +507,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
       throw error;

@@ -8,6 +8,7 @@ import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { resolveRulesets } from '../../infrastructure/paths/rulesets-resolver';
@@ -51,7 +52,6 @@ export class RulesetsCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith rulesets',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -73,14 +73,14 @@ export class RulesetsCommand extends BaseEvolithCommand {
           'that could not be read. Pass --core <path> or set EVOLITH_CORE_PATH.';
         if (json) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('RULESET_NOT_FOUND', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           return;
         }
         throw new Error(message);
       }
 
       if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope(catalog, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(catalog, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
 
@@ -89,7 +89,7 @@ export class RulesetsCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
       throw error; // Let BaseEvolithCommand render the failure.

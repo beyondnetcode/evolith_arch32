@@ -25,6 +25,8 @@
  * mapping. The canonical source of phase definitions is the workflow YAML,
  * not this constant — kept for backward compatibility.
  */
+import { performance } from 'node:perf_hooks';
+
 export const GATE_PHASES = ['discovery', 'design', 'construction', 'qa', 'release'] as const;
 export type GatePhase = (typeof GATE_PHASES)[number];
 
@@ -129,6 +131,66 @@ export interface ErrorEnvelope {
 }
 
 export type OutputEnvelope<T> = SuccessEnvelope<T> | ErrorEnvelope;
+
+/**
+ * GT-686 — `durationMs` is a MEASUREMENT, and this is the one place it is taken.
+ *
+ * Forty-seven envelopes shipped a literal zero as their duration: the schema
+ * declares wall-clock execution time and permits `minimum: 0`, so a constant
+ * passed every check while every consumer read a fabricated number. A clock
+ * started when the work starts and read when the envelope is built is the
+ * whole fix; the literal is now rejected by
+ * `.harness/scripts/ci/72-validate-measured-duration.mjs`.
+ *
+ * `elapsedMs()` rounds UP from a sub-millisecond clock: any work that ran
+ * reports at least 1, and only a clock that was never allowed to tick reports
+ * 0. That keeps "0" meaning "nothing ran" instead of "ran faster than a
+ * millisecond", which is what lets the guard reject a zero from a run whose
+ * wall clock moved.
+ */
+export interface EnvelopeClock {
+  /** ISO 8601 instant the clock started — what the envelope reports as `executedAt`. */
+  readonly executedAt: string;
+  /** Whole milliseconds elapsed since the clock started, rounded up. */
+  elapsedMs(): number;
+}
+
+export function startEnvelopeClock(): EnvelopeClock {
+  const executedAt = new Date().toISOString();
+  const startedAt = performance.now();
+  return {
+    executedAt,
+    elapsedMs: () => Math.ceil(performance.now() - startedAt),
+  };
+}
+
+/**
+ * The same rounding for sites that keep an epoch-millisecond `startedAt`
+ * (`Date.now()`) rather than a clock: whole milliseconds elapsed, and never 0
+ * for a run that produced an envelope — at millisecond resolution a sub-
+ * millisecond run rounds UP to 1, which is the ceiling of its true duration,
+ * not a stand-in. `0` stays reserved for "nothing ran".
+ */
+export function elapsedMsSince(startedAtEpochMs: number): number {
+  return Math.max(1, Date.now() - startedAtEpochMs);
+}
+
+/**
+ * Builds an {@link OutputMeta} whose `executedAt` and `durationMs` come from a
+ * running clock rather than from the caller. Everything else is passed
+ * through; `schemaVersion` defaults to the current envelope version.
+ */
+export function measuredMeta(
+  clock: EnvelopeClock,
+  fields: Omit<OutputMeta, 'executedAt' | 'durationMs' | 'schemaVersion'> & { readonly schemaVersion?: string },
+): OutputMeta {
+  return {
+    ...fields,
+    executedAt: clock.executedAt,
+    durationMs: clock.elapsedMs(),
+    schemaVersion: fields.schemaVersion ?? OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  };
+}
 
 export function createSuccessEnvelope<T>(data: T, meta: OutputMeta): SuccessEnvelope<T> {
   return { success: true, data, meta };

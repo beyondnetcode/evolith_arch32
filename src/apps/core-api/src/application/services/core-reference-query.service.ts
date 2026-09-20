@@ -223,26 +223,18 @@ export class CoreReferenceQueryService {
    * closed instead: if the corpus cannot be located, say so and say where we
    * looked.
    */
+  /**
+   * GT-690 — ONE tree. This used to append `reference/core/architecture/
+   * topologies/**` (the GT-632 "doc-side corpus"), which carried a second copy
+   * of the three progressive-axis rulesets under a different `$id`: the same
+   * rule listed twice, and the copy the evaluation engine never loads listed
+   * next to the one it does. Those copies are gone; the corpus root the probe
+   * resolves is the only place a ruleset lives, so it is the only place this
+   * listing reads.
+   */
   private async findAllRulesetFiles(corePath: string): Promise<string[]> {
     const rulesetsRoot = await this.resolveRulesetsRoot(corePath);
-    return [
-      ...(await this.findRulesetFiles(rulesetsRoot)),
-      ...(await this.findRulesetFiles(this.topologyDocsRoot(corePath))),
-    ];
-  }
-
-  /**
-   * The doc-side topology corpus, which carries its own `*.rules.json` files
-   * alongside the narrative pages and is NOT a subtree of the ruleset corpus.
-   *
-   * GT-632: this was `reference/architecture/topologies`, which the `src/` move
-   * relocated under `reference/core/`. `findRulesetFiles` returns `[]` for a
-   * directory that does not exist, so the three doc-side topology rulesets
-   * simply stopped appearing in `GET /reference/rulesets` — a silent shortfall,
-   * not an error, and therefore invisible.
-   */
-  private topologyDocsRoot(corePath: string): string {
-    return path.join(corePath, 'reference', 'core', 'architecture', 'topologies');
+    return this.findRulesetFiles(rulesetsRoot);
   }
 
   /**

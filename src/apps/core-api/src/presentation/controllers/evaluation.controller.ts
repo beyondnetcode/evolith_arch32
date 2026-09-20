@@ -155,7 +155,8 @@ export class EvaluationController {
       return createSuccessEnvelope(result, {
         command: 'evolith evaluate',
         executedAt: new Date().toISOString(),
-        durationMs: 0,
+        // GT-686 — the same clock the latency metric reads (the inline path already did this).
+        durationMs: Date.now() - start,
         correlationId: `api-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       });

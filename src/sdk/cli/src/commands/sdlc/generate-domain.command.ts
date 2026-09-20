@@ -9,6 +9,7 @@ import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { exitCodeForErrorCode } from '../../infrastructure/cli/exit-codes';
@@ -33,7 +34,6 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith sdlc generate',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -47,7 +47,7 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
       if (json) {
         const msg = 'Both a generation target and a source file must be specified.';
         console.log(JSON.stringify(
-          createErrorEnvelope('VALIDATION_FAILED', msg, { ...meta, durationMs: Date.now() - startedAt }),
+          createErrorEnvelope('VALIDATION_FAILED', msg, { ...meta, durationMs: elapsedMsSince(startedAt) }),
           null,
           2,
         ));
@@ -145,7 +145,7 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
           : chalk.green(`✅ Scaffold complete — ${result.created.length} file(s) created.`),
       );
     } else {
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
     }
   }
 

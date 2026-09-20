@@ -923,7 +923,7 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** Si el satélite ya está al día, el envelope con `data.upToDate: true` y el mensaje "already up to date". Si hay cambios, `data.upToDate: false`, `data.dryRun: true`, `data.plan` (el plan completo), `data.breakingChanges` (cuántos rompen compatibilidad) y un mensaje con el conteo de cambios planificados sin aplicar.
+**Qué esperar.** Si el satélite ya está al día, el envelope con `data.upToDate: true` y el mensaje "already up to date". Si hay cambios, `data.upToDate: false`, `data.dryRun: true`, `data.plan` (el plan completo), `data.breakingChanges` (cuántos rompen compatibilidad) y un mensaje con el conteo de cambios planificados sin aplicar. Cada cambio trae una `classification` — `upstream-only` (el Core se movió, el tenant no; `apply` lo escribe), `local-only` (una edición del tenant; nunca se escribe) o `conflict` (se movieron ambos, o `reason: "no-fingerprint"` cuando el satélite no tiene `.evolith/scaffold-manifest.json`; solo se escribe con `overwriteLocal`) — y el plan los lista en `data.plan.upstreamOnly` / `localOnly` / `conflicts`, resumidos en `data.divergence`. Es el reporte de divergencia del satélite: nunca escribe, así que es la forma de preguntar "cuán lejos está este satélite del upstream" sin actualizar.
 
 ### 5.13. `evolith-upgrade-apply` — aplicar el upgrade del satélite · **mutativa**
 
@@ -935,8 +935,10 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 | --- | --- | --- | --- |
 | `satellitePath` | string | no | Ruta del proyecto satélite (default: cwd del servidor). |
 | `corePath` | string | no | Ruta al checkout de Evolith Core (default: el `satellitePath`). |
-| `force` | boolean | no | Aplica el upgrade **aunque haya breaking changes** (default `false`; sin esto se detiene ante cambios que rompen). |
+| `force` | boolean | no | Aplica el upgrade **aunque haya breaking changes** (default `false`; sin esto se detiene ante cambios que rompen). **No** sobrescribe ediciones del tenant. |
 | `skipBackup` | boolean | no | Omite crear el backup previo a aplicar (default `false`). |
+| `overwriteLocal` | boolean | no | Aplica también los **conflictos**, sobrescribiendo el contenido del tenant con el del Core (default `false`). El resultado nombra cada archivo sobrescrito en `data.result.overwrittenFiles`. |
+| `acceptLocal` | boolean | no | Registra el contenido actual del Core como línea base en `.evolith/scaffold-manifest.json` y **no copia nada** (default `false`). La ruta de migración para un satélite sin manifiesto. |
 
 **Ejemplo:**
 
@@ -947,7 +949,7 @@ Este grupo cubre el *ciclo de vida del propio satélite*: crearlo o adoptarlo en
 }
 ```
 
-**Qué esperar.** El envelope con `data.result` (el resultado del upgrade: cambios aplicados, backup, etc.) y `data.report` (el reporte legible del upgrade). Recuerda correr primero `evolith-upgrade-plan` para revisar el plan antes de aplicar.
+**Qué esperar.** El envelope con `data.result` (el resultado del upgrade: cambios aplicados, backup, `overwrittenFiles`, `baselinedFiles` y el plan con sus tres clases), `data.report` (el reporte legible del upgrade) y `data.divergence` (el mismo resumen por clase que devuelve `evolith-upgrade-plan`). Por defecto solo se escriben los cambios `upstream-only`; los `local-only` se conservan y los `conflict` se omiten y se reportan hasta que pases `overwriteLocal: true`. Recuerda correr primero `evolith-upgrade-plan` para revisar el plan antes de aplicar.
 
 ### 5.14. `evolith-fixtures` — sembrar datos de ejemplo · **mutativa**
 
@@ -1410,3 +1412,63 @@ La recuperación es **híbrida, BM25 primero**. No es una preferencia, es un aju
 `retrievalMode` es `hybrid` cuando corrieron ambos recuperadores y `lexical-only` cuando no hay sidecar de embeddings configurado — o cuando el lado denso falló y la búsqueda degradó a BM25 en vez de no devolver nada.
 
 **Cuándo no está disponible.** El corpus vive en un store pgvector (`EVOLITH_RAG_PG_URL`) poblado por el workflow de delta-sync. Sin store configurado la tool **falla explícitamente** en vez de devolver un resultado vacío, porque un agente que recibe «sin coincidencias» de un corpus no configurado concluirá que el corpus no dice nada del asunto y actuará sobre eso.
+
+### 6.18. `evolith-history` — leer el historial de comandos de la CLI
+
+**Qué hace.** Lee el historial de comandos de Evolith CLI — el mismo `$HOME/.evolith/history.jsonl` que lee `evolith history`, a través del mismo `CommandHistoryService` — para que un agente vea qué ejecutó un operador, cuándo y si tuvo éxito. Una sola tool con cuatro modos de lectura elegidos con `action`. Solo lectura: `--clear` y `--replay` se quedan en la CLI (GT-682).
+
+**Argumentos.**
+
+| campo | tipo | req | para qué |
+| --- | --- | --- | --- |
+| `action` | string | no | `list` (por defecto), `get`, `search` o `stats`. |
+| `limit` | number | no | `list`: cuántas de las entradas más recientes devolver (`20` por defecto, el mismo valor que la CLI). |
+| `id` | string | `get` | El id de la entrada, p. ej. `h-000042`. |
+| `query` | string | `search` | Texto, sin distinguir mayúsculas, que se busca en el comando y sus argumentos. |
+
+**Ejemplo.**
+
+```json
+{ "name": "evolith-history", "arguments": { "action": "search", "query": "gate evaluate" } }
+```
+
+**Qué esperar.** Los mismos payloads que imprime `evolith history --format json`: `list` y `search` devuelven un array de entradas (`id`, `timestamp`, `command`, `args`, `exitCode`, `durationMs`, `success`), de la más reciente a la más antigua; `get` devuelve una entrada; `stats` devuelve `totalCommands`, `successRate`, `mostUsed` y `recentCommands`. Un id desconocido es un envelope de error `PATH_NOT_FOUND`; una máquina sin historial responde una lista vacía.
+
+### 6.19. `evolith-profile` — leer el perfil activo de la CLI
+
+**Qué hace.** Lee los perfiles con nombre de la CLI desde el mismo store que usa `evolith profile`, para que un agente sepa con qué contexto de core/satélite/tenant/iniciativa está configurada la CLI del operador. La ubicación del store, su formato y la precedencia `EVOLITH_PROFILE` > guardado > `default` los resuelve un único lector en core-domain, al que ahora también delega la CLI. Solo lectura: `create`, `switch` y `delete` se quedan en la CLI — cambiar el perfil del operador desde un gateway sería una acción a distancia (GT-682).
+
+**Argumentos.**
+
+| campo | tipo | req | para qué |
+| --- | --- | --- | --- |
+| `action` | string | no | `current` (por defecto) o `list`. |
+
+**Ejemplo.**
+
+```json
+{ "name": "evolith-profile", "arguments": { "action": "list" } }
+```
+
+**Qué esperar.** `current` devuelve `{ name, core?, satellite?, tenant?, initiative?, select? }`; `list` devuelve `{ profiles: [...], active }` — los mismos payloads que imprime la CLI con `--format json`. Una máquina donde la CLI nunca ha corrido responde `default`, y no se crea nada.
+
+### 6.20. `evolith-standards` — leer los estándares corporativos
+
+**Qué hace.** Lee los estándares registrados en `<path>/reference/standards/standards-index.json` a través del mismo `StandardsService` que usa `evolith standards`. Solo lectura: `--init`, `--validate` y `--export` se quedan en la CLI (GT-682).
+
+**Argumentos.**
+
+| campo | tipo | req | para qué |
+| --- | --- | --- | --- |
+| `action` | string | no | `list` (por defecto) o `get`. |
+| `category` | string | no | `list`: conservar solo `architecture`, `governance`, `operations` o `infrastructure`. |
+| `id` | string | `get` | El id del estándar. |
+| `path` | string | no | Raíz del workspace que contiene `reference/standards` (por defecto el cwd del servidor, igual que la CLI usa el suyo). |
+
+**Ejemplo.**
+
+```json
+{ "name": "evolith-standards", "arguments": { "action": "list", "category": "governance", "path": "/repos/my-satellite" } }
+```
+
+**Qué esperar.** `list` devuelve `{ count, standards: [{ id, name, version, category, rulesCount }] }`; `get` devuelve el estándar completo con sus `rules`. Un workspace sin índice responde `count: 0`; un id desconocido es un envelope de error `PATH_NOT_FOUND`.

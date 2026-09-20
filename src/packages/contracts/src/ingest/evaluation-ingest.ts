@@ -240,6 +240,30 @@ export interface IngestProducer {
   readonly version?: string;
 }
 
+/**
+ * GT-686 — how long the run took, HANDED OVER by the surface that measured it.
+ *
+ * The contract package never reads a clock: a `durationMs` synthesized here
+ * would be exactly the fabricated measurement the gap records (46 envelopes
+ * shipping a literal zero). The surface starts its `EnvelopeClock` before the
+ * evaluation and passes the reading in; when nothing measured, `timing` is
+ * ABSENT, so "not measured" and "took zero" never collapse into one value.
+ *
+ * `ai` is present only when a model was actually consulted. A zero token count
+ * or a zero cost with no AI signal on the payload is an invented figure and
+ * {@link checkEvaluationIngestPayload} rejects it — absent stays distinguishable
+ * from zero here too.
+ */
+export interface IngestTiming {
+  /** Wall-clock milliseconds of the run, as the producing surface measured it. */
+  readonly durationMs: number;
+  /** Model usage for the run, only when a model ran. */
+  readonly ai?: {
+    readonly totalTokens?: number;
+    readonly costUsd?: number;
+  };
+}
+
 // ---------------------------------------------------------------------------
 // The payload
 // ---------------------------------------------------------------------------
@@ -322,6 +346,12 @@ export interface EvaluationIngestPayload {
     readonly policy?: string;
     readonly blueprint?: string;
   };
+
+  /**
+   * GT-686 — the run's measured duration (and model usage when a model ran).
+   * Absent when the producing surface did not measure; never a stand-in zero.
+   */
+  readonly timing?: IngestTiming;
 }
 
 // ---------------------------------------------------------------------------
@@ -416,6 +446,21 @@ export const EVALUATION_INGEST_FIELD_SOURCES: readonly IngestFieldSource[] = Obj
     source: null,
     note: "derived: violations where severity === 'error' && !frozen (same rule as buildEnforcerEvidence/EVD-03)",
   }),
+  Object.freeze({
+    field: 'timing.durationMs',
+    source: null,
+    note: 'GT-686: handed over by the depositing surface from its EnvelopeClock; ABSENT when unmeasured, never synthesized here and never a stand-in 0',
+  }),
+  Object.freeze({
+    field: 'timing.ai.totalTokens',
+    source: null,
+    note: 'GT-686: only when a model ran; a 0 with no AI signal is rejected as an invented figure',
+  }),
+  Object.freeze({
+    field: 'timing.ai.costUsd',
+    source: null,
+    note: 'GT-686: only when a model ran; a 0 with no AI signal is rejected as an invented figure',
+  }),
   Object.freeze({ field: 'versions.core', source: 'EvaluationResult.versions.core' }),
   Object.freeze({ field: 'versions.ruleset', source: 'EvaluationResult.versions.ruleset' }),
   Object.freeze({ field: 'versions.rulesetVersion', source: 'EvaluationResult.versions.rulesetVersion' }),
@@ -505,6 +550,13 @@ export interface EvaluationIngestInput {
    * ledger row and the local artifact carry the SAME id.
    */
   readonly correlationId?: string;
+  /**
+   * GT-686 — the run's duration as the surface MEASURED it (an `EnvelopeClock`
+   * reading). Leave it out when nothing measured; the mapper never invents one.
+   */
+  readonly durationMs?: number;
+  /** Model usage, only when a model ran during the evaluation. */
+  readonly aiUsage?: IngestTiming['ai'];
 }
 
 // ---------------------------------------------------------------------------
@@ -666,8 +718,33 @@ export function toEvaluationIngestPayload(input: EvaluationIngestInput): Evaluat
           blueprint: result.versions.blueprint,
         }),
       ),
+      timing: toIngestTiming(input.durationMs, input.aiUsage),
     }),
   );
+}
+
+/**
+ * GT-686 — the timing block is built ONLY from what the surface handed over.
+ * No `durationMs` means no `timing`; a handed-over reading that is not a
+ * non-negative integer is a contract error, not something to round or clamp.
+ */
+export function toIngestTiming(
+  durationMs: number | undefined,
+  ai: IngestTiming['ai'] | undefined,
+): IngestTiming | undefined {
+  if (durationMs === undefined) {
+    if (ai !== undefined) {
+      throw new EvaluationIngestContractError('aiUsage was supplied without a measured durationMs');
+    }
+    return undefined;
+  }
+  if (!Number.isInteger(durationMs) || durationMs < 0) {
+    throw new EvaluationIngestContractError(
+      `durationMs must be a non-negative integer number of milliseconds, got ${String(durationMs)}`,
+    );
+  }
+  const usage = ai ? Object.freeze(compact<NonNullable<IngestTiming['ai']>>({ ...ai })) : undefined;
+  return Object.freeze(compact<IngestTiming>({ durationMs, ai: usage && Object.keys(usage).length > 0 ? usage : undefined }));
 }
 
 /** Distinct, sorted accountable owners. Exported so the oracle re-derives with the same rule. */
@@ -794,6 +871,36 @@ export function checkEvaluationIngestPayload(value: unknown): IngestContractChec
   const versions = p.versions as Record<string, unknown> | undefined;
   if (!versions || typeof versions.core !== 'string') {
     problems.push('versions.core is missing');
+  }
+
+  // GT-686 — timing is optional, but when present it must be a measurement.
+  if (p.timing !== undefined) {
+    const timing = p.timing as Record<string, unknown>;
+    if (typeof timing !== 'object' || timing === null) {
+      problems.push('timing is present but not an object');
+    } else {
+      if (!Number.isInteger(timing.durationMs) || (timing.durationMs as number) < 0) {
+        problems.push('timing.durationMs is missing or not a non-negative integer — omit timing when nothing measured');
+      } else if (timing.durationMs === 0) {
+        problems.push(
+          'timing.durationMs is 0: an evaluation that ran takes time, so a zero is a stand-in, not a measurement — omit timing instead',
+        );
+      }
+      if (timing.ai !== undefined) {
+        const ai = timing.ai as Record<string, unknown>;
+        const requestedBy = p.requestedBy as Record<string, unknown> | undefined;
+        const aiSignal = typeof requestedBy?.modelRef === 'string' && requestedBy.modelRef.length > 0;
+        for (const key of ['totalTokens', 'costUsd'] as const) {
+          if (ai?.[key] !== undefined && (typeof ai[key] !== 'number' || (ai[key] as number) < 0)) {
+            problems.push(`timing.ai.${key} is not a non-negative number`);
+          } else if (ai?.[key] === 0 && !aiSignal) {
+            problems.push(
+              `timing.ai.${key} is 0 with no AI signal (requestedBy.modelRef): an invented cost — omit the field when no model ran`,
+            );
+          }
+        }
+      }
+    }
   }
 
   return Object.freeze({ ok: problems.length === 0, problems: Object.freeze(problems) });

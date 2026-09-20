@@ -8,9 +8,9 @@ F1, F2, and F3 remain supported compatibility aliases for existing CLI, MCP, Ser
 
 | Phase | Rule File | Description |
 |---|---|---|
-| **F1 — Modular Monolith** | [f1-modular-monolith.rules.json](../../../reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json) | Canonical starting topology; extraction readiness gates |
-| **F2 — Distributed Modules** | [f2-distributed-modules.rules.json](../../../reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json) | Module boundaries formalized; inter-module contracts established |
-| **F3 — Microservices** | [f3-microservices.rules.json](../../../reference/core/architecture/topologies/progressive-axis/microservices/microservices.rules.json) | Autonomous deployability; service mesh readiness |
+| **F1 — Modular Monolith** | [f1-modular-monolith.rules.json](../topologies/progressive-axis/modular-monolith/modular-monolith.rules.json) | Canonical starting topology; extraction readiness gates |
+| **F2 — Distributed Modules** | [f2-distributed-modules.rules.json](../topologies/progressive-axis/distributed-modules/distributed-modules.rules.json) | Module boundaries formalized; inter-module contracts established |
+| **F3 — Microservices** | [f3-microservices.rules.json](../topologies/progressive-axis/microservices/microservices.rules.json) | Autonomous deployability; service mesh readiness |
 
 | Compatibility Alias | Canonical Topology |
 |---|---|

@@ -74,13 +74,8 @@ export class CalibrateCommand extends BaseEvolithCommand {
 
   private async report(options: CalibrateCommandOptions): Promise<void> {
     const json = options.format === 'json';
-    const meta = {
-      command: 'evolith calibrate report',
-      executedAt: new Date().toISOString(),
-      durationMs: 0,
-      correlationId: randomUUID(),
-      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-    };
+    // GT-686 — built when each envelope is emitted, so `durationMs` covers the work.
+    const meta = () => this.envelopeMeta('evolith calibrate report');
 
     if (!options.labels) {
       throw new CliUsageError(
@@ -101,7 +96,7 @@ export class CalibrateCommand extends BaseEvolithCommand {
       const envelope = createErrorEnvelope(
         'IO_ERROR',
         `Cannot read the calibration corpus at ${labelsPath}`,
-        meta,
+        meta(),
       );
       if (json) process.stdout.write(`${JSON.stringify(envelope)}\n`);
       else console.error(chalk.red(`✗ Cannot read labels at ${labelsPath}`));
@@ -119,7 +114,7 @@ export class CalibrateCommand extends BaseEvolithCommand {
     }
 
     const report = buildCalibrationReport(labels);
-    const envelope = createSuccessEnvelope(report, meta);
+    const envelope = createSuccessEnvelope(report, meta());
 
     if (json) {
       process.stdout.write(`${JSON.stringify(envelope)}\n`);

@@ -3,7 +3,7 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import packageJson from '../../../package.json';
 
 const SEMVER_REGEX = /^\d+\.\d+\.\d+(-[\w.]+)?(\+[\w.]+)?$/;
@@ -30,7 +30,6 @@ export class UpdateCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith update',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       startedAt,
@@ -57,7 +56,7 @@ export class UpdateCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         throw error;
       }
@@ -74,7 +73,7 @@ export class UpdateCommand extends BaseEvolithCommand {
         latest: latestVersion,
         updateAvailable: latestVersion ? this.isNewerVersion(latestVersion, currentVersion) : false,
       };
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 
@@ -113,7 +112,7 @@ export class UpdateCommand extends BaseEvolithCommand {
       const message = 'Could not reach npm registry';
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showError(message);
         this.promptService.showInfo('Check your internet connection and try again');
@@ -127,7 +126,7 @@ export class UpdateCommand extends BaseEvolithCommand {
         latest: latestVersion,
         updateAvailable: this.isNewerVersion(latestVersion, currentVersion),
       };
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
     } else {
       this.promptService.showInfo(`Current: ${chalk.cyan(currentVersion)}`);
       this.promptService.showInfo(`Latest:  ${chalk.cyan(latestVersion)}`);
@@ -156,7 +155,7 @@ export class UpdateCommand extends BaseEvolithCommand {
       const message = 'Could not fetch latest version';
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.stopSpinner();
         this.promptService.showError(message);
@@ -169,7 +168,7 @@ export class UpdateCommand extends BaseEvolithCommand {
     if (!this.isNewerVersion(latestVersion, currentVersion)) {
       if (json) {
         const result = { current: currentVersion, latest: latestVersion, installed: false };
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.stopSpinner();
         this.promptService.showSuccess(`You are already on the latest version (${currentVersion})`);
@@ -194,7 +193,7 @@ export class UpdateCommand extends BaseEvolithCommand {
           current: newVersion,
           installed: true,
         };
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showSuccess(`\n✓ Update installed successfully`);
         this.promptService.showInfo(`Run ${chalk.cyan('evolith --version')} to verify`);
@@ -209,7 +208,7 @@ export class UpdateCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('IO_ERROR', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.stopSpinner();
         this.promptService.showError('Update failed');
@@ -222,7 +221,7 @@ export class UpdateCommand extends BaseEvolithCommand {
   private async showUpdateHelp(json = false, meta?: any): Promise<void> {
     if (json) {
       const result = { usage: 'Use --current, --check, or --install flags' };
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 

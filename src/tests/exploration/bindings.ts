@@ -411,7 +411,12 @@ export const BINDINGS: Record<string, Binding> = {
 
   'standards-crud': {
     verified: true,
+    // GT-682 (#761) — the MCP twin of `standards --list`. Both surfaces must read
+    // the SAME workspace: the CLI takes its cwd (the temporary satellite the
+    // spec chdirs into) and the tool is told that path explicitly, so a listing
+    // that differed would be a product divergence, not two different questions.
     cli: (c) => ['standards', '--list', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-standards', args: { action: 'list', path: c.projectPath } }),
   },
 
   'docs-scaffold': {
@@ -444,7 +449,12 @@ export const BINDINGS: Record<string, Binding> = {
 
   'history': {
     verified: true,
+    // GT-682 (#759) — the MCP twin of the bare `history` listing. Both read
+    // `$HOME/.evolith/history.jsonl` through core-domain's CommandHistoryService
+    // with the CLI's default limit; the tool takes no path on purpose, exactly
+    // like the command it mirrors.
     cli: (c) => ['history', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-history', args: { action: 'list' } }),
   },
 
   'completion': {
@@ -454,7 +464,11 @@ export const BINDINGS: Record<string, Binding> = {
 
   'profile': {
     verified: true,
+    // GT-682 (#760) — the MCP twin of `profile list`. Both resolve the store
+    // through core-domain's profile-store reader (the CLI hands `conf` the same
+    // directory the tool reads), so the two listings come from one file.
     cli: (c) => ['profile', 'list', '--format', 'json'],
+    mcp: (c) => ({ tool: 'evolith-profile', args: { action: 'list' } }),
   },
 
   'mcp-serve': {

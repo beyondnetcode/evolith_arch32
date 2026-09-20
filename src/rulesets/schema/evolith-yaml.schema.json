@@ -212,6 +212,18 @@
             }
           },
           "description": "Executive governance metadata for scorecard metrics."
+        },
+        "rulesets": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "overrides": {
+              "type": "string",
+              "minLength": 1,
+              "description": "GT-678 — path, relative to the satellite root and contained in it, of the per-rule override document (`rule-overrides.schema.json`). Read by every surface's validate/evaluate path; a document that is missing, malformed or fails its schema aborts the run with a named error (`SCHEMA_INVALID`) and is never ignored."
+            }
+          },
+          "description": "GT-678 — how this satellite configures the Core corpus it is evaluated against. The Core PROPOSES its catalogue; the satellite selects and softens per tenant, in documents it owns."
         }
       }
     }

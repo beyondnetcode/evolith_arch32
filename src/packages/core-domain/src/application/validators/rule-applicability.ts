@@ -83,7 +83,14 @@ export interface ApplicabilityContext {
 }
 
 /** Why a rule was excluded before evaluation. */
-export type NotApplicableReason = 'audience' | 'topology' | 'sdlc-phase';
+/**
+ * GT-678 adds `disabled`: the rule was switched off — by its own file's
+ * `enabled: false`, by a `tenants/**` pack, or by the satellite's override
+ * document — and never reached the evaluator. Kept OUTSIDE `rulesTotal` like the
+ * other three, so `corpusTotal = rulesTotal + rulesNotApplicable` still names
+ * the whole corpus; the WHO and FROM WHAT are in `overrides.applied`.
+ */
+export type NotApplicableReason = 'audience' | 'topology' | 'sdlc-phase' | 'disabled';
 
 /** The permissive default, used for any rule the corpus does not annotate. */
 export const DEFAULT_APPLICABILITY: RuleApplicability = Object.freeze({ audience: 'both' });
@@ -160,6 +167,8 @@ export function describeNotApplicable(reason: NotApplicableReason): string {
       return 'belongs to a topology this repository has not declared';
     case 'sdlc-phase':
       return 'belongs to a later SDLC phase than the one this repository declares';
+    case 'disabled':
+      return 'disabled by an authored `enabled: false` or a tenant override (see `overrides.applied`)';
   }
 }
 

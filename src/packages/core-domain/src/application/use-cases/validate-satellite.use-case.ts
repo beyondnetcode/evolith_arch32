@@ -207,6 +207,23 @@ export class ValidateSatelliteUseCase {
       lines.push(`**Core Version:** ${result.coreRef.version}`);
     }
 
+    // GT-678 — the markdown report is what gets pasted into a PR, which is
+    // exactly where "this passed because ACL-02 was waived until December by
+    // the CTO" has to be visible to whoever approves the merge.
+    if (result.overrides && result.overrides.applied.length > 0) {
+      lines.push('', '## Overrides Applied');
+      for (const a of result.overrides.applied) {
+        const approval = a.approvedBy ? ` — approved by ${a.approvedBy}${a.expiresOn ? `, until ${a.expiresOn}` : ''}` : '';
+        lines.push(`- **${a.ruleId}** ${a.field}: ${String(a.from)} -> ${String(a.to)} (${a.source})${approval}`);
+      }
+    }
+    if (result.overrides && result.overrides.rejected.length > 0) {
+      lines.push('', '## Overrides Rejected');
+      for (const r of result.overrides.rejected) {
+        lines.push(`- **${r.ruleId}** [${r.code}] ${r.message}`);
+      }
+    }
+
     lines.push('');
 
     const blocking = result.issues.filter(i => i.blocking);

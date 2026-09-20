@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import {
   CATEGORIES, TOOLS, RESOURCES, SCHEMAS, COMMANDS,
   TOOL_SCHEMAS, RESOURCE_SCHEMAS, COMMAND_SCHEMAS,
@@ -32,7 +32,6 @@ export class ApiCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith api',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       startedAt,
@@ -46,7 +45,7 @@ export class ApiCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         throw error;
       }
@@ -59,13 +58,13 @@ export class ApiCommand extends BaseEvolithCommand {
         const cat = CATEGORIES.find(c => c.name === category);
         if (!cat) {
           process.exitCode = 1;
-          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', `Unknown category: ${category}`, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', `Unknown category: ${category}`, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
           return;
         }
         const result = this.getCategoryData(cat.name);
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
-        console.log(JSON.stringify(createSuccessEnvelope({ categories: CATEGORIES }, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope({ categories: CATEGORIES }, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       }
       return;
     }
@@ -128,7 +127,7 @@ export class ApiCommand extends BaseEvolithCommand {
           inputSchema: schema.inputSchema,
           outputSchema: schema.outputSchema,
         };
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showIntro(`Inspecting: ${operationName}`);
         this.promptService.showInfo(chalk.bold('\n🔧 MCP Tool Schema\n'));
@@ -149,7 +148,7 @@ export class ApiCommand extends BaseEvolithCommand {
           description: schema.description,
           mimeType: schema.mimeType,
         };
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showIntro(`Inspecting: ${operationName}`);
         this.promptService.showInfo(chalk.bold('\n📋 MCP Resource Schema\n'));
@@ -167,7 +166,7 @@ export class ApiCommand extends BaseEvolithCommand {
           description: schema.description,
           options: schema.options,
         };
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showIntro(`Inspecting: ${operationName}`);
         this.promptService.showInfo(chalk.bold('\n⌨️ CLI Command Schema\n'));
@@ -183,7 +182,7 @@ export class ApiCommand extends BaseEvolithCommand {
     const message = `Unknown operation: ${operationName}`;
     if (json) {
       process.exitCode = 1;
-      console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
     } else {
       this.promptService.showError(message);
       this.promptService.showInfo('Try one of:');
@@ -200,7 +199,7 @@ export class ApiCommand extends BaseEvolithCommand {
   private async showHelp(json = false, meta?: any): Promise<void> {
     if (json) {
       const result = { categories: CATEGORIES };
-      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 

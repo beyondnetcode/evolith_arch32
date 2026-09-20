@@ -13,6 +13,7 @@ import {
   createSuccessEnvelope,
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import * as path from 'node:path';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -65,7 +66,6 @@ export class RecommendCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith topology recommend',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };
@@ -92,7 +92,7 @@ export class RecommendCommand extends BaseEvolithCommand {
       const result = new TopologyRecommendationService().recommend(rules, signals);
 
       if (json) {
-        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
 
@@ -101,7 +101,7 @@ export class RecommendCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         return;
       }
       throw error; // Let BaseEvolithCommand render the failure.

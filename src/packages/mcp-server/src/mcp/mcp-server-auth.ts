@@ -36,6 +36,9 @@ export async function authenticateHttpRequest(
   /** GT-582 — `WWW-Authenticate` challenge attached to any 401 this raises. */
   challenge?: string,
 ): Promise<McpUserContext | null> {
+  // GT-686 — a 401 reports how long the credential check took, not a literal 0.
+  const authStartedAt = Date.now();
+  const authElapsed = () => Date.now() - authStartedAt;
   const authHeader = req.headers.authorization || '';
   const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
 
@@ -46,12 +49,12 @@ export async function authenticateHttpRequest(
 
     const hasLocalCredential = !!apiKey || !!process.env.JWT_SECRET || allowNoAuth;
     if (!hasLocalCredential) {
-      return writeUnauthorized(res, 'Invalid or expired OAuth bearer token', challenge);
+      return writeUnauthorized(res, 'Invalid or expired OAuth bearer token', challenge, authElapsed());
     }
   }
 
   // 2-4. Local path
-  return validateAuth(req, res, apiKey, allowNoAuth, challenge);
+  return validateAuth(req, res, apiKey, allowNoAuth, challenge, authStartedAt);
 }
 
 export function validateAuth(
@@ -60,13 +63,16 @@ export function validateAuth(
   apiKey: string | undefined,
   allowNoAuth = false,
   challenge?: string,
+  /** GT-686 — when the credential check started, so a 401 reports its real duration. */
+  authStartedAt: number = Date.now(),
 ): McpUserContext | null {
+  const authElapsed = () => Date.now() - authStartedAt;
   const env = process.env.NODE_ENV || 'production';
 
   // No API key configured
   if (!apiKey) {
     if (env === 'production' || !allowNoAuth) {
-      return writeUnauthorized(res, 'MCP server requires an API key. Set EVOLITH_API_KEY or --api-key.', challenge);
+      return writeUnauthorized(res, 'MCP server requires an API key. Set EVOLITH_API_KEY or --api-key.', challenge, authElapsed());
     }
     return { ...READER_CONTEXT, environment: env };
   }
@@ -87,7 +93,7 @@ export function validateAuth(
     if (payload) return getContextFromPayload(payload);
   }
 
-  return writeUnauthorized(res, 'Invalid or missing API key or JWT token', challenge);
+  return writeUnauthorized(res, 'Invalid or missing API key or JWT token', challenge, authElapsed());
 }
 
 export function verifyJwtToken(token: string, secret: string): Record<string, unknown> | null {

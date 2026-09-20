@@ -15,6 +15,7 @@ import {
   createErrorEnvelope,
   createSuccessEnvelope,
   ErrorCode,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
@@ -91,7 +92,7 @@ export class EnforceCommand extends BaseEvolithCommand {
     const meta = (): OutputMeta => ({
       command: commandId,
       executedAt: new Date().toISOString(),
-      durationMs: Date.now() - startedAt,
+      durationMs: elapsedMsSince(startedAt),
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });
@@ -189,7 +190,7 @@ export class EnforceCommand extends BaseEvolithCommand {
     const meta = (): OutputMeta => ({
       command: commandId,
       executedAt: new Date().toISOString(),
-      durationMs: Date.now() - startedAt,
+      durationMs: elapsedMsSince(startedAt),
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });

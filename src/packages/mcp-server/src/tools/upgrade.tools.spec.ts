@@ -24,6 +24,9 @@ jest.mock(
   }),
 );
 
+// GT-673: every plan carries the three classes; the tools summarise them.
+const emptyClasses = { manifestPresent: true, upstreamOnly: [], localOnly: [], conflicts: [] };
+
 describe('createUpgradeTools', () => {
   const fsDouble = { readFile: jest.fn() } as unknown as never;
   const loggerDouble = { info: jest.fn() } as unknown as never;
@@ -55,7 +58,7 @@ describe('createUpgradeTools', () => {
 
   describe('evolith-upgrade-plan (read)', () => {
     it('reports up-to-date when the plan has no changes (explicit paths)', async () => {
-      const plan = { changes: [], breakingChanges: [] };
+      const plan = { ...emptyClasses, changes: [], breakingChanges: [] };
       mockPlanUpgrade.mockResolvedValue(plan);
 
       const out = (await planTool.execute({
@@ -67,12 +70,14 @@ describe('createUpgradeTools', () => {
       expect(out).toEqual({
         upToDate: true,
         plan,
+        divergence: { manifestPresent: true, upstreamOnly: [], localOnly: [], conflicts: [] },
         message: 'Satellite is already up to date',
       });
     });
 
     it('returns a dry-run summary when changes are planned (path/core aliases)', async () => {
       const plan = {
+        ...emptyClasses,
         changes: [{ id: 'a' }, { id: 'b' }],
         breakingChanges: [{ id: 'a' }],
       };
@@ -86,13 +91,14 @@ describe('createUpgradeTools', () => {
         upToDate: false,
         dryRun: true,
         plan,
+        divergence: { manifestPresent: true, upstreamOnly: [], localOnly: [], conflicts: [] },
         breakingChanges: 1,
         message: 'Dry run complete — 2 change(s) planned, no changes applied',
       });
     });
 
     it('defaults satellitePath to cwd and corePath to satellitePath when args are empty', async () => {
-      mockPlanUpgrade.mockResolvedValue({ changes: [], breakingChanges: [] });
+      mockPlanUpgrade.mockResolvedValue({ ...emptyClasses, changes: [], breakingChanges: [] });
 
       await planTool.execute({});
 
@@ -110,7 +116,7 @@ describe('createUpgradeTools', () => {
 
   describe('evolith-upgrade-apply (mutative)', () => {
     it('applies the upgrade and returns the result and report', async () => {
-      const result = { applied: true, files: 3 };
+      const result = { applied: true, files: 3, plan: { ...emptyClasses } };
       const report = '# Upgrade report';
       mockExecuteUpgrade.mockResolvedValue(result);
       mockGetUpgradeReport.mockResolvedValue(report);
@@ -127,13 +133,19 @@ describe('createUpgradeTools', () => {
         corePath: '/core',
         force: true,
         skipBackup: true,
+        overwriteLocal: false,
+        acceptLocal: false,
       });
       expect(mockGetUpgradeReport).toHaveBeenCalledWith(result);
-      expect(out).toEqual({ result, report });
+      expect(out).toEqual({
+        result,
+        report,
+        divergence: { manifestPresent: true, upstreamOnly: [], localOnly: [], conflicts: [] },
+      });
     });
 
     it('coerces missing force/skipBackup to false and defaults paths to cwd', async () => {
-      const result = { applied: false };
+      const result = { applied: false, plan: { ...emptyClasses } };
       mockExecuteUpgrade.mockResolvedValue(result);
       mockGetUpgradeReport.mockResolvedValue('r');
 
@@ -144,12 +156,66 @@ describe('createUpgradeTools', () => {
         corePath: process.cwd(),
         force: false,
         skipBackup: false,
+        overwriteLocal: false,
+        acceptLocal: false,
       });
     });
 
     it('propagates service failures', async () => {
       mockExecuteUpgrade.mockRejectedValue(new Error('apply failed'));
       await expect(applyTool.execute({ satellitePath: '/sat' })).rejects.toThrow('apply failed');
+    });
+  });
+
+  // GT-673: the MCP surface mirrors the CLI flags and the per-class summary.
+  describe('GT-673: classification parity with the CLI', () => {
+    const plan = {
+      manifestPresent: false,
+      changes: [{ relativePath: 'rulesets/a.json' }, { relativePath: 'rulesets/b.json' }, { relativePath: 'rulesets/c.json' }],
+      breakingChanges: [],
+      upstreamOnly: [{ relativePath: 'rulesets/a.json', classification: 'upstream-only' }],
+      localOnly: [{ relativePath: 'rulesets/b.json', classification: 'local-only' }],
+      conflicts: [{ relativePath: 'rulesets/c.json', classification: 'conflict', reason: 'no-fingerprint' }],
+    };
+
+    it('plan: the payload carries the divergence summary with the three classes and conflict reasons', async () => {
+      mockPlanUpgrade.mockResolvedValue(plan);
+
+      const out = (await planTool.execute({ satellitePath: '/sat' })) as Record<string, unknown>;
+
+      expect(out.divergence).toEqual({
+        manifestPresent: false,
+        upstreamOnly: ['rulesets/a.json'],
+        localOnly: ['rulesets/b.json'],
+        conflicts: [{ path: 'rulesets/c.json', reason: 'no-fingerprint' }],
+      });
+    });
+
+    it('apply: forwards overwriteLocal and acceptLocal, and the payload names overwritten files', async () => {
+      const result = { success: true, plan, overwrittenFiles: ['rulesets/c.json'], baselinedFiles: [] };
+      mockExecuteUpgrade.mockResolvedValue(result);
+      mockGetUpgradeReport.mockResolvedValue('r');
+
+      const out = (await applyTool.execute({ satellitePath: '/sat', overwriteLocal: true })) as Record<string, unknown>;
+
+      expect(mockExecuteUpgrade).toHaveBeenCalledWith(expect.objectContaining({ overwriteLocal: true, acceptLocal: false }));
+      expect((out.result as typeof result).overwrittenFiles).toEqual(['rulesets/c.json']);
+      expect((out.divergence as Record<string, unknown>).conflicts).toEqual([{ path: 'rulesets/c.json', reason: 'no-fingerprint' }]);
+    });
+
+    it('apply: acceptLocal is forwarded so the baseline path is reachable from MCP', async () => {
+      mockExecuteUpgrade.mockResolvedValue({ success: true, plan, overwrittenFiles: [], baselinedFiles: ['rulesets/c.json'] });
+      mockGetUpgradeReport.mockResolvedValue('r');
+
+      await applyTool.execute({ satellitePath: '/sat', acceptLocal: true });
+
+      expect(mockExecuteUpgrade).toHaveBeenCalledWith(expect.objectContaining({ acceptLocal: true, overwriteLocal: false }));
+    });
+
+    it('apply schema declares the two GT-673 inputs', () => {
+      const props = (applyTool.schema.inputSchema as { properties: Record<string, unknown> }).properties;
+      expect(props.overwriteLocal).toBeDefined();
+      expect(props.acceptLocal).toBeDefined();
     });
   });
 });

@@ -45,6 +45,8 @@ describe('Tool registration (full DI graph)', () => {
       'evolith-evaluate',
       'evolith-fixtures',
       'evolith-gate-evaluate',
+      // GT-682 (#759) — `evolith history`, read-only.
+      'evolith-history',
       'evolith-init-batch',
       'evolith-knowledge-search',
       'evolith-metrics',
@@ -60,6 +62,8 @@ describe('Tool registration (full DI graph)', () => {
       'evolith-pattern-list-by-topology',
       'evolith-phase-advance',
       'evolith-phase-artifacts-evaluate',
+      // GT-682 (#760) — `evolith profile current|list`, read-only.
+      'evolith-profile',
       'evolith-satellite-adopt',
       'evolith-satellite-create',
       'evolith-satellite-list',
@@ -68,6 +72,8 @@ describe('Tool registration (full DI graph)', () => {
       'evolith-sdlc-generate',
       'evolith-sdlc-handoff',
       'evolith-sdlc-status',
+      // GT-682 (#761) — `evolith standards --list|--get`, read-only.
+      'evolith-standards',
       'evolith-topology-get',
       'evolith-ruleset-list',
   'evolith-topology-list',
@@ -97,5 +103,9 @@ describe('Tool registration (full DI graph)', () => {
     expect(registry.get('evolith-sdlc-handoff')?.mutative).toBe(true);
     expect(registry.get('evolith-auto-fix')?.mutative).toBe(true);
     expect(registry.get('evolith-validate')?.mutative).toBeFalsy();
+    // GT-682 — the three ported CLI reads must never acquire the mutative flag.
+    expect(registry.get('evolith-history')?.mutative).toBeFalsy();
+    expect(registry.get('evolith-profile')?.mutative).toBeFalsy();
+    expect(registry.get('evolith-standards')?.mutative).toBeFalsy();
   });
 });

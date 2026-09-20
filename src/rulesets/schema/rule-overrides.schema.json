@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/rule-overrides.schema.json",
+  "title": "Evolith Rule Overrides",
+  "description": "GT-678 — a tenant's per-rule delta over the Core corpus: disable, downgrade, de-block or harden ONE rule at a time, with a rationale, an approver and (for waivers) an expiry. Authored inside the satellite and referenced from its `evolith.yaml` (`spec.rulesets.overrides: <path relative to the satellite root>`). Read by `RulesetValidatorService.validate`, which every surface (CLI `validate`/`evaluate`, MCP `evolith-validate`/`evolith-evaluate`, REST `/architecture/validate-satellite` and `/evaluate`) traverses; validated against this schema before anything runs, and a document that fails it aborts the run with a named error (never ignored). Every override that changes a run is named in the result under `overrides.applied` (from → to, approver, expiry, source); every override that could not be honoured is named under `overrides.rejected` with a code. A blocking criterion can be WAIVED (time-boxed and approved) but never REMOVED: `enabled: false` or `blocking: false` on a `blocking: true` rule without both `approvedBy` and `expiresOn` is rejected as `OVR-BLOCKING-REMOVED` and fails the run closed.",
+  "type": "object",
+  "required": ["tenantId", "version", "effectiveDate", "approvedBy", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "tenantId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Opaque tenant identifier. Echoed for audit; the Core never resolves it (ADR-0101)."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver of this override document."
+    },
+    "effectiveDate": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date from which the document applies (informational; the engine gates on `expiresOn`, not on this)."
+    },
+    "approvedBy": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Who approved the DOCUMENT. Does not stand in for the per-override `approvedBy` a waiver of a blocking criterion requires."
+    },
+    "rules": {
+      "type": "object",
+      "description": "Keyed by Core rule id (e.g. `ACL-02`). An id the corpus does not carry is reported as `OVR-UNKNOWN-RULE`; nothing is loosened by a typo, so the run stays at least as strict as the corpus.",
+      "propertyNames": { "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$" },
+      "additionalProperties": { "$ref": "#/definitions/override" }
+    }
+  },
+  "definitions": {
+    "override": {
+      "type": "object",
+      "required": ["rationale"],
+      "additionalProperties": false,
+      "anyOf": [
+        { "required": ["enabled"] },
+        { "required": ["severity"] },
+        { "required": ["blocking"] }
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "`false` removes the rule from evaluation; it is reported as disabled with its source. On a `blocking: true` rule this is a waiver and needs `approvedBy` + `expiresOn`."
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["MUST", "SHOULD", "COULD", "MUST NOT", "SHOULD NOT"],
+          "description": "The severity the rule is evaluated and reported at. `SHOULD NOT` collapses to `SHOULD`, exactly as the corpus loader collapses it. Downgrading a `blocking: true` rule needs `approvedBy` (recorded); raising is always allowed."
+        },
+        "blocking": {
+          "type": "boolean",
+          "description": "`false` on a `blocking: true` rule is a waiver of a blocking criterion and needs `approvedBy` + `expiresOn`; `true` (hardening) is always allowed."
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Why. Required on every override so an auditor never finds a softening without a reason."
+        },
+        "approvedBy": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Who approved THIS override. Required to waive a blocking criterion or to downgrade its severity."
+        },
+        "expiresOn": {
+          "type": "string",
+          "format": "date",
+          "description": "Last day (inclusive, UTC) the override is in force. Past it the override is ignored and reported as `OVR-EXPIRED`. Required to waive a blocking criterion."
+        }
+      }
+    }
+  }
+}

@@ -8,6 +8,7 @@ import {
   createErrorEnvelope,
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
   type OutputMeta,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
 import { CLI_EXIT_CODES, setExitCode } from '../../infrastructure/cli/exit-codes';
@@ -53,7 +54,7 @@ export class ChatCommand extends BaseEvolithCommand {
     const meta = (correlationId: string): OutputMeta => ({
       command: 'evolith chat',
       executedAt: new Date().toISOString(),
-      durationMs: Date.now() - startedAt,
+      durationMs: elapsedMsSince(startedAt),
       correlationId,
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });

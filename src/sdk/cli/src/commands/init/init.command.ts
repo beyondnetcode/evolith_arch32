@@ -73,7 +73,6 @@ export class InitCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith init',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     };

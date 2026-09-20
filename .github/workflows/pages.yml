@@ -1,0 +1,90 @@
+name: Publish GitHub Pages
+
+# The two public views — the Atlas (https://beyondnetcode.github.io/evolith_arch32/)
+# and the E2E master view (/master-view.html) — were published by hand until
+# 2026-09-19: the `gh-pages` branch carried a copy of `reference/core/architecture/demos`
+# that predated the 2026-07-04 taxonomy move, and a master view whose counts were
+# three months stale. Nothing compared the branch to the tree.
+#
+# This workflow makes the branch a projection of `main`: every push that touches a
+# source of the pages rebuilds `dist/pages` with `.harness/scripts/pages/build-pages.mjs`
+# (which derives every printed number from the tree) and force-pushes the result to
+# `gh-pages`. The Pages site stays on its legacy `gh-pages` source, so the repo's
+# Pages settings do not change.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'reference/core/architecture/demos/**'
+      - 'reference/core/sdlc/assets/master-view.svg'
+      - '.harness/scripts/pages/**'
+      - '.harness/scripts/generate-master-view.mjs'
+      - '.harness/scripts/generate-master-view-viewer.mjs'
+      - '.github/workflows/pages.yml'
+
+# Scorecard Token-Permissions: read-only by default; the one job that pushes
+# declares `contents: write` on itself.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build the pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '20'
+
+      # No `npm ci`: the build reads the tree and generated artifacts with node:fs only.
+      - name: Build dist/pages from the tree
+        run: node .harness/scripts/pages/build-pages.mjs --out dist/pages
+
+      - name: Tracked master-view.svg matches its generator
+        run: node .harness/scripts/pages/build-pages.mjs --check
+
+      - name: Upload the built site
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pages
+          path: dist/pages
+          retention-days: 7
+
+  publish:
+    name: Push to gh-pages
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download the built site
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: pages
+          path: dist/pages
+
+      # A fresh orphan commit each time: the branch is a projection, not a history.
+      - name: Publish dist/pages to the gh-pages branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd dist/pages
+          touch .nojekyll
+          git init -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "pages: built from ${GITHUB_SHA} by ${GITHUB_WORKFLOW}"
+          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages

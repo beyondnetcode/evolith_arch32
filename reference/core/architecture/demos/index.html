@@ -1,135 +1,74 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Evolith Governance Atlas</title>
+  <meta name="theme-color" content="#F4F6F8">
+  <link rel="alternate" hreflang="en" href="./?lang=en">
+  <link rel="alternate" hreflang="es" href="./?lang=es">
+  <link rel="alternate" hreflang="x-default" href="./">
+  <script>(function(){try{var d=document.documentElement,s=JSON.parse(localStorage.getItem("evolith.pages.v1")||"{}")||{},t=new URLSearchParams(location.search).get("theme")||s.theme;if(t==="light"||t==="dark")d.setAttribute("data-theme",t);if(s.motion==="off")d.setAttribute("data-motion","off")}catch(e){}})()</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="./pages.css">
   <link rel="stylesheet" href="./styles.css">
+  <style>
+    /* Skeleton bands painted before the module runs (design-spec §2.11); removed on first render. */
+    .canvas-wrap.is-loading::before { content: ""; position: absolute; inset: 16px; border-radius: 16px;
+      background: repeating-linear-gradient(180deg, var(--surface-2) 0 96px, transparent 96px 112px); opacity: .7; }
+  </style>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand">
-        <svg class="brand-mark" viewBox="0 0 64 76" aria-hidden="true">
-          <path d="M32 2 61 18v12L32 14 3 30V18L32 2Z" fill="#52a69c"/>
-          <path d="M3 35 32 51l29-16v12L32 63 3 47V35Z" fill="#214d70"/>
-          <path d="M3 20 32 36l29-16v12L32 48 3 32V20Z" fill="#17344d"/>
-          <path d="M18 28 32 36l14-8 11 6-25 14L7 34l11-6Z" fill="#eef7f8"/>
-        </svg>
-        <div>
-          <p class="eyebrow" id="topSubtitle">Dynamic product and architecture vision</p>
-          <h1 id="topTitle">Evolith Governance Atlas</h1>
-        </div>
-      </div>
+  <a class="skip-link" id="skipLink" href="#transcript"></a>
 
-      <div class="top-actions" aria-label="Controles principales">
-        <label class="search-box">
-          <span id="searchLabel">Buscar</span>
-          <input id="searchInput" type="search" placeholder="Core API, MCP, evidence...">
-        </label>
-        <button id="langToggle" type="button" class="lang-toggle">EN</button>
-        <button id="playButton" type="button" class="primary-action">Play E2E</button>
-        <button id="resetButton" type="button">Reset</button>
-      </div>
-    </header>
+  <header class="shell-header" id="header" role="banner"></header>
 
-    <nav class="mode-strip" aria-label="Modos de exploracion" id="modeStrip"></nav>
-
-    <main class="workspace">
-      <aside class="rail left-rail">
-        <section class="rail-card">
-          <h2 id="scenarioRailTitle">Scenario</h2>
-          <div id="scenarioList" class="scenario-list"></div>
-        </section>
-
-        <section class="rail-card">
-          <h2 id="layersRailTitle">Layers</h2>
-          <div id="layerList" class="layer-list"></div>
-        </section>
-      </aside>
-
-      <section class="canvas-panel">
-        <div class="canvas-toolbar">
-          <div>
-            <strong id="activeModeName">Executive Flow</strong>
-            <span id="activeModeDescription">Idea to production under governed evidence.</span>
-          </div>
-          <div class="canvas-actions">
-            <button type="button" id="fitButton">Fit</button>
-            <button type="button" id="compactButton">Compact</button>
-          </div>
-        </div>
-
-        <div id="atlasCanvas" class="atlas-canvas" tabindex="0" aria-label="Mapa dinamico de arquitectura Evolith">
-          <div id="didacticCallout" class="didactic-callout" aria-live="polite" hidden></div>
-          <svg id="atlasSvg" viewBox="0 0 1600 940" role="img" aria-labelledby="atlasTitle atlasDesc">
-            <title id="atlasTitle">Evolith Governance Atlas</title>
-            <desc id="atlasDesc">Mapa dinamico de vision de producto, interfaces, runtime, gobierno, evidencia e integraciones de Evolith.</desc>
-            <defs>
-              <marker id="arrowDefault" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-                <path d="M2 2 L10 6 L2 10 Z"></path>
-              </marker>
-              <marker id="arrowActive" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
-                <path d="M2 2 L12 7 L2 12 Z"></path>
-              </marker>
-              <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
-                <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#102030" flood-opacity=".18"/>
-              </filter>
-            </defs>
-            <g id="viewport">
-              <g id="layersGroup"></g>
-              <g id="edgesGroup"></g>
-              <g id="nodesGroup"></g>
-              <g id="packetsGroup"></g>
-            </g>
-          </svg>
-          <div class="zoom-hint" id="zoomHint">Scroll para zoom, arrastra para mover, click para inspeccionar.</div>
-        </div>
-
-        <footer class="timeline" aria-label="Timeline E2E">
-          <div id="timelineTrack" class="timeline-track"></div>
-        </footer>
-      </section>
-
-      <aside class="rail detail-rail">
-        <section class="detail-card" id="detailCard">
-          <p class="detail-domain" id="detailDomain">Atlas</p>
-          <h2 id="detailTitle">Selecciona un componente</h2>
-          <p id="detailSummary">Explora la vision dinamica de Evolith por flujo, autoridad, interfaz, evidencia, runtime agentic, satelites o integraciones.</p>
-
-          <div class="detail-grid">
-            <div>
-              <strong id="labelAuthority">Autoridad</strong>
-              <span id="detailAuthority">Seleccion dinamica</span>
-            </div>
-            <div>
-              <strong id="labelConsumes">Consume</strong>
-              <span id="detailConsumes">Nodos, relaciones y escenarios</span>
-            </div>
-            <div>
-              <strong id="labelExposes">Expone</strong>
-              <span id="detailExposes">Contexto de arquitectura</span>
-            </div>
-            <div>
-              <strong id="labelProtocol">Protocolo</strong>
-              <span id="detailProtocol">CLI, REST, MCP, eventos, Git</span>
-            </div>
-          </div>
-
-          <div class="doc-links">
-            <strong id="labelSources">Fuentes</strong>
-            <div id="detailDocs"></div>
-          </div>
-        </section>
-
-        <section class="rail-card">
-          <h2 id="relationRailTitle">Relation</h2>
-          <p id="relationSummary">Activa un modo o escenario para ver protocolos, ownership y direccion de flujo.</p>
-        </section>
-      </aside>
-    </main>
+  <div class="story-bar" id="storyBar">
+    <div class="mode-switch seg" id="modeSwitch" role="radiogroup"></div>
+    <div class="story-controls" id="storyControls"></div>
+    <div class="explore-controls" id="exploreControls" hidden></div>
   </div>
 
-  <script src="./app.js" type="module"></script>
+  <main class="atlas-main" id="main">
+    <section class="canvas-wrap is-loading" id="canvasWrap">
+      <svg id="atlas" class="atlas-svg" role="group" aria-labelledby="atlasTitle" aria-describedby="atlasDesc" preserveAspectRatio="xMidYMid meet">
+        <title id="atlasTitle"></title>
+        <desc id="atlasDesc"></desc>
+        <defs id="atlasDefs"></defs>
+        <g id="camera">
+          <g id="lanes"></g>
+          <rect id="veil" class="veil" hidden></rect>
+          <g id="edges"></g>
+          <g id="nodes"></g>
+          <g id="packets"></g>
+          <g id="badges"></g>
+        </g>
+      </svg>
+      <div class="canvas-tools" id="canvasTools"></div>
+      <div class="canvas-hint" id="canvasHint" aria-hidden="true"></div>
+      <div class="popover" id="legendPop" hidden></div>
+      <div class="popover" id="layersPop" hidden></div>
+      <div class="canvas-error" id="canvasError" hidden></div>
+    </section>
+
+    <aside class="story-panel" id="panel" aria-labelledby="panelTitle" data-snap="half">
+      <button type="button" class="sheet-handle" id="sheetHandle" aria-expanded="false" hidden></button>
+      <div class="panel-head" id="panelHead" hidden></div>
+      <div class="panel-body" id="panelBody"></div>
+    </aside>
+
+    <section class="list-view" id="listView" aria-labelledby="listTitle" hidden></section>
+  </main>
+
+  <section class="transcript" id="transcript" aria-labelledby="transcriptTitle"></section>
+
+  <footer class="status-strip" id="statusStrip"></footer>
+
+  <div class="dialog" id="shortcuts" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle" hidden></div>
+
+  <script id="atlas-data"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>

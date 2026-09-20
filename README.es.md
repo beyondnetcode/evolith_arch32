@@ -123,7 +123,7 @@ Para un agente de IA, el mismo motor como servidor MCP sobre stdio (Node ≥ 20)
 
 Cuántas reglas, packs y ADRs carga tu instalación lo imprime `evolith rulesets`; los conteos del árbol los mide CI en cada PR y los publica el [inventario del corpus](./reference/core/control-center/maturity-reports/inventory-summary.es.md).
 
-<div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Abrir el diagrama interactivo"><img src="./reference/core/sdlc/assets/master-view.svg" alt="Cómo encajan CLI, Core y las cinco fases del SDLC" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Abrir visor interactivo</a></b> — arrastra para desplazar, rueda para zoom</sub></div>
+<div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Abrir el diagrama interactivo"><img src="./reference/core/sdlc/assets/master-view.svg" alt="Cómo encajan CLI, Core y las cinco fases del SDLC" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Abrir el visor interactivo</a></b> — recorrido guiado en once paradas · arrastra para desplazar · rueda para zoom · cifras derivadas del árbol en cada build</sub></div>
 
 ---
 

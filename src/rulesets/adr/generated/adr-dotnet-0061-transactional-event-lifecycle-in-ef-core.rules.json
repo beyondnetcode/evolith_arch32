@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0061-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0061: Transactional Event Lifecycle in EF Core",

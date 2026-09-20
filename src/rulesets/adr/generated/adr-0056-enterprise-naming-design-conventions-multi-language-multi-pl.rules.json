@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0056-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0056: Enterprise Naming & Design Conventions - Multi-Language, Multi-Platform",

@@ -10,6 +10,10 @@
   "rules": [
     {
       "id": "MCP-01",
+      "facts": [
+        "core.evidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "protocol",
       "title": "Initialize Request Must Return Capabilities",
@@ -19,6 +23,10 @@
     },
     {
       "id": "MCP-02",
+      "facts": [
+        "core.evidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "tools",
       "title": "Tools List Must Be Complete and Stable",
@@ -28,6 +36,10 @@
     },
     {
       "id": "MCP-03",
+      "facts": [
+        "core.evidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "resources",
       "title": "Resources Must Preserve Core Traceability",
@@ -37,6 +49,10 @@
     },
     {
       "id": "MCP-04",
+      "facts": [
+        "core.cli",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "HTTP Transport Requires Explicit Authentication Mode",
@@ -46,6 +62,10 @@
     },
     {
       "id": "MCP-05",
+      "facts": [
+        "core.cli",
+        "repository"
+      ],
       "severity": "SHOULD",
       "category": "observability",
       "title": "MCP Calls Should Emit Metrics",

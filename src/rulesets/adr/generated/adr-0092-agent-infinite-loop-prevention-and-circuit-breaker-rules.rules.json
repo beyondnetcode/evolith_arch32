@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0092-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0092: Agent Infinite Loop Prevention and Circuit Breaker Rules",

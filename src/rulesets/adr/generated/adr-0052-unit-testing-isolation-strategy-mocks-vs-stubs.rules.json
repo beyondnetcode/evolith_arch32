@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0052-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0052: Unit Testing Isolation Strategy (Mocks vs Stubs)",

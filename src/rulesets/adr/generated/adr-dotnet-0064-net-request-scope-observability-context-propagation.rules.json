@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0064-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0064: .NET Request-Scope Observability Context Propagation",

@@ -60,6 +60,8 @@ const KNOWN_CLASSES = [
   'native-handler',
   'unimplemented-native',
   'needs-runtime',
+  // GT-716 AC2: decided over a posture only the owners can declare; the OPA engine when supplied.
+  'needs-supplied-facts',
   'needs-external-system',
   'documentation-only',
   'underspecified',

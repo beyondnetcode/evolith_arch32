@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0021-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0021: High-Performance Authentication Graph Compilation",

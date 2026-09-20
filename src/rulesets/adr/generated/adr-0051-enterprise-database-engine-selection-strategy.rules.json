@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0051-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0051: Enterprise Database Engine Selection Strategy",

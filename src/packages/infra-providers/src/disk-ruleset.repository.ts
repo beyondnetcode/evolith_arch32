@@ -15,6 +15,11 @@ import {
   describeRulesetsResolutionFailure,
   probeRulesetsLocation,
 } from "@beyondnet/evolith-core-domain/application/paths/rulesets-location";
+import {
+  FactVocabulary,
+  parseFactVocabulary,
+  resolveDeclaredFacts,
+} from "@beyondnet/evolith-core-domain/domain/models/declared-facts";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { ErrorObject, ValidateFunction } from "ajv";
@@ -297,6 +302,8 @@ export class DiskRulesetRepository implements IRulesetRepository {
     // a governance tool that silently validates nothing is worse than one that
     // crashes, because the operator reads "warning" as "checked, mostly passed".
     const rulesetsDir = await this.resolveRulesetsDir(corePath);
+    // GT-716 AC2: the fact vocabulary every rule's `facts` resolves against.
+    const vocabulary = await this.loadFactVocabulary(rulesetsDir);
 
     const files = await this.findRulesetFiles(rulesetsDir);
     const loaded: LoadedRule[] = [];
@@ -355,7 +362,7 @@ export class DiskRulesetRepository implements IRulesetRepository {
         const relative = filePath.replace(corePath + path.sep, "");
         const corpusFile = relativeToCorpus(filePath, rulesetsDir);
         const tenant = corpusFile.startsWith(TENANT_PACK_PREFIX);
-        for (const { rule, authored } of this.normalizeRuleset(parsed, relative)) {
+        for (const { rule, authored } of this.normalizeRuleset(parsed, relative, vocabulary)) {
           loaded.push({ rule, corpusFile, tenant, authored });
         }
       } catch (err: unknown) {
@@ -477,6 +484,7 @@ export class DiskRulesetRepository implements IRulesetRepository {
   private normalizeRuleset(
     parsed: Record<string, unknown>,
     sourceFile: string,
+    vocabulary: FactVocabulary = new Map(),
   ): Array<{ rule: NormalizedRule; authored: AuthoredRuleOverride }> {
     const rawList = (parsed["rules"] ?? parsed["principles"]) as
       | Array<Record<string, unknown>>
@@ -500,6 +508,11 @@ export class DiskRulesetRepository implements IRulesetRepository {
             ? String(r["validationQuery"])
             : undefined,
           enforce: this.normalizeEnforce(r["enforce"]),
+          // GT-716 AC2: the rule's declared facts, resolved against the vocabulary.
+          // Absent stays absent (a pack that predates the declaration); a facet the
+          // vocabulary does not know is dropped HERE and named at WARN, never
+          // silently promoted to "observed".
+          ...this.normalizeFacts(r["facts"], String(r["id"]), sourceFile, vocabulary),
           sourceFile,
           // GT-678: an authored `enabled: false` is HONOURED — it used to pass
           // the schema and vanish here. Only the authored `false` is carried;
@@ -508,6 +521,52 @@ export class DiskRulesetRepository implements IRulesetRepository {
         },
         authored: authoredOverride(r),
       }));
+  }
+
+  /**
+   * GT-716 AC2 — read `<rulesets>/schema/facets.json`. A corpus without it (one
+   * that predates the declaration) loads with an empty vocabulary and says so once:
+   * every rule then loads without `facts`, and the engine falls back to the
+   * pre-GT-716 defaults rather than inventing provenances.
+   */
+  private async loadFactVocabulary(rulesetsDir: string): Promise<FactVocabulary> {
+    const file = path.join(rulesetsDir, "schema", "facets.json");
+    if (!(await this.fs.exists(file))) {
+      // A corpus without a vocabulary is legitimate — a fixture, a tenant pack, a bundle
+      // that predates GT-716 — so this is information, not a warning: the rules load
+      // without `facts` and the engine classifies them by the pre-declaration defaults.
+      this.logger.info(
+        `Fact vocabulary not found at ${file}; rules load without \`facts\` and are classified by the pre-GT-716 defaults.`,
+      );
+      return new Map();
+    }
+    try {
+      const { vocabulary, rejected } = parseFactVocabulary(await this.fs.readJson(file));
+      if (rejected.length > 0) {
+        this.logger.warn(`Fact vocabulary: ${rejected.length} facet(s) with an unknown provenance were ignored: ${rejected.join(", ")}`);
+      }
+      return vocabulary;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`Fact vocabulary at ${file} could not be read (${msg}); rules load without \`facts\`.`);
+      return new Map();
+    }
+  }
+
+  private normalizeFacts(
+    raw: unknown,
+    ruleId: string,
+    sourceFile: string,
+    vocabulary: FactVocabulary,
+  ): Pick<NormalizedRule, "facts"> {
+    if (!Array.isArray(raw)) return {};
+    const { facts, unknown } = resolveDeclaredFacts(raw, vocabulary);
+    if (unknown.length > 0) {
+      this.logger.warn(
+        `${sourceFile}: ${ruleId} declares facet(s) the vocabulary does not know — ${unknown.join(", ")}. They are ignored; add them to src/rulesets/schema/facets.json or correct the rule.`,
+      );
+    }
+    return { facts };
   }
 
   /**

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0041-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0041: Canonical .NET (C#) Backend Architecture",

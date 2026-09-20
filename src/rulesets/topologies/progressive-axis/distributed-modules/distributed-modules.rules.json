@@ -10,6 +10,7 @@
   "rules": [
     {
       "id": "DM-R01",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "module-autonomy",
       "title": "Module Owns Its Lifecycle",
@@ -20,6 +21,7 @@
     },
     {
       "id": "DM-R02",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "contract-stability",
       "title": "Inter-Module Contracts are Explicit and Versioned",
@@ -30,6 +32,7 @@
     },
     {
       "id": "DM-R03",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "data-ownership",
       "title": "Module Data Isolation Enforced",
@@ -40,6 +43,7 @@
     },
     {
       "id": "DM-R04",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "async-communication",
       "title": "Async Events Have Schema-Validated Payloads",
@@ -50,6 +54,7 @@
     },
     {
       "id": "DM-R05",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "observability",
       "title": "Distributed Tracing Across Modules",
@@ -60,6 +65,7 @@
     },
     {
       "id": "DM-R06",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "deployment",
       "title": "Modules Deployable Independently",
@@ -70,6 +76,7 @@
     },
     {
       "id": "DM-R07",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "resiliency",
       "title": "Circuit Breaker for Inter-Module Calls",
@@ -80,6 +87,7 @@
     },
     {
       "id": "DM-R08",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "extraction-readiness",
       "title": "Maintain F2 Extraction Score",

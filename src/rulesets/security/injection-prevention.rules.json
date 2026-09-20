@@ -5,6 +5,9 @@
   "rules": [
     {
       "id": "SEC-INJ-01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "No shell exec with user input",
@@ -15,6 +18,9 @@
     },
     {
       "id": "SEC-INJ-02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "Parameter allowlists for scaffold tools",

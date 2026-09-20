@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0043-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0043: Data Access and ORM Strategy for Node.js",

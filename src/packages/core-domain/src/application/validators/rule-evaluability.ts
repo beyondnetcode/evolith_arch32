@@ -20,14 +20,18 @@
  * unhandled rules are not a handler problem at all. That reframing is the point
  * of this module; the handlers are the cheap part once it exists.
  *
- * The triage is a TABLE, not a heuristic. A keyword classifier over rule text
- * would be exactly the unmeasured guess GT-584 exists to prevent, and it would
- * drift silently. Every entry below is a decision taken by reading the rule's
- * own `validationQuery`, and `rule-corpus-triage.spec.ts` fails if the corpus
- * grows a rule this table does not cover.
+ * The triage was a TABLE here (`RULE_TRIAGE`, keyed by rule id) until GT-716 AC2
+ * moved the declaration into each rule's own file: `facts` names the facets the
+ * check reads, `src/rulesets/schema/facets.json` says where the truth of each one
+ * lives, and the class is DERIVED from the most demanding provenance. The same
+ * declaration is what the OPA bundle build checks the policies' reads against, so
+ * the two engines can no longer classify one rule from two unrelated sources — the
+ * defect that had `KI-R01..07` "underspecified" natively and decided in Rego.
+ * `rule-corpus-triage.spec.ts` fails if a corpus rule declares nothing, or names a
+ * facet the vocabulary does not know.
  */
 
-import { NormalizedRule } from '../../domain/models/normalized-rule';
+import { DeclaredFact, FactProvenance, NormalizedRule } from '../../domain/models/normalized-rule';
 
 /** Why a rule is or is not evaluable by the native engine. */
 export type RuleEvaluability =
@@ -39,6 +43,14 @@ export type RuleEvaluability =
   | 'needs-external-system'
   /** Needs the running system: traces, timings, executed tests, per-call decisions. */
   | 'needs-runtime'
+  /**
+   * GT-716 AC2 — decided over a posture only the satellite's owners can declare
+   * (`supplied` facets: tenancy posture, runtime intent, the open-core boundary, a
+   * knowledge-intake record). The OPA engine decides it when the caller supplies the
+   * facet through `facts.satellite`; the native engine never can, and calling it
+   * `unimplemented-native` promised a handler that had nothing to read.
+   */
+  | 'needs-supplied-facts'
   /** No executable check is expressible — process/judgement, or a generator placeholder. */
   | 'documentation-only'
   /** The rule declares NO check at all. It must be authored before it can be implemented. */
@@ -97,92 +109,48 @@ export interface TriageEntry {
   readonly why: string;
 }
 
-const WHY = {
-  vcsHost: 'Acceptance lives in the VCS host (branch protection, approvals, tags, merge strategy), not in the tree.',
-  tracker: 'Acceptance is an issue-tracker state (age/SLA), outside the repository.',
-  registry: 'Acceptance is a record in an external catalog/registry/lineage store.',
-  liveDb: 'Acceptance is a property of a live database (RLS, schema-per-tenant).',
-  mesh: 'Acceptance is a property of deployed infrastructure (service mesh, mTLS, on-call).',
-  backend: 'Acceptance is a query against a telemetry/metrics backend.',
-  traces: 'Acceptance is an observation of the running system (traces, logs, per-call decisions).',
-  timings: 'Acceptance is a measured execution property (durations, coverage, isolation at run time).',
-  execute: 'Acceptance requires executing the suite/fixtures and comparing outcomes.',
-  judgement: 'Acceptance is a human judgement or board process with no machine-checkable predicate.',
-  noQuery: 'The rule declares no validationQuery — there is no check to implement yet.',
-} as const;
+/** Most demanding first: a rule's class is that of its most demanding fact. */
+const PROVENANCE_RANK: Readonly<Record<FactProvenance, number>> = { observed: 0, supplied: 1, external: 2, runtime: 3 };
+
+const CLASS_OF_PROVENANCE: Readonly<Record<FactProvenance, RuleEvaluability>> = {
+  observed: 'unimplemented-native',
+  supplied: 'needs-supplied-facts',
+  external: 'needs-external-system',
+  runtime: 'needs-runtime',
+};
 
 /**
- * Per-rule triage for every corpus rule no native handler claims.
+ * GT-716 AC2 — the class a declaration implies for a rule NO handler evaluates.
  *
- * Read as: "if this is not here and no handler claims it, the engine OWES a
- * handler". The default is deliberately the expensive one — an unknown rule
- * must never drop out of the denominator by accident.
+ * `[]` is a statement too: the rule names no machine-checkable fact. With a
+ * `validationQuery` that is a judgement or the generator placeholder it is
+ * documentation; with none at all it is a check nobody authored yet.
  */
-export const RULE_TRIAGE: Readonly<Record<string, TriageEntry>> = {
-  // ---- needs-external-system -------------------------------------------------
-  'CICD-03': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'CICD-04': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'CICD-06': { evaluability: 'needs-external-system', why: WHY.tracker },
-  'CICD-07': { evaluability: 'needs-external-system', why: WHY.tracker },
-  'DAM-R04': { evaluability: 'needs-external-system', why: WHY.registry },
-  'DAM-R06': { evaluability: 'needs-external-system', why: WHY.registry },
-  'DAM-R09': { evaluability: 'needs-external-system', why: WHY.registry },
-  'GIT-01': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'GIT-02': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'GIT-03': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'GIT-04': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'GIT-05': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'GIT-06': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'GIT-07': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'GIT-09': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'GIT-10': { evaluability: 'needs-external-system', why: WHY.vcsHost },
-  'MS-R02': { evaluability: 'needs-external-system', why: WHY.mesh },
-  'MS-R08': { evaluability: 'needs-external-system', why: WHY.mesh },
-  'MTN-02': { evaluability: 'needs-external-system', why: WHY.liveDb },
-  'OBS-EVD-03': { evaluability: 'needs-external-system', why: WHY.backend },
-
-  // ---- needs-runtime ---------------------------------------------------------
-  'ABAC-01': { evaluability: 'needs-runtime', why: WHY.traces },
-  'ABAC-02': { evaluability: 'needs-runtime', why: WHY.traces },
-  'ABAC-03': { evaluability: 'needs-runtime', why: WHY.traces },
-  'CLI-PAR-03': { evaluability: 'needs-runtime', why: WHY.execute },
-  'HXA-07': { evaluability: 'needs-runtime', why: WHY.timings },
-  'MS-R03': { evaluability: 'needs-runtime', why: WHY.timings },
-  'MS-R04': { evaluability: 'needs-runtime', why: WHY.execute },
-  'MTN-04': { evaluability: 'needs-runtime', why: WHY.traces },
-  'MTN-06': { evaluability: 'needs-runtime', why: WHY.traces },
-  'OBS-EVD-01': { evaluability: 'needs-runtime', why: WHY.traces },
-  'OBS-EVD-02': { evaluability: 'needs-runtime', why: WHY.traces },
-  'OCB-08': { evaluability: 'needs-runtime', why: WHY.execute },
-  'PROT-01': { evaluability: 'needs-runtime', why: WHY.traces },
-  'TPY-01': { evaluability: 'needs-runtime', why: WHY.execute },
-  'TPY-02': { evaluability: 'needs-runtime', why: WHY.timings },
-  'TPY-05': { evaluability: 'needs-runtime', why: WHY.timings },
-  'TPY-07': { evaluability: 'needs-runtime', why: WHY.timings },
-
-  // ---- documentation-only (judgement / board process) ------------------------
-  'OCB-07': { evaluability: 'documentation-only', why: WHY.judgement },
-  'PROT-03': { evaluability: 'documentation-only', why: WHY.judgement },
-  'PROT-06': { evaluability: 'documentation-only', why: WHY.judgement },
-
-  // ---- underspecified — no validationQuery authored --------------------------
-  // These are MUST/blocking rules that state an obligation and no way to test it.
-  // They are the most dangerous class: they look enforced and are not.
-  'EC-SEC-01': { evaluability: 'underspecified', why: WHY.noQuery },
-  'EC-SEC-02': { evaluability: 'underspecified', why: WHY.noQuery },
-  'SV-SEC-01': { evaluability: 'underspecified', why: WHY.noQuery },
-  'SV-SEC-02': { evaluability: 'underspecified', why: WHY.noQuery },
-  'INH-03': { evaluability: 'underspecified', why: WHY.noQuery },
-  'INH-04': { evaluability: 'underspecified', why: WHY.noQuery },
-  'INH-05': { evaluability: 'underspecified', why: WHY.noQuery },
-  'KI-R01': { evaluability: 'underspecified', why: WHY.noQuery },
-  'KI-R02': { evaluability: 'underspecified', why: WHY.noQuery },
-  'KI-R03': { evaluability: 'underspecified', why: WHY.noQuery },
-  'KI-R04': { evaluability: 'underspecified', why: WHY.noQuery },
-  'KI-R05': { evaluability: 'underspecified', why: WHY.noQuery },
-  'KI-R06': { evaluability: 'underspecified', why: WHY.noQuery },
-  'KI-R07': { evaluability: 'underspecified', why: WHY.noQuery },
-};
+export function evaluabilityOfFacts(
+  facts: readonly DeclaredFact[],
+  rule: Pick<NormalizedRule, 'validationQuery' | 'category'>,
+): TriageEntry {
+  if (facts.length === 0) {
+    // A generated ADR-conformance rule is documentation whether its validationQuery
+    // is the placeholder sentence or absent (the attestation variant has none): the
+    // generator, not an author, left it without a check.
+    if (rule.category === ADR_CONFORMANCE_CATEGORY && hasNoAuthoredCheck(rule.validationQuery)) {
+      return {
+        evaluability: 'documentation-only',
+        why: 'Auto-generated ADR-conformance rule that declares no fact — the harness never wired a check.',
+      };
+    }
+    return (rule.validationQuery ?? '').trim().length === 0
+      ? { evaluability: 'underspecified', why: 'The rule declares no facts and no validationQuery — there is no check to implement yet.' }
+      : { evaluability: 'documentation-only', why: 'The rule declares no machine-checkable fact: a judgement, a board process, or a generator placeholder.' };
+  }
+  const top = [...facts].sort((a, b) => PROVENANCE_RANK[b.provenance] - PROVENANCE_RANK[a.provenance])[0];
+  const listed = facts.map(f => `${f.facet} (${f.provenance})`).join(', ');
+  return {
+    evaluability: CLASS_OF_PROVENANCE[top.provenance],
+    why: `Declared facts: ${listed}.${top.why ? ` ${top.why}` : ''}`,
+  };
+}
 
 /**
  * The `.harness` generator (`generate-adr-rulesets.mjs`) emits one conformance
@@ -206,16 +174,19 @@ export function hasNoAuthoredCheck(validationQuery?: string): boolean {
  * Classify one rule.
  *
  * `hasNativeHandler` is supplied by the caller (the evaluator knows its own
- * handlers) so this module stays pure and testable without an engine.
+ * handlers) so this module stays pure and testable without an engine. A rule that
+ * carries a `facts` declaration is classified from it; one that does not (a tenant
+ * pack, a fixture) gets the defaults the table used to give.
  */
 export function classifyRule(rule: NormalizedRule, hasNativeHandler: boolean): TriageEntry {
   if (hasNativeHandler) {
     return { evaluability: 'native-handler', why: 'A native handler claims this rule.' };
   }
 
-  const triaged = RULE_TRIAGE[rule.id];
-  if (triaged) return triaged;
+  // GT-716 AC2 — the rule's own declaration, when the pack carries one.
+  if (rule.facts) return evaluabilityOfFacts(rule.facts, rule);
 
+  // No declaration (a tenant pack, a fixture): the pre-GT-716 defaults.
   if (rule.category === ADR_CONFORMANCE_CATEGORY && hasNoAuthoredCheck(rule.validationQuery)) {
     return {
       evaluability: 'documentation-only',
@@ -274,6 +245,7 @@ function emptyByClass(): Record<RuleEvaluability, number> {
     'unimplemented-native': 0,
     'needs-external-system': 0,
     'needs-runtime': 0,
+    'needs-supplied-facts': 0,
     'documentation-only': 0,
     underspecified: 0,
     // GT-675: reported by the OPA path only. The native triage table never

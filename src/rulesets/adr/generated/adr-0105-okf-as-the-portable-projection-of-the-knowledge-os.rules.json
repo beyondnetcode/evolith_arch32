@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0105-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0105: OKF as the Portable Projection of the Knowledge OS",

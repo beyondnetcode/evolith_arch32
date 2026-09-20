@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0027-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0027: Dual-Protocol API Strategy (REST & gRPC)",

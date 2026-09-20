@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0094-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0094: Multi-Agent Handoff and Task Delegation Standards",

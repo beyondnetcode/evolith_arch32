@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0060-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0060: .NET Multi-Tenancy Dual-Layer Strategy (EF Core & SQL Server)",

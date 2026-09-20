@@ -10,6 +10,10 @@
   "rules": [
     {
       "id": "OBS-EVD-01",
+      "facts": [
+        "satellite.packageJson",
+        "traces"
+      ],
       "severity": "MUST",
       "category": "tracing",
       "title": "Production Paths Emit Trace Context",
@@ -19,6 +23,10 @@
     },
     {
       "id": "OBS-EVD-02",
+      "facts": [
+        "satellite.packageJson",
+        "traces"
+      ],
       "severity": "MUST",
       "category": "logging",
       "title": "Structured Logs Carry Request Context",
@@ -28,6 +36,10 @@
     },
     {
       "id": "OBS-EVD-03",
+      "facts": [
+        "satellite.packageJson",
+        "telemetryBackend"
+      ],
       "severity": "MUST",
       "category": "metrics",
       "title": "Service Health Metrics Are Reported",
@@ -37,6 +49,9 @@
     },
     {
       "id": "OBS-EVD-04",
+      "facts": [
+        "satellite.scorecards"
+      ],
       "severity": "SHOULD",
       "category": "dashboards",
       "title": "Gate Evidence References Dashboard",

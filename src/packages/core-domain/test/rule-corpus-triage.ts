@@ -30,7 +30,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { NativeEvaluator } from '../src/application/validators/evaluators/native-evaluator';
 import { INativeRuleHandler } from '../src/application/validators/evaluators/handlers/rule-handler.interface';
-import { NormalizedRule } from '../src/domain/models/normalized-rule';
+import { DeclaredFact, FactProvenance, NormalizedRule } from '../src/domain/models/normalized-rule';
+import { parseFactVocabulary, resolveDeclaredFacts } from '../src/domain/models/declared-facts';
 import {
   ADR_CONFORMANCE_CATEGORY,
   ClassifiedRule,
@@ -88,6 +89,20 @@ function deriveSeverity(raw: Record<string, unknown>): NormalizedRule['severity'
   return raw['blocking'] === true || raw['enforcement'] ? 'MUST' : 'SHOULD';
 }
 
+const VOCABULARY = parseFactVocabulary(
+  JSON.parse(fs.readFileSync(path.join(RULESETS_ROOT, 'schema', 'facets.json'), 'utf8')),
+);
+
+/**
+ * GT-716 AC2 — a rule's declared facet ids, resolved through the SAME resolver the
+ * production loader uses. A facet the vocabulary does not know is kept, without a
+ * provenance, so the spec names it instead of losing it.
+ */
+export function resolveFacts(declared: readonly unknown[]): DeclaredFact[] {
+  const { facts, unknown } = resolveDeclaredFacts(declared, VOCABULARY.vocabulary);
+  return [...facts, ...unknown.map(facet => ({ facet, provenance: undefined as unknown as FactProvenance, why: 'NOT IN VOCABULARY' }))];
+}
+
 export function loadCorpus(rulesetsRoot: string = RULESETS_ROOT): NormalizedRule[] {
   const rules: NormalizedRule[] = [];
   for (const file of rulesetFiles(rulesetsRoot)) {
@@ -116,6 +131,10 @@ export function loadCorpus(rulesetsRoot: string = RULESETS_ROOT): NormalizedRule
         // handlers dispatch on does not "load the corpus exactly as
         // DiskRulesetRepository does"; it measures a different corpus.
         enforce: raw['enforce'] as NormalizedRule['enforce'],
+        // GT-716 AC2: the declaration, resolved against the vocabulary exactly as
+        // DiskRulesetRepository resolves it — a facet it does not know is kept with
+        // no provenance so the spec can name it rather than have it vanish.
+        ...(Array.isArray(raw['facts']) ? { facts: resolveFacts(raw['facts'] as unknown[]) } : {}),
         sourceFile: path.relative(REPO_ROOT, file),
       });
     }
@@ -207,6 +226,7 @@ export const CLASS_ORDER: readonly RuleEvaluability[] = [
   'unimplemented-native',
   'needs-external-system',
   'needs-runtime',
+  'needs-supplied-facts',
   'underspecified',
 ];
 

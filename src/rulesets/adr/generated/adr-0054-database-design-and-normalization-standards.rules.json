@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0054-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0054: Database Design and Normalization Standards",

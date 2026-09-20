@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "AI-0002-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0002: MCP Integration Protocol for Agent Tool Invocation",

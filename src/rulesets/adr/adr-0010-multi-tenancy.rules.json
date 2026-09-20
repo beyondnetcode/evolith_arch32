@@ -14,6 +14,9 @@
   "rules": [
     {
       "id": "MTN-01",
+      "facts": [
+        "satellite.multiTenancy"
+      ],
       "severity": "MUST",
       "category": "filtering-layer",
       "title": "Application-layer tenant filtering is primary",
@@ -25,6 +28,10 @@
     },
     {
       "id": "MTN-02",
+      "facts": [
+        "database",
+        "satellite.multiTenancy"
+      ],
       "severity": "MUST",
       "category": "filtering-layer",
       "title": "Database-native tenant enforcement is secondary",
@@ -36,6 +43,9 @@
     },
     {
       "id": "MTN-03",
+      "facts": [
+        "satellite.multiTenancy"
+      ],
       "severity": "MUST",
       "category": "context-propagation",
       "title": "Tenant context propagated through all layers",
@@ -46,6 +56,10 @@
     },
     {
       "id": "MTN-04",
+      "facts": [
+        "satellite.multiTenancy",
+        "traces"
+      ],
       "severity": "MUST NOT",
       "category": "data-isolation",
       "title": "Cross-tenant data access prohibited",
@@ -56,6 +70,10 @@
     },
     {
       "id": "MTN-05",
+      "facts": [
+        "repository",
+        "satellite.multiTenancy"
+      ],
       "appliesFromSdlcPhase": 2,
       "severity": "MUST",
       "category": "schema-per-tenant",
@@ -67,6 +85,10 @@
     },
     {
       "id": "MTN-06",
+      "facts": [
+        "satellite.multiTenancy",
+        "traces"
+      ],
       "severity": "MUST",
       "category": "audit-trail",
       "title": "Tenant-scoped audit trail maintained",
@@ -78,6 +100,9 @@
     },
     {
       "id": "MTN-07",
+      "facts": [
+        "satellite.multiTenancy"
+      ],
       "severity": "MUST",
       "category": "data-migration",
       "title": "Tenant migration path defined for schema changes",
@@ -88,6 +113,9 @@
     },
     {
       "id": "MTN-08",
+      "facts": [
+        "satellite.multiTenancy"
+      ],
       "severity": "MUST",
       "category": "external-api",
       "title": "External APIs validate tenant context on every request",

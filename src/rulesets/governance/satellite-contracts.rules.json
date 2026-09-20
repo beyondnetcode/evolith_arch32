@@ -126,36 +126,60 @@
   "rules": [
     {
       "id": "SVC-01",
+      "facts": [
+        "repository",
+        "satellite.contracts"
+      ],
       "title": "Each satellite project must have exactly one evolith.yaml at its project root",
       "enforcement": "CLI validates a single evolith.yaml at each satellite project's root. A manifest nested within another project's tree is prohibited. A satellite workspace (monorepo) declares its project roots in evolith.workspace.yaml; a single-repo satellite is the degenerate one-project workspace (backward compatible). Amended by ADR-0109 from repo-scoped to project-scoped.",
       "description": "CLI validates a single evolith.yaml at each satellite project's root. A manifest nested within another project's tree is prohibited. A satellite workspace (monorepo) declares its project roots in evolith.workspace.yaml; a single-repo satellite is the degenerate one-project workspace."
     },
     {
       "id": "SVC-02",
+      "facts": [
+        "repository",
+        "satellite.contracts"
+      ],
       "title": "Satellite name must be unique across all Evolith satellites",
       "enforcement": "CLI checks against Evolith satellite registry before allowing first push.",
       "description": "CLI checks against Evolith satellite registry before allowing first push."
     },
     {
       "id": "SVC-03",
+      "facts": [
+        "repository",
+        "satellite.contracts"
+      ],
       "title": "F1 phase satellites must reference core/ADR-0047 in spec.compliance.adrRegistry",
       "enforcement": "Satellites in F1 phase must include core/ADR-0047 confirming modular monolith starting point.",
       "description": "Satellites in F1 phase must include core/ADR-0047 confirming modular monolith starting point."
     },
     {
       "id": "SVC-04",
+      "facts": [
+        "repository",
+        "satellite.contracts"
+      ],
       "title": "Satellites in F2 or F3 must have extraction readiness score documented",
       "enforcement": "Satellites with phase F2 or F3 must have core/ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3).",
       "description": "Satellites with phase F2 or F3 must have core/ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3)."
     },
     {
       "id": "SVC-05",
+      "facts": [
+        "repository",
+        "satellite.contracts"
+      ],
       "title": "Core version referenced must exist in Evolith Core registry",
       "enforcement": "CLI validates coreRef.version against Evolith Core releases. Unknown versions trigger error.",
       "description": "CLI validates coreRef.version against Evolith Core releases. Unknown versions trigger error."
     },
     {
       "id": "SVC-06",
+      "facts": [
+        "repository",
+        "satellite.contracts"
+      ],
       "title": "Workspace integrity: declared projects and discovered manifests must correspond one-to-one",
       "enforcement": "In a satellite workspace, every evolith.yaml discovered under the workspace must correspond to a declared spec.projects[].path in evolith.workspace.yaml, and every declared project path must contain an evolith.yaml. Single-project satellites (no evolith.workspace.yaml) are exempt. Introduced by ADR-0109.",
       "description": "Every evolith.yaml found in a workspace must correspond to a declared spec.projects[].path, and vice versa — no undeclared (stray/nested) project manifests and no declared project missing its manifest."

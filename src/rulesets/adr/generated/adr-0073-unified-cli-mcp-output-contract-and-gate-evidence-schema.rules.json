@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0073-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0073: Unified CLI/MCP Output Contract and Gate Evidence Schema",

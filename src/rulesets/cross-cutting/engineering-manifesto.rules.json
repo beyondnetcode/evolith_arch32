@@ -53,6 +53,10 @@
   "rules": [
     {
       "id": "EM-S-01",
+      "facts": [
+        "classLineCount",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "SOLID",
       "title": "Single Responsibility: one reason to change",
@@ -62,6 +66,10 @@
     },
     {
       "id": "EM-S-02",
+      "facts": [
+        "openClosedViolations",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "SOLID",
       "title": "Open/Closed: open for extension, closed for modification",
@@ -71,6 +79,10 @@
     },
     {
       "id": "EM-S-03",
+      "facts": [
+        "liskovViolations",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "SOLID",
       "title": "Liskov Substitution: subtype substitutable for base",
@@ -80,6 +92,10 @@
     },
     {
       "id": "EM-S-04",
+      "facts": [
+        "interfaceSegregationViolations",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "SOLID",
       "title": "Interface Segregation: fine-grained interfaces",
@@ -89,6 +105,10 @@
     },
     {
       "id": "EM-S-05",
+      "facts": [
+        "domainImportsInfrastructure",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "SOLID",
       "title": "Dependency Inversion: depend on abstractions",
@@ -98,6 +118,10 @@
     },
     {
       "id": "EM-D-01",
+      "facts": [
+        "duplicateCodeRatio",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "DRY",
       "title": "Don't Repeat Yourself",
@@ -107,6 +131,10 @@
     },
     {
       "id": "EM-D-02",
+      "facts": [
+        "duplicateConfigCount",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "DRY",
       "title": "Configuration not duplicated",
@@ -116,6 +144,10 @@
     },
     {
       "id": "EM-K-01",
+      "facts": [
+        "maxCyclomaticComplexity",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "KISS",
       "title": "Keep It Simple, Stupid",
@@ -125,6 +157,10 @@
     },
     {
       "id": "EM-K-02",
+      "facts": [
+        "prematureAbstractionSignals",
+        "repository"
+      ],
       "severity": "SHOULD NOT",
       "category": "KISS",
       "title": "Avoid premature abstraction",
@@ -134,6 +170,10 @@
     },
     {
       "id": "EM-Y-01",
+      "facts": [
+        "repository",
+        "yagniViolations"
+      ],
       "severity": "MUST NOT",
       "category": "YAGNI",
       "title": "You Aren't Gonna Need It",

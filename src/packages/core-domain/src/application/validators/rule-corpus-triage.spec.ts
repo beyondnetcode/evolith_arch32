@@ -24,7 +24,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
   ADR_CONFORMANCE_CATEGORY,
-  RULE_TRIAGE,
   RuleEvaluability,
   isNonExecutable,
 } from './rule-evaluability';
@@ -42,7 +41,7 @@ import { REPO_ROOT, RULESETS_ROOT, triageCorpus, renderSnapshot } from '../../..
 // and the other's `--check` would go red for no visible reason. There is now ONE
 // renderer, and this suite is its PIN rather than a second copy of it.
 const TRIAGE = triageCorpus();
-const { corpus: CORPUS, classified: CLASSIFIED, summary: SUMMARY, claims } = TRIAGE;
+const { corpus: CORPUS, classified: CLASSIFIED, summary: SUMMARY, claims, evaluates } = TRIAGE;
 
 /**
  * The class counts this repository is pinned to.
@@ -107,6 +106,16 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // compiled OPA bundle makes about itself at evaluation time. A non-zero here
   // would mean the native triage had started asserting something about a bundle
   // it never loaded.
+  // GT-716 AC2 (2026-09-20) — the classes are DERIVED from each rule's own `facts`
+  // declaration now, and forty-four rules moved when the declaration replaced the
+  // table. Not a regression: the table defaulted every un-triaged rule to "decidable
+  // from the tree", and the policies that decide 21 of them read a posture only the
+  // owners can declare (`needs-supplied-facts`, new), 4 read the CI system or the
+  // findings store, 6 read a test run; the 12 the table called non-executable while
+  // Rego decided them (KI-R01..07, INH-03..05, PROT-03/06) now declare what Rego reads.
+  //   unimplemented-native   52 -> 21   needs-external-system 20 -> 27
+  //   needs-runtime          17 -> 23   needs-supplied-facts   0 -> 31
+  //   documentation-only    141 -> 138  underspecified        14 -> 4
   'native-handler': 171,
   // 137 -> 138 on 2026-08-16: ADR-0126's generated conformance ruleset. An accepted
   // ADR owes one, `generate-adr-rulesets.mjs` wrote it, and it lands here for the same
@@ -119,11 +128,12 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // never built). Same mechanism again, and the same reading: superseding a decision
   // costs one more rule nothing can run, because the superseding ADR owes a conformance
   // placeholder of its own while the superseded one keeps the placeholder it already had.
-  'documentation-only': 141,
-  'unimplemented-native': 52,
-  'needs-external-system': 20,
-  'needs-runtime': 17,
-  underspecified: 14,
+  'documentation-only': 138,
+  'unimplemented-native': 21,
+  'needs-external-system': 27,
+  'needs-runtime': 23,
+  'needs-supplied-facts': 31,
+  underspecified: 4,
   'no-policy-in-bundle': 0,
   // GT-716 (+0, 2026-09-20): `supplied-facet-absent` joined it, for the same reason and
   // with the same pin — a rule the bundle declines because the run supplied no fact is a
@@ -190,7 +200,8 @@ describe('GT-595 · the corpus is fully classified', () => {
     for (const c of classes) {
       expect([
         'native-handler', 'unimplemented-native', 'needs-external-system',
-        'needs-runtime', 'documentation-only', 'underspecified',
+        'needs-runtime',
+        'needs-supplied-facts', 'documentation-only', 'underspecified',
       ]).toContain(c);
     }
     const counted = Object.values(SUMMARY.byClass).reduce((a, b) => a + b, 0);
@@ -199,18 +210,55 @@ describe('GT-595 · the corpus is fully classified', () => {
   });
 
   it('never leaves an unrecognised rule out of the denominator by accident', () => {
-    // The default class for an unknown rule is `unimplemented-native`, which is
-    // INSIDE the executable denominator. A rule can only leave it by an explicit
-    // triage entry or by being a generator placeholder.
+    // A rule leaves the executable denominator only by DECLARING no fact
+    // (`facts: []`) — never by omission. GT-716 AC2 replaced the triage table with
+    // that declaration, so the only way out is written in the rule's own file.
     const escaped = CLASSIFIED.filter(c => isNonExecutable(c.evaluability))
-      .filter(c => !RULE_TRIAGE[c.ruleId] && !c.why.includes('generator placeholder'));
+      .filter(c => { const rule = CORPUS.find(r => r.id === c.ruleId); return !rule?.facts || rule.facts.length > 0; });
     expect(escaped).toEqual([]);
   });
+});
 
-  it('has a triage entry for every rule it claims to have triaged (no stale ids)', () => {
-    const corpusIds = new Set(CORPUS.map(r => r.id));
-    const stale = Object.keys(RULE_TRIAGE).filter(id => !corpusIds.has(id));
-    expect(stale).toEqual([]);
+/**
+ * GT-716 AC2 — one evaluability declaration per rule, and both engines derive from it.
+ *
+ * The native class is derived here from the facts' provenance; the OPA bundle build
+ * (`compile-opa-wasm.mjs`) refuses a policy that reads a facet its rule did not
+ * declare. This suite holds the corpus half of that contract.
+ */
+describe('GT-716 AC2 · every corpus rule declares its facts, and the declaration is the source', () => {
+  it('every rule carries a `facts` declaration — silence is not "decidable from the tree"', () => {
+    const silent = CORPUS.filter(r => !r.facts).map(r => `${r.id} (${r.sourceFile})`);
+    expect(silent).toEqual([]);
+  });
+
+  it('every declared facet is in the vocabulary, with a provenance', () => {
+    const unknown = CORPUS.flatMap(r => (r.facts ?? []).filter(f => !f.provenance).map(f => `${r.id}: ${f.facet}`));
+    expect(unknown).toEqual([]);
+  });
+
+  it('no rule a native handler EVALUATES declares no fact — a verdict with no declared premise is the contradiction this row closes', () => {
+    const contradictions = CORPUS.filter(r => evaluates(r) && r.facts && r.facts.length === 0).map(r => r.id);
+    expect(contradictions).toEqual([]);
+  });
+
+  it('the twelve rules the native triage called non-executable while Rego decided them now declare what Rego reads', () => {
+    // KI-R01..07 (knowledge-intake.rego), INH-03..05 (governance.rego), PROT-03/06
+    // (protocol-selection.rego) — measured 2026-09-20 in the GT-716 row.
+    const ids = ['KI-R01', 'KI-R02', 'KI-R03', 'KI-R04', 'KI-R05', 'KI-R06', 'KI-R07', 'INH-03', 'INH-04', 'INH-05', 'PROT-03', 'PROT-06'];
+    const byId = new Map(CORPUS.map(r => [r.id, r]));
+    for (const id of ids) {
+      const rule = byId.get(id);
+      expect([id, (rule?.facts ?? []).length > 0]).toEqual([id, true]);
+      expect([id, isNonExecutable(CLASSIFIED.find(c => c.ruleId === id)!.evaluability)]).toEqual([id, false]);
+    }
+  });
+
+  it('PEA-01..04 stay where they were — native-handler, with the evidence facet declared', () => {
+    for (const id of ['PEA-01', 'PEA-02', 'PEA-03', 'PEA-04']) {
+      expect([id, CLASSIFIED.find(c => c.ruleId === id)?.evaluability]).toEqual([id, 'native-handler']);
+      expect(CORPUS.find(r => r.id === id)?.facts?.map(f => f.facet)).toEqual(expect.arrayContaining(['qualityEvidence']));
+    }
   });
 });
 
@@ -262,9 +310,12 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // 154 -> 155 on 2026-08-22: ADR-0129's. Superseding ADR-0106 does not retire 0106's
     // placeholder — a superseded decision keeps its record — so the denominator grows by
     // one rather than trading one for another.
-    expect(SUMMARY.nonExecutable).toBe(155);
-    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 155);
-    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(155);
+    // 155 -> 142 on 2026-09-20 (GT-716 AC2): the thirteen that left are the twelve the
+    // table called non-executable while a Rego policy decided them, plus OCB-07 — all
+    // now declaring the supplied or external facts their check reads.
+    expect(SUMMARY.nonExecutable).toBe(142);
+    expect(SUMMARY.executableTotal).toBe(SUMMARY.total - 142);
+    expect(SUMMARY.nonExecutableRuleIds).toHaveLength(142);
   });
 
   it('names the blocking rules that can never produce a verdict', () => {
@@ -277,10 +328,13 @@ describe('GT-595 · the published breakdown, with its denominator', () => {
     // that a human declared blocking and never gave a check to; those are a
     // governance decision (author the check or drop the flag), not a generator
     // bug, so they stay visible and keep failing the run.
-    expect(SUMMARY.blockingNonExecutable.length).toBe(11);
+    // 11 -> 4 on 2026-09-20 (GT-716 AC2): KI-R01..07 declare the intake facets
+    // `knowledge-intake.rego` reads and are executable again (needs-supplied-facts);
+    // what remains is EC-SEC-01/02 and SV-SEC-01/02 — blocking, no fact, no query.
+    expect(SUMMARY.blockingNonExecutable.length).toBe(4);
     expect(SUMMARY.blockingNonExecutable).not.toContain('CORE-0111-01');
     expect(SUMMARY.blockingNonExecutable).toContain('EC-SEC-01');
-    expect(SUMMARY.blockingNonExecutable).toContain('KI-R01');
+    expect(SUMMARY.blockingNonExecutable).not.toContain('KI-R01');
   });
 
   it('publishes a coverage ratio per ruleset (AC3)', () => {
@@ -418,15 +472,18 @@ describe('GT-595 AC2 · the corpus rules that still declare `blocking` and canno
     // engine never read (GT-632). The other three classes are untouched — no
     // adapter was written and no rule was re-authored.
     expect(offenders).toHaveLength(73);
-    expect(countOf('unimplemented-native')).toBe(36);
-    expect(countOf('needs-external-system')).toBe(14);
-    expect(countOf('needs-runtime')).toBe(12);
-    expect(countOf('underspecified')).toBe(11);
+    // 2026-09-20 (GT-716 AC2): the 73 are the same 73 — a declaration moves a rule
+    // between classes, never in or out of "blocking and did not run" — but what each
+    // one costs changed: 25 of the 36 "write the handler" rows were never handler work
+    // (a declared posture, the CI system, a test run), and the seven KI-R rows are no
+    // longer "author the check" but "supply the intake record".
+    expect(countOf('unimplemented-native')).toBe(11);
+    expect(countOf('needs-external-system')).toBe(16);
+    expect(countOf('needs-runtime')).toBe(15);
+    expect(countOf('needs-supplied-facts')).toBe(27);
+    expect(countOf('underspecified')).toBe(4);
 
-    expect(offenders.filter(o => o.evaluability === 'underspecified').map(o => o.ruleId).sort()).toEqual([
-      'EC-SEC-01', 'EC-SEC-02', 'KI-R01', 'KI-R02', 'KI-R03', 'KI-R04',
-      'KI-R05', 'KI-R06', 'KI-R07', 'SV-SEC-01', 'SV-SEC-02',
-    ]);
+    expect(offenders.filter(o => o.evaluability === 'underspecified').map(o => o.ruleId).sort()).toEqual(['EC-SEC-01', 'EC-SEC-02', 'SV-SEC-01', 'SV-SEC-02']);
   });
 });
 
@@ -442,12 +499,18 @@ describe('GT-595 · the remaining backlog is costed, not a lump', () => {
     //    "Infrastructure implements Core ports" is not a module-graph clause
     //    and the rule authors no `enforce` block.
     // OCB-02 stays, and deliberately: see the vacuity note below.
-    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-03', 'OCB-02']));
+    // OCB-02 left this list on 2026-09-20 (GT-716 AC2): `open-core-boundary.rego`
+    // decides it from a declared boundary, so it is `needs-supplied-facts` — see the
+    // vacuity note below, which still holds.
+    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-03']));
+    expect(of('unimplemented-native')).not.toContain('OCB-02');
+    expect(of('needs-supplied-facts')).toEqual(expect.arrayContaining(['OCB-02', 'MTN-01', 'RUNT-01', 'KI-R01', 'PROT-03']));
     expect(of('unimplemented-native')).not.toContain('MTN-05');
     expect(of('unimplemented-native')).not.toContain('HXA-01');
     expect(of('needs-external-system')).toEqual(expect.arrayContaining(['GIT-02', 'MTN-02', 'OBS-EVD-03']));
     expect(of('needs-runtime')).toEqual(expect.arrayContaining(['OBS-EVD-01', 'TPY-05', 'ABAC-01']));
-    expect(of('underspecified')).toEqual(expect.arrayContaining(['EC-SEC-01', 'KI-R01', 'INH-03']));
+    expect(of('underspecified')).toEqual(expect.arrayContaining(['EC-SEC-01', 'SV-SEC-01']));
+    expect(of('underspecified')).not.toContain('KI-R01');
   });
 
   it('keeps runtime/external rules INSIDE the denominator — an adapter can close them', () => {
@@ -511,7 +574,11 @@ describe('GT-595 · OCB-02 is vacuous as written — measured, not asserted', ()
   it('keeps OCB-02 in the backlog rather than closing it vacuously', () => {
     const ocb02 = CLASSIFIED.find(c => c.ruleId === 'OCB-02');
     expect(ocb02).toBeDefined();
-    expect(ocb02!.evaluability).toBe('unimplemented-native');
+    // `needs-supplied-facts` since GT-716 AC2 — still inside the executable
+    // denominator, still blocking: the boundary it should be written against is a
+    // declared one, and until it is declared the rule fails the run rather than
+    // closing vacuously.
+    expect(ocb02!.evaluability).toBe('needs-supplied-facts');
     expect(ocb02!.blocking).toBe(true);
   });
 

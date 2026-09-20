@@ -616,6 +616,9 @@ function backlogStats(entries, evaluabilityDoc) {
     'unimplemented-native',
     'needs-external-system',
     'needs-runtime',
+    // GT-716 AC2: decided over a posture only the satellite's owners can declare; the
+    // OPA engine decides it when supplied, the native one never — not handler work.
+    'needs-supplied-facts',
     'documentation-only',
     'underspecified',
     'native-handler',
@@ -642,7 +645,7 @@ function backlogStats(entries, evaluabilityDoc) {
     source: 'native-evaluability-snapshot.json',
     sourceAuthority: evaluabilityDoc.capturedFrom,
     note:
-      'The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, and the two adapter classes are closed by the enforcer seam rather than by a rule handler.',
+      'The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, the two adapter classes are closed by the enforcer seam rather than by a rule handler, and `needs-supplied-facts` (GT-716) is closed by the caller declaring the posture through `facts.satellite`.',
     realBacklogSize: backlog.rules,
     adoptableFromAnalyser: backlog.analyserAdoptable,
     adoptableFromAnalyserIncludingPartial: backlog.analyserAdoptable + backlog.analyserAdoptablePartial,

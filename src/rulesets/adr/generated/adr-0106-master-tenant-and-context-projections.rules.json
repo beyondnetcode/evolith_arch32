@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0106-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0106: Master Tenant and Context Projections",

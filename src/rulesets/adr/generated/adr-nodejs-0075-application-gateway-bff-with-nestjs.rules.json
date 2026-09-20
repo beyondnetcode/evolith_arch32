@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0075-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0075: Application Gateway (BFF) with NestJS",

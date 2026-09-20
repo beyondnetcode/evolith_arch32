@@ -11,6 +11,7 @@
   "rules": [
     {
       "id": "EC-SEC-01",
+      "facts": [],
       "severity": "MUST",
       "category": "execution-security",
       "title": "Network Security Profile",
@@ -20,6 +21,7 @@
     },
     {
       "id": "EC-SEC-02",
+      "facts": [],
       "severity": "MUST",
       "category": "execution-mtls",
       "title": "mTLS Enforcement",
@@ -29,6 +31,9 @@
     },
     {
       "id": "EC-R01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "edge-computing-sync",
       "title": "Mandatory Synchronization Strategy",
@@ -38,6 +43,9 @@
     },
     {
       "id": "EC-R02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "edge-computing-isolation",
       "title": "Edge Node Isolation",
@@ -47,6 +55,9 @@
     },
     {
       "id": "EC-R03",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "edge-computing-conflict",
       "title": "Conflict Resolution Strategy",

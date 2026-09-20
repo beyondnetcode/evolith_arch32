@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0008-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0008: Progressive Multi-Module Evolution with API Gateway and BFF Patterns",

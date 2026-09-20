@@ -113,9 +113,7 @@ Response shape (captured live):
 ```json
 {
   "data": {
-    "blockingNonExecutableRuleIds": [
-      "<string>"
-    ],
+    "blockingNonExecutableRuleIds": [],
     "blockingSkippedRuleIds": [
       "<string>"
     ],
@@ -216,9 +214,7 @@ Response shape (captured live):
 ```json
 {
   "data": {
-    "blockingNonExecutableRuleIds": [
-      "<string>"
-    ],
+    "blockingNonExecutableRuleIds": [],
     "blockingSkippedRuleIds": [
       "<string>"
     ],
@@ -313,9 +309,7 @@ Response shape (captured live):
 ```json
 {
   "data": {
-    "blockingNonExecutableRuleIds": [
-      "<string>"
-    ],
+    "blockingNonExecutableRuleIds": [],
     "blockingSkippedRuleIds": [
       "<string>"
     ],

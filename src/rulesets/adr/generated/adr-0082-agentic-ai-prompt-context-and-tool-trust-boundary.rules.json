@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0082-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0082: Agentic AI Prompt, Context, and Tool Trust Boundary",

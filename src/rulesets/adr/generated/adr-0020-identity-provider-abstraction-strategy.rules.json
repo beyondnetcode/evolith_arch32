@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0020-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0020: Identity Provider Abstraction Strategy",

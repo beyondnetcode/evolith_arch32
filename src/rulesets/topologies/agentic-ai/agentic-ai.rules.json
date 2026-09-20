@@ -20,6 +20,9 @@
   "rules": [
     {
       "id": "AAI-R01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-identity",
       "title": "Declared Agent Identity and Capabilities",
@@ -31,6 +34,9 @@
     },
     {
       "id": "AAI-R02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-sandbox",
       "title": "Explicit Sandbox Boundary",
@@ -42,6 +48,9 @@
     },
     {
       "id": "AAI-R03",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-prompt-boundaries",
       "title": "Prompt and Implementation Separation",
@@ -53,6 +62,9 @@
     },
     {
       "id": "AAI-R04",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-tool-approval",
       "title": "Approval for Mutative Tools",
@@ -64,6 +76,9 @@
     },
     {
       "id": "AAI-R05",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-sandbox-limits",
       "title": "Ephemeral Sandbox Resource Limits",
@@ -75,6 +90,9 @@
     },
     {
       "id": "AAI-R06",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-context-trust",
       "title": "Untrusted Context Is Data",
@@ -86,6 +104,9 @@
     },
     {
       "id": "AAI-R07",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-action-accountability",
       "title": "Capability-Scoped, Auditable Actions",
@@ -97,6 +118,9 @@
     },
     {
       "id": "AAI-R08",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-operational-budgets",
       "title": "Operational Budgets and Concurrency Limits",
@@ -108,6 +132,9 @@
     },
     {
       "id": "AAI-R09",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "agent-credential-lifecycle",
       "title": "Satellite Credential Lifecycle",
@@ -119,6 +146,9 @@
     },
     {
       "id": "AAI-R10",
+      "facts": [
+        "repository"
+      ],
       "severity": "SHOULD",
       "category": "agent-sandbox-observed",
       "title": "Declared Sandbox Boundary Is Not Contradicted By The Implementation",

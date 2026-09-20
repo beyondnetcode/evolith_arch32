@@ -11,6 +11,11 @@
   "rules": [
     {
       "id": "CLI-RR-01",
+      "facts": [
+        "core.cli",
+        "repository",
+        "satellite.releaseReadiness"
+      ],
       "severity": "MUST",
       "category": "build",
       "title": "TypeScript Build Must Pass",
@@ -24,6 +29,11 @@
     },
     {
       "id": "CLI-RR-02",
+      "facts": [
+        "core.cli",
+        "repository",
+        "satellite.releaseReadiness"
+      ],
       "severity": "MUST",
       "category": "tests",
       "title": "Unit and Integration Tests Must Start and Pass",
@@ -37,6 +47,12 @@
     },
     {
       "id": "CLI-RR-03",
+      "facts": [
+        "core.cli",
+        "core.hasPackageLock",
+        "repository",
+        "satellite.releaseReadiness"
+      ],
       "severity": "MUST",
       "category": "dependencies",
       "title": "Dependency Graph Must Be Reproducible",
@@ -50,6 +66,11 @@
     },
     {
       "id": "CLI-RR-04",
+      "facts": [
+        "core.evidence",
+        "repository",
+        "satellite.releaseReadiness"
+      ],
       "severity": "MUST",
       "category": "mcp",
       "title": "MCP Smoke Test Must Pass",
@@ -63,6 +84,11 @@
     },
     {
       "id": "CLI-RR-05",
+      "facts": [
+        "core.cli",
+        "repository",
+        "satellite.releaseReadiness"
+      ],
       "severity": "SHOULD",
       "category": "documentation",
       "title": "Release Documentation Must Match Implementation",

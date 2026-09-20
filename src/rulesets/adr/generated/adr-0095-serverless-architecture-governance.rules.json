@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0095-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0095: Serverless Architecture Governance",

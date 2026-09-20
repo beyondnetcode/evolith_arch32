@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0086-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0086: Agentic AI Telemetry & Cost Control Standard",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0047-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0047: Actionable User Error Contract and Correlated Diagnostics",

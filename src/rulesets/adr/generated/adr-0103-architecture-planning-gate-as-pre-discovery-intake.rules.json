@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0103-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0103: Architecture Planning Gate as Pre-Discovery Intake",

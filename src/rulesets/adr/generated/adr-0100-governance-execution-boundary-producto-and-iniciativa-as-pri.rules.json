@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0100-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0100: Governance/Execution Boundary — Producto and Iniciativa as Primary Units, with Advisory Capability",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0063-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0063: B2B Request Idempotency Middleware in ASP.NET Core",

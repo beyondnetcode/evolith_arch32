@@ -12,6 +12,12 @@
   "rules": [
     {
       "id": "ABAC-01",
+      "facts": [
+        "environment",
+        "tool_name",
+        "traces",
+        "user"
+      ],
       "severity": "MUST",
       "category": "access-control",
       "title": "Tool Access Requires Authorization",
@@ -21,6 +27,10 @@
     },
     {
       "id": "ABAC-02",
+      "facts": [
+        "traces",
+        "user"
+      ],
       "severity": "MUST",
       "category": "access-control",
       "title": "User Context Must Carry Roles",
@@ -30,6 +40,10 @@
     },
     {
       "id": "ABAC-03",
+      "facts": [
+        "tool_name",
+        "traces"
+      ],
       "severity": "MUST",
       "category": "access-control",
       "title": "Tool Must Be Classified in the Tool Registry",

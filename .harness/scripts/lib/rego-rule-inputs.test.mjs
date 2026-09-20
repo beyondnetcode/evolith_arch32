@@ -73,6 +73,17 @@ violations contains v if {
 	v := input.satellite.workflows[_]
 }
 
+# The id assigned in the body — the phase-gate style — is the same declaration.
+violations contains v if {
+	some required in input.gate.mandatoryEvidence
+	not presented[required.artifact]
+	v := {"id": "P-06", "message": sprintf("missing %v", [required.artifact])}
+}
+
+presented contains a if {
+	a := input.evidence[_].artifact
+}
+
 violations contains {"id": "P-05", "message": "constant"} if {
 	true
 }
@@ -115,7 +126,7 @@ test('an id emitted by several bodies gets the UNION of their reads', () => {
 
 test('a head without a literal id is not a rule; a rule reading nothing is an empty list', () => {
   const inputs = ruleInputPathsFromAst(parse(POLICY));
-  assert.deepEqual([...inputs.keys()].sort(), ['P-01', 'P-02', 'P-03', 'P-04', 'P-05']);
+  assert.deepEqual([...inputs.keys()].sort(), ['P-01', 'P-02', 'P-03', 'P-04', 'P-05', 'P-06']);
   assert.deepEqual(inputs.get('P-05'), []);
 });
 
@@ -142,4 +153,18 @@ test('a shipped policy: OBS-EVD-01 reads the dependencies through its helper cha
   assert.deepEqual(inputs.get('OBS-EVD-03'), ['input.satellite.packageJson.dependencies', 'input.satellite.packageJson.devDependencies']);
   // OBS-EVD-04 is the one that reads the supplied scorecards facet.
   assert.deepEqual(inputs.get('OBS-EVD-04'), ['input.satellite.scorecards.observabilityOperational']);
+});
+
+test('an id assigned in the body (the phase-gate style) is attributed, with the reads of its body and helpers', () => {
+  const inputs = ruleInputPathsFromAst(parse(POLICY));
+  assert.deepEqual(inputs.get('P-06'), ['input.evidence', 'input.gate.mandatoryEvidence']);
+});
+
+test('a shipped policy in that style: phase-gates.rego attributes its PG-* ids', () => {
+  const ast = JSON.parse(
+    execFileSync(OPA, ['parse', '--format', 'json', join(ROOT, 'src/rulesets/opa/phase-gates.rego')], { maxBuffer: 64 * 1024 * 1024 }).toString(),
+  );
+  const inputs = ruleInputPathsFromAst(ast);
+  assert.ok([...inputs.keys()].some((id) => id.startsWith('PG-')), `ids: ${[...inputs.keys()].join(' ')}`);
+  assert.ok([...inputs.values()].flat().some((p) => p.startsWith('input.gate')), 'the gate facet is read');
 });

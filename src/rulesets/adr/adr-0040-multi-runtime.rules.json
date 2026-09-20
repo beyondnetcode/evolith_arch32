@@ -12,6 +12,9 @@
   "rules": [
     {
       "id": "RUNT-01",
+      "facts": [
+        "satellite.runtime"
+      ],
       "severity": "MUST",
       "category": "runtime-selection",
       "title": "Runtime selected by workload profile only",
@@ -22,6 +25,9 @@
     },
     {
       "id": "RUNT-02",
+      "facts": [
+        "satellite.runtime"
+      ],
       "severity": "MUST",
       "category": "web-apis",
       "title": "Web APIs and BFF use Node.js/TypeScript",
@@ -34,6 +40,9 @@
     },
     {
       "id": "RUNT-03",
+      "facts": [
+        "satellite.runtime"
+      ],
       "severity": "MUST",
       "category": "compute-workloads",
       "title": "High compute and batch use .NET (C#)",
@@ -46,6 +55,9 @@
     },
     {
       "id": "RUNT-04",
+      "facts": [
+        "satellite.runtime"
+      ],
       "severity": "MUST",
       "category": "mobile-workloads",
       "title": "Mobile with hardware access uses Android/Kotlin",
@@ -58,6 +70,9 @@
     },
     {
       "id": "RUNT-05",
+      "facts": [
+        "satellite.runtime"
+      ],
       "severity": "MUST NOT",
       "category": "runtime-coupling",
       "title": "Direct runtime dependency forbidden",
@@ -68,6 +83,9 @@
     },
     {
       "id": "RUNT-06",
+      "facts": [
+        "satellite.runtime"
+      ],
       "severity": "MUST",
       "category": "sync-interop",
       "title": "Synchronous inter-op uses gRPC",
@@ -79,6 +97,9 @@
     },
     {
       "id": "RUNT-07",
+      "facts": [
+        "satellite.runtime"
+      ],
       "severity": "MUST",
       "category": "async-interop",
       "title": "Asynchronous inter-op uses message broker",
@@ -90,6 +111,9 @@
     },
     {
       "id": "RUNT-08",
+      "facts": [
+        "satellite.runtime"
+      ],
       "severity": "MUST",
       "category": "contract-registry",
       "title": "Contracts centrally stored and versioned",

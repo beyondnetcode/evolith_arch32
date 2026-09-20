@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0053-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0053: Integration and E2E Testing Strategy",

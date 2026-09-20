@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0030-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0030: Two-Tier Distributed Gateway Model",

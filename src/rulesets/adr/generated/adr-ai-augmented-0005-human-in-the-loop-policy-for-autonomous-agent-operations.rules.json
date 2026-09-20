@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "AI-0005-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0005: Human-in-the-Loop Policy for Autonomous Agent Operations",

@@ -17,6 +17,10 @@
   "rules": [
     {
       "id": "PEA-01",
+      "facts": [
+        "qualityEvidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "evidence-admissibility",
       "title": "Probabilistic Evidence Declares A Measured Error Rate Before It May Block",
@@ -26,6 +30,10 @@
     },
     {
       "id": "PEA-02",
+      "facts": [
+        "qualityEvidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "evidence-admissibility",
       "title": "A Measured Error Rate Below The Declared Floor Degrades To Advisory",
@@ -35,6 +43,11 @@
     },
     {
       "id": "PEA-03",
+      "facts": [
+        "evaluationDate",
+        "qualityEvidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "evidence-admissibility",
       "title": "A Stale Or Unreadable Measurement Degrades To Advisory",
@@ -44,6 +57,11 @@
     },
     {
       "id": "PEA-04",
+      "facts": [
+        "evaluationDate",
+        "qualityEvidence",
+        "repository"
+      ],
       "severity": "SHOULD",
       "category": "evidence-admissibility",
       "title": "An Admitted Measurement Says How It Was Obtained",

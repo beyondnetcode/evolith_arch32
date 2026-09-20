@@ -11,6 +11,9 @@
   "rules": [
     {
       "id": "ED-R01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "event-driven-config",
       "title": "Strict AsyncAPI Contract",
@@ -22,6 +25,9 @@
     },
     {
       "id": "ED-R02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "event-driven-outbox",
       "title": "Transactional Outbox",
@@ -33,6 +39,9 @@
     },
     {
       "id": "ED-R03",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "event-driven-dlq",
       "title": "Dead Letter Queue",
@@ -44,6 +53,9 @@
     },
     {
       "id": "ED-R04",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "event-ordering",
       "title": "Event Ordering Guarantee",
@@ -55,6 +67,9 @@
     },
     {
       "id": "ED-R05",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "idempotency",
       "title": "Idempotent Consumer Contract",
@@ -66,6 +81,9 @@
     },
     {
       "id": "ED-R06",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "schema-evolution",
       "title": "Backward-Compatible Schema Evolution",
@@ -77,6 +95,9 @@
     },
     {
       "id": "ED-R07",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "retention",
       "title": "Retention Policy Declaration",
@@ -88,6 +109,9 @@
     },
     {
       "id": "ED-R08",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "observability",
       "title": "Event Observability (Correlation and Trace Propagation)",
@@ -99,6 +123,9 @@
     },
     {
       "id": "ED-R09",
+      "facts": [
+        "repository"
+      ],
       "severity": "SHOULD",
       "category": "consumer-groups",
       "title": "Explicit Consumer Group Registration",

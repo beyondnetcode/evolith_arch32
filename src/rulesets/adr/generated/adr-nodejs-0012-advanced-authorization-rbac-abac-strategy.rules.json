@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0012-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0012: Advanced Authorization (RBAC/ABAC) Strategy",

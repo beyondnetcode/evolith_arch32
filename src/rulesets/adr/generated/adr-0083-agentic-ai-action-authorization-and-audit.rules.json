@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0083-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0083: Agentic AI Action Authorization and Audit",

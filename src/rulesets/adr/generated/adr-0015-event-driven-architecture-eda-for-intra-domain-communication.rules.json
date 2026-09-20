@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0015-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0015: Event-Driven Architecture (EDA) for Intra-Domain Communication",

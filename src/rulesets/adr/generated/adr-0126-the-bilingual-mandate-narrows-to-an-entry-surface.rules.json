@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0126-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0126: The Bilingual Mandate Narrows to an Entry Surface",

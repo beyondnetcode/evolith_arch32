@@ -11,7 +11,12 @@
     "fact a verdict — the seven `supplied-facet-absent` rows (ACL-01, ACL-04, DORA-01, SPACE-04, SPACE-05, SVC-01, SVC-03) and TAX-01,",
     "whose registered reason (`authored-rule-divergence`, differing exemption lists) was wrong: `repository-taxonomy.rego` reads",
     "`input.repository.files`, a facet no channel carries, so its `passed` was an absent list, not a different list. OPA now skips all",
-    "eight with `supplied-facet-absent`; the ids that remain are the ones both engines still decide and still disagree on."
+    "eight with `supplied-facet-absent`; the ids that remain are the ones both engines still decide and still disagree on.",
+    "2026-09-20 (GT-716 AC2): GOV-RULE-NON-EXECUTABLE removed because guard 68 reported it stale. The synthetic row fired natively",
+    "over the in-scope rules the triage table called non-executable on this repository — KI-R01..07 (no validationQuery) and",
+    "PROT-03/06 (judgement) — while the OPA engine decided them. With the class derived from each rule's `facts`, those rules",
+    "declare the facets their policies read and are executable (`needs-supplied-facts`); nothing non-executable remains in scope",
+    "here, the row no longer fires, and the two engines stop disagreeing about it. CLI-EXIT-01/03 are the conflicts that remain."
   ],
   "measuredOn": "2026-09-20",
   "method": "evolith validate --engine {native,opa} --format json over the whole corpus, both from the repository root; only rules BOTH engines decided are compared.",
@@ -31,14 +36,6 @@
       "family": "native-context-assumption",
       "reason": "Same doubled root as CLI-EXIT-01, reported through the other branch of the same handler: 'exit-code taxonomy not declared: .../src/sdk/cli/src/sdk/cli/src/infrastructure/cli/exit-codes.ts not found'. Registered separately because a partial fix that repaired only the scan and not the taxonomy read is a real state, and the guard should be able to say which half moved.",
       "followUp": "Same fix as CLI-EXIT-01."
-    },
-    {
-      "ruleId": "GOV-RULE-NON-EXECUTABLE",
-      "native": "failed",
-      "opa": "passed",
-      "family": "undeclared-id-reported-passed",
-      "reason": "A synthetic rule the native reporter raises about its own corpus — '13 corpus rules are not executable by any engine', severity COULD — so there is no policy for OPA to decide it with. Measured against the compiled bundle: `evolith/manifest/declared_rule_ids` returns 238 ids and this is not one of them, yet the OPA run reports it `passed` rather than `skipped`. That is the GT-675 shape surviving in one instance, because a synthetic id never passes through the decidability filter the corpus rules go through.",
-      "followUp": "Route synthetic/reporter-emitted ids through the same declared-scope filter as corpus rules, so an engine with no policy for them reports `skipped`. Then this becomes a coverage difference and the entry goes."
     }
   ]
 }

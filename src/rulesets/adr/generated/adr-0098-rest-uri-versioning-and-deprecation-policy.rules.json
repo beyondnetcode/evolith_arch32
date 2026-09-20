@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0098-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0098: REST URI Versioning and Deprecation Policy",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0023-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0023: Centralized Authorization Core Strategy",

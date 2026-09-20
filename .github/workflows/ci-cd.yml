@@ -109,6 +109,7 @@ jobs:
       - name: The two engines do not disagree about facts (GT-704)
         run: |
           node --test .harness/scripts/lib/rego-rule-inputs.test.mjs
+          node --test .harness/scripts/lib/rule-facts.test.mjs
           node --test .harness/scripts/ci/68-validate-engine-verdict-parity.test.mjs
           node .harness/scripts/ci/68-validate-engine-verdict-parity.mjs --verbose --json
 

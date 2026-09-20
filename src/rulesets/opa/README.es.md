@@ -25,10 +25,28 @@ Un cuerpo Rego cuyo hecho falta queda *indefinido*: `not input.adapter.schemaVal
 - En tiempo de build el bundle registra, por id de regla, las rutas `input.…` que lee su política (`evolith/manifest/rule_input_paths`, extraídas del AST del compilador por [`.harness/scripts/lib/rego-rule-inputs.mjs`](../../../.harness/scripts/lib/rego-rule-inputs.mjs) — lecturas directas, cabeceras, reglas auxiliares seguidas transitivamente).
 - En tiempo de evaluación, una regla declarada cuyo input no lleva **nada** de una faceta que lee vuelve `skipped` con evaluabilidad `supplied-facet-absent` y la faceta nombrada. La faceta es el primer segmento bajo `input`, o el segundo bajo `satellite` / `core`: `input.satellite.git` es una faceta que un llamador envía entera, `input.satellite.git.branchNameInvalid` es un campo de ella.
 - Presencia es «la clave existe», no «el valor es verdadero»: una faceta que el constructor de input **observó** decide lo que sea que observó (`null`, `false`, `[]` son respuestas), y una faceta que un llamador suministró como `false` fue suministrada.
-- `ABSENCE_IS_A_FACT` (en `opa-evaluator.ts`) exime las facetas cuya ausencia es en sí un hecho por diseño de las políticas que las leen — `qualityEvidence`, `qualityAdmissibilityPolicy`, `evaluationDate` (ADR-0111: no presentar nada es el veredicto), `evidence`, `waiver` (compuertas de fase), `tenantId`. Es la única lista mantenida a mano; el AC2 de GT-716 lleva la declaración al fichero de cada regla.
+- `ABSENCE_IS_A_FACT` (en `opa-evaluator.ts`) exime las facetas cuya ausencia es en sí un hecho por diseño de las políticas que las leen — `qualityEvidence`, `evaluationDate` (ADR-0111: no presentar nada es el veredicto), `evidence`, `waiver` (compuertas de fase). Qué hechos lee una regla, y dónde vive su verdad, se declara en la propia regla (`facts`, AC2 de GT-716 — ver *Una declaración por regla* más abajo); este conjunto es el único juicio que queda en código.
 - Un bundle compilado antes de que existiera este entrypoint conserva el comportamiento anterior y lo dice en `WARN`; `27-opa-parity-gate` hace fallar un bundle que deje de exponerlo.
 
 Para que una regla se decida, suministra la faceta por el contexto de evaluación (`facts.satellite.<faceta>`, GT-694). Medido sobre un satélite recién salido de `init` el día que esto aterrizó: `--engine opa` pasó de 133 reglas «decididas» a 10, y las 123 que dejó de decidir eran todas veredictos sobre input que nadie había suministrado.
+
+## Una declaración por regla (AC2 de GT-716)
+
+Cada regla de `src/rulesets/**/*.rules.json` declara `facts`: las facetas que lee su comprobación, por id desde [`schema/facets.json`](../schema/facets.json), donde cada faceta lleva su **procedencia** — dónde vive su verdad:
+
+| procedencia | significado | clase nativa cuando ningún handler decide la regla |
+|---|---|---|
+| `observed` | legible desde el árbol del repositorio; el Core la deriva (un handler nativo, o el constructor de input) | `unimplemented-native` |
+| `supplied` | una postura que solo los dueños del satélite pueden declarar — tenencia, intención de runtime, la frontera open-core, un registro de intake; llega a OPA por `facts.satellite` | `needs-supplied-facts` |
+| `external` | en manos de la forja, el tracker, un registro, una base de datos viva, infraestructura desplegada, un backend de telemetría | `needs-external-system` |
+| `runtime` | observable solo desde el sistema en ejecución o una suite ejecutada | `needs-runtime` |
+
+Ambos motores derivan de esa única declaración, y la derivación se comprueba en las dos direcciones:
+
+- **Nativo:** `classifyRule` lee los facts de la regla y toma la clase de la procedencia más exigente (`runtime` > `external` > `supplied` > `observed`); `facts: []` significa que no hay hecho comprobable por máquina (`documentation-only` tras un juicio o un placeholder del generador, `underspecified` tras nada). La tabla de triaje que guardaba esto por id de regla ya no existe.
+- **OPA:** `npm run build:policy` rechaza un bundle cuando una política lee una faceta que su regla no declaró, o cuando una entrada del vocabulario no la declara ninguna regla ni la lee ninguna política. El día que aterrizó, declarar `facts: []` para las doce reglas que la tabla llamaba no ejecutables mientras Rego las decidía (`KI-R01..07`, `INH-03..05`, `PROT-03/06`) puso el build en rojo con doce hallazgos; declarar lo que leen las políticas es lo que lo devolvió a verde — y las movió al denominador ejecutable.
+
+Añadir una regla significa, por tanto, declarar qué lee; añadir una lectura en una política exige que los `facts` de la regla la nombren. Lo que se movió cuando la declaración sustituyó a la tabla (2026-09-20): el «backlog de handlers» (`unimplemented-native`) pasó de 52 a 21 — 25 de esas filas las decidían políticas sobre una postura declarada, el sistema de CI o una ejecución de tests, nunca un handler sobre el árbol.
 
 ## Políticas de enforcement agregadas
 

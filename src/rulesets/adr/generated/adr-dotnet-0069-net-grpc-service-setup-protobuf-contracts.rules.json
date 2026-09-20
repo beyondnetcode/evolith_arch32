@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0069-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0069: .NET gRPC Service Setup & Protobuf Contracts",

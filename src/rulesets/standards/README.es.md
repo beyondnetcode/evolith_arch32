@@ -131,10 +131,11 @@ Las ocho reglas del SSDF y las cuatro de SLSA se quedan en `no`, y eso es un ver
 ## Re-dimensionar el backlog de handlers
 
 El enunciado del gap dimensionaba el beneficio contra "~240 handlers por escribir". **Esa cifra ya está
-retirada.** GT-595 hizo el triage del corpus y el backlog real, decidible desde el repositorio, son **52
-reglas** — la clase `unimplemented-native`. De las 410 reglas que carga el triage del Core, 170 ya se
-ejecutan y las otras 188 son 137 placeholders de generador solo documentales, 14 reglas sin check
-redactado, 20 que requieren un sistema externo y 17 que requieren uno en ejecución.
+retirada.** GT-595 hizo el triage del corpus y el backlog real, decidible desde el repositorio, es la
+clase `unimplemented-native`: **52 reglas** cuando se escribió esta sección, **21** desde el 2026-09-20
+(ver más abajo). De las 410 reglas que cargaba entonces el triage del Core, 170 ya se ejecutaban y las
+otras 188 eran 137 placeholders de generador solo documentales, 14 reglas sin check redactado, 20 que
+requerían un sistema externo y 17 que requerían uno en ejecución.
 
 (410, no 412: los dos archivos de regla única llevan sus metadatos en la raíz del documento, y el
 cargador de corpus del Core no los lee. Aparecen en el mapeo como `not-in-snapshot`.)
@@ -148,21 +149,34 @@ ningún handler NATIVO las decide, lo cual es el diseño y no una carencia — l
 decide un adaptador sobre el SARIF de un analizador libre. Las cuatro reglas del pack SLSA (GT-665) NO
 cayeron aquí: `SlsaRuleHandler` las reclama, así que son `native-handler`.
 
+52 → 21 el 2026-09-20 (AC2 de GT-716): la clase se DERIVA ahora de la declaración `facts` de cada regla,
+no se lee de una tabla por id de regla, y la tabla daba por «decidible desde el árbol» a toda regla sin
+triaje explícito. Las políticas que deciden 25 de esas filas leen una postura que solo los dueños del
+satélite pueden declarar (21, la nueva clase `needs-supplied-facts`), el sistema de CI o el almacén de
+hallazgos (4), o una ejecución de tests (6 — más 3 desde otras clases). No se implementó nada entre las
+dos cifras: 31 filas que nunca fueron trabajo de handler dejaron de contarse como tal. Los conteos por
+clase ahora: 171 se ejecutan, 21 por escribir, 27 necesitan un sistema externo, 23 uno en ejecución, 31
+una postura declarada, 138 son documentación, 4 están sin especificar.
+
 Proyectar este mapeo sobre esa clase es la cifra que importa:
 
-| Del backlog de 52 handlers | Cantidad |
+| Del backlog de 21 handlers | Cantidad |
 |---|---|
 | Decidibles hoy por un analizador estándar | 9 |
-| Decidibles parcialmente (señal necesaria pero no suficiente) | 5 |
-| Que hay que escribir de verdad | 38 |
+| Decidibles parcialmente (señal necesaria pero no suficiente) | 2 |
+| Que hay que escribir de verdad | 10 |
 
 Las 9 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
 `SEC-PATH-02` (consultas de inyección y path traversal de CodeQL/Semgrep), `SEC-TIMING-01` (comparación
-en tiempo constante) y las cuatro reglas `ISO5055-*`, que declaran ellas mismas su analizador. Las 5
-parciales están listadas en `handlerBacklog.byEvaluabilityClass` del JSON de mapeo.
+en tiempo constante) y las cuatro reglas `ISO5055-*`, que declaran ellas mismas su analizador. Las 2
+parciales (`SEC-INJ-02`, `SEC-TIMING-02`) están listadas en `handlerBacklog.byEvaluabilityClass` del JSON
+de mapeo; las otras tres parciales de antes salieron de la clase con GT-716, al decidirse sobre una postura
+declarada.
 
-Es decir, adoptar vale **17,3% del backlog por completo, 26,9% incluyendo parciales** — 14 de 52 reglas
-que no necesitan handlers a medida.
+Es decir, adoptar vale **42,9% del backlog por completo, 52,4% incluyendo parciales** — 11 de 21 reglas
+que no necesitan handlers a medida. (Antes de GT-716 las mismas 11 se leían como 14 de 52 — 17,3% / 26,9%
+— contra un backlog inflado por filas que nunca fueron trabajo de handler; la proporción se movió porque
+se corrigió el denominador, no porque se adoptara nada.)
 
 5 → 9 el 2026-08-09 (GT-667): las cuatro reglas de ISO/IEC 5055 se contaban como trabajo por escribir
 mientras las decidía un analizador, así que `remainderToAuthor` exageraba el backlog real en cuatro. **La

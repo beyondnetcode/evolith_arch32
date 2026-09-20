@@ -12,6 +12,10 @@
   "rules": [
     {
       "id": "TPY-01",
+      "facts": [
+        "satellite.testing",
+        "testExecution"
+      ],
       "severity": "MUST",
       "category": "test-layer-distribution",
       "title": "Test distribution follows 70/20/10 pyramid",
@@ -28,6 +32,10 @@
     },
     {
       "id": "TPY-02",
+      "facts": [
+        "executionMetrics",
+        "satellite.testing"
+      ],
       "severity": "MUST",
       "category": "unit-testing",
       "title": "Unit tests dominate total test volume",
@@ -39,6 +47,9 @@
     },
     {
       "id": "TPY-03",
+      "facts": [
+        "satellite.testing"
+      ],
       "severity": "MUST",
       "category": "integration-testing",
       "title": "Integration tests use ephemeral containers",
@@ -50,6 +61,9 @@
     },
     {
       "id": "TPY-04",
+      "facts": [
+        "satellite.testing"
+      ],
       "severity": "MUST",
       "category": "e2e-testing",
       "title": "E2E tests cover full HTTP routes",
@@ -61,6 +75,10 @@
     },
     {
       "id": "TPY-05",
+      "facts": [
+        "executionMetrics",
+        "satellite.testing"
+      ],
       "severity": "MUST",
       "category": "coverage-threshold",
       "title": "Business logic coverage >= 80%",
@@ -72,6 +90,9 @@
     },
     {
       "id": "TPY-06",
+      "facts": [
+        "satellite.testing"
+      ],
       "severity": "MUST",
       "category": "per-layer-thresholds",
       "title": "Per-layer coverage thresholds enforced",
@@ -88,6 +109,10 @@
     },
     {
       "id": "TPY-07",
+      "facts": [
+        "executionMetrics",
+        "satellite.testing"
+      ],
       "severity": "MUST NOT",
       "category": "test-isolation",
       "title": "Unit tests do not execute IO",

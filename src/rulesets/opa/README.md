@@ -25,10 +25,28 @@ A Rego body whose fact is missing is *undefined*: `not input.adapter.schemaValid
 - At build time the bundle records, per rule id, the `input.…` paths its policy reads (`evolith/manifest/rule_input_paths`, extracted from the compiler's AST by [`.harness/scripts/lib/rego-rule-inputs.mjs`](../../../.harness/scripts/lib/rego-rule-inputs.mjs) — direct reads, heads, helper rules followed transitively).
 - At evaluation time a declared rule whose input carries **none** of a facet it reads comes back `skipped` with evaluability `supplied-facet-absent` and the facet named. The facet is the first segment under `input`, or the second under `satellite` / `core`: `input.satellite.git` is a facet a caller sends whole, `input.satellite.git.branchNameInvalid` is a field of it.
 - Presence is "the key exists", not "the value is truthy": a facet the input builder **observed** decides whatever it observed (`null`, `false`, `[]` are answers), and a facet a caller supplied as `false` was supplied.
-- `ABSENCE_IS_A_FACT` (in `opa-evaluator.ts`) exempts the facets whose absence is itself a fact by the design of the policies reading them — `qualityEvidence`, `qualityAdmissibilityPolicy`, `evaluationDate` (ADR-0111: nothing presented is the verdict), `evidence`, `waiver` (phase gates), `tenantId`. It is the one hand-kept list; GT-716 AC2 moves the declaration into each rule's own file.
+- `ABSENCE_IS_A_FACT` (in `opa-evaluator.ts`) exempts the facets whose absence is itself a fact by the design of the policies reading them — `qualityEvidence`, `evaluationDate` (ADR-0111: nothing presented is the verdict), `evidence`, `waiver` (phase gates). Which facts a rule reads, and where their truth lives, is declared in the rule itself (`facts`, GT-716 AC2 — see *One declaration per rule* below); this set is the one judgement left in code.
 - A bundle compiled before this entrypoint existed keeps the previous behaviour and says so at `WARN`; `27-opa-parity-gate` fails a bundle that stops exposing it.
 
 To have a rule decided, supply the facet through the evaluation context (`facts.satellite.<facet>`, GT-694). Measured on a satellite fresh from `init` the day this landed: `--engine opa` went from 133 rules "decided" to 10, and the 123 it stopped deciding were all verdicts on input nobody had supplied.
+
+## One declaration per rule (GT-716 AC2)
+
+Every rule in `src/rulesets/**/*.rules.json` declares `facts`: the facets its check reads, by id from [`schema/facets.json`](../schema/facets.json), where each facet carries its **provenance** — where the truth of it lives:
+
+| provenance | meaning | native class when no handler decides the rule |
+|---|---|---|
+| `observed` | readable from the repository tree; the Core derives it (a native handler, or the input builder) | `unimplemented-native` |
+| `supplied` | a posture only the satellite's owners can declare — tenancy, runtime intent, the open-core boundary, an intake record; reaches OPA through `facts.satellite` | `needs-supplied-facts` |
+| `external` | held by the forge, the tracker, a registry, a live database, deployed infrastructure, a telemetry backend | `needs-external-system` |
+| `runtime` | observable only from the running system or an executed suite | `needs-runtime` |
+
+Both engines derive from that one declaration, and the derivation is checked in both directions:
+
+- **Native:** `classifyRule` reads the rule's facts and takes the class of the most demanding provenance (`runtime` > `external` > `supplied` > `observed`); `facts: []` means no machine-checkable fact (`documentation-only` behind a judgement or a generator placeholder, `underspecified` behind nothing). The triage table that used to hold this per rule id is gone.
+- **OPA:** `npm run build:policy` refuses a bundle when a policy reads a facet its rule did not declare, or when a vocabulary entry is declared by no rule and read by no policy. The day it landed, declaring `facts: []` for the twelve rules the table called non-executable while Rego decided them (`KI-R01..07`, `INH-03..05`, `PROT-03/06`) turned the build red with twelve findings; declaring what the policies read is what turned it green — and moved them into the executable denominator.
+
+Adding a rule therefore means declaring what it reads; adding a policy read means the rule's `facts` must name it. What moved when the declaration replaced the table (2026-09-20): the "handler backlog" (`unimplemented-native`) went from 52 to 21 — 25 of those rows were decided by policies over a declared posture, the CI system or a test run, never by a handler over the tree.
 
 ## Aggregated enforcement policies
 

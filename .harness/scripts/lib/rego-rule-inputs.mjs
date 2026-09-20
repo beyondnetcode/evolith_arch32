@@ -53,16 +53,41 @@ export function ruleName(rule) {
   return isTerm(first, 'var') ? first.value : null;
 }
 
-/** The literal `"id"` of a `violations contains {…}` head, or null. */
+/** The literal `"id"` of an object term, or null. */
+function idOfObject(term) {
+  if (!isTerm(term, 'object')) return null;
+  for (const pair of term.value ?? []) {
+    const [key, value] = pair;
+    if (isTerm(key, 'string') && key.value === 'id') return isTerm(value, 'string') ? value.value : null;
+  }
+  return null;
+}
+
+/** The first object literal carrying an `"id"` anywhere under `node`, depth-first. */
+function firstIdLiteral(node) {
+  if (!node || typeof node !== 'object') return null;
+  if (Array.isArray(node)) { for (const child of node) { const id = firstIdLiteral(child); if (id) return id; } return null; }
+  const own = idOfObject(node);
+  if (own) return own;
+  for (const key of Object.keys(node)) { const id = firstIdLiteral(node[key]); if (id) return id; }
+  return null;
+}
+
+/**
+ * The literal `"id"` a `violations` rule emits, or null.
+ *
+ * Two authoring styles exist in the corpus: the id in the head
+ * (`violations contains {"id": "ACL-01", …} if {…}`) and the id assigned in the body
+ * (`violations contains v if { v := {"id": "PG-1-EVIDENCE-01", …} … }`, the
+ * phase-gate style). Both are the same declaration; a rule whose id cannot be
+ * found as a literal (a projection such as `main.rego`'s aggregations) is not one.
+ */
 export function ruleIdOf(rule) {
   const head = rule?.head ?? {};
-  if (ruleName(rule) !== AGGREGATE_HEAD || !isTerm(head.key, 'object')) return null;
-  for (const pair of head.key.value ?? []) {
-    const [key, value] = pair;
-    if (isTerm(key, 'string') && key.value === 'id') {
-      return isTerm(value, 'string') ? value.value : null;
-    }
-  }
+  if (ruleName(rule) !== AGGREGATE_HEAD) return null;
+  const inHead = idOfObject(head.key);
+  if (inHead) return inHead;
+  if (isTerm(head.key, 'var')) return firstIdLiteral(rule.body) ?? firstIdLiteral(rule.else);
   return null;
 }
 

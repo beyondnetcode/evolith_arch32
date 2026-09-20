@@ -10,6 +10,10 @@
   "principles": [
     {
       "id": "DORA-01",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Deployment Frequency",
       "statement": "Satellite products MUST measure and report deployment frequency. Target: at least once per week to production.",
       "rationale": "Evololith Product Vision §6: Deployment Frequency is a core DORA metric. High deployment frequency indicates healthy CD pipeline.",
@@ -29,6 +33,10 @@
     },
     {
       "id": "DORA-02",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Lead Time for Changes",
       "statement": "Satellite products MUST measure and report lead time from commit to production. Target: less than 7 days for medium changes.",
       "rationale": "Evololith Product Vision §6: Lead Time measures how quickly changes flow from commit to production. Short lead time indicates efficient pipeline.",
@@ -48,6 +56,10 @@
     },
     {
       "id": "DORA-03",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Change Failure Rate",
       "statement": "Satellite products MUST measure and report change failure rate. Target: less than 15% of deployments cause failures.",
       "rationale": "Evololith Product Vision §6: Change Failure Rate measures the percentage of deployments causing production failures.",
@@ -67,6 +79,10 @@
     },
     {
       "id": "DORA-04",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Time to Restore",
       "statement": "Satellite products MUST measure and report MTTR (Mean Time To Restore). Target: less than 1 hour for critical failures.",
       "rationale": "Evolith Product Vision §6: Time to Restore measures how quickly the team recovers from failures. Low MTTR indicates effective incident response.",
@@ -86,6 +102,10 @@
     },
     {
       "id": "SPACE-01",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Reliability (Observability)",
       "statement": "Satellite products MUST have observability infrastructure (traces, logs, metrics) operational in production.",
       "rationale": "Evololith Product Vision §6: Reliability ensures production systems are observable. Evolith ADR-0007 mandates OpenTelemetry.",
@@ -106,6 +126,10 @@
     },
     {
       "id": "SPACE-02",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Culture (Team Health)",
       "statement": "Satellite products SHOULD measure team health quarterly. Target: > 70% positive sentiment.",
       "rationale": "Evolith Product Vision §6: Culture measures team satisfaction and health. Teams that are healthy ship higher quality.",
@@ -125,6 +149,10 @@
     },
     {
       "id": "SPACE-03",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Execution (Throughput)",
       "statement": "Satellite products MUST measure and report sprint throughput. Target: > 80% of committed work delivered.",
       "rationale": "Evolith Product Vision §6: Execution measures delivery effectiveness. Consistent throughput indicates predictable pipeline.",
@@ -144,6 +172,10 @@
     },
     {
       "id": "SPACE-04",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Communication (Visibility)",
       "statement": "Satellite products MUST have current SDLC state visible to all stakeholders. Target: phase gate status updated within 24h.",
       "rationale": "Evolith Product Vision §6: Communication ensures stakeholders have real-time visibility into development state.",
@@ -163,6 +195,10 @@
     },
     {
       "id": "SPACE-05",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Sponsorship (Leadership Alignment)",
       "statement": "Satellite products MUST have executive sponsor assigned and actively engaged. Sponsor must review quarterly status.",
       "rationale": "Evolith Product Vision §6: Sponsorship ensures leadership alignment. Active sponsorship prevents strategic drift.",
@@ -182,6 +218,10 @@
     },
     {
       "id": "DRIFT-01",
+      "facts": [
+        "repository",
+        "satellite.scorecards"
+      ],
       "principle": "Architecture Drift Index",
       "statement": "Satellite products MUST measure and report Architecture Drift Index. Target: < 10% drift from Evolith Core standards.",
       "rationale": "Evolith Product Vision §6: Adherence measured via Architecture Drift Index. Drift > threshold indicates erosion of governance.",

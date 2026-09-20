@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0006-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0006: Microservices Transition via Sidecar Pattern",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0014-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0014: Multi-Layer Distributed Caching Strategy",

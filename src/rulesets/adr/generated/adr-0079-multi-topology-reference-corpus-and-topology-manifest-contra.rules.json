@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0079-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0079: Multi-Topology Reference Corpus and Topology Manifest Contract",

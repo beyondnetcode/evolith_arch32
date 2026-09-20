@@ -24,6 +24,10 @@
   "rules": [
     {
       "id": "QT-01",
+      "facts": [
+        "coverage_percentage",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "testing",
       "title": "Code Coverage",
@@ -32,6 +36,10 @@
     },
     {
       "id": "QT-02",
+      "facts": [
+        "maxCyclomaticComplexity",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "code-quality",
       "title": "Cyclomatic Complexity",
@@ -40,6 +48,11 @@
     },
     {
       "id": "QT-03",
+      "facts": [
+        "criticalCveCount",
+        "highCveCount",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "Security Vulnerabilities",
@@ -48,6 +61,11 @@
     },
     {
       "id": "QT-04",
+      "facts": [
+        "repository",
+        "technicalDebtRatio",
+        "technicalDebtRemediationPlanExists"
+      ],
       "severity": "MUST",
       "category": "code-quality",
       "title": "Technical Debt Ratio",
@@ -56,6 +74,9 @@
     },
     {
       "id": "QT-05",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "testing",
       "title": "Testing Pyramid Distribution",
@@ -64,6 +85,10 @@
     },
     {
       "id": "QT-06",
+      "facts": [
+        "behaviorChangedWithoutDocUpdate",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "documentation",
       "title": "Documentation Delta",
@@ -72,6 +97,10 @@
     },
     {
       "id": "QT-07",
+      "facts": [
+        "apiPathsWithoutObservability",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "operations",
       "title": "Observability Evidence",
@@ -80,6 +109,11 @@
     },
     {
       "id": "QT-08",
+      "facts": [
+        "breakingContractChange",
+        "contractTestsPassed",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "contract",
       "title": "API Contract Compatibility",

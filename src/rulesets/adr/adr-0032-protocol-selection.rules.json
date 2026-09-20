@@ -12,6 +12,10 @@
   "rules": [
     {
       "id": "PROT-01",
+      "facts": [
+        "satellite.protocol",
+        "traces"
+      ],
       "severity": "MUST",
       "category": "internal-communication",
       "title": "Internal service-to-service uses gRPC",
@@ -23,6 +27,9 @@
     },
     {
       "id": "PROT-02",
+      "facts": [
+        "satellite.protocol"
+      ],
       "severity": "MUST",
       "category": "external-communication",
       "title": "Public and external APIs use REST",
@@ -34,6 +41,9 @@
     },
     {
       "id": "PROT-03",
+      "facts": [
+        "satellite.protocol"
+      ],
       "severity": "MUST",
       "category": "bff-communication",
       "title": "BFF uses REST primary, GraphQL targeted",
@@ -45,6 +55,9 @@
     },
     {
       "id": "PROT-04",
+      "facts": [
+        "satellite.protocol"
+      ],
       "severity": "MUST NOT",
       "category": "graphql-isolation",
       "title": "GraphQL resolvers never in domain layer",
@@ -56,6 +69,9 @@
     },
     {
       "id": "PROT-05",
+      "facts": [
+        "satellite.protocol"
+      ],
       "severity": "MUST",
       "category": "protobuf-centralization",
       "title": "Proto files centralized in Contracts library",
@@ -66,6 +82,9 @@
     },
     {
       "id": "PROT-06",
+      "facts": [
+        "satellite.protocol"
+      ],
       "severity": "SHOULD",
       "category": "streaming",
       "title": "File uploads/streams prefer gRPC streaming",
@@ -76,6 +95,9 @@
     },
     {
       "id": "PROT-07",
+      "facts": [
+        "satellite.protocol"
+      ],
       "severity": "MUST",
       "category": "contract-versioning",
       "title": "Breaking changes require version bump",

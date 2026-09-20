@@ -5,6 +5,9 @@
   "rules": [
     {
       "id": "SEC-TIMING-01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "Constant-time credential comparison",
@@ -15,6 +18,9 @@
     },
     {
       "id": "SEC-TIMING-02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "No early rejection on credential length",

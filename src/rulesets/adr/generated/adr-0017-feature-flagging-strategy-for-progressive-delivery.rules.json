@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0017-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0017: Feature Flagging Strategy for Progressive Delivery",

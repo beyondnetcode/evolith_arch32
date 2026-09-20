@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "AI-0104-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0104: Interaction Adapter Port for Evolith Agent Runtime",

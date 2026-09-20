@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0108-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0108: MassTransit Owns the Message Topology; Broker CRDs Are RBAC-Only",

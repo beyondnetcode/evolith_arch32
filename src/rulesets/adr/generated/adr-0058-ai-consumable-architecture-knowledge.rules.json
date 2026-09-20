@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0058-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0058: AI-Consumable Architecture Knowledge",

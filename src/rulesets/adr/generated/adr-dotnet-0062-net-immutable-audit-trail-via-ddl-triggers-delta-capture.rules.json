@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0062-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0062: .NET Immutable Audit Trail via DDL Triggers & Delta Capture",

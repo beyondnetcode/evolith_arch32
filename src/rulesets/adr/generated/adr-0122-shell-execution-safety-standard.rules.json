@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0122-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0122: Shell Execution Safety Standard",

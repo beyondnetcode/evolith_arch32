@@ -10,6 +10,7 @@
   "rules": [
     {
       "id": "MM-R01",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "topology",
       "title": "Single Deployment Unit",
@@ -20,6 +21,7 @@
     },
     {
       "id": "MM-R02",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "bounded-contexts",
       "title": "Explicit Bounded Context Boundaries",
@@ -30,6 +32,7 @@
     },
     {
       "id": "MM-R03",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "hexagonal-architecture",
       "title": "Ports and Adapters Boundary",
@@ -40,6 +43,7 @@
     },
     {
       "id": "MM-R04",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "communication",
       "title": "Inter-Context Communication via Ports",
@@ -50,6 +54,7 @@
     },
     {
       "id": "MM-R05",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "persistence",
       "title": "No Shared Database Across Bounded Contexts",
@@ -60,6 +65,7 @@
     },
     {
       "id": "MM-R06",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "async-boundaries",
       "title": "Async Events Use Domain Events",
@@ -70,6 +76,7 @@
     },
     {
       "id": "MM-R07",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "extraction-readiness",
       "title": "Maintain Extraction Readiness Score",
@@ -80,6 +87,7 @@
     },
     {
       "id": "MM-R08",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "observability",
       "title": "Observability Instrumentation",
@@ -90,6 +98,7 @@
     },
     {
       "id": "MM-R09",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "dependency-injection",
       "title": "Strict Dependency Inversion Principle (DIP)",
@@ -100,6 +109,7 @@
     },
     {
       "id": "MM-R10",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "static-analysis",
       "title": "AST-Based Code Analysis Mandatory",
@@ -110,6 +120,7 @@
     },
     {
       "id": "MM-R11",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "separation-of-concerns",
       "title": "Strict UI and Logic Isolation (SoC)",
@@ -120,6 +131,7 @@
     },
     {
       "id": "MM-R12",
+      "facts": ["repository"],
       "severity": "SHOULD",
       "category": "domain-purity",
       "title": "Pure Domain Model (Data Mapper Enforcement)",

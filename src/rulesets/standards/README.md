@@ -129,10 +129,11 @@ The eight SSDF and four SLSA rules stay at `no`, and that is a verdict rather th
 ## Re-scoping the handler backlog
 
 The gap statement sized the payoff against "~240 handlers to write". **That figure is already
-retired.** GT-595 triaged the corpus and the real, decidable-from-the-repository backlog is **52
-rules** — the `unimplemented-native` class. Of the 410 rules Core's triage loads, 170 already run and
-the other 188 are 137 documentation-only generator placeholders, 14 underspecified rules with no
-authored check, 20 that need an external system and 17 that need a running one.
+retired.** GT-595 triaged the corpus and the real, decidable-from-the-repository backlog is the
+`unimplemented-native` class: **52 rules** when this section was written, **21** since 2026-09-20 (see
+below). Of the 410 rules Core's triage loaded then, 170 already ran and the other 188 were 137
+documentation-only generator placeholders, 14 underspecified rules with no authored check, 20 that
+needed an external system and 17 that needed a running one.
 
 (410, not 412: the two single-rule infrastructure files carry their rule metadata at the document root,
 which Core's corpus loader does not read. They appear in the mapping as `not-in-snapshot`.)
@@ -145,21 +146,33 @@ NATIVE handler decides them, which is the design rather than a gap — they carr
 decided by an adapter over a free analyser's SARIF. The SLSA pack's four rules (GT-665) did NOT land
 here: `SlsaRuleHandler` claims them, so they are `native-handler`.
 
+52 → 21 on 2026-09-20 (GT-716 AC2): the class is DERIVED from each rule's own `facts` declaration now,
+not read from a table keyed by rule id, and the table had defaulted every un-triaged rule to "decidable
+from the tree". The policies that decide 25 of those rows read a posture only the satellite's owners
+can declare (21, the new `needs-supplied-facts` class), the CI system or the findings store (4), or a
+test run (6 — with 3 more from elsewhere). Nothing was implemented between the two figures: 31 rows
+that were never handler work stopped being counted as handler work. The counts per class now: 171
+run, 21 to author, 27 need an external system, 23 need a running one, 31 need a declared posture, 138
+are documentation, 4 are underspecified.
+
 Folding this mapping onto that class is the number that matters:
 
-| Of the 52-rule handler backlog | Count |
+| Of the 21-rule handler backlog | Count |
 |---|---|
 | Decidable today by an off-the-shelf analyser | 9 |
-| Decidable partially (analyser gives a necessary-but-not-sufficient signal) | 5 |
-| Genuinely has to be authored | 38 |
+| Decidable partially (analyser gives a necessary-but-not-sufficient signal) | 2 |
+| Genuinely has to be authored | 10 |
 
 The 9 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
 `SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries), `SEC-TIMING-01` (timing-safe
-comparison) and the four `ISO5055-*` rules, which declare their analyser themselves. The 5 partials are
-listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON.
+comparison) and the four `ISO5055-*` rules, which declare their analyser themselves. The 2 partials
+(`SEC-INJ-02`, `SEC-TIMING-02`) are listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON;
+the other three former partials left the class with GT-716, being decided over a declared posture.
 
-So adoption is worth **17.3% of the backlog outright, 26.9% including partials** — 14 of 52 rules that
-do not need bespoke handlers.
+So adoption is worth **42.9% of the backlog outright, 52.4% including partials** — 11 of 21 rules that
+do not need bespoke handlers. (Before GT-716 the same 11 read as 14 of 52 — 17.3% / 26.9% — against a
+backlog inflated by rows that were never handler work; the share moved because the denominator was
+corrected, not because anything was adopted.)
 
 5 → 9 on 2026-08-09 (GT-667): the four ISO/IEC 5055 rules were counted as work to author while being
 decided by an analyser, so `remainderToAuthor` overstated the real backlog by four. **The share moved

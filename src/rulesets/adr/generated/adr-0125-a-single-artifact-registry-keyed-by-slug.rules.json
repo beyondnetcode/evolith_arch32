@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0125-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0125: A Single Artifact Registry, Keyed by Slug",

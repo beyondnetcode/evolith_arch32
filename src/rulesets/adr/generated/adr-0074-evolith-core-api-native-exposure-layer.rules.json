@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0074-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0074: Evolith Core API Native Exposure Layer",

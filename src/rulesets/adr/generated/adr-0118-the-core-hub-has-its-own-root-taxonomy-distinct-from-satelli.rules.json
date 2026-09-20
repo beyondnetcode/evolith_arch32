@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0118-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0118: The Core Hub Has Its Own Root Taxonomy, Distinct From Satellites",

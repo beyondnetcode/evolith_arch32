@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0093-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0093: Concurrency Control and Resource Locking Standard for MCP Tools",

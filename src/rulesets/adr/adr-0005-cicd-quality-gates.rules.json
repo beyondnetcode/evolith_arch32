@@ -12,6 +12,9 @@
   "rules": [
     {
       "id": "CICD-01",
+      "facts": [
+        "satellite.ci"
+      ],
       "severity": "MUST",
       "category": "security-scan",
       "title": "CodeQL Static Analysis runs on every PR",
@@ -26,6 +29,9 @@
     },
     {
       "id": "CICD-02",
+      "facts": [
+        "satellite.ci"
+      ],
       "severity": "MUST",
       "category": "dependency-scan",
       "title": "Dependency vulnerability scan blocks merge",
@@ -36,6 +42,10 @@
     },
     {
       "id": "CICD-03",
+      "facts": [
+        "forge",
+        "satellite.ci"
+      ],
       "severity": "MUST",
       "category": "secret-detection",
       "title": "Secret detection enabled on repository",
@@ -46,6 +56,10 @@
     },
     {
       "id": "CICD-04",
+      "facts": [
+        "forge",
+        "satellite.ci"
+      ],
       "severity": "MUST",
       "category": "pipeline-structure",
       "title": "All quality gates execute before merge",
@@ -56,6 +70,9 @@
     },
     {
       "id": "CICD-05",
+      "facts": [
+        "satellite.findings"
+      ],
       "severity": "MUST",
       "category": "documentation",
       "title": "Security findings documented with justification",
@@ -66,6 +83,10 @@
     },
     {
       "id": "CICD-06",
+      "facts": [
+        "issueTracker",
+        "satellite.findings"
+      ],
       "severity": "MUST",
       "category": "sla-compliance",
       "title": "Critical findings resolved within 24 hours",
@@ -77,6 +98,10 @@
     },
     {
       "id": "CICD-07",
+      "facts": [
+        "issueTracker",
+        "satellite.findings"
+      ],
       "severity": "MUST",
       "category": "sla-compliance",
       "title": "High findings resolved within 72 hours",

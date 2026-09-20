@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0116-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0116: Canonical Finding Contract and an Executable Advisory-Authority Boundary",

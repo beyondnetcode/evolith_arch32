@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0090-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0090: RAG Knowledge Governance Standard",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0057-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0057: Architecture Intelligence Catalog",

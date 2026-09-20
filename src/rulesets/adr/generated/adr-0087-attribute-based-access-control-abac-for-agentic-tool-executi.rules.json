@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0087-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0087: Attribute-Based Access Control (ABAC) for Agentic Tool Execution",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0128-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0128: LLM Providers Are a Catalog the Core Publishes and a Choice the Tenant Makes",

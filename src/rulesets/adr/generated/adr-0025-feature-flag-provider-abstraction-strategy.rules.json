@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0025-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0025: Feature Flag Provider Abstraction Strategy",

@@ -11,6 +11,9 @@
   "rules": [
     {
       "id": "DAM-R01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "data-mesh-config",
       "title": "Data Product Designation",
@@ -22,6 +25,9 @@
     },
     {
       "id": "DAM-R02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "data-mesh-contracts",
       "title": "Data Contracts",
@@ -33,6 +39,9 @@
     },
     {
       "id": "DAM-R03",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "data-mesh-governance",
       "title": "Federated Governance",
@@ -44,6 +53,9 @@
     },
     {
       "id": "DAM-R04",
+      "facts": [
+        "registry"
+      ],
       "severity": "MUST",
       "category": "data-lineage",
       "title": "Data Product Lineage Tracking",
@@ -55,6 +67,9 @@
     },
     {
       "id": "DAM-R05",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "retention",
       "title": "Retention Policy on Data Products",
@@ -66,6 +81,9 @@
     },
     {
       "id": "DAM-R06",
+      "facts": [
+        "registry"
+      ],
       "severity": "MUST",
       "category": "consumption-contracts",
       "title": "Explicit Consumption Contracts",
@@ -77,6 +95,9 @@
     },
     {
       "id": "DAM-R07",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "observability",
       "title": "Data Quality SLO Declaration",
@@ -88,6 +109,9 @@
     },
     {
       "id": "DAM-R08",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "schema-evolution",
       "title": "Data Contract Backward Compatibility",
@@ -99,6 +123,9 @@
     },
     {
       "id": "DAM-R09",
+      "facts": [
+        "registry"
+      ],
       "severity": "SHOULD",
       "category": "discovery",
       "title": "Data Product Discoverability Registration",

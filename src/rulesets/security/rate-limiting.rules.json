@@ -5,6 +5,9 @@
   "rules": [
     {
       "id": "SEC-RL-01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "Rate limiting on HTTP endpoints",
@@ -15,6 +18,9 @@
     },
     {
       "id": "SEC-RL-02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "Request body size limits",
@@ -25,6 +31,9 @@
     },
     {
       "id": "SEC-RL-03",
+      "facts": [
+        "repository"
+      ],
       "severity": "SHOULD",
       "category": "security",
       "title": "HTTP server timeouts",

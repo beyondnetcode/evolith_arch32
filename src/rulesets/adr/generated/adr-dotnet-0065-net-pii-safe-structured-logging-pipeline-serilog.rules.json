@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0065-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0065: .NET PII-Safe Structured Logging Pipeline (Serilog)",

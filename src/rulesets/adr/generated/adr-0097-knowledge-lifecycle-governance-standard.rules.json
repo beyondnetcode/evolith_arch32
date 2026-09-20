@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0097-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0097: Knowledge Lifecycle Governance Standard",

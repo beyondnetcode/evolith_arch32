@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0048-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0048: Enterprise Taxonomy Standardization and Reference Layout",

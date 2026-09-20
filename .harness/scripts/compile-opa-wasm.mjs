@@ -12,6 +12,8 @@ import https from 'https';
 import { OPA_VERSION } from './opa-runtime.mjs';
 // GT-716 AC1: what each reachable rule READS, from the same AST the ids come from.
 import { ruleInputPathsFromAst } from './lib/rego-rule-inputs.mjs';
+// GT-716 AC2: the rules' own `facts` declarations, which every policy read must be covered by.
+import { readCorpusFacts, readVocabulary, staleVocabulary, undeclaredReads } from './lib/rule-facts.mjs';
 
 const rootDir = process.cwd();
 const harnessBinDir = join(rootDir, '.harness', 'bin');
@@ -195,6 +197,30 @@ function collectManifest() {
 
 async function compileWasm() {
   const { declaredRuleIds, ruleInputPaths } = collectManifest();
+
+  // GT-716 AC2 — one declaration, both engines. A policy that reads a facet its rule
+  // never declared is the two engines classifying one rule from two sources again:
+  // `KI-R01..07` were "underspecified" natively while Rego decided them. The build
+  // refuses it, so the declaration is corrected (or the policy is) before a bundle
+  // that contradicts the corpus can ship. A vocabulary entry nothing uses is refused
+  // for the same reason a dead baseline entry is.
+  const corpusFacts = readCorpusFacts(join(rootDir, 'src', 'rulesets'), rootDir);
+  const vocabulary = readVocabulary(rootDir);
+  const undeclared = undeclaredReads(ruleInputPaths, corpusFacts, vocabulary);
+  const stale = staleVocabulary(vocabulary, corpusFacts, ruleInputPaths);
+  if (undeclared.length > 0 || stale.length > 0) {
+    if (undeclared.length > 0) {
+      console.error(`OPA manifest: ${undeclared.length} policy read(s) are not covered by the rule's own \`facts\` declaration (GT-716 AC2):`);
+      for (const line of undeclared) console.error(`  - ${line}`);
+      console.error('Declare the facet in the rule (src/rulesets/**/*.rules.json → facts) or stop reading it in the policy; both engines derive from that declaration.');
+    }
+    if (stale.length > 0) {
+      console.error(`OPA manifest: ${stale.length} facet(s) in src/rulesets/schema/facets.json are declared by no rule and read by no policy: ${stale.join(', ')}`);
+      console.error('Remove them, or declare them where they are needed — a vocabulary entry nothing derives from is dead.');
+    }
+    process.exit(1);
+  }
+  console.log(`OPA manifest: every policy read is declared by its rule (${corpusFacts.size} corpus rules checked, ${vocabulary.size} facets in the vocabulary).`);
   console.log(`OPA manifest: ${declaredRuleIds.length} rule id(s) declared by reachable policies; ${ruleInputPaths.size} of them state which input paths they read.`);
 
   // Generated into a staging directory and passed to `opa build` as a second

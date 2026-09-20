@@ -11,6 +11,10 @@
   "principles": [
     {
       "id": "OCB-01",
+      "facts": [
+        "repository",
+        "satellite.openCore"
+      ],
       "principle": "Core Remains License-Agnostic",
       "statement": "Evolith Core rulesets, schemas, ADRs, and standards MUST NOT reference or depend on any commercial license, paid feature flag, or enterprise-only dependency.",
       "rationale": "Core is the constitutional foundation. If it requires commercial components, satellite products become dependent on Evolith the company, not Evolith the framework.",
@@ -23,6 +27,9 @@
     },
     {
       "id": "OCB-02",
+      "facts": [
+        "satellite.openCore"
+      ],
       "principle": "Enterprise Features Explicitly Marked",
       "statement": "Any rule, schema, or artifact that is Enterprise-only MUST be explicitly marked with 'availability: enterprise' in its metadata. Unmarked artifacts default to Core (open).",
       "rationale": "Ambiguity about what is Core vs Enterprise creates compliance confusion. Explicit marking ensures clear boundaries.",
@@ -35,6 +42,9 @@
     },
     {
       "id": "OCB-03",
+      "facts": [
+        "satellite.openCore"
+      ],
       "principle": "ACLs Are Enterprise Features",
       "statement": "Anti-Corruption Layer implementations for Jira, Trello, Linear, and similar external systems are Enterprise features. Core provides the ACL rules; the integrations themselves belong to Enterprise.",
       "rationale": "ACLs are the monetization vector for Evolith. They must remain in the Enterprise layer to protect the business model while being governed by Core rules.",
@@ -47,6 +57,9 @@
     },
     {
       "id": "OCB-04",
+      "facts": [
+        "satellite.openCore"
+      ],
       "principle": "CLI and MCP Remain Core",
       "statement": "Command-line interface and MCP server implementations MUST remain fully open in Core. They cannot be gated behind paid licenses or enterprise subscriptions.",
       "rationale": "CLI and MCP are the primary exposure layer for Evolith Core. Making them enterprise-only would block adoption and contradict the democratization mission.",
@@ -59,6 +72,9 @@
     },
     {
       "id": "OCB-05",
+      "facts": [
+        "satellite.openCore"
+      ],
       "principle": "Tracker Features Cannot Penetrate Core",
       "statement": "Features specific to Evolith Tracker (SaaS dashboard, advanced analytics, multi-tenancy management UI, audit logs UI) cannot be implemented as Core rules or standards.",
       "rationale": "Tracker is the commercial SaaS layer. Its implementation details must not influence Core definitions.",
@@ -71,6 +87,9 @@
     },
     {
       "id": "OCB-06",
+      "facts": [
+        "satellite.openCore"
+      ],
       "principle": "Reference Corpus Is Core",
       "statement": "The Reference Corpus (ADRs, standards, blueprints, taxonomies, rulesets, schemas) is Core and freely available. No tier of access within Core (e.g., 'basic' vs 'premium' standards).",
       "rationale": "All standards are equal in Core. Paywalling some standards would fragment the constitutional baseline.",
@@ -83,6 +102,9 @@
     },
     {
       "id": "OCB-07",
+      "facts": [
+        "satellite.openCore"
+      ],
       "principle": "Enterprise Innovations Can Promote to Core",
       "statement": "Features initially developed in Evolith Enterprise (Tracker) can be promoted to Core via the standard ADR process, provided they benefit the broader ecosystem.",
       "rationale": "The enterprise layer is an innovation engine. Successful features should ascend to Core for universal benefit, following the federated governance promotion process.",
@@ -96,6 +118,10 @@
     },
     {
       "id": "OCB-08",
+      "facts": [
+        "satellite.openCore",
+        "testExecution"
+      ],
       "principle": "Core Cannot Require Enterprise to Function",
       "statement": "Satellite products must be able to implement Core rules without purchasing or subscribing to Evolith Enterprise. Enterprise features are additive, never blocking.",
       "rationale": "The Core must remain independently viable. If implementing Core requires enterprise license, the Open-Core model collapses.",

@@ -11,6 +11,9 @@
   "rules": [
     {
       "id": "CLI-PAR-01",
+      "facts": [
+        "satellite.coreParity"
+      ],
       "severity": "MUST",
       "category": "traceability",
       "title": "Every Executable Core Rule Has a Parity Record",
@@ -23,6 +26,9 @@
     },
     {
       "id": "CLI-PAR-02",
+      "facts": [
+        "satellite.coreParity"
+      ],
       "severity": "MUST",
       "category": "shared-logic",
       "title": "CLI and MCP Must Use Shared Validation Logic",
@@ -36,6 +42,10 @@
     },
     {
       "id": "CLI-PAR-03",
+      "facts": [
+        "satellite.coreParity",
+        "testExecution"
+      ],
       "severity": "MUST",
       "category": "outputs",
       "title": "Equivalent CLI and MCP Results Must Be Semantically Consistent",
@@ -48,6 +58,9 @@
     },
     {
       "id": "CLI-PAR-04",
+      "facts": [
+        "satellite.coreParity"
+      ],
       "severity": "SHOULD",
       "category": "documentation",
       "title": "Parity Gaps Must Remain Visible",

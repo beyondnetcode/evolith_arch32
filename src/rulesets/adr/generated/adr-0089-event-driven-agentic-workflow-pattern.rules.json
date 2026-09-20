@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0089-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0089: Event-Driven Agentic Workflow Pattern",

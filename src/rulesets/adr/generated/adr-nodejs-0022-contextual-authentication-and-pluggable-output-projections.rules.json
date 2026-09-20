@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0022-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0022: Contextual Authentication and Pluggable Output Projections",

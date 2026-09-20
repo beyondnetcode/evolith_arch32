@@ -71,7 +71,7 @@ export function declaredPorts(dir) {
   const names = new Set();
   for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.ts') && !x.includes('.spec.'))) {
     const src = fs.readFileSync(path.join(dir, f), 'utf8');
-    for (const m of src.matchAll(/export interface (I[A-Z][A-Za-z]*)/g)) names.add(m[1]);
+    for (const m of src.matchAll(/export interface (I[A-Z][A-Za-z0-9]*)/g)) names.add(m[1]);
   }
   return [...names].sort();
 }
@@ -87,7 +87,7 @@ export function hotPathPorts(depsFile) {
   const src = fs.readFileSync(depsFile, 'utf8');
   const required = [];
   const optional = [];
-  for (const m of src.matchAll(/readonly\s+[a-zA-Z]+(\??):\s*(I[A-Z][A-Za-z]*)\s*;/g)) {
+  for (const m of src.matchAll(/readonly\s+[a-zA-Z]+(\??):\s*(I[A-Z][A-Za-z0-9]*)\s*;/g)) {
     (m[1] === '?' ? optional : required).push(m[2]);
   }
   return { required: [...new Set(required)].sort(), optional: [...new Set(optional)].sort() };

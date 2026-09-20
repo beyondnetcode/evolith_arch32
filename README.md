@@ -91,7 +91,7 @@ For an AI agent, the same engine as an MCP server over stdio (Node ≥ 20):
 
 How many rules, packs and ADRs your installation loads is printed by `evolith rulesets`; the tree's counts are measured by CI on every PR and published in the [corpus inventory](./reference/core/control-center/maturity-reports/inventory-summary.md).
 
-<div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Open the interactive diagram"><img src="./reference/core/sdlc/assets/master-view.svg" alt="How the CLI, the Core and the five SDLC phases fit together" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Open the interactive viewer</a></b> — drag to pan, scroll to zoom</sub></div>
+<div align="center"><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html" title="Open the interactive diagram"><img src="./reference/core/sdlc/assets/master-view.svg" alt="How the CLI, the Core and the five SDLC phases fit together" width="820" /></a><br/><sub><b><a href="https://beyondnetcode.github.io/evolith_arch32/master-view.html">Open the interactive viewer</a></b> — guided tour in eleven stops · drag to pan · scroll to zoom · numbers derived from the tree on every build</sub></div>
 
 ---
 

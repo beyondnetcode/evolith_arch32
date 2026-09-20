@@ -24,7 +24,7 @@ Ordenadas de la [[política]] general a la evidencia concreta:
 | [Arquitectura Maestra C4](./C4-MASTER-ARCHITECTURE.es.md) | Diseño de sistema end-to-end consolidado y verificado (core-api, servidor MCP y Agent Runtime desplegados) | Ver la arquitectura tal como está construida y desplegada | Diseño de sistema | No |
 | [C4 Nivel 3 — Componentes](./level-3-components/README.es.md) | Desglose de componentes por desplegable: core-api, servidor MCP, Agent Runtime, Evolith CLI | Hacer zoom en los internos de un contenedor | Diseño de sistema | No |
 | [C4 Nivel 4 — Módulos de Código](./level-4-code-modules/README.es.md) | Vista a nivel de módulos de `core-domain` | Hacer zoom en la estructura del código | Diseño de sistema | No |
-| [Visual Map](https://beyondnetcode.github.io/evolith_arch32/) | Explorador interactivo de la arquitectura de Evolith | Navegar visualmente el modelo C4 y sus componentes | Mapa interactivo | No |
+| [Atlas de Gobierno](https://beyondnetcode.github.io/evolith_arch32/) | Mapa interactivo de la arquitectura con una historia guiada de once capítulos en tres niveles de lectura (EN/ES); se construye desde esta carpeta con `.harness/scripts/pages/build-pages.mjs` y cada cifra se deriva del árbol | Seguir la secuencia idea → veredicto → federación y luego explorar el mapa | Mapa interactivo | No |
 | [Flujos de Interfaces del Core](./view-by-interface-flow.es.md) | Contratos IN/OUT, rutas de procesamiento, resiliencia, auditoría y guía de clientes para interfaces Core | Entender cómo la comunicación cruza cada límite del Core | Vista de arquitectura | No |
 | [Principios](../../foundations/principles/README.es.md) | Principios arquitectónicos fundacionales | Fundamentar todas las decisiones en principios compartidos | Hub de área | Sí |
 | [Hub de Blueprints](../blueprints/README.es.md) | Principios agnósticos al runtime, topología y criterios de selección | Definir la línea base arquitectónica | Hub de área | Sí |
@@ -33,7 +33,7 @@ Ordenadas de la [[política]] general a la evidencia concreta:
 | [Hub de Topologias](../topologies/README.es.md) | Corpus de Referencia Multi-Topologia legible por humanos | Gobernar dimensiones topologicas y composicion | Hub de area | Si |
 | [Patrones Canónicos](../patterns/README.es.md) | Patrones de código gobernados por ADRs específicos de runtime | Estandarizar implementaciones por runtime | Hub de área | No |
 | Evolith SDK | Modelo de dominio y diseño técnico del SDK de Evolith | Diseñar el SDK compartido | Referencia de diseño | No |
-| [Catálogo de Herramientas MCP](../../foundations/common-rules/ai-augmented/03-tools-catalog/evolith-mcp-tools.es.md) | Catálogo de 11 herramientas MCP para automatización con agentes de IA | Habilitar automatización con agentes de IA | Referencia de herramientas | No |
+| [Catálogo de Herramientas MCP](../../foundations/common-rules/ai-augmented/03-tools-catalog/evolith-mcp-tools.es.md) | Catálogo de las herramientas MCP para automatización con agentes de IA (el conteo vive en el inventario de producto generado) | Habilitar automatización con agentes de IA | Referencia de herramientas | No |
 | [Modelo de Referencia UMS](../../../../product/research/demo/ums-reference-model.es.md) | Muestra cómo un producto real adopta o especializa la referencia | Demostrar evidencia aplicada | Referencia aplicada | No |
 
 ## Regla de Lectura

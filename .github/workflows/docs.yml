@@ -263,6 +263,20 @@ jobs:
       - name: Check surface parity matrix
         run: node .harness/scripts/ci/24-check-surface-parity.mjs
 
+      # The two GitHub Pages views (the Atlas and the E2E master view) are BUILT from the
+      # tree: every number they print is derived by `.harness/scripts/pages/derive-page-metrics.mjs`
+      # and the poster SVG the README embeds is a generated artifact. Until 2026-09-19 both
+      # were published by hand and had aged three months (the poster said "12 ports · 30
+      # adapters · 26 tools · 20 commands" against a tree with 21 · 47 · 55 · 38). This step
+      # validates the authored model (ids, doc paths, both languages, word budgets) and fails
+      # when `reference/core/sdlc/assets/master-view.svg` or `demos/tokens.css` no longer match
+      # what the tree renders — the fix is `node .harness/scripts/pages/build-pages.mjs --write-svg`.
+      - name: GitHub Pages views are current (model valid, SVG and tokens match the tree)
+        run: node .harness/scripts/pages/build-pages.mjs --check
+
+      - name: Self-test for the pages build
+        run: node --test .harness/scripts/pages/build-pages.test.mjs
+
       - name: Validate topology rule coverage
         run: node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
 

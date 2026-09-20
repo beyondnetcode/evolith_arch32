@@ -24,7 +24,7 @@ Ordered from general policy to concrete evidence:
 | [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.md) | Consolidated, verified end-to-end system design (deployed core-api, MCP server, Agent Runtime) | See the architecture as actually built and deployed | System design | No |
 | [C4 Level 3 — Components](./level-3-components/README.md) | Component breakdown per deployable: core-api, MCP server, Agent Runtime, Evolith CLI | Zoom into a container's internals | System design | No |
 | [C4 Level 4 — Code Modules](./level-4-code-modules/README.md) | Module-level view of `core-domain` | Zoom into the code structure | System design | No |
-| [Visual Map](https://beyondnetcode.github.io/evolith_arch32/) | Interactive explorer for the Evolith architecture | Navigate the C4 model and its components visually | Interactive map | No |
+| [Governance Atlas](https://beyondnetcode.github.io/evolith_arch32/) | Interactive map of the architecture with an eleven-chapter guided story at three reading levels (EN/ES); built from this folder by `.harness/scripts/pages/build-pages.mjs`, every number derived from the tree | Follow the sequence idea → verdict → federation, then explore the map | Interactive map | No |
 | [Core Interface Flows](./view-by-interface-flow.md) | IN/OUT contracts, processing paths, resilience, audit, and client guidance for Core interfaces | Understand how communication crosses every Core boundary | Architecture view | No |
 | [Principles](../../foundations/principles/README.md) | Foundational architecture principles | Ground all decisions in shared principles | Area hub | Yes |
 | [Blueprints Hub](../blueprints/README.md) | Runtime-agnostic principles, topology, and selection criteria | Define the architectural baseline | Area hub | Yes |
@@ -33,7 +33,7 @@ Ordered from general policy to concrete evidence:
 | [Topology Hub](../topologies/README.md) | Human-readable Multi-Topology Reference Corpus | Govern topology dimensions and composition | Area hub | Yes |
 | [Canonical Patterns](../patterns/README.md) | Code patterns governed by runtime-specific ADRs | Standardize runtime implementations | Area hub | No |
 | Evolith SDK | Domain model and technical design of the Evolith SDK | Design the shared SDK | Design reference | No |
-| [MCP Tools Catalog](../../foundations/common-rules/ai-augmented/03-tools-catalog/evolith-mcp-tools.md) | Catalog of 11 MCP tools for AI agent automation | Enable AI agent automation | Tool reference | No |
+| [MCP Tools Catalog](../../foundations/common-rules/ai-augmented/03-tools-catalog/evolith-mcp-tools.md) | Catalog of the MCP tools for AI agent automation (the count lives in the generated product inventory) | Enable AI agent automation | Tool reference | No |
 | [UMS Reference Model](../../../../product/research/demo/ums-reference-model.md) | Shows how a real product adopts or specializes the reference | Demonstrate applied evidence | Applied reference | No |
 
 ## Reading Rule

@@ -14,9 +14,21 @@ In short: Markdown explains, Native `*.rules.json` defines, and OPA + the Native
 
 - Script: [`.harness/scripts/compile-opa-wasm.mjs`](../../../.harness/scripts/compile-opa-wasm.mjs), invoked via `npm run build:policy`.
 - It downloads OPA `v1.19.0`, then runs `opa build -t wasm` over `rulesets/opa/` with `--ignore=schemas`.
-- **Wasm entrypoints (3):** `evolith/main/violations`, `evolith/abac/violations` and `evolith/manifest/declared_rule_ids`. The third is generated at build time (GT-675): the script writes a `manifest.rego` into a staging directory listing every rule id the reachable policies can decide, so the evaluator can tell "evaluated, clean" from "nothing here decides this". It is not a file in this directory and must not be committed.
+- **Wasm entrypoints (4):** `evolith/main/violations`, `evolith/abac/violations`, `evolith/manifest/declared_rule_ids` and `evolith/manifest/rule_input_paths`. The last two are generated at build time from the policies' AST: the script writes a `manifest.rego` into a staging directory listing every rule id the reachable policies can decide (GT-675 — so the evaluator can tell "evaluated, clean" from "nothing here decides this") and, per rule id, the `input.…` paths its policy reads (GT-716 — so `OpaEvaluator` reports a rule whose fact the run did not supply as `skipped` / `supplied-facet-absent` instead of as a verdict; see *When a fact is absent* below). It is not a file in this directory and must not be committed.
 - The extracted `policy.wasm` is installed to `sdk/cli/rulesets/opa/policy.wasm` for the Evolith CLI evaluator.
 - `evolith.main` ([main.rego](./main.rego)) aggregates the `violations` sets of the individual policies. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) is **dual-published**: it is imported and unioned into `evolith/main/violations` (`main.rego` imports `data.evolith.abac.violations` and unions it), *and* it is also exposed as the dedicated `evolith/abac/violations` entrypoint for runtime MCP tool-access decisions.
+
+## When a fact is absent (GT-716)
+
+A Rego body whose fact is missing is *undefined*: `not input.adapter.schemaValidated` fires, `input.satellite.git.branchNameInvalid` never matches. Neither is a verdict about the repository, so `OpaEvaluator` does not report one:
+
+- At build time the bundle records, per rule id, the `input.…` paths its policy reads (`evolith/manifest/rule_input_paths`, extracted from the compiler's AST by [`.harness/scripts/lib/rego-rule-inputs.mjs`](../../../.harness/scripts/lib/rego-rule-inputs.mjs) — direct reads, heads, helper rules followed transitively).
+- At evaluation time a declared rule whose input carries **none** of a facet it reads comes back `skipped` with evaluability `supplied-facet-absent` and the facet named. The facet is the first segment under `input`, or the second under `satellite` / `core`: `input.satellite.git` is a facet a caller sends whole, `input.satellite.git.branchNameInvalid` is a field of it.
+- Presence is "the key exists", not "the value is truthy": a facet the input builder **observed** decides whatever it observed (`null`, `false`, `[]` are answers), and a facet a caller supplied as `false` was supplied.
+- `ABSENCE_IS_A_FACT` (in `opa-evaluator.ts`) exempts the facets whose absence is itself a fact by the design of the policies reading them — `qualityEvidence`, `qualityAdmissibilityPolicy`, `evaluationDate` (ADR-0111: nothing presented is the verdict), `evidence`, `waiver` (phase gates), `tenantId`. It is the one hand-kept list; GT-716 AC2 moves the declaration into each rule's own file.
+- A bundle compiled before this entrypoint existed keeps the previous behaviour and says so at `WARN`; `27-opa-parity-gate` fails a bundle that stops exposing it.
+
+To have a rule decided, supply the facet through the evaluation context (`facts.satellite.<facet>`, GT-694). Measured on a satellite fresh from `init` the day this landed: `--engine opa` went from 133 rules "decided" to 10, and the 123 it stopped deciding were all verdicts on input nobody had supplied.
 
 ## Aggregated enforcement policies
 

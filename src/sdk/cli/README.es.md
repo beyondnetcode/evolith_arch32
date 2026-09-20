@@ -277,7 +277,7 @@ El enum `rulesets` de `reference/config/evolith.config.schema.json` reconoce ade
 
 **Motores de validación:**
 - `native` — motor TypeScript integrado (por defecto, sin dependencias externas)
-- `opa` — módulos WebAssembly de Open Policy Agent
+- `opa` — el bundle Rego compilado (Open Policy Agent, WebAssembly). La mayoría de sus políticas leen hechos que el llamador suministra por el contexto de evaluación (`facts.satellite`, GT-694): una regla cuyo hecho la ejecución no lleva se reporta `skipped` con la clase `supplied-facet-absent` y la faceta que le falta, nunca decidida sobre input ausente (GT-716). Sobre una ejecución a secas decide, por tanto, solo las reglas cuyos hechos el constructor de input observa en el árbol; los dos motores se exigen coincidencia en los veredictos que ambos alcanzan, no igual alcance.
 
 **Motor composable (GT-312):**
 Cuando se activa `--composable`, la CLI resuelve automáticamente qué modos de validación activar según el contexto proporcionado:

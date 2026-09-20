@@ -112,7 +112,7 @@
 <text x="68" y="610" font-size="12" fill="#3D4E5F">handler throw → errored</text>
 <rect x="405" y="572" width="326" height="70" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.2"/>
 <text x="417" y="594" font-size="15" fill="#155E78" font-weight="700">OPA → Wasm · 35 policies</text>
-<text x="417" y="610" font-size="12" fill="#3D4E5F">OPA v1.19.0 · 3 entrypoints</text>
+<text x="417" y="610" font-size="12" fill="#3D4E5F">OPA v1.19.0 · 4 entrypoints</text>
 <text x="417" y="624" font-size="12" fill="#3D4E5F">missing wasm → every rule failed</text>
 <rect x="754" y="572" width="326" height="70" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.2"/>
 <text x="766" y="594" font-size="15" fill="#155E78" font-weight="700">Enforcer · 6 sandboxed analysers</text>

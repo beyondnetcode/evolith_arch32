@@ -125,6 +125,10 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   'needs-runtime': 17,
   underspecified: 14,
   'no-policy-in-bundle': 0,
+  // GT-716 (+0, 2026-09-20): `supplied-facet-absent` joined it, for the same reason and
+  // with the same pin — a rule the bundle declines because the run supplied no fact is a
+  // statement about the INPUT the OPA path saw, never about the native handler table.
+  'supplied-facet-absent': 0,
 };
 
 const SNAPSHOT_FILE = path.join(REPO_ROOT, 'src', 'rulesets', 'standards', 'native-evaluability-snapshot.json');

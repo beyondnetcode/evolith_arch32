@@ -550,7 +550,10 @@ export class RulesetValidatorService {
 
   /**
    * #628 -- `evolith validate` with no flag runs the native evaluator, which
-   * decides materially fewer rules than `--engine opa` over the same corpus.
+   * decided materially fewer rules than `--engine opa` over the same corpus when
+   * the row was written. (GT-716 later showed most of that extra reach was verdicts
+   * on facts nobody supplied, and the OPA engine now skips those instead; the
+   * advice below says "different", not "more", for that reason.)
    * Both totals were honest and the skips were all published; what was missing
    * was the sentence telling the reader that the missing coverage belongs to the
    * ENGINE THEY DID NOT CHOOSE rather than to their repository.
@@ -584,9 +587,11 @@ export class RulesetValidatorService {
         `${coverage.rulesChecked} of the ${coverage.rulesTotal} rules in scope and skipped ` +
         `${coverage.rulesSkipped} (${share}%). A skip here usually means the native evaluator has no ` +
         'handler for that rule, not that your repository failed to satisfy it. ' +
-        'Re-run with `--engine opa` to evaluate against the compiled Rego bundle, which decides more of ' +
-        'the same corpus. The two engines are held to agreement on the verdicts they both reach; they ' +
-        'are not held to equal reach, and this run got the shorter one.',
+        '`--engine opa` evaluates the compiled Rego bundle instead, which decides a DIFFERENT part of the ' +
+        'same corpus: most of its policies read facts a caller supplies (`facts.satellite`, GT-694), and ' +
+        'since GT-716 it reports a rule whose fact the run did not supply as skipped rather than deciding it ' +
+        'on absent input. The two engines are held to agreement on the verdicts they both reach; they are ' +
+        'not held to equal reach.',
       blocking: false,
     };
   }

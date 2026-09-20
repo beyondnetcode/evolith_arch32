@@ -1,0 +1,395 @@
+{
+  "$comment": "Every reader-facing string of the E2E Product Vision poster (EN only, as decided). {{dotted}} placeholders resolve against the published map's meta.metrics (+ asOf, commit, llmProviders); an unknown placeholder fails the build. Dated literals and ADR ids that are not metrics are typed as the spec states them. `perPhase` templates resolve against each metrics.sdlc[] entry.",
+  "title": "Evolith — E2E Product Vision (numbers as of {{asOf}})",
+  "annotation": "port-inventory: {{runtime.portsHot}} hot / {{runtime.portsDeclared}} declared",
+  "annotationNote": "GT-621 — the split above is what .harness/scripts/ci/45-validate-port-inventory-honesty.mjs checks against the tree: {{runtime.portsDeclared}} port interfaces are declared, {{runtime.portsHot}} are reachable from AgentRuntimeService ({{runtime.portsRequired}} required + {{runtime.portsOptional}} optional). A port count is a surface, not a capability claim; the band-4 sentence prints the same numbers.",
+  "desc": {
+    "doors": "Band 1, four doors: the CLI, the GitHub Action, the MCP server and the REST Core API apply the same rules and return the same envelope.",
+    "core": "Band 2, the Core: a stateless evaluation engine that turns an EvaluationContext into an EvaluationResult, beside the Constitution of {{corpus.adrs}} ADRs, {{corpus.rulesetPacks}} rule packs and {{corpus.schemas}} schemas, and the strip of who can say yes.",
+    "suite": "Band 3, Evolith Tracker: the commercial control plane that decides gates and owns state, with the five SDLC phases and their gates and the topology axis beside them.",
+    "agents": "Band 4, governed agents: the experimental agent runtime with {{runtime.portsDeclared}} declared port interfaces of which {{runtime.portsHot}} are on the hot path, the LLM providers a tenant chooses, and the governed-composition rail of ports, adapters and anti-corruption layers.",
+    "federation": "Band 5, federated governance: the Core as level 0, satellites as level 1 inheritors, and the Architecture Board approving upstream proposals.",
+    "evidence": "Band 6, evidence: eight generated, dated and linked tiles on how honest this picture is."
+  },
+  "header": {
+    "brand": "EVOLITH",
+    "tagline": "·  E2E PRODUCT VISION",
+    "subtitle": "Governed Composition  ·  Stateless Evaluation Core  ·  Federated Five-Phase SDLC",
+    "repo": "repo · evolith_arch32 · numbers as of {{asOf}}",
+    "adrs": "ADR-0101 · ADR-0074 · ADR-0102 · ADR-0116 · ADR-0125 · ADR-0128 · ADR-0129"
+  },
+  "doors": {
+    "title": "FOUR DOORS — CLI · GitHub Action · MCP server · REST API · same rules, same envelope",
+    "whoArrives": "WHO ARRIVES ↓",
+    "arrivals": [
+      "Humans · terminal · IDE",
+      "CI · pull request",
+      "AI agents · MCP clients · Claude Code plugin",
+      "Tracker · external client"
+    ],
+    "cards": [
+      {
+        "name": "Evolith CLI",
+        "mono": [
+          "npx -y @beyondnet/evolith-cli",
+          "  validate --engine opa"
+        ],
+        "detail": [
+          "@beyondnet/evolith-cli {{packages.cli.version}} · Node ≥ 18",
+          "{{surfaces.cliCommandFiles}} command files (generated inventory)"
+        ],
+        "foot": [
+          "exit 0 pass · 1 tool failed (no verdict)",
+          "2 gate blocked · 3 invalid invocation"
+        ]
+      },
+      {
+        "name": "GitHub Action",
+        "mono": [
+          "uses:",
+          "{{observed.distribution.githubAction}}"
+        ],
+        "detail": [
+          "Marketplace: Evolith Governance Validation",
+          "fail-on-violation: true"
+        ],
+        "foot": [
+          "outputs compliance-status · exit-code",
+          "\"Not evaluated\" in words"
+        ]
+      },
+      {
+        "name": "MCP server",
+        "mono": [
+          "npx -y @beyondnet/evolith-mcp",
+          "  (stdio · Streamable HTTP)"
+        ],
+        "detail": [
+          "@beyondnet/evolith-mcp {{packages.mcp.version}}",
+          "{{surfaces.mcpTools}} tools · {{surfaces.mcpResources}} resources · {{surfaces.mcpPrompts}} prompts"
+        ],
+        "foot": [
+          "stdio JSON-RPC 2.0 · Streamable HTTP",
+          "ABAC native AND OPA · approvalToken"
+        ]
+      },
+      {
+        "name": "REST Core API",
+        "mono": [
+          "POST /api/v1/evaluate",
+          "Bearer EVOLITH_API_KEY"
+        ],
+        "detail": [
+          "{{surfaces.restControllers}} controllers · {{surfaces.restEndpoints}} endpoints (measured)",
+          "ghcr.io/beyondnetcode/evolith-core-api"
+        ],
+        "foot": [
+          "ADR-0073 envelope",
+          "{ success, data | error, meta }"
+        ]
+      }
+    ],
+    "chatbox": "The chatbox is an intermediary, not the source of authority — LLMs and agents consume approved context, rulesets, skills and permissions through Evolith contracts.",
+    "channels": [
+      "Channels: npm @beyondnet/evolith-cli {{packages.cli.version}} · @beyondnet/evolith-mcp {{packages.mcp.version}} · GitHub Marketplace action v1 · MCP registry {{observed.distribution.mcpRegistry}}",
+      "Claude Code plugin {{observed.distribution.claudePluginMarketplace}} · GHCR {{governance.ghcrImages.length}} images (core-api · mcp · agent-runtime)"
+    ],
+    "parity": "One parity matrix: {{surfaces.parity.operations}} operations · CLI {{surfaces.parity.cli}} · MCP {{surfaces.parity.mcp}} · REST {{surfaces.parity.rest}} · {{surfaces.parity.allThree}} on all three (reviewed {{surfaces.parity.lastReviewed}}) · guard 24 both ways · exploration suite in a required check · Node SDK @beyondnet/evolith-sdk {{packages.sdk.version}}",
+    "link": "EvaluationContext ↓   ·   ↑ EvaluationResult — a verdict, never a decision (ADR-0101)"
+  },
+  "core": {
+    "title": "THE CORE · repo evolith_arch32 — stateless engine + the Constitution (ADR-0101)",
+    "engineSubtitle": "STATELESS EVALUATION ENGINE — @beyondnet/evolith-core-domain {{packages.coreDomain.version}}",
+    "formula": "EvaluationContext → EvaluationResult",
+    "formulaNotes": [
+      "schema 1.0.0 → 2.0.0 · decisionRecommendation.binding: false",
+      "never persists tenant · product · initiative"
+    ],
+    "engines": [
+      {
+        "name": "Native TS · {{engines.nativeHandlers}} handlers",
+        "lines": [
+          "handler throw → errored"
+        ]
+      },
+      {
+        "name": "OPA → Wasm · {{corpus.opaPolicies}} policies",
+        "lines": [
+          "OPA v{{corpus.opaVersion}} · {{corpus.opaEntrypoints}} entrypoints",
+          "missing wasm → every rule failed"
+        ]
+      },
+      {
+        "name": "Enforcer · {{engines.enforcerAdapters}} sandboxed analysers",
+        "lines": [
+          "dependency-cruiser · NetArchTest",
+          "import-linter · checkov · trivy",
+          "ISO 5055 SARIF"
+        ]
+      }
+    ],
+    "outcomes": [
+      "passed",
+      "failed",
+      "skipped",
+      "errored"
+    ],
+    "outcomesClaim": "A blocking rule that never ran fails the PR exactly as one that failed.",
+    "outcomesDetail": [
+      "blockingSkippedRuleIds · undeclared rule → skipped (no-policy-in-bundle)",
+      "empty corpus → RulesetsNotFoundError · missing evolith.yaml → GOV-000"
+    ],
+    "kinds": "{{engines.evaluationKinds}} EvaluationKinds · {{engines.kindEvaluators}} KindEvaluators (CLI · MCP) · evidence kind refused (UnsupportedEvaluationKindError)",
+    "ladder": "Markdown explains · *.rules.json defines · OPA + Native enforce (ADR-0041)",
+    "constitutionSubtitle": "THE CONSTITUTION — read by every door",
+    "tiles": [
+      {
+        "hero": "{{corpus.adrs}}",
+        "label": "ADRs",
+        "sub": "newest {{corpus.newestCoreAdr}}"
+      },
+      {
+        "hero": "{{corpus.rulesetPacks}}",
+        "label": "rule packs",
+        "sub": "{{corpus.rulesetCategories}} categories · {{corpus.ruleRows}} rules"
+      },
+      {
+        "hero": "{{corpus.schemas}}",
+        "label": "schemas",
+        "sub": "phase-gate + contracts"
+      },
+      {
+        "hero": "{{corpus.artifacts}}",
+        "label": "artifacts",
+        "sub": "{{corpus.artifactsBinding}} binding (ADR-0125)"
+      },
+      {
+        "hero": "{{corpus.topologies}}",
+        "label": "topologies",
+        "sub": "5 dimensions ⟂ SDLC axis"
+      },
+      {
+        "hero": "{{corpus.standardsPacks}}",
+        "label": "standards packs",
+        "sub": "SSDF · ISO 5055 · SLSA"
+      }
+    ],
+    "constitutionLines": [
+      "core {{corpus.adrFamilies.core}} · nodejs {{corpus.adrFamilies.nodejs}} · dotnet {{corpus.adrFamilies.dotnet}} · android {{corpus.adrFamilies.android}} · ai-augmented {{corpus.adrFamilies.ai-augmented}}",
+      "NIST SSDF v1.1 · ISO/IEC 5055:2021 · SLSA v1.0 = 16 rules",
+      "Knowledge OS (M0) · OKF v0.1 (ADR-0105, Proposed)",
+      "RAG on pgvector (ADR-0112) · KO-* (ADR-0115, Proposed)",
+      "Security ADR-0119…0124 → generated conformance packs",
+      "inventory {{corpus.inventoryDate}} · cli {{packages.cli.version}}: {{observed.firstRun.corpusPacks}} packs · {{observed.firstRun.corpusRules}} rules"
+    ],
+    "authorityLabel": "WHO CAN SAY YES (ADR-0116):",
+    "authorityHumans": "human · custodian · board → accept · promote · ratify · waive · enforce",
+    "authorityAgents": "agent · engine · ci → observe · recommend · attach-evidence · draft-candidate   |   mutative MCP tools need { apply: true, approvalToken }"
+  },
+  "suite": {
+    "title": "EVOLITH TRACKER · repo evolith_tracker — SDLC GOVERNANCE CONTROL PLANE (external client · decides gates · owns state · commercial, not launched)",
+    "boxes": [
+      {
+        "w": 296,
+        "name": "tracker-web",
+        "lines": [
+          "React 19 + Vite 8 SPA (nginx)"
+        ]
+      },
+      {
+        "w": 556,
+        "name": "tracker-api · .NET 10 BFF (ASP.NET Core) — sole Core client",
+        "lines": [
+          "UMS-delegated Bearer · TenantScope isolation (T-044)",
+          "ACL to view-models · T-038 · T-046"
+        ]
+      },
+      {
+        "w": 616,
+        "name": "Owns runtime governance state",
+        "lines": [
+          "gate policies (requiresCoreVerdict) · submissions · evidence · exceptions (T-039)",
+          "ledger both ways (T-055) · HITL approvals · append-only audit"
+        ]
+      }
+    ],
+    "chips": [
+      "{{observed.tracker.localDecisions}} local decisions (index) · UAT on Coolify since 2026-08-22",
+      "tracker-gateway · NestJS facade for external consumers (T-052)",
+      "UMS · tenant master (ADR-0129) · identity (T-040 · T-053)"
+    ],
+    "strip": "SDLC EXECUTION ENGINE · orchestrated by Tracker · evaluated by Core",
+    "wedge": "WEDGE (vision §1.5) · architecture conformance on every PR",
+    "axis": [
+      "⟂  TOPOLOGY AXIS",
+      "{{corpus.topologies}} topologies",
+      "5 dimensions",
+      "guard 30 keeps the",
+      "axes disjoint",
+      "evolith drift",
+      "measures this axis,",
+      "not a gate"
+    ],
+    "footers": [
+      "Granularity = Initiatives — no tasks / backlog / epics / user-stories. Agile work items are ExternalReferenceContext ingested via ACL.",
+      "Tracker decides every phase transition · Core recommendations are non-binding (ADR-0100 · ADR-0101 · ADR-0127). CLI-only deployments block locally: evolith gate evaluate --phase · evolith phase advance.",
+      "Two planes: process governance always on (no repo needed) · architecture conformance opt-in via requiresCoreVerdict (default false).",
+      "Tracker BFF consumes the Core API as an external client — ADR-0074 explicitly rejected placing the BFF inside Core."
+    ],
+    "busUp": "POST /api/v1/evaluate · evaluationInput.files (inline) · Bearer",
+    "busDown": "EvaluationResult (ADR-0073 envelope) · non-binding → ACL → GateDecision"
+  },
+  "perPhase": {
+    "phase": "PHASE {{order}}",
+    "key": "{{id}} · {{gateId}}",
+    "gate": "Gate: {{gateName}}"
+  },
+  "agents": {
+    "title": "GOVERNED AGENTS · AI ON THE TENANT'S TERMS",
+    "runtime": "AGENT RUNTIME · @beyondnet/evolith-agent-runtime {{packages.agentRuntime.version}} (ADR-0102) · Experimental",
+    "ports": [
+      "AgentRuntimeService — {{runtime.portFiles}} port files · {{runtime.portsDeclared}} declared port interfaces · {{runtime.portsHot}} on the hot path ({{runtime.portsRequired}} required + {{runtime.portsOptional}} optional)",
+      "{{runtime.adapterClasses}} adapter classes — a port count is not a capability count"
+    ],
+    "interactionLabel": "InteractionAdapters:",
+    "notConstructed": [
+      "Mcp",
+      "OpenCode"
+    ],
+    "interactionFoot": "* declared, not constructed by any surface (vision, verified 2026-07-28)",
+    "engines": "Engines behind IAgentEnginePort: Stub (default) · Hermes · Swarms · Cowork · Routing — \"Hermes is the engine, not the authority\"",
+    "orchestration": "Governed orchestration: ABAC native AND OPA (ADR-0087) · HITL POST /runtime-approvals · run-journal replay (GT-593)",
+    "llmTitle": "LLM providers · ADR-0128 — {{llmProviders}} · none → deterministic stub",
+    "llmDetail": "off by default (EVOLITH_LLM_EGRESS) · HITL per call · 30 s Gemini / 60 s Claude · 60,000 bytes fail-closed · 8 redaction classes",
+    "llmClaim": "The published CLI calls no LLM.",
+    "llmTenant": "tenant chooses and pays",
+    "portFilesHead": "Port files in code ({{runtime.portFiles}}) · {{runtime.portsDeclared}} declared interfaces · vision taxonomy 18 (§3.4) — the {{runtime.portFiles}} *.port.ts files:"
+  },
+  "composition": {
+    "title": "GOVERNED COMPOSITION",
+    "lead": [
+      "Build the irreducible governance kernel;",
+      "compose commodities behind replaceable",
+      "ports, adapters and ACLs."
+    ],
+    "quality": [
+      "Quality signals · IQualitySignalProvider",
+      "ADR-0111 Proposed · Lighthouse ADR-0113",
+      "(Proposed)"
+    ],
+    "acl": [
+      "Anti-Corruption Layers (ACLs)",
+      "preserve lineage · map to canonical",
+      "reject non-compliant"
+    ],
+    "toolsTitle": "External Tools Cluster",
+    "tools": [
+      "Jira",
+      "GitHub / GitLab",
+      "CI/CD runners",
+      "Test runners",
+      "Security scanners",
+      "Observability",
+      "Deployment",
+      "Doc engines"
+    ],
+    "dispositionTitle": "Disposition per capability",
+    "dispositions": [
+      "Adopt",
+      "Embed",
+      "Integrate",
+      "Extend",
+      "Build",
+      "Reject"
+    ],
+    "note": [
+      "Data ownership stays with the source",
+      "of record; Tracker judges evidence."
+    ],
+    "arrow": "commands · events · evidence"
+  },
+  "federation": {
+    "title": "FEDERATED GOVERNANCE · HUB-AND-SPOKE (INH-01…INH-06)",
+    "boxes": [
+      {
+        "name": "Evolith Core — Level 0 (Authority)",
+        "lines": [
+          "the Constitution · a satellite of itself",
+          "evolith.yaml coreRef 1.0.0"
+        ]
+      },
+      {
+        "name": "Satellite Repository — Level 1 (Inheritor)",
+        "lines": [
+          "Evolith Tracker (.NET 10) · UMS (ADR-0129)",
+          "tenant master · any evolith.yaml"
+        ]
+      },
+      {
+        "name": "Architecture Board",
+        "lines": [
+          "approves upstream promotion",
+          "UP-001 · UP-002 · UP-003 (PROPOSED)"
+        ]
+      }
+    ],
+    "arrows": "→ inherit · pinned coreRef.version (INH-01 · INH-02 · INH-03)     ·     Upstream Proposal UP-NNN → Architecture Board (INH-05)",
+    "returnLines": [
+      "approved promotion → Core evolves → every satellite re-inherits · INH-04 local ADRs tagged EvolithSatellite",
+      "INH-06 DECISIONS.md · Adopt · Extend · Override · Not Applicable — silence is not an option"
+    ],
+    "dayZero": [
+      "evolith init --name <x> --yes → evolith.yaml · missing manifest → GOV-000 · evolith upgrade (INH-03) · satellite:create | satellite:adopt",
+      "waiver → Verdict.WAIVE · rulesets.overrides: waivable, never removable (GT-678)"
+    ]
+  },
+  "evidence": {
+    "title": "EVIDENCE — how honest is this picture (generated · dated · linked)",
+    "tiles": [
+      [
+        "Gap board {{governance.gaps.done}} / {{governance.gaps.total}} · {{governance.gaps.notDone}} not done",
+        "P0 GT-435 · NO-GO",
+        "generated {{governance.gaps.asOf}}"
+      ],
+      [
+        "{{observed.requiredChecks.value}} required checks · {{governance.workflows}} workflows",
+        "{{governance.guards}} guards + {{governance.guardSelfTests}} self-tests",
+        "enforce_admins"
+      ],
+      [
+        "Security tab {{observed.securityTab.codeql}} · {{observed.securityTab.scorecard}} · {{observed.securityTab.dependabot}} · {{observed.securityTab.secretScanning}}",
+        "on {{observed.securityTab.commit}} ({{observed.securityTab.asOf}})",
+        "{{observed.securityTab.fixedReal}} fixed · {{observed.securityTab.dismissedWithReason}} dismissed with reason"
+      ],
+      [
+        "OpenSSF Scorecard {{governance.scorecard.aggregate}}",
+        "with committed floors",
+        "({{governance.scorecard.observedOn}})"
+      ],
+      [
+        "Tests {{governance.tests.suites}} suites · {{governance.tests.tests}} tests",
+        "{{governance.coverageStatements}} statements · {{governance.coverageLines}} lines",
+        "({{governance.tests.observedAt}})"
+      ],
+      [
+        "Engines on this repo: opa {{observed.engineCoverageOnThisRepo.opa.evaluated}}/{{observed.engineCoverageOnThisRepo.opa.selected}}",
+        "native {{observed.engineCoverageOnThisRepo.native.evaluated}}/{{observed.engineCoverageOnThisRepo.native.selected}}",
+        "({{observed.engineCoverageOnThisRepo.asOf}}, cli {{packages.cli.version}})"
+      ],
+      [
+        "{{observed.adoption.npmDownloads}} npm downloads · Linux-only CI install",
+        "{{observed.adoption.window}}",
+        "no confirmed external adoption"
+      ],
+      [
+        "Evidence window {{observed.evidenceWindow.maxAgeDays}} days · observed {{observed.evidenceWindow.lastObserved}}",
+        "stale from {{observed.evidenceWindow.staleFrom}}",
+        "{{observed.supplyChain.attestedPackages}} packages attested ({{observed.supplyChain.asOf}})"
+      ]
+    ]
+  },
+  "footer": [
+    "Source of truth: product/suite/vision/evolith-product-vision-master.md · counts from generated inventories (inventory-summary.md {{corpus.inventoryDate}} · product-inventory.md · maturity-reconciliation.json {{governance.gaps.asOf}})",
+    "and tree measurements · rendered {{asOf}}"
+  ]
+}

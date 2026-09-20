@@ -261,6 +261,32 @@ export const CHAIN = [
     ],
     writes: ['src/rulesets/sdlc/phase-gates.rules.json'],
   },
+  {
+    // GT-717 — the E2E master view the README embeds is a generated artifact: every number
+    // on it is derived from the inventories, the gap board's reconciliation and the tree
+    // (`.harness/scripts/pages/derive-page-metrics.mjs`). It sits LAST because it consumes
+    // the reconciliation the board link writes: closing a gap moves "688 / 714" on the poster,
+    // so a board wave that forgets `--write-svg` is a red required check, not a stale picture
+    // — which is exactly how the poster aged three months before this link existed.
+    name: 'GitHub Pages poster (master-view.svg) and tokens.css',
+    producer: '.harness/scripts/pages/build-pages.mjs',
+    checkArgs: ['--check'],
+    writeArgs: ['--write-svg'],
+    consumes: [
+      'reference/core/control-center/maturity-reports/maturity-reconciliation.json',
+      'reference/core/control-center/maturity-reports/executive-summary.md',
+      'reference/core/control-center/maturity-reports/inventory-summary.md',
+      'product/products/smart-cli/product-inventory.md',
+      'src/rulesets/standards/iso-5055-mapping.json',
+      'reference/core/architecture/demos/architecture-map.json',
+      'reference/core/architecture/demos/observed-facts.json',
+      'reference/core/architecture/demos/shared/tokens.json',
+    ],
+    writes: [
+      'reference/core/sdlc/assets/master-view.svg',
+      'reference/core/architecture/demos/tokens.css',
+    ],
+  },
 ];
 
 function fail(lines) {

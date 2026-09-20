@@ -48,6 +48,8 @@ Both engines derive from that one declaration, and the derivation is checked in 
 
 Adding a rule therefore means declaring what it reads; adding a policy read means the rule's `facts` must name it. What moved when the declaration replaced the table (2026-09-20): the "handler backlog" (`unimplemented-native`) went from 52 to 21 — 25 of those rows were decided by policies over a declared posture, the CI system or a test run, never by a handler over the tree.
 
+What one engine decides and the other does not is then a **registered difference, not a free one** (GT-716 AC3): [`73-validate-engine-coverage-parity.mjs`](../../../.harness/scripts/ci/73-validate-engine-coverage-parity.mjs) runs both engines on this repository and on a satellite fresh from `evolith init`, and holds every coverage-only rule to [`engine-coverage-parity.baseline.json`](../../../.harness/scripts/ci/engine-coverage-parity.baseline.json) — per rule, per scenario, per direction, with the reason the other engine gave (the class its report states, the facets the policy reads that a bare run does not supply). An unregistered rule, a stale entry or a changed class fails; `--write` regenerates the file for review. Nothing in it is a tolerance: it is the list of what each engine cannot yet decide, and why.
+
 ## Aggregated enforcement policies
 
 These 35 policies are imported and unioned by [`main.rego`](./main.rego) into the `evolith/main/violations` Wasm entrypoint. Each has a co-located `*.test.rego` and (unless noted) an input schema under `schemas/`. The authoritative list is the `import data.evolith.*` block of `main.rego`; the build refuses a policy that emits rule ids without being imported there.

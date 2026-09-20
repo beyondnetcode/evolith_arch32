@@ -1,0 +1,405 @@
+#!/usr/bin/env node
+
+/**
+ * GT-716 AC3 — the coverage difference between the two engines is a per-rule
+ * ratchet, in both directions, on both scenarios.
+ *
+ * ## What 68 leaves on the table
+ *
+ * `68-validate-engine-verdict-parity.mjs` holds the engines to agreement on the
+ * rules BOTH decide, and prints what only one of them decides as `coverageOnly` —
+ * two counts, gated on nothing. ADR-0041 never promised equal reach, and this guard
+ * does not ask for it. It asks that every rule one engine decides and the other
+ * does not be REGISTERED, with the measured reason the other engine gave, so that
+ * a coverage change is a diff somebody reads rather than a number nobody does.
+ *
+ * ## The comparison, stated precisely
+ *
+ * For each scenario, each engine runs once (`evolith validate --engine <e> --format
+ * json`) and every rule id gets one outcome through 68's `deriveOutcomes` (skipped /
+ * not-applicable / non-executable / errored are "did not decide"; failed and passed
+ * are "decided"). A rule decided by exactly one engine is a coverage-only rule, and
+ * its entry carries WHY the other engine did not decide it — the evaluability class
+ * the report states (`needs-supplied-facts`, `no-policy-in-bundle`, …) and, for the
+ * OPA side, the facets its policy reads that a bare run does not supply.
+ *
+ * Two scenarios, because the sign flips between them (GT-716): this repository, where
+ * the native engine decides 138 ADR-conformance rules no policy names, and a satellite
+ * fresh from `evolith init`, where the policies that decide anything read facets nobody
+ * supplied. A ratchet on one would let the other drift.
+ *
+ * ## The baseline is a ratchet in both directions
+ *
+ * `engine-coverage-parity.baseline.json` is written by `--write` and compared by
+ * default. An id that is coverage-only and not registered fails (a new divergence);
+ * an id that is registered and is no longer coverage-only fails (a stale entry — the
+ * handler or policy landed and the entry must go with it); an entry whose reason
+ * changed class fails (the same id, a different debt). A fix cannot land without its
+ * entry, and an entry cannot outlive the difference it describes.
+ *
+ * ## Anti-vacuous pass
+ *
+ * Both engine runs of both scenarios go through `assertScannedPerSource`; a missing
+ * dist, an unbuilt bundle or an `init` that produced nothing fails loudly instead of
+ * reporting "no differences".
+ *
+ * Usage:
+ *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs
+ *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --verbose
+ *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --json
+ *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --write   # regenerate the baseline (review the diff)
+ *
+ * Exit codes:
+ *   0 - every coverage-only rule is registered with its reason, and every entry still holds
+ *   1 - an unregistered rule, a stale entry, a changed reason, or an engine that produced nothing
+ */
+
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { REPO_ROOT } from '../lib/paths.mjs';
+import { assertScannedPerSource, ZeroCoverageError } from '../lib/coverage.mjs';
+import { facetOfInputPath, readCorpusFacts, readVocabulary } from '../lib/rule-facts.mjs';
+import { deriveOutcomes, outcomeOf } from './68-validate-engine-verdict-parity.mjs';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+
+export const BASELINE_PATH = resolve(HERE, 'engine-coverage-parity.baseline.json');
+const CLI_ENTRY = 'src/sdk/cli/dist/main.js';
+const WASM_CANDIDATES = ['src/rulesets/opa/policy.wasm', 'src/sdk/cli/rulesets/opa/policy.wasm'];
+const ENGINES = ['native', 'opa'];
+const DECIDED = new Set(['passed', 'failed']);
+export const SCENARIOS = ['repository', 'init-satellite'];
+
+/** The evaluability classes a report can state about a rule it did not decide. */
+const CLASS_IN_TEXT = /\b(unimplemented-native|needs-external-system|needs-runtime|needs-supplied-facts|documentation-only|underspecified|no-policy-in-bundle|supplied-facet-absent)\b/;
+
+/** Classes the NATIVE triage produces; stated on the OPA side they mean the OPA path said nothing of its own. */
+const NATIVE_CLASSES = new Set(['unimplemented-native', 'needs-external-system', 'needs-runtime', 'needs-supplied-facts', 'documentation-only', 'underspecified']);
+
+/** What closing each kind of entry costs — the follow-up the baseline carries. */
+export const FOLLOW_UP = Object.freeze({
+  'opa-gave-no-reason': 'Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class).',
+  'no-policy-in-bundle': 'Author the Rego twin, or record that the rule is native-only.',
+  'supplied-facet-absent': 'Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy.',
+  'unimplemented-native': 'Write the native handler — the rule declares an observed fact.',
+  'needs-supplied-facts': 'The caller supplies the posture; the native engine cannot obtain it.',
+  'needs-external-system': 'An adapter over the external system, through the enforcer seam.',
+  'needs-runtime': 'An adapter that observes the running system, through the enforcer seam.',
+  'documentation-only': 'Author a check or retire the rule; nothing can run it as written.',
+  underspecified: 'Author the check the rule never got, or drop the blocking flag.',
+  'handler-declined': 'The native handler found nothing to judge here; a fixture with the subject would decide it.',
+  undecided: 'The report states no class for the skip — make the engine say why.',
+});
+
+/**
+ * Rule ids decided by exactly one engine, with the OTHER engine's outcome.
+ * Exported for the unit tests; the precedence is 68's.
+ */
+export function coverageOnly(nativeOutcomes, opaOutcomes, universe) {
+  const nativeOnly = [];
+  const opaOnly = [];
+  for (const id of [...universe].sort()) {
+    const n = outcomeOf(nativeOutcomes, id);
+    const o = outcomeOf(opaOutcomes, id);
+    if (DECIDED.has(n) && !DECIDED.has(o)) nativeOnly.push({ ruleId: id, other: o });
+    else if (DECIDED.has(o) && !DECIDED.has(n)) opaOnly.push({ ruleId: id, other: n });
+  }
+  return { nativeOnly, opaOnly };
+}
+
+/** The class a report states for a rule it did not decide, or null. */
+export function classFromReport(data, ruleId) {
+  for (const issue of data?.issues ?? []) {
+    if (String(issue?.ruleId ?? '') !== ruleId) continue;
+    const m = CLASS_IN_TEXT.exec(`${issue.title ?? ''} ${issue.description ?? ''} ${issue.message ?? ''}`);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+/** The facets the OPA evaluator named in its skip message, when the report carries the row. */
+const READS_IN_TEXT = /reads ((?:`input\.[^`]+`(?:, )?)+), and this run supplied/;
+
+/**
+ * The facets `opa-input-builder.ts` emits on every run, read from its source: the
+ * `satellite:` and `core:` blocks plus the two paths. A facet a policy reads that is
+ * not among them is absent on a bare run whatever its provenance says — GT-694's
+ * `layers` is observed in nature and supplied in practice, and `repository-taxonomy`
+ * reads an `input.repository` nothing produces at all.
+ */
+export function builderEmits(root) {
+  const src = readFileSync(resolve(root, 'src/packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts'), 'utf8');
+  const emitted = new Set(['satellitePath', 'corePath']);
+  for (const container of ['satellite', 'core']) {
+    const start = src.indexOf(`      ${container}: {`);
+    if (start < 0) continue;
+    const end = src.indexOf('\n      }', start);
+    for (const m of src.slice(start, end).matchAll(/^\s{8}(\w+):/gm)) emitted.add(`${container}.${m[1]}`);
+  }
+  return emitted;
+}
+
+/**
+ * The reason the OPA engine did not decide a rule. Measured first — the class and
+ * facets the report states in its skip row — then derived from the bundle's own
+ * manifest: an id no reachable policy emits, or a policy that reads facets the input
+ * builder never emits (absent on a bare run, whatever their provenance).
+ */
+export function opaReason(ruleId, manifest, corpus, vocabulary, opaReport = null, emitted = null) {
+  const stated = opaReport ? classFromReport(opaReport, ruleId) : null;
+  if (stated === 'supplied-facet-absent') {
+    const row = (opaReport.issues ?? []).find((i) => String(i?.ruleId ?? '') === ruleId);
+    const m = READS_IN_TEXT.exec(`${row?.description ?? ''} ${row?.message ?? ''}`);
+    const facets = m ? [...m[1].matchAll(/`input\.([^`]+)`/g)].map((x) => x[1]).sort() : [];
+    return { class: stated, why: `The report states the policy reads ${facets.join(', ') || 'a facet'} this run did not supply.`, facets };
+  }
+  if (stated && NATIVE_CLASSES.has(stated)) {
+    // The OPA path returned a skip with no class of its own (an enforcer route that
+    // failed, a strategy that declined) and the reporter fell back to the
+    // declaration's class. Say that, rather than file OPA's silence as handler debt.
+    const row = (opaReport.issues ?? []).find((i) => String(i?.ruleId ?? '') === ruleId);
+    const said = (row?.description ?? '').replace(/^\[[A-Z ]+\] This rule[^.]*\. /, '').replace(/ A blocking rule that skips.*$/, '').trim();
+    return { class: 'opa-gave-no-reason', why: `The OPA path skipped without stating why — the reporter fell back to the declaration's \`${stated}\`; the row says: ${said.slice(0, 160) || '(nothing)'}` };
+  }
+  if (stated) return { class: stated, why: `The report states \`${stated}\`.` };
+  if (!manifest.declared.has(ruleId)) {
+    return { class: 'no-policy-in-bundle', why: 'No reachable policy in the compiled bundle emits this id.' };
+  }
+  const facets = [...new Set((manifest.inputPaths.get(ruleId) ?? []).map(facetOfInputPath).filter(Boolean))];
+  const absent = facets
+    .filter((f) => (emitted ? !emitted.has(f) : vocabulary.get(f)?.provenance && vocabulary.get(f).provenance !== 'observed'))
+    .sort();
+  if (absent.length > 0) {
+    return { class: 'supplied-facet-absent', why: `The policy reads ${absent.join(', ')}, which the input builder does not emit on a bare run.`, facets: absent };
+  }
+  const declared = corpus.get(ruleId)?.facts ?? [];
+  return { class: 'undecided', why: `The bundle declares the id and reads ${facets.join(', ') || 'no input'}; declared facts: ${declared.join(', ') || 'none'}.` };
+}
+
+/** The reason the native engine did not decide a rule: the class it stated, or the declaration's. */
+export function nativeReason(ruleId, data, snapshot, corpus) {
+  const stated = classFromReport(data, ruleId);
+  const cls = stated ?? (snapshot[ruleId] === 'native-handler' ? 'handler-declined' : snapshot[ruleId]) ?? 'undecided';
+  const facts = corpus.get(ruleId)?.facts ?? [];
+  return { class: cls, why: `${stated ? 'The report states' : 'The declaration gives'} \`${cls}\`; declared facts: ${facts.join(', ') || 'none'}.` };
+}
+
+/**
+ * Compare measured entries against a baseline scenario.
+ * @returns {{unregistered: object[], stale: object[], changed: object[]}}
+ */
+export function reconcileCoverage(measured, baselineScenario) {
+  const out = { unregistered: [], stale: [], changed: [] };
+  for (const direction of ['nativeOnly', 'opaOnly']) {
+    const have = new Map((measured[direction] ?? []).map((e) => [e.ruleId, e]));
+    const want = new Map(Object.entries(baselineScenario?.[direction] ?? {}));
+    for (const [id, entry] of have) {
+      const registered = want.get(id);
+      if (!registered) out.unregistered.push({ direction, ruleId: id, class: entry.reason.class, why: entry.reason.why });
+      else if (registered.class !== entry.reason.class) out.changed.push({ direction, ruleId: id, from: registered.class, to: entry.reason.class });
+    }
+    for (const [id, registered] of want) {
+      if (!have.has(id)) out.stale.push({ direction, ruleId: id, class: registered.class });
+    }
+  }
+  return out;
+}
+
+/** Render measured entries in the baseline's shape. */
+export function toBaselineScenario(measured) {
+  const render = (entries) =>
+    Object.fromEntries(entries.map((e) => [e.ruleId, { class: e.reason.class, why: e.reason.why, followUp: FOLLOW_UP[e.reason.class] ?? FOLLOW_UP.undecided }]));
+  return { nativeOnly: render(measured.nativeOnly), opaOnly: render(measured.opaOnly) };
+}
+
+function runCli(args, cwd) {
+  const proc = spawnSync(process.execPath, [resolve(REPO_ROOT, CLI_ENTRY), ...args], {
+    cwd,
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  if (proc.error) throw new Error(`could not spawn the CLI (${args.join(' ')}): ${proc.error.message}`);
+  return proc;
+}
+
+function runEngine(engine, cwd, extra = []) {
+  const proc = runCli(['validate', '--engine', engine, '--format', 'json', ...extra], cwd);
+  let parsed;
+  try {
+    parsed = JSON.parse(proc.stdout);
+  } catch {
+    const tail = String(proc.stdout ?? '').slice(-400) || '(empty stdout)';
+    throw new Error(`engine '${engine}' did not emit a JSON report (exit ${proc.status}). Last stdout: ${tail}`);
+  }
+  if (!parsed?.data) throw new Error(`engine '${engine}' emitted a report with no \`data\` envelope.`);
+  return parsed.data;
+}
+
+/** A satellite exactly as `evolith init` leaves it, in a temporary directory. */
+function initSatellite() {
+  const dir = mkdtempSync(join(tmpdir(), 'evolith-coverage-parity-'));
+  const proc = runCli(['init', '--name', 'coverage-parity-sat', '--yes'], dir);
+  if (proc.status !== 0 || !existsSync(join(dir, 'evolith.yaml'))) {
+    throw new Error(`\`evolith init\` did not produce a satellite in ${dir} (exit ${proc.status}): ${String(proc.stderr ?? '').slice(-300)}`);
+  }
+  return dir;
+}
+
+async function readManifest(root) {
+  const rel = WASM_CANDIDATES.find((r) => existsSync(resolve(root, r)));
+  const { loadPolicy } = await import('@open-policy-agent/opa-wasm');
+  const policy = await loadPolicy(readFileSync(resolve(root, rel)));
+  const declared = new Set((policy.evaluate({}, 'evolith/manifest/declared_rule_ids')?.[0]?.result ?? []).map(String));
+  const raw = policy.evaluate({}, 'evolith/manifest/rule_input_paths')?.[0]?.result ?? {};
+  const inputPaths = new Map(Object.entries(raw).map(([id, paths]) => [id, (paths ?? []).map(String)]));
+  return { declared, inputPaths };
+}
+
+function preflight(root) {
+  const missing = [];
+  if (!existsSync(resolve(root, CLI_ENTRY))) missing.push(`${CLI_ENTRY} (build it: npm run build --workspace src/sdk/cli)`);
+  if (!WASM_CANDIDATES.some((rel) => existsSync(resolve(root, rel)))) missing.push(`${WASM_CANDIDATES[0]} (build it: npm run build:policy)`);
+  if (!existsSync(resolve(root, 'src/rulesets/standards/native-evaluability-snapshot.json'))) missing.push('src/rulesets/standards/native-evaluability-snapshot.json');
+  return missing;
+}
+
+function measureScenario(name, runs, manifest, snapshot, corpus, vocabulary, emitted) {
+  const outcomes = Object.fromEntries(ENGINES.map((e) => [e, deriveOutcomes(runs[e])]));
+  assertScannedPerSource(
+    { native: outcomes.native.size, opa: outcomes.opa.size },
+    { what: `rule outcomes (${name})` },
+  );
+  const universe = new Set([...outcomes.native.keys(), ...outcomes.opa.keys()]);
+  const { nativeOnly, opaOnly } = coverageOnly(outcomes.native, outcomes.opa, universe);
+  return {
+    nativeOnly: nativeOnly.map((e) => ({ ...e, reason: opaReason(e.ruleId, manifest, corpus, vocabulary, runs.opa, emitted) })),
+    opaOnly: opaOnly.map((e) => ({ ...e, reason: nativeReason(e.ruleId, runs.native, snapshot, corpus) })),
+  };
+}
+
+async function main() {
+  const argv = process.argv.slice(2);
+  const verbose = argv.includes('--verbose');
+  const asJson = argv.includes('--json');
+  const write = argv.includes('--write');
+  const root = REPO_ROOT;
+
+  console.log('⚖️  Engine coverage parity — what only one engine decides, per rule, both scenarios (GT-716 AC3)');
+
+  const missing = preflight(root);
+  if (missing.length > 0) {
+    console.error('❌ the two engines cannot both be run, so nothing was compared:');
+    for (const m of missing) console.error(`   - missing ${m}`);
+    process.exit(1);
+  }
+
+  const manifest = await readManifest(root);
+  const snapshot = JSON.parse(readFileSync(resolve(root, 'src/rulesets/standards/native-evaluability-snapshot.json'), 'utf8')).classes ?? {};
+  const corpus = readCorpusFacts(resolve(root, 'src/rulesets'), root);
+  const vocabulary = readVocabulary(root);
+  const emitted = builderEmits(root);
+
+  const measured = {};
+  let satellite = null;
+  try {
+    for (const scenario of SCENARIOS) {
+      const runs = {};
+      const started = Date.now();
+      if (scenario === 'init-satellite') satellite = initSatellite();
+      for (const engine of ENGINES) {
+        runs[engine] = scenario === 'repository'
+          ? runEngine(engine, root)
+          : runEngine(engine, satellite, ['--core', root]);
+      }
+      measured[scenario] = measureScenario(scenario, runs, manifest, snapshot, corpus, vocabulary, emitted);
+      measured[scenario].durationMs = Date.now() - started;
+    }
+  } catch (err) {
+    if (err instanceof ZeroCoverageError) {
+      console.error(`❌ ${err.message}`);
+      process.exit(1);
+    }
+    console.error(`❌ ${err.message}`);
+    process.exit(1);
+  } finally {
+    if (satellite) rmSync(satellite, { recursive: true, force: true });
+  }
+
+  if (write) {
+    const baseline = {
+      $comment: [
+        'GT-716 AC3 — every rule ONE engine decides and the other does not, per scenario, with the reason the other engine gave.',
+        'Written by `73-validate-engine-coverage-parity.mjs --write` and compared by default: an unregistered rule, a stale entry or a',
+        'changed class fails. ADR-0041 never promised equal coverage; this file makes every coverage difference a diff somebody reads.',
+        '`why` is measured — the class the report states, the facets the policy reads — and `followUp` says what would REMOVE the entry.',
+      ],
+      measuredOn: new Date().toISOString().slice(0, 10),
+      method: 'evolith validate --engine {native,opa} --format json, on the repository root and on a satellite fresh from `evolith init` (with --core); outcomes per 68-validate-engine-verdict-parity.mjs.',
+      scenarios: Object.fromEntries(SCENARIOS.map((s) => [s, toBaselineScenario(measured[s])])),
+    };
+    writeFileSync(BASELINE_PATH, JSON.stringify(baseline, null, 2) + '\n');
+    for (const s of SCENARIOS) {
+      console.log(`   ${s}: native-only ${measured[s].nativeOnly.length}, opa-only ${measured[s].opaOnly.length} (${measured[s].durationMs} ms)`);
+    }
+    console.log(`✓ baseline written to ${BASELINE_PATH.replace(`${root}/`, '')} — review the diff before committing it.`);
+    return;
+  }
+
+  const baseline = existsSync(BASELINE_PATH) ? JSON.parse(readFileSync(BASELINE_PATH, 'utf8')) : { scenarios: {} };
+  const report = { schemaVersion: '1.0', scenarios: {} };
+  let failed = false;
+
+  for (const s of SCENARIOS) {
+    const { unregistered, stale, changed } = reconcileCoverage(measured[s], baseline.scenarios?.[s]);
+    report.scenarios[s] = {
+      nativeOnly: measured[s].nativeOnly.length,
+      opaOnly: measured[s].opaOnly.length,
+      unregistered: unregistered.map((e) => e.ruleId),
+      stale: stale.map((e) => e.ruleId),
+      changed: changed.map((e) => e.ruleId),
+      durationMs: measured[s].durationMs,
+    };
+    console.log(
+      `   ${s}: native-only ${measured[s].nativeOnly.length}, opa-only ${measured[s].opaOnly.length}; ` +
+        `${unregistered.length} unregistered, ${stale.length} stale, ${changed.length} changed class (${measured[s].durationMs} ms).`,
+    );
+    if (verbose) {
+      for (const e of measured[s].nativeOnly) console.log(`     · native-only ${e.ruleId}: opa ${e.reason.class}`);
+      for (const e of measured[s].opaOnly) console.log(`     · opa-only ${e.ruleId}: native ${e.reason.class}`);
+    }
+    if (unregistered.length > 0) {
+      failed = true;
+      console.error(`❌ ${s}: ${unregistered.length} rule(s) are decided by ONE engine and not registered:`);
+      for (const e of unregistered) console.error(`   - ${e.direction} ${e.ruleId}: the other engine says ${e.class} — ${e.why}`);
+    }
+    if (stale.length > 0) {
+      failed = true;
+      console.error(`❌ ${s}: ${stale.length} registered entry(ies) are no longer coverage-only — remove them (or re-run with --write and review):`);
+      for (const e of stale) console.error(`   - ${e.direction} ${e.ruleId} (registered as ${e.class})`);
+    }
+    if (changed.length > 0) {
+      failed = true;
+      console.error(`❌ ${s}: ${changed.length} entry(ies) changed class — the same id, a different debt:`);
+      for (const e of changed) console.error(`   - ${e.direction} ${e.ruleId}: ${e.from} → ${e.to}`);
+    }
+  }
+
+  if (asJson) console.log(`ENGINE_COVERAGE_PARITY ${JSON.stringify(report)}`);
+
+  if (failed) {
+    console.error('   A coverage difference is legitimate (ADR-0041); an unregistered one is not. Register it with its reason, or fix it.');
+    process.exit(1);
+  }
+  console.log('✓ 73-validate-engine-coverage-parity: every coverage-only rule is registered with its reason, in both directions, on both scenarios.');
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
+  main().catch((err) => {
+    console.error(`❌ ${err instanceof Error ? err.stack ?? err.message : String(err)}`);
+    process.exit(1);
+  });
+}

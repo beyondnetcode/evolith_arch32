@@ -4,7 +4,7 @@
 
 **Estado:** Aprobado  
 **Propietario:** Evolith Architecture Board  
-**Última Actualización:** 2026-07-11
+**Última Actualización:** 2026-09-20 (conteos re-derivados del árbol; ver la nota bajo §2.1)
 
 ---
 
@@ -95,14 +95,23 @@ Reference Corpus (Constitución)
 ├── Directivas Arquitectónicas
 ├── ADRs Core y Específicos por Plataforma (incluyendo categoría ai-augmented/)
 ├── Estándares y Taxonomías
-├── Rulesets (26 categorías) y Skills
+├── Rulesets (21 categorías) y Skills
 ├── Schemas de Artefactos y Evidencias
 ├── Definiciones de Phase Gates
-├── OPA Policies (25+ .rego) con dual-engine parity
+├── OPA Policies (35 .rego agregadas por main.rego) con dual-engine parity
 └── Contratos de Adaptadores e Integraciones
 ```
 
-**ADR-0101: Core es un Evaluation Engine stateless.** Core recibe un `EvaluationContext` con identificadores opacos, ejecuta evaluaciones multi-kind (gate, artifact, evidence, architecture, blueprint, topology, checkpoint, deployment, rule, compliance) y devuelve un `EvaluationResult` con veredictos y recomendaciones no vinculantes. Core **no persiste** estado — Tracker es propietario del estado de gobernanza en runtime.
+> **De dónde salen los números.** Todo conteo de este documento (categorías de
+> rulesets, políticas OPA, kinds de evaluación, controllers, comandos, tools,
+> puertos, adaptadores) está tecleado a mano y caduca; la autoridad es el árbol. El
+> [Inventario del Corpus de Referencia](../../../reference/core/control-center/maturity-reports/inventory-summary.es.md)
+> y el [Inventario de Superficie de Producto](../../products/smart-cli/product-inventory.es.md)
+> generados se regeneran en CI, y `node .harness/scripts/pages/derive-page-metrics.mjs`
+> imprime el conjunto derivado completo (kinds, evaluadores, controllers, handlers,
+> puertos, adaptadores) como JSON. Última re-derivación: 2026-09-20.
+
+**ADR-0101: Core es un Evaluation Engine stateless.** Core recibe un `EvaluationContext` con identificadores opacos, ejecuta evaluaciones multi-kind (gate, artifact, evidence, architecture, blueprint, topology, checkpoint, deployment, rule, compliance, design, phase-artifacts) y devuelve un `EvaluationResult` con veredictos y recomendaciones no vinculantes. Core **no persiste** estado — Tracker es propietario del estado de gobernanza en runtime.
 
 Core permanece neutral respecto de proveedores. Las decisiones específicas de productos pertenecen a adaptadores, referencias específicas de plataforma o repositorios satélite, salvo que se generalicen como patrones reutilizables respaldados por evidencia.
 
@@ -128,13 +137,13 @@ No es simplemente un gestor de tareas. Tracker es propietario del estado de gobe
 Evolith debe construir y poseer:
 
 1. el SDLC canónico de cinco fases y la máquina de estados de Phase Gates;
-2. rulesets (26 categorías), schemas, estándares, taxonomía y herencia del Core;
+2. rulesets (21 categorías), schemas, estándares, taxonomía y herencia del Core;
 3. el modelo canónico de artefactos y evidencias;
-4. el **EvaluationOrchestrator** stateless con 10 EvaluationKinds y 5 KindEvaluators;
+4. el **EvaluationOrchestrator** stateless con 12 EvaluationKinds y 7 KindEvaluators (el Core API cablea 5 de ellos);
 5. la trazabilidad desde la intención de negocio hasta arquitectura, código, QA y release;
 6. Architecture Drift y score de adherencia (eje progresivo F1/F2/F3);
 7. el **Agent Runtime** con puertos hexagonales, adaptadores de interacción y orquestación gobernada;
-8. rulesets OPA (25+ policies) con dual-engine parity (Native TypeScript + OPA/WASM);
+8. rulesets OPA (35 policies agregadas por `main.rego`) con dual-engine parity (Native TypeScript + OPA/WASM);
 9. contratos neutrales respecto del proveedor para sistemas de trabajo, agentes, observabilidad, analítica, repositorios, CI/CD, testing y despliegue;
 10. autoridad final sobre cada transición de fase (recomendaciones no vinculantes; Tracker decide);
 11. promoción de lecciones validadas de los satélites hacia Core.
@@ -161,15 +170,15 @@ flowchart TB
   end
   subgraph CORE["repo · evolith_arch32 (Evolith Core · Constitución)"]
     subgraph EXP["Capa de Exposición del Core · ADR-0074"]
-      API["apps/core-api<br/>REST · 11 controllers"]
+      API["apps/core-api<br/>REST · 12 controllers"]
       MCP["mcp-server<br/>MCP · 55 tools · 12 resources"]
-      CLI["evolith-cli<br/>CLI · 31 commands"]
+      CLI["evolith-cli<br/>CLI · 38 commands"]
     end
     subgraph RT["Agent Runtime · @beyondnet/evolith-agent-runtime"]
-      ARS["AgentRuntimeService<br/>10 puertos en la ruta caliente<br/>(17 declarados · 47 módulos adaptadores)"]
+      ARS["AgentRuntimeService<br/>11 puertos en la ruta caliente<br/>(21 declarados · 47 clases adaptadoras)"]
       IA["InteractionAdapters<br/>CLI Command · CLI Chat · Hermes · MCP · OpenCode · External"]
     end
-    DOM["@beyondnet/evolith-core-domain<br/>EvaluationOrchestrator · 10 Kinds<br/>rulesets JSON · OPA/WASM · schemas"]
+    DOM["@beyondnet/evolith-core-domain<br/>EvaluationOrchestrator · 12 Kinds<br/>rulesets JSON · OPA/WASM · schemas"]
     API --> DOM
     MCP --> DOM
     CLI --> DOM
@@ -203,23 +212,24 @@ flowchart TB
 
 | Interfaz | Consumidor | Propósito |
 |---|---|---|
-| **API REST** | UI del Tracker, CI/CD e integraciones empresariales | 11 controllers: evaluación, gates, fases, arquitectura, proyectos, satélites, capabilities, composable-validate, reference, metrics, salud |
+| **API REST** | UI del Tracker, CI/CD e integraciones empresariales | 12 controllers: evaluación, gates, fases, arquitectura, architecture-plan, proyectos, satélites, capabilities, composable-validate, reference, metrics, salud |
 | **MCP HTTP/SSE** | LLMs y agentes autónomos | 55 tools, 12 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
-| **CLI** | Roles de ingeniería y producto | 31 comandos: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
-| **Agent Runtime** | Agentes IA, chatboxes, triggers externos | **10 puertos hexagonales en la ruta caliente de ejecución** (7 obligatorios, 3 opcionales), orquestación gobernada con OPA + HITL. El paquete *declara* 17 puertos y 47 módulos adaptadores, incluidos 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External) — ver la nota siguiente para saber cuáles están conectados y cuáles son especulativos. |
+| **CLI** | Roles de ingeniería y producto | 38 comandos: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
+| **Agent Runtime** | Agentes IA, chatboxes, triggers externos | **11 puertos hexagonales en la ruta caliente de ejecución** (7 obligatorios, 4 opcionales), orquestación gobernada con OPA + HITL. El paquete *declara* 21 interfaces de puerto (en 20 ficheros de puerto) y 47 clases adaptadoras (en 63 ficheros de adaptador), incluidos 6 interaction adapters (CLI Command, CLI Chat, Hermes, MCP, OpenCode, External) — ver la nota siguiente para saber cuáles están conectados y cuáles son especulativos. |
 | **Webhook / Bus de Eventos** — *no implementado, roadmap* | *(ninguno todavía)* | **Hoy no se entrega ninguna superficie de webhook ni de bus de eventos.** Evolith no expone endpoint de webhook entrante ni emite tráfico saliente de webhooks o eventos. El único código relacionado es `src/packages/infra-providers/src/webhook.adapter.ts`, un adaptador **solo-saliente** sin ninguna superficie conectada. Ver [Ecosistema y Comunicación](../../products/ecosystem-and-communication.es.md). Propagar comandos, evidencias, cambios de estado y resultados de gates de forma reactiva sigue siendo un ítem de roadmap. |
 
 > **Un conteo de puertos no es un conteo de capacidad.** Un número de inventario
-> ("17 puertos, 47 adaptadores") mide cuánta costura se talló, no cuánta capacidad
-> se entrega. Dicho explícitamente, y verificado contra el código el 2026-07-28:
+> ("21 puertos, 47 adaptadores") mide cuánta costura se talló, no cuánta capacidad
+> se entrega. Dicho explícitamente, y re-verificado contra el código el 2026-09-20:
 >
 > **Ruta caliente — los puertos de los que depende de verdad una pasada de ejecución**
 > (`AgentRuntimeDeps` en `packages/agent-runtime/src/application/agent-runtime-deps.ts`):
 > **7 obligatorios** — `ISkillRegistryPort`, `IHarnessPort`, `ICoreEvaluationPort`,
 > `IPolicyValidationPort`, `IApprovalPort`, `ITrackerTracePort`, `IMemoryPort`; y
-> **3 opcionales** — `IAgentEnginePort`, `IKnowledgePort`, `IWorkspaceContextPort`.
-> Diez puertos para una pasada gobernada de planificar → validar → ejecutar → trazar
-> están bien dimensionados, y cada uno tiene al menos un adaptador que corre.
+> **4 opcionales** — `IAgentEnginePort`, `IKnowledgePort`, `IWorkspaceContextPort`,
+> `IRunJournalPort`. Once puertos para una pasada gobernada de planificar → validar →
+> ejecutar → trazar están bien dimensionados, y cada uno tiene al menos un adaptador
+> que corre.
 >
 > **Especulativos — costuras declaradas sin consumidor vivo.** `IAgentRuntimePort` e
 > `IAssistantInvocationPort` no tienen consumidor fuera de su propio módulo de puerto.
@@ -485,7 +495,7 @@ OPEN CORE                                  TRACKER ENTERPRISE
 Constitución Core                          Gobernanza Multi-Tenant
 ADRs, Estándares y Taxonomías              Orquestación Gobernada
 Rulesets, Schemas y Contratos              Evidence Graph y Auditoría
-Exposición CLI · MCP · REST/GraphQL        Adaptadores Gestionados y Certificados
+Exposición CLI · MCP · REST                Adaptadores Gestionados y Certificados
 SDK Comunitario de Adaptadores             Vistas Ejecutivas y de Compliance
 Implementaciones de Referencia             Soporte Empresarial y SLA
 ```

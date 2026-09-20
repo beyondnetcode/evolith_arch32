@@ -11,9 +11,16 @@ Escritas para una persona que está aprendiendo a usar Evolith Core: cada
 comando/tool/endpoint explicado en prosa, con sus opciones, ejemplos de lo simple a
 lo avanzado, y las combinaciones habituales.
 
-- **[Usando la CLI](using-the-cli.es.md)** — los 25 comandos y subcomandos de la CLI.
-- **[Usando MCP](using-the-mcp.es.md)** — las 51 tools `evolith-*`, para agentes.
-- **[Usando la API REST](using-the-rest-api.es.md)** — los 27 endpoints, para integradores / el Tracker.
+- **[Usando la CLI](using-the-cli.es.md)** — los comandos y subcomandos de la CLI.
+- **[Usando MCP](using-the-mcp.es.md)** — las tools `evolith-*`, para agentes.
+- **[Usando la API REST](using-the-rest-api.es.md)** — los endpoints REST, para integradores / el Tracker.
+
+El tamaño de cada superficie no se teclea aquí: el
+[Inventario de Superficie de Producto](../../../product/products/smart-cli/product-inventory.es.md)
+generado cuenta los comandos de la CLI, las tools, resources y prompts MCP desde sus
+fuentes de registro, y `node .harness/scripts/pages/derive-page-metrics.mjs` añade los
+controllers y handlers REST (el 2026-09-20: 38 ficheros de comando, 55 tools, 33
+handlers en 12 controllers).
 
 ## Catálogo de referencia (por fase, generado)
 

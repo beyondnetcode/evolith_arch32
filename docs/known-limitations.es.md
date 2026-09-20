@@ -47,7 +47,7 @@ La mitad de «el LLM propone, un verificador determinista dispone» es una direc
 
 ## Egreso de red
 
-Local-first: la CLI, las reglas, las políticas OPA y el Core de evaluación corren en tu máquina, y tu código nunca se sube. Existe exactamente **una** integración de salida (`GeminiProvider`, Google Gemini API), está **desactivada por defecto**, y hoy ningún comando de la CLI publicada la alcanza. Los tarballs que hay en el registro son anteriores a ese endurecimiento: **trata el `GeminiProvider` publicado como no gobernado y no lo armes.**
+Local-first: la CLI, las reglas, las políticas OPA y el Core de evaluación corren en tu máquina, y tu código nunca se sube. Existen exactamente **dos** integraciones de salida — los transportes LLM del catálogo de proveedores (`ClaudeProvider`, Messages API de Anthropic; `GeminiProvider`, Google Gemini API; ADR-0128) — **sin proveedor por defecto**, ambas **desactivadas por defecto** tras un solo interruptor, y hoy ningún comando de la CLI publicada alcanza ninguna. Los tarballs que hay en el registro son anteriores a ese endurecimiento: **trata el `GeminiProvider` publicado como no gobernado y no lo armes** (`ClaudeProvider` no está aún en ningún tarball publicado).
 
 Divulgación completa —sub-encargados, credencial, límites, redacción, qué sale y qué no, y las limitaciones conocidas de estos controles—: [Salida de Red y Tratamiento de Datos](../SECURITY.es.md#salida-de-red-y-tratamiento-de-datos). Reporta un defecto de egreso por ahí, nunca en un issue público.
 

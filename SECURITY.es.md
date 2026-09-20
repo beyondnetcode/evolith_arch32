@@ -96,21 +96,38 @@ API y el transporte HTTP del MCP son servidores que hospeda el propio operador.
 Ninguna superficie reporta telemetría, analítica ni comprobación de licencia a
 los mantenedores.
 
-Existe exactamente **una** integración saliente con terceros en los paquetes
-publicados. Está **deshabilitada por defecto** y lo siguiente es su divulgación
-completa. Responde cuestionarios empresariales y DPAs desde esta sección.
+Existen exactamente **dos** integraciones salientes con terceros en los paquetes
+publicados: los dos transportes LLM del catálogo de proveedores (ADR-0128,
+`src/packages/agent-runtime/src/providers/assistant-transport.registry.ts`). El
+catálogo **no tiene default** — una instalación que no nombra proveedor obtiene el
+stub determinista, sin red y sin coste — y ambos transportes están
+**deshabilitados por defecto** tras el mismo interruptor. Lo siguiente es su
+divulgación completa. Responde cuestionarios empresariales y DPAs desde esta
+sección.
 
-### La única ruta de salida
+### Las dos rutas de salida
+
+Lo que comparten los dos transportes — el núcleo gobernado de `llm-egress.ts` (GT-575):
 
 | Elemento | Divulgación |
 |---|---|
-| Componente | `GeminiProvider`, un export público de `@beyondnet/evolith-agent-runtime` (`src/packages/agent-runtime/src/providers/GeminiProvider.ts`) |
-| Endpoint | un `POST` HTTPS a `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`, modelo por defecto `gemini-2.5-flash`. El paquete no contacta con ningún otro host. |
-| Estado por defecto | **DESHABILITADO.** Sin configuración el provider no abre ningún socket: registra el intento rechazado y lanza `LlmEgressDisabledError`. |
-| Activación explícita | la variable de entorno `EVOLITH_LLM_EGRESS=true` (o `1`), o un `new GeminiProvider({ enabled: true })` explícito. No existe ninguna ruta de activación implícita. |
-| Credencial | `EVOLITH_LLM_API_KEY`, con `GEMINI_API_KEY` como alternativa. Se transmite en la cabecera `x-goog-api-key`, nunca en el query string de la URL. Sin clave, la llamada se rechaza antes de abrir un socket. |
-| Límites de transporte | timeout de 30.000 ms vía `AbortController`; 60.000 bytes / ~15.000 tokens estimados, aplicados sobre los bytes exactos a enviar y **fallando cerrado** en lugar de truncar. |
-| Humano en el bucle | el cableado previsto inyecta el provider como `IAssistantTransport` de `SupervisedAssistantClient`, que a su vez está apagado por defecto y exige una aprobación humana explícita antes de alcanzar el transporte. |
+| Estado por defecto | **DESHABILITADO.** Sin configuración ningún provider abre un socket: registra el intento rechazado y lanza `LlmEgressDisabledError`. |
+| Activación explícita | la variable de entorno `EVOLITH_LLM_EGRESS=true` (o `1`), o un `{ enabled: true }` explícito en el provider. Un solo interruptor gobierna la salida, no uno por proveedor. No existe ninguna ruta de activación implícita. |
+| Selección | explícita, por id (`claude` o `gemini`), por instalación o por tenant. Un id desconocido o ausente resuelve a ningún transporte, nunca a un proveedor de respaldo. |
+| Ubicación de la credencial | siempre una cabecera de la petición, nunca el query string de la URL. Sin clave, la llamada se rechaza antes de abrir un socket. |
+| Presupuesto del payload | 60.000 bytes / ~15.000 tokens estimados, aplicados sobre los bytes exactos a enviar y **fallando cerrado** en lugar de truncar. |
+| Humano en el bucle | cada provider rechaza la llamada con `LlmEgressUnsupervisedError` salvo que un `IApprovalPort` haya concedido **esta** invocación; el cableado previsto lo inyecta como `IAssistantTransport` de `SupervisedAssistantClient`, que a su vez está apagado por defecto. La supervisión nunca se autoconcede. |
+
+Lo que es específico de cada proveedor:
+
+| Elemento | `ClaudeProvider` | `GeminiProvider` |
+|---|---|---|
+| Componente | export público de `@beyondnet/evolith-agent-runtime` (`src/packages/agent-runtime/src/providers/ClaudeProvider.ts`) | export público de `@beyondnet/evolith-agent-runtime` (`src/packages/agent-runtime/src/providers/GeminiProvider.ts`) |
+| Endpoint | Messages API de Anthropic en `api.anthropic.com`, a través de `@anthropic-ai/sdk` (peer **opcional**, cargado perezosamente: el paquete compila y arranca sin él). Modelo por defecto `claude-opus-5`. | un `POST` HTTPS a `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`, modelo por defecto `gemini-2.5-flash`. |
+| Credencial | `ANTHROPIC_API_KEY`, con `EVOLITH_LLM_API_KEY` como alternativa; el SDK la envía en la cabecera `x-api-key`. | `EVOLITH_LLM_API_KEY`, con `GEMINI_API_KEY` como alternativa; se envía en la cabecera `x-goog-api-key`. |
+| Timeout | 60.000 ms (timeout del cliente SDK); respuesta limitada a 16.000 tokens de salida. | timeout de 30.000 ms vía `AbortController`. |
+
+El paquete no contacta con ningún otro host.
 
 **Datos transmitidos.** A través de la costura gobernada `IAssistantTransport`:
 la intención de la petición, el id opcional de la herramienta, los parámetros de
@@ -137,7 +154,8 @@ nunca se registra.
 
 | Sub-encargado | Propósito | Cuándo se activa |
 |---|---|---|
-| Google LLC — Gemini API | Inferencia LLM para la ruta de asistente/plan del agent-runtime | Solo cuando la salida LLM se arma explícitamente vía `EVOLITH_LLM_EGRESS`; nunca por defecto |
+| Anthropic PBC — Claude Messages API | Inferencia LLM para la ruta de asistente/plan del agent-runtime | Solo cuando la salida LLM se arma explícitamente vía `EVOLITH_LLM_EGRESS` **y** la instalación o el tenant seleccionó `claude`; nunca por defecto |
+| Google LLC — Gemini API | Inferencia LLM para la ruta de asistente/plan del agent-runtime | Solo cuando la salida LLM se arma explícitamente vía `EVOLITH_LLM_EGRESS` **y** la instalación o el tenant seleccionó `gemini`; nunca por defecto |
 
 Un colector de OpenTelemetry configurado por el operador (`OTEL_ENABLED=true`)
 recibe trazas del CLI, pero es el endpoint del propio operador, no un encargado
@@ -151,17 +169,21 @@ Se declaran para que una persona revisora no tenga que descubrirlas:
   datos: reduce materialmente la fuga accidental de credenciales, no garantiza su
   ausencia.
 - Los controles de cabecera, timeout, presupuesto, redacción y esquema de
-  respuesta están cubiertos por tests unitarios con un `fetch` inyectado. **No**
-  se han ejercitado contra el endpoint real de Google.
+  respuesta están cubiertos por tests unitarios con un `fetch` inyectado (Gemini)
+  y un cliente SDK inyectado (Claude). **No** se han ejercitado contra los
+  endpoints reales de Google ni de Anthropic.
 - Los valores de timeout y presupuesto se heredan del propio revisor de CI del
   repositorio y no están afinados para prompts interactivos grandes, que fallan
   cerrado en lugar de degradarse.
-- Ningún comando registrado en el CLI publicado alcanza hoy este provider, así
-  que una instalación por defecto del CLI no realiza ninguna salida LLM.
+- Ningún comando registrado en el CLI publicado alcanza hoy ninguno de los dos
+  providers, así que una instalación por defecto del CLI no realiza ninguna
+  salida LLM.
 - Los tarballs de npm actualmente en el registro son anteriores a este
   endurecimiento; los controles descritos arriba están en `develop` y llegan al
   registro con la siguiente release. Hasta entonces, trata el `GeminiProvider`
-  publicado como no gobernado y no lo armes.
+  publicado como no gobernado y no lo armes. `ClaudeProvider` no está aún en
+  ningún tarball del registro: es posterior al último
+  `@beyondnet/evolith-agent-runtime` publicado (1.2.0).
 - El repositorio todavía no ejecuta contra sí mismo las 9 reglas bloqueantes
   `AAI-*` de IA agéntica del propio producto en CI; esa puerta sigue abierta.
 

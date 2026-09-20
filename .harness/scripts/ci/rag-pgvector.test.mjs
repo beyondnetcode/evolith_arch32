@@ -131,3 +131,37 @@ test('DDL: dimension 1024, cosine HNSW, vector extension, and metadata columns (
   }
   assert.equal(RAG_PGVECTOR_TABLE, 'rag_chunks');
 });
+
+// ---------------------------------------------------------------------------
+// GT-685 / ADR-0112 §6 — lexical-only mode: text in, NULL vector, tagged corpus
+// ---------------------------------------------------------------------------
+
+test('lexical mode: the adapter tags the corpus "lexical" and has no embedder', async () => {
+  const a = createRagAdapter({ provider: 'pgvector', client: makeStub(), mode: 'lexical' });
+  assert.equal(a.lexicalOnly, true);
+  assert.equal(a.embeddingModelId, 'lexical');
+  await assert.rejects(() => a.embed(['x']), /lexical-only pgvector adapter has no embedder/);
+});
+
+test('lexical mode: upsert stores embedding = NULL and refuses a vector', async () => {
+  const stub = makeStub();
+  const a = createRagAdapter({ provider: 'pgvector', client: stub, mode: 'lexical' });
+  await a.upsert([{ id: 'abc123', vector: null, metadata: META }]);
+  assert.equal(stub.calls.length, 1);
+  assert.equal(stub.calls[0].params[9], null, 'the vector parameter is NULL, not a placeholder');
+  assert.equal(stub.calls[0].params[8], META.corpus_version);
+  await assert.rejects(
+    () => a.upsert([{ id: 'abc124', vector: new Array(RAG_EMBEDDING_DIM).fill(0), metadata: META }]),
+    /refuses a vector/,
+  );
+});
+
+test('dense mode still refuses a NULL vector (the two shapes never mix)', async () => {
+  const a = createRagAdapter({ provider: 'pgvector', client: makeStub() });
+  await assert.rejects(() => a.upsert([{ id: 'abc123', vector: null, metadata: META }]), /expects a 1024-dim vector/);
+});
+
+test('DDL: embedding is nullable and the NOT NULL of older stores is lifted (ADR-0112 §6)', () => {
+  assert.match(PGVECTOR_DDL, /embedding\s+vector\(1024\)\s*\n\);/, 'no NOT NULL on the embedding column');
+  assert.match(PGVECTOR_DDL, /ALTER TABLE rag_chunks ALTER COLUMN embedding DROP NOT NULL;/);
+});

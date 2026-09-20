@@ -1411,7 +1411,7 @@ La recuperación es **híbrida, BM25 primero**. No es una preferencia, es un aju
 
 `retrievalMode` es `hybrid` cuando corrieron ambos recuperadores y `lexical-only` cuando no hay sidecar de embeddings configurado — o cuando el lado denso falló y la búsqueda degradó a BM25 en vez de no devolver nada.
 
-**Cuándo no está disponible.** El corpus vive en un store pgvector (`EVOLITH_RAG_PG_URL`) poblado por el workflow de delta-sync. Sin store configurado la tool **falla explícitamente** en vez de devolver un resultado vacío, porque un agente que recibe «sin coincidencias» de un corpus no configurado concluirá que el corpus no dice nada del asunto y actuará sobre eso.
+**Cuándo no está disponible.** El corpus vive en un store pgvector (`EVOLITH_RAG_PG_URL`) poblado por el workflow de delta-sync. Sin store configurado la tool **falla explícitamente** en vez de devolver un resultado vacío, porque un agente que recibe «sin coincidencias» de un corpus no configurado concluirá que el corpus no dice nada del asunto y actuará sobre eso. El arranque local del full-stack (`product/infra/docker-compose.fullstack.yml`) aprovisiona el store y lo siembra en **modo solo léxico** (ADR-0112 §6, GT-685): BM25 sobre el texto de los chunks, `embedding = NULL`, `retrievalMode: "lexical-only"` en cada respuesta; el reordenado denso se conecta solo donde haya un sidecar de embeddings configurado.
 
 ### 6.18. `evolith-history` — leer el historial de comandos de la CLI
 

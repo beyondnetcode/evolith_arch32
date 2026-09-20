@@ -185,7 +185,11 @@ export class PgVectorKnowledgeAdapter implements IKnowledgePort {
 
     // $1 is always the query vector; filter values follow, LIMIT is last.
     const params: unknown[] = [toVectorLiteral(vec)];
-    const where: string[] = [];
+    // GT-685 / ADR-0112 §6 — a lexical-only corpus stores its chunks with
+    // `embedding = NULL`. Those rows are BM25's, not this adapter's: cosine over
+    // NULL is NULL, and a dense reader attached to a text-only index must find
+    // nothing here rather than rank rows it cannot compare.
+    const where: string[] = ['embedding IS NOT NULL'];
 
     if (request.language) {
       params.push(request.language);

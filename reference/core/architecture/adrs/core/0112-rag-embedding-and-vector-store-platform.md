@@ -44,6 +44,15 @@ The model runs behind a **local inference service on the same perimeter** (ONNX 
 - **Write-side (ingest):** the delta re-embed on `reference/` commits (ADR-0090 §4) is offline/batch — quality-first; run `4B`/`8B` where hardware allows.
 - **Query-side (retrieval, GT-540):** latency-sensitive; `0.6B` is sufficient given the small corpus. The query-side **MUST** use the same model and dimension as the write-side, or the vectors are not comparable.
 
+### 6. Lexical-only corpus mode (amended 2026-09-19, GT-685)
+A deployment MAY hold the corpus **without dense vectors**. In lexical-only mode every chunk is stored with `embedding = NULL` and is retrieved through the `content_tsv` index (BM25, [GT-592](../../../control-center/gaps/gap-reference-catalog.md#gt-592)); the `corpus_version` carries the suffix `+lexical` in the same slot a model id occupies, because "no model" is a corpus identity too. Rules:
+
+- **The store answers from what it holds.** The read side is BM25-first by construction: the lexical index is always attached; the dense reranker is attached only when a sidecar is configured **and** only ranks rows whose `embedding IS NOT NULL`. A dense reader over a lexical-only store degrades to lexical and reports it in the retrieval trace.
+- **A live sync is either dense or explicitly lexical.** The write side takes `EVOLITH_RAG_MODE=lexical` (no embedder, `NULL` vectors) or a configured sidecar (`EVOLITH_RAG_EMBED_URL`); the deterministic sha256 pseudo-embedding stays a dry-run/test stand-in and a live run that would persist it is refused by name. A lexical index and a dense index never mix shapes: the lexical writer refuses a vector, the dense writer refuses `NULL`.
+- **Dense reranking is an upgrade, not a precondition.** Attaching vectors is a re-index (`+lexical` → `+<model>@<dim>`), the same full-reindex trigger §5 already defines for a model swap.
+
+Why this amendment: measured on 2026-09-19, the EN corpus is 5 698 chunks / 1.35 M tokens; the `text-embeddings-inference` CPU images are amd64-only and a CPU sidecar (Ollama, arm64) embedded 10 chunks in 413 s, so seeding the dense index on the hardware people develop on costs tens of CPU-hours. §4's "no corpus egress" rules out a hosted embeddings API. The tool the gateway advertises (`evolith-knowledge-search`) was therefore registered in every deployment and answerable in none; a lexical-only index makes it answerable wherever a PostgreSQL runs, and over an identifier-heavy corpus BM25 is the half that carries the recall ([GT-592](../../../control-center/gaps/gap-reference-catalog.md#gt-592) measured it).
+
 ## Alternatives Considered
 | Option | License | Verdict |
 |---|---|---|
@@ -66,6 +75,7 @@ The model runs behind a **local inference service on the same perimeter** (ONNX 
 
 ### Neutral
 - The concrete choice lives in the ADR-0003 model registry and in each chunk's `corpus_version`; migrating to a managed vendor later is a documented adapter swap plus a re-index, not a rewrite.
+- A lexical-only index (§6) is a first-class deployment, not a degraded one: it is what the local full-stack bring-up seeds, and a dense re-index upgrades it in place.
 
 ## References
 - [ADR-0090: RAG Knowledge Governance](./0090-rag-knowledge-governance.md) — the governing contract this platform realizes

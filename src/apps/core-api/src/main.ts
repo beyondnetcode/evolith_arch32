@@ -2,6 +2,7 @@ import './tracing';
 
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { setupOpenApi, OPENAPI_CONFIG } from './openapi';
@@ -14,8 +15,12 @@ import { SecurityAuditInterceptor } from './infrastructure/interceptors/security
 import { MetricsService } from './infrastructure/metrics/metrics.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
+    // GT-715: the parsers are registered below with an explicit ceiling. Left to
+    // Nest, express's 100 KB json limit applied, and a body over it surfaced as a
+    // masked 500 with no log line — measured with the Tracker's inline context.
+    bodyParser: false,
   });
 
   app.enableVersioning({
@@ -25,6 +30,10 @@ async function bootstrap() {
   });
 
   const config = app.get(ConfigService<EnvConfig>);
+
+  const maxBodyBytes = config.get('EVOLITH_MAX_BODY_BYTES', { infer: true });
+  app.useBodyParser('json', { limit: maxBodyBytes });
+  app.useBodyParser('urlencoded', { extended: true, limit: maxBodyBytes });
 
   // L2: Swagger requires explicit opt-in in all environments (security hardening).
   // Previously auto-enabled in non-production, which exposed the full API surface

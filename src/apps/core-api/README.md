@@ -141,7 +141,7 @@ En error (vía `HttpExceptionFilter`, con `error.details` en formato RFC 9457 Pr
 }
 ```
 
-> `error.code` ∈ `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `TOO_MANY_REQUESTS`, `INTERNAL_ERROR`.
+> `error.code` ∈ `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `PAYLOAD_TOO_LARGE`, `UNSUPPORTED_MEDIA_TYPE`, `TOO_MANY_REQUESTS`, `INTERNAL_ERROR`.
 
 ---
 
@@ -189,6 +189,7 @@ npm run start:prod
 | `WORKSPACE_ROOT` | `/tmp/evolith-workspaces` | Directorio raíz donde el Tracker monta los workspace de los tenants |
 | `CORS_ORIGINS` | — | CSV de orígenes permitidos en producción (ej: `https://tracker.evolith.io,https://app.evolith.io`). En `production` sin este valor se **deniega** todo cross-origin; `*` permite todos. |
 | `SWAGGER_ENABLED` | — | `"true"` para forzar Swagger en producción. En `development` siempre activo. |
+| `EVOLITH_MAX_BODY_BYTES` | `2097152` (2 MiB) | Techo del cuerpo JSON. Por encima, `413 PAYLOAD_TOO_LARGE` con los dos tamaños en el mensaje. El contexto inline del Tracker (`evaluationInput.files`) llega a ~1 MB; el 100 KB por omisión de Express lo rechazaba como un 500 enmascarado (GT-715). |
 | `REDIS_URL` | — | URL completa Redis (ej: `redis://user:pass@host:6379`). Tiene prioridad sobre HOST/PORT. |
 | `REDIS_HOST` | `localhost` | Host Redis |
 | `REDIS_PORT` | `6379` | Puerto Redis |

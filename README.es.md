@@ -27,7 +27,7 @@ Lee tu repositorio —carpetas, workflows, manifiestos, decisiones de arquitectu
 
 1. **Cuenta lo que no pudo revisar.** Un linter normal solo reporta lo que falló. Evolith también reporta las reglas que no llegó a evaluar; si una de ellas es bloqueante, el PR falla igual. Así un "todo en verde" nunca significa "no revisé nada".
 
-2. **Sigue el ciclo de vida del producto.** Cada producto está en una fase: Discovery → Design → Construction → QA → Delivery. Evolith evalúa los controles de la fase actual y no deja avanzar a la siguiente hasta que se cumplen, guardando evidencia de cada paso. Las decisiones de arquitectura (ADR) se escriben con la misma herramienta y muchas reglas nacen de ellas.
+2. **Sigue el ciclo de vida del producto.** Cada producto está en una fase: Discovery → Design → Construction → QA → Delivery. Evolith evalúa los controles de la fase actual y no recomienda avanzar a la siguiente hasta que se cumplen, guardando evidencia de cada paso. Las decisiones de arquitectura (ADR) se escriben con la misma herramienta y muchas reglas nacen de ellas.
 
 **Para quién es**
 
@@ -41,7 +41,7 @@ Lee tu repositorio —carpetas, workflows, manifiestos, decisiones de arquitectu
 2. [Cuatro términos que necesitas](#cuatro-términos-que-necesitas) — regla, pack, topología y fase.
 3. [Úsalo en CI](#en-ci) — para que corra en cada PR.
 
-¿Más contexto? [Qué hay dentro](#qué-hay-dentro) · [Cómo se compara](#cómo-se-compara) · [Qué no es](#qué-no-es) · [Documentación](#documentación) · [Atlas interactivo](https://beyondnetcode.github.io/evolith_arch32/)
+¿Más contexto? [La compuerta de fase, en la CLI y en el Tracker](#la-compuerta-de-fase-en-la-cli-y-en-el-tracker) · [Qué hay dentro](#qué-hay-dentro) · [Cómo se compara](#cómo-se-compara) · [Qué no es](#qué-no-es) · [Documentación](#documentación) · [Atlas interactivo](https://beyondnetcode.github.io/evolith_arch32/)
 
 ---
 
@@ -76,6 +76,22 @@ Un **ADR** (Architecture Decision Record) es una decisión de arquitectura por e
 
 ---
 
+## La compuerta de fase, en la CLI y en el Tracker
+
+El mismo corpus que hace fallar un PR decide también si un producto puede salir de su fase. Sobre el satélite de la primera ejecución, el gate de Discovery pide seis artefactos y no encuentra ninguno:
+
+<img src="./docs/assets/evolith-gates-demo.es.svg" alt="Terminal: evolith gate evaluate --phase discovery reporta el gate FAILED con seis artefactos ausentes, exit 2; evolith phase advance --from discovery --to design responde NOT RECOMMENDED, exit 2" width="960">
+
+<sub>Salida real del CLI publicado (2026-09-20, abreviada; <a href="./docs/evidence/phase-gate-capture.es.md">captura completa</a>). <code>--core ../evolith</code> es un checkout de este repositorio: el tarball aún no trae las definiciones de gate (<a href="./reference/core/control-center/gaps/gap-tracking.es.md">GT-714</a>).</sub>
+
+La CLI evalúa y propone; más allá de la evidencia que imprime, no guarda nada. Decidir, y conservar la decisión, es para lo que existe **Evolith Tracker**: el mismo gate alrededor de una iniciativa, con los criterios que deriva su tipo, la firma del product owner y las fases que siguen bloqueadas hasta que se aprueba el gate anterior.
+
+<img src="./docs/assets/evolith-tracker-initiative.png" alt="Evolith Tracker: iniciativa INI-CORE-001 'Architecture gates in every PR' en Discovery; el pipeline SDLC muestra G1 en curso y G2 a G5 bloqueadas; el gate de Discovery lista cuatro criterios obligatorios, dos cumplidos y dos sin cumplir; la cadena de aprobación está en revisión" width="960">
+
+<sub>Entorno UAT de Evolith Tracker el 2026-09-20, gobernando este repositorio como producto. Producto comercial, no lanzado, repositorio privado. El Core al que llama es el que ejecuta la CLI — y su llamada de conformidad del repositorio es la que destapó GT-715 ([Estado real](./docs/known-limitations.es.md#el-tracker-le-envió-un-repositorio-al-core-y-el-core-respondió-500)).</sub>
+
+---
+
 ## En CI
 
 ```yaml
@@ -103,7 +119,7 @@ Para un agente de IA, el mismo motor como servidor MCP sobre stdio (Node ≥ 20)
 | **MCP Services** | Las reglas como contexto vivo para un agente |
 | **Core API** | REST para consultar y evaluar en remoto |
 | **Agent Runtime** | Ejecuta el Core desde un agente, por Puertos y Adaptadores. Experimental |
-| **Evolith Tracker** | Producto comercial de gobernanza del ciclo de vida. Aún no lanzado; será el único de pago |
+| **Evolith Tracker** | Producto comercial de gobernanza del ciclo de vida: iniciativas, fases, decisiones de gate y su rastro de aprobación, sobre el Core. En UAT ([cómo se ve](#la-compuerta-de-fase-en-la-cli-y-en-el-tracker)); aún no lanzado; será el único de pago |
 
 Cuántas reglas, packs y ADRs carga tu instalación lo imprime `evolith rulesets`; los conteos del árbol los mide CI en cada PR y los publica el [inventario del corpus](./reference/core/control-center/maturity-reports/inventory-summary.es.md).
 

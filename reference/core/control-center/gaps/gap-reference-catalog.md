@@ -10324,3 +10324,75 @@ Both were fixed structurally rather than corrected: the rethrow now names BOTH f
   - [x] The pull-request trigger is untouched. **MET** — `on.pull_request` has no `paths`, as #218 required.
   - [x] **FALSIFIABILITY:** what cannot be observed yet is written down as such, not claimed. **MET as a statement of what is NOT claimed** — the first push to `main` after this lands that changes `src/packages/**` or `src/apps/**` must show a `push`-event run of `Evolith SDK CLI - CI Pipeline` on that SHA and a `refs/heads/main` CodeQL analysis with that `commit_sha`, with no manual dispatch. This workflow file itself is in the filter, so the promotion carrying this change will run, but that proves the file path, not the new ones; the row closes on the filter change and the first `src/packages`-only promotion is what confirms it. Recorded here and in the closure record.
 - **Status:** `DONE`
+
+#### GT-714
+
+**Title:** `gate evaluate` and `phase advance` in the published CLI need a checkout of this repository on disk, because the tarball carries the rules but not the gate definitions
+
+- **Purpose:** Make the two phase-gate commands the front page advertises work from `npx` alone, the way `validate` already does.
+- **Evidence, measured 2026-09-20 with `@beyondnet/evolith-cli@1.3.2` in a clean `node:20` container, on a satellite fresh from `init` (full run in [`docs/evidence/phase-gate-capture.md`](../../../../docs/evidence/phase-gate-capture.md)):**
+
+  | fact | value |
+  |---|---|
+  | `gate evaluate --phase discovery` with no `--core` | `exit 1` — `ENOENT: no such file or directory, scandir '/work/my-project/reference/governance/sdlc/gates'`; `stderr` first warns that `/work/my-project/src/rulesets/sdlc/artifact-registry.json` is missing |
+  | `phase advance --from discovery --to design` with no `--core` | the same `ENOENT`, `exit 1` |
+  | the same two commands with `--core ../evolith` (a checkout at `142b8324`) | `exit 2` both: gate `business-sign-off` `FAILED` with six `PG-1-EVIDENCE-*` rows, transition `NOT RECOMMENDED` |
+  | what the tarball carries | `rulesets/sdlc/phase-gates.rules.json` and `rulesets/sdlc/artifact-registry.json` — the fallback ruleset and the registry, at the package's own paths |
+  | what it does not carry | `reference/governance/sdlc/gates/gate-f1.json` … `gate-f5.json`, the canonical gate definitions |
+  | where the paths are composed | `PhaseGateValidatorService` (`src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts`): `resolvedCorePath = corePath ?? findCorePath(cwd)`, then `<core>/reference/governance/sdlc/gates` and `<core>/src/rulesets/sdlc/artifact-registry.json`; `findCorePath` walks up for the gates tree, then for a corpus, then falls back to **the satellite itself** |
+  | the fallback the validator would use | `loadRuleset()` reads `phase-gates.rules.json` only when the gate registry loaded zero gates — but the registry throws on the missing directory before that branch is reached |
+  | the sibling that was fixed | GT-705 (2026-08-16) bundled both trees into the MCP package and replaced the guess with one resolver (caller → `EVOLITH_CORE_PATH` → walk up → bundled corpus); the CLI package was not part of that change |
+
+- **What it is not:** `validate` is unaffected — GT-456/GT-705 gave it the bundled corpus. `sdlc gate-status` has no `--core` at all (GT-461 sub-finding) and fails the same way with no workaround.
+- **Use cases:**
+  - A reader follows the front page, runs `evolith gate evaluate --phase discovery` in a fresh satellite and gets a tool failure (`exit 1`) rather than a verdict.
+  - A CI job that only has the tarball cannot evaluate a phase gate at all.
+- **Impact:** The two commands the front page names as what makes Evolith more than a linter do not run from the published package without a clone of this repository next to the satellite; the front page shows them with `--core ../evolith` and says why.
+- **Expected outcome:** `npx -y @beyondnet/evolith-cli gate evaluate --phase discovery` on a fresh satellite exits `2` with the six missing artifacts, no `--core`; the demo and its capture are regenerated without the flag.
+- **Files affected:** `src/sdk/cli/package.json` (`files`), `src/sdk/cli/scripts/copy-rulesets.js`, `src/packages/core-domain/src/application/validators/phase-gate-validator.service.ts`, `src/sdk/cli/scripts/check-install-smoke.mjs`, `.harness/scripts/generate-readme-demo.mjs`, `docs/evidence/phase-gate-capture.md`
+- **Component:** `Evolith CLI` · **Criticality:** P1 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-09-20 while extending the front-page demo to the phase gate: the first capture of `gate evaluate` on a fresh satellite was an `exit 1`, and the flag that made it run had to be explained in the caption. Public issue: [#775](https://github.com/beyondnetcode/evolith_arch32/issues/775).
+- **Acceptance criteria:**
+  - [ ] The CLI tarball carries `reference/governance/sdlc/gates/*.json` and the artifact registry at the path the validator composes, and `PhaseGateValidatorService` falls back to the bundled trees through the same resolver chain GT-705 built — no path composed off the satellite.
+  - [ ] `sdlc gate-status` resolves the Core the same way (GT-461's open sub-finding).
+  - [ ] **FALSIFIABILITY:** `check-install-smoke.mjs` runs `gate evaluate --phase discovery` from the packed tarball in an empty directory and asserts `exit 2` with six `PG-1-EVIDENCE-*` rows; observed red against the current package before it is wired.
+  - [ ] The front-page demo and `docs/evidence/phase-gate-capture.md` are regenerated from a capture without `--core`, and the caption sentence about the tarball is removed.
+- **Status:** `PENDING`
+
+#### GT-715
+
+**Title:** The Core API rejected any inline evaluation context over 100 KB with a masked 500 and no log line, so the Tracker's repository-conformance call never worked against a real repository
+
+- **Purpose:** Let the Tracker send the Core a real repository inline, and make the Core say what it refuses and why — to the client and to the operator.
+- **Evidence, measured 2026-09-20:**
+
+  | fact | value |
+  |---|---|
+  | the call, from the Tracker's UAT environment | `POST /api/v1/products/{id}/evaluate-architecture` for a product pointing at this public repository: the Tracker read 150 files from GitHub (~1 MB; its own caps are 150 files, ~1024 KB, 256 KB per file) and posted them to the Core as `evaluationInput.files` |
+  | what the Core answered | `HTTP 500`; the Tracker recorded `status: FAILED`, `resultDecision: BLOCKED`, `provenance: synthetic`, `CoreEvaluation.HttpError "Core evaluation failed with HTTP 500."` and answered `502` |
+  | reproduced on the same image locally | `ghcr.io/beyondnetcode/evolith-core-api:latest` = `main@142b8324`: 14 files / 99,797-byte body → `200`; 15 files / 101,578-byte body → `500 INTERNAL_ERROR "An unexpected error occurred"` |
+  | isolated from the content | a synthetic body of 92,956 bytes → `200`; 126,556 bytes → `500`. The ceiling, not the files |
+  | what the Core logged | nothing: no `SecurityAudit` line for the request, no stack — the filter masked the message for the wire and wrote it nowhere else |
+  | the cause | Nest registers express's `json()` parser with its 100 KB default; a body over it throws `PayloadTooLargeError` (`type: entity.too.large`, `status: 413`), which is not an `HttpException`; `HttpExceptionFilter` classified it by message, matched nothing, and answered 500 |
+  | a body of 6 files (10 KB) | `200`, gate `gate-f1` `FAIL` with the six missing artifacts — the inline path itself works |
+
+- **What closes it, in `3b276c9a`:** `EVOLITH_MAX_BODY_BYTES` (default 2 MiB, validated in `env.validation.ts`) registers the `json` and `urlencoded` parsers explicitly with `bodyParser: false`; the filter recognises body-parser errors by their `type`/`status` before the message matchers and keeps the parser's status (413, 400, 415…), the 413 states the bytes received, the ceiling and the variable; and every 5xx is logged with its stack before it is masked. Red first: 4 of the 5 new specs fail against the previous filter. After: the same 1.1 MB payload → `200` with the `gate-f1` verdict; a 3 MB body → `413 PAYLOAD_TOO_LARGE "Request body too large: 3146294 bytes received, the limit is 2097152 bytes (EVOLITH_MAX_BODY_BYTES)."`
+- **What this does not close:** the UAT image predates the fix until `main` is promoted and Coolify redeploys (the `deploy` job is still off, see the UAT compose); and the Tracker records a `synthetic BLOCKED` verdict on an HTTP error, which is the Tracker's own honesty question and lives in its repository.
+- **Use cases:**
+  - A tenant links a product to its repository and asks for the architecture verdict; the Core evaluates the repository it received instead of failing on its size.
+  - A body that does exceed the ceiling gets a 413 that names the ceiling, so the operator raises `EVOLITH_MAX_BODY_BYTES` instead of reading a 500.
+- **Impact:** Plane 2 of the Tracker's governance (technical-architecture conformance) could not be exercised against any real repository from the deployed stack; the front page carries a Tracker capture of the phase gate for that reason, not of the repository verdict.
+- **Expected outcome:** A ~1 MB inline context is evaluated; anything over the ceiling is a 413 with both sizes; a masked 5xx leaves a log line.
+- **Files affected:** `src/apps/core-api/src/main.ts`, `src/apps/core-api/src/infrastructure/config/env.validation.ts`, `src/apps/core-api/src/infrastructure/filters/http-exception.filter.ts`, `src/apps/core-api/src/infrastructure/filters/http-exception.filter.spec.ts`, `src/apps/core-api/README.md`
+- **Component:** `Core API` · **Criticality:** P1 · **Complexity:** S
+- **Principal:** `S` · **Interest:** `HIGH` · **Basis:** `estimate`
+- **Provenance:** Registered 2026-09-20 while capturing the Tracker for the front page: the first repository-conformance call from the UAT Tracker to the UAT Core came back 500, and bisecting the payload on the same image located the 100 KB step.
+- **Acceptance criteria:**
+  - [x] A 1 MB inline context is accepted. **MET** — the 150-file payload that failed → `200` on the built `core-api`.
+  - [x] A body over the ceiling is a 413 naming both sizes and the variable. **MET** — 3 MB → `413 PAYLOAD_TOO_LARGE`, message quoted above.
+  - [x] The ceiling is configurable and documented. **MET** — `EVOLITH_MAX_BODY_BYTES` in `env.validation.ts` and the core-api README's variable table.
+  - [x] A masked 5xx is logged with its stack; a 4xx is not. **MET** — two specs, `Logger.prototype.error` observed once and zero times.
+  - [x] **FALSIFIABILITY:** the specs are red against the previous filter. **MET** — 4 failed / 3 passed with `git show HEAD:…filter.ts` in place, 7 passed after.
+  - [~] **NOT CLAIMED:** the UAT Tracker's `evaluate-architecture` returning a real verdict. That needs the promoted image redeployed; recorded here so the front page does not say it, and it is not what this row is about — the row is the Core's ceiling and its silence, both measured closed.
+- **Status:** `DONE`

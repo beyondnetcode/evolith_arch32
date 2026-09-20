@@ -33,6 +33,14 @@ Ninguna de esas cifras es la viva. La del árbol la mide CI en cada PR y la publ
 
 Un repositorio recién configurado con `init` es una línea base, no un aprobado: muchas reglas asumen un layout más completo. La captura íntegra de esa primera ejecución —71 filas, 37 bloqueantes, 9 de ellas reglas que el motor no pudo decidir— está en [first-run-capture](./evidence/first-run-capture.es.md). Llevar el default a cero se sigue como GT-571 en el [Tablero de Gaps](../reference/core/control-center/gaps/gap-tracking.es.md).
 
+## `gate evaluate` y `phase advance` necesitan un checkout de este repositorio en disco
+
+Medido el 2026-09-20 con `@beyondnet/evolith-cli@1.3.2` en un contenedor limpio: sobre un satélite recién salido de `init`, `evolith gate evaluate --phase discovery` sale con `1` y `ENOENT … reference/governance/sdlc/gates`, y `phase advance` igual. El tarball trae las reglas pero no las definiciones de gate, y sin `--core` (ni `EVOLITH_CORE_PATH`, ni un perfil) el resolutor las busca dentro del satélite. Con `--core` apuntando a un clon de este repositorio las dos órdenes funcionan y salen con `2` — la [captura de la compuerta de fase](./evidence/phase-gate-capture.es.md) tiene ambas ejecuciones. El paquete MCP arregló el mismo defecto para sí en GT-705; la CLI no: GT-714 en el [Tablero de Gaps](../reference/core/control-center/gaps/gap-tracking.es.md), abierto como [#775](https://github.com/beyondnetcode/evolith_arch32/issues/775). Hasta que aterrice, la portada muestra las órdenes con `--core ../evolith`, porque eso es lo que corre.
+
+## El Tracker le envió un repositorio al Core, y el Core respondió 500
+
+Medido el 2026-09-20 contra la imagen del Core construida desde `main@142b8324`, la que corre el entorno UAT: la llamada de conformidad del repositorio del Tracker (`POST /products/{id}/evaluate-architecture` → Core `POST /api/v1/evaluate` con el repositorio inline, 150 ficheros, ~1 MB) volvió como `500 INTERNAL_ERROR "An unexpected error occurred"`, sin una sola línea de log en el Core. Reproducido en local sobre la misma imagen: 14 ficheros (99,8 KB) → `200`, 15 ficheros (101,6 KB) → `500`. El techo de 100 KB por omisión de Express para JSON, nunca subido, nunca nombrado. Arreglado como GT-715 —un techo configurable (`EVOLITH_MAX_BODY_BYTES`, 2 MiB por defecto), un `413 PAYLOAD_TOO_LARGE` que dice los dos tamaños y una línea de log por cada 5xx enmascarado—, pero la imagen que corre el UAT es anterior al arreglo hasta que `main` se promueva y se redespliegue. La captura del Tracker en la portada es, por eso, la compuerta de fase alrededor de una iniciativa, que nunca pasa por este camino; no es el veredicto sobre el repositorio.
+
 ## Lo que no está construido
 
 La mitad de «el LLM propone, un verificador determinista dispone» es una dirección documentada, no comportamiento publicado. Ningún comando de la CLI instalada alcanza un LLM.

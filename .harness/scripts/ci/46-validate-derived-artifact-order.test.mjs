@@ -155,6 +155,19 @@ const PRELUDE_STUBS = {
     stubProducer(['src/rulesets/standards/iso-5055-mapping.json', 'src/rulesets/standards/iso-5055-mapping.csv']),
   'src/rulesets/standards/iso-5055-mapping.json': 'stable\n',
   'src/rulesets/standards/iso-5055-mapping.csv': 'stable\n',
+
+  // link 10 — the GitHub Pages poster + tokens.css (GT-717), downstream of the reconciliation
+  '.harness/scripts/pages/build-pages.mjs': stubProducer([
+    'reference/core/sdlc/assets/master-view.svg',
+    'reference/core/architecture/demos/tokens.css',
+  ]),
+  'reference/core/control-center/maturity-reports/inventory-summary.md': '// stub\n',
+  'product/products/smart-cli/product-inventory.md': '// stub\n',
+  'reference/core/architecture/demos/architecture-map.json': '// stub\n',
+  'reference/core/architecture/demos/observed-facts.json': '// stub\n',
+  'reference/core/architecture/demos/shared/tokens.json': '// stub\n',
+  'reference/core/sdlc/assets/master-view.svg': 'stable\n',
+  'reference/core/architecture/demos/tokens.css': 'stable\n',
 };
 
 // --- the shape of the declaration itself ------------------------------------

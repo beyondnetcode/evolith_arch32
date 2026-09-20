@@ -10304,6 +10304,62 @@ Los dos se arreglaron de forma estructural y no como correcciones: el rethrow no
   - [x] El `evaluate-architecture` del Tracker UAT devuelve un veredicto real. **CUMPLIDO tras la promoción** — Promovido en #778 (`9c5deedf`) y redesplegado por el job `Deploy UAT (Coolify)` de la corrida 35490911533 el 2026-09-20; medido justo después: la misma llamada `evaluate-architecture` responde `200`, `provenance: core`, `status: COMPLETED`, `resultDecision: FAILED` — un veredicto real sobre 150 ficheros (gates f1–f5 fallidos por artefactos de fase ausentes), 174 ms en el Core. La portada conserva la captura de la compuerta de fase; este veredicto queda registrado aquí y en `known-limitations`.
 - **Estado:** `COMPLETADO`
 
+#### GT-716
+
+**Título:** Sobre un `validate` a secas, la brecha de cobertura entre los dos motores es en su mayoría veredictos sobre facetas que nadie suministró, y nada en CI fija esa brecha en ninguna de las dos direcciones
+
+- **Propósito:** Que los dos motores salten la misma regla por la misma razón declarada, que esa razón salga de una sola declaración por regla en vez de dos tablas sin relación, y que la diferencia de cobertura que quede sea una línea base por regla que CI hace fallar — para que «paridad» signifique una sola cosa en la portada, en el informe y en el guard.
+- **Evidencia, medida el 2026-09-20 con la CLI construida desde este árbol (`@beyondnet/evolith-cli` 1.4.0 en `b3df7e96`, `policy.wasm` recompilado el mismo día), un `evolith validate --engine <e> --format json` por motor y escenario, cruzado regla por regla sobre `skippedRuleIds` / `nonExecutableRuleIds` / `issues` con la precedencia de resultados de `68-validate-engine-verdict-parity.mjs`:**
+
+  | escenario | nativo decide / salta | OPA decide / salta | decididas solo por OPA | …de las cuales leen una faceta suministrada | decididas solo por el nativo | decididas por ninguno | conflictos de veredicto |
+  |---|---|---|---|---|---|---|---|
+  | satélite recién salido de `init` (159 en alcance) | 56 / 103 | 133 / 26 | 76 | **73** | 11 | 7 (+ `ISO5055-*` ×4, el enforcer no produjo nada) | 8 |
+  | este repositorio, corpus completo (358 en alcance, 57 no aplicables) | 247 / 111 | 187 / 171 | 91 | 81 (+ 6 mixtas) | 164 | 7 | 11 |
+
+  De qué está hecho «decididas solo por OPA» sobre el satélite nuevo — la faceta es la que lee el cuerpo del `.rego`, tomada del fuente, y ninguna la emite `opa-input-builder.ts` en una ejecución a secas:
+
+  | reglas | faceta leída | familia |
+  |---|---|---|
+  | `GIT-01..07`, `GIT-09`, `GIT-10` (9) | `input.satellite.git` | suministrada (GT-694) |
+  | `RUNT-01..08` (8) | `input.satellite.runtime` | suministrada |
+  | `TPY-01..07` (7) | `input.satellite.testing` | suministrada |
+  | `MTN-01..04`, `MTN-06..08` (7) | `input.satellite.multiTenancy` | suministrada |
+  | `CICD-01..07` (7) | `input.satellite.ci`, `input.satellite.findings` | suministrada |
+  | `DORA-01..04`, `SPACE-01..03`, `OBS-EVD-03/04` (9) | `input.satellite.scorecards` | suministrada |
+  | `PROT-01/02/04/05/07` (5) | `input.satellite.protocol` | suministrada |
+  | `QT-01..04`, `QT-07`, `QT-08` (6) | métricas de primer nivel (`coverage_percentage`, `maxCyclomaticComplexity`, `criticalCveCount`…) | suministrada |
+  | `ACL-02/03/05` (3) | `input.adapter` | suministrada |
+  | `HXA-03/06/07` (3) | `input.satellite.layers` | suministrada — donde GT-694 trazó la línea: el análisis estático pertenece al enforcer |
+  | `SVC-02/05/06` (3) | `input.satellite.contracts` | suministrada |
+  | `ABAC-01..03` (3) | `input.user`, `input.tool_name` | suministrada |
+  | `DOD-02/08` (2), `EM-Y-01` (1) | `input.context.dod`, `input.yagniViolations` | suministrada |
+  | `MCP-05`, `OBS-EVD-01`, `OBS-EVD-02` (3) | `input.core.cli.mcpServerSource`, `input.satellite.packageJson` | **observada** — el backlog real de handlers |
+
+  Una faceta suministrada ausente no se salta: un cuerpo Rego cuyo hecho falta queda indefinido, así que la regla vuelve `passed` (`GIT-01`, `TPY-03`…), o la política comprueba `not input.x` y vuelve `failed` (`ACL-01`, `DORA-01`, `SVC-01`). Seis de los ocho conflictos de veredicto del satélite nuevo (`ACL-01`, `ACL-04`, `SPACE-04`, `SPACE-05`, `SVC-01`, `INH-02`) y siete de los once del corpus son exactamente esto, y `engine-verdict-parity.baseline.json` ya nombra la familia: `supplied-facet-absent`, cada entrada terminando en «decidir qué significa una faceta SUMINISTRADA cuando nadie la suministró».
+
+  El resto de la brecha, en ambos escenarios: **11** reglas que el nativo decide y para las que el bundle no declara política (`SSDF-PO.3.1`, `SSDF-PS.3.2`, `SSDF-PW.4.1`, `SSDF-PW.4.4`, `SSDF-PW.7.2`, `SSDF-RV.1.2`, `SSDF-RV.1.3`, `SEC-RL-01`, `SEC-RL-02`, `QT-05`, `SLSA-HOSTED-L2`); **7** que no decide ninguno (`SEC-INJ-01/02`, `SEC-PATH-01/02`, `SEC-TIMING-01/02`, `SEC-RL-03` — `unimplemented-native` y `no-policy-in-bundle` a la vez); y **12** que `RULE_TRIAGE` clasifica como `documentation-only` o `underspecified` — sin comprobación expresable, sin `validationQuery` — mientras una política alcanzable las decide (`KI-R01..07`, `INH-03..05`, `PROT-03`, `PROT-06`; `OCB-07` se les suma sobre el corpus). Sobre el corpus completo el signo se invierte porque `AdrConformanceRuleHandler` reclama **138** reglas ADR-conformance generadas y `MM-R*` (11) que ningún `.rego` nombra.
+
+- **Por qué es estructural y no un backlog:** la razón del motor nativo para saltar sale de `rule-evaluability.ts` (`RULE_TRIAGE`, una tabla mantenida a mano por id de regla); la del motor OPA, de `evolith/manifest/declared_rule_ids`, que `compile-opa-wasm.mjs` extrae de los AST de las políticas. Ninguna lee a la otra, ninguna lee el fichero de la propia regla, y las únicas reglas cuyas dos implementaciones coinciden por construcción son `PEA-01..04`, cuyo handler delega en la misma función de admisibilidad que el `.rego`. `68-validate-engine-verdict-parity.mjs` calcula `coverageOnly.nativeDecidedOpaDidNot` y `opaDecidedNativeDidNot` en cada ejecución, los imprime, y no bloquea por ninguno — ADR-0041 nunca prometió cobertura igual, pero tampoco prometió ignorarla.
+- **Lo que no es:** no pide cobertura igual — el alcance complementario es legítimo (ADR-0041, GT-704). No es #628 — el comando por defecto ya nombra su motor y su cobertura (`GOV-ENGINE-COVERAGE`, `ruleset-validator.service.ts`). No es GT-694 — esa fila abrió el canal por el que un llamador PUEDE suministrar estas facetas; esta fila trata de lo que dicen los dos motores cuando el canal no lleva nada. No es un argumento para poner `--engine opa` por defecto: sobre un repositorio nuevo su alcance extra en su mayoría no es alcance.
+- **Casos de uso:**
+  - Un lector compara los dos conteos de la portada, elige `--engine opa` porque «comprueba más», y recibe 73 veredictos sobre su repositorio decididos sin mirarlo.
+  - Un tenant corre el motor por defecto en CI, ve `KI-R02` saltada como «no hay comprobación que implementar», cambia de motor y la recibe fallida.
+  - Un `.rego` gana una regla para la que el motor nativo no tiene handler, o aterriza un handler sin su `.rego`; la brecha de cobertura se mueve y ningún check se pone en rojo.
+- **Impacto:** La cobertura publicada de los motores no es comparable, la página que la compara describe un artefacto, y el mecanismo que mantendría a los dos al paso (una sola fuente de «qué necesita esta regla») no existe.
+- **Resultado esperado:** Sobre el satélite nuevo los dos motores saltan las mismas reglas por la misma razón, con a lo sumo las excepciones nombradas; cada regla lleva una declaración de evaluabilidad de la que ambos motores derivan; y la diferencia de cobertura restante es una línea base que CI hace fallar en ambas direcciones, en ambos escenarios.
+- **Ficheros afectados:** `src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts`, `.harness/scripts/compile-opa-wasm.mjs`, `src/packages/core-domain/src/application/validators/rule-evaluability.ts`, `src/packages/core-domain/src/application/validators/evaluators/native-evaluator.ts` y `handlers/`, `src/packages/core-domain/src/application/validators/evaluators/opa-input-coverage.spec.ts`, `src/packages/core-domain/src/application/validators/rule-corpus-triage.spec.ts`, `src/rulesets/**/*.rules.json` y el esquema de reglas, `.harness/scripts/ci/68-validate-engine-verdict-parity.mjs`, `.harness/scripts/ci/engine-verdict-parity.baseline.json`, `docs/known-limitations.es.md`
+- **Componente:** `Core Domain` · **Criticidad:** P1 · **Complejidad:** L
+- **Principal:** `L` · **Interés:** `MED` · **Base:** `estimate`
+- **Procedencia:** Registrado el 2026-09-20 a partir de la pregunta del propietario sobre la tabla de la página de estado real («cómo logramos la paridad»), tras correr los dos motores sobre los dos escenarios y cruzar cada regla de un solo motor contra el cuerpo de la política que la decide. Las cifras publicadas (41 / 133 sobre 1.3.2) no se discuten; el 56 de aquí es la misma medición sobre el árbol actual.
+- **Criterios de aceptación:**
+  - [ ] **Una faceta suministrada ausente es `skipped` en OPA, nunca un veredicto.** El manifiesto del bundle lleva, por id de regla, las rutas de input que lee su política (`compile-opa-wasm.mjs` ya parsea el AST de cada política), y `OpaEvaluator` devuelve `skipped` con una clase que nombra la faceta ausente cuando el input no la lleva. **FALSABILIDAD:** sobre el satélite nuevo `--engine opa` pasa de 133 decididas a 60 como máximo, las siete entradas `supplied-facet-absent` de `engine-verdict-parity.baseline.json` se eliminan porque el guard 68 las reporta obsoletas, y suministrar la faceta por el canal de GT-694 sigue devolviendo `MTN-01` — una evaluación real, no una respuesta fija. Ambas salidas registradas.
+  - [ ] **Una sola declaración de evaluabilidad por regla, y ambos motores derivan de ella.** Cada regla de `*.rules.json` declara los hechos que necesita y su procedencia (`observed` / `supplied` / `runtime` / `external` / `none`); `RULE_TRIAGE` pasa a ser una proyección de ella (o una comprobación contra ella), y el manifiesto del bundle también. Un guard falla cuando un `.rego` lee una faceta que su regla no declara, cuando un handler nativo reclama una regla declarada no ejecutable, y cuando los dos motores clasifican distinto la misma regla. **FALSABILIDAD:** las 12 reglas que hoy el nativo clasifica como no ejecutables y OPA decide (`KI-R01..07`, `INH-03..05`, `PROT-03`, `PROT-06`) lo ponen en rojo hasta que un lado cambie; `PEA-01..04` siguen en verde sin tocarlas.
+  - [ ] **La diferencia de cobertura es un ratchet por regla, en ambas direcciones y en ambos escenarios.** `68-validate-engine-verdict-parity.mjs` (o un hermano que reutilice su `deriveOutcomes`) deja en línea base cada id de `coverageOnly` con su propia razón medida y su seguimiento, sobre la raíz del repositorio Y sobre un satélite producido por `init`; una regla de un solo motor sin registrar falla, y una registrada que ahora deciden ambos falla hasta que se retire su entrada. **FALSABILIDAD:** quitar un `import` de `main.rego` lo pone en rojo nombrando los ids que el bundle dejó de decidir; restaurarlo lo devuelve a verde.
+  - [ ] **El backlog nombrado queda implementado o declarado, nada de él dejado en `coverageOnly` por omisión:** handlers nativos para `MCP-05`, `OBS-EVD-01`, `OBS-EVD-02` (y, sobre el corpus, `MCP-01..04`, `DEP-08`, `TAX-07/08`); un `.rego` para las 11 reglas `no-policy-in-bundle` nombradas arriba; ambos para las 7 que no decide ningún motor; y una decisión registrada para las 138 reglas ADR-conformance y `MM-R*` — un gemelo `.rego` generado, o `documentation-only` en los dos motores.
+  - [ ] **El informe y la página dicen lo mismo.** `GOV-ENGINE-COVERAGE` y `docs/known-limitations.es.md` enuncian la cobertura por motor con el desglose de facetas suministradas, y la portada o deja de necesitar `--engine opa` por razones de cobertura o dice qué razón queda.
+- **Dependencias:** GT-694 (el canal de facetas suministradas, COMPLETADO), GT-675 (el manifiesto del bundle, COMPLETADO), GT-704 (la línea base de veredictos que esta extiende, COMPLETADO); la costura del enforcer (GT-514) para `satellite.layers`.
+- **Estado:** `PENDIENTE`
+
 #### GT-717
 
 **Título:** Las dos vistas de GitHub Pages se publicaban a mano y llevaban tres meses envejeciendo; nada derivaba sus números del árbol

@@ -17,7 +17,7 @@ Full audit of our own claims, with what blocks each pending item and who can unb
 | `--engine opa` | 133 of 159 | 26 |
 | native (default) | 41 of 159 | 118 |
 
-CI holds them to agreement over **facts**, not over coverage; that part is by design. That the default command never says so is not ([#628](https://github.com/beyondnetcode/evolith_arch32/issues/628)). That is why the front page uses `--engine opa` everywhere.
+CI holds them to agreement over **facts**, not over coverage; that part is by design. That the default command never says so is not ([#628](https://github.com/beyondnetcode/evolith_arch32/issues/628)). That is why the front page uses `--engine opa` everywhere. Measured again on 2026-09-20 with the CLI built from this tree: the default decides 56 of the same 159, and of the 76 rules only `--engine opa` decides, 73 are verdicts on facets a bare run never supplies — so most of that extra coverage is not coverage. Tracked as GT-716 in the [Gap Tracking Board](../reference/core/control-center/gaps/gap-tracking.md).
 
 ## Two infrastructure rules are in no denominator
 

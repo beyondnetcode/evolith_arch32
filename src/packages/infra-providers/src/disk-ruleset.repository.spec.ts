@@ -1,5 +1,5 @@
 import { IFileSystem, ILogger } from '@beyondnet/evolith-core-domain/domain/interfaces';
-import { DiskRulesetRepository, RulesetsNotFoundError } from './disk-ruleset.repository';
+import { DiskRulesetRepository, DuplicateRuleIdError, RulesetsNotFoundError } from './disk-ruleset.repository';
 import { NodeFileSystemProvider } from './node-filesystem.provider';
 import * as nodePath from 'path';
 
@@ -699,5 +699,194 @@ describe('DiskRulesetRepository — non-corpus document kinds (GT-649)', () => {
 
     expect(logger.warnings).toHaveLength(1);
     expect(logger.warnings[0]).toMatch(/Skipping non-standard ruleset/);
+  });
+});
+
+/**
+ * GT-678 — one rule id, one rule. A tenant pack under `tenants/**` that
+ * redefines a Core rule is an OVERRIDE of that rule, not a second copy of it.
+ *
+ * Observed RED before the fix, against the REAL `ruleset-standard.schema.json`:
+ * the loader pushed every normalised rule additively, so a corpus in which
+ * `tenants/acme/pack.rules.json` re-declared `ACL-02` produced
+ * `TOTAL RULES LOADED: 2` — the Core copy still `blocking: true` beside a tenant
+ * copy at `SHOULD` — and the authored `enabled: false` survived the schema and
+ * was DROPPED by `normalizeRuleset`, present on neither copy. A key that is
+ * accepted and discarded looks like configuration and is not.
+ */
+describe('DiskRulesetRepository — tenant pack overrides (GT-678)', () => {
+  const REAL_SCHEMA_PATH = nodePath.resolve(
+    __dirname,
+    '..',
+    '..',
+    '..',
+    'rulesets',
+    'schema',
+    'ruleset-standard.schema.json',
+  );
+
+  function corpusWithTenantPack(tenantRule: Record<string, unknown>) {
+    return makeFs({
+      dirs: new Set([
+        '/core/src/rulesets',
+        '/core/src/rulesets/schema',
+        '/core/src/rulesets/acl',
+        '/core/src/rulesets/tenants',
+        '/core/src/rulesets/tenants/acme',
+      ]),
+      files: {
+        '/core/src/rulesets/schema/ruleset-standard.schema.json': require('fs').readFileSync(
+          REAL_SCHEMA_PATH,
+          'utf-8',
+        ),
+        '/core/src/rulesets/acl/anti-corruption-layer.rules.json': JSON.stringify({
+          rules: [
+            {
+              id: 'ACL-02',
+              severity: 'MUST',
+              blocking: true,
+              title: 'Validate inbound payloads',
+              description: 'Every inbound payload is validated against a schema.',
+            },
+            {
+              id: 'ACL-03',
+              severity: 'SHOULD',
+              blocking: false,
+              title: 'Translate external models',
+              description: 'External models never leak into the domain.',
+            },
+          ],
+        }),
+        '/core/src/rulesets/tenants/acme/pack.rules.json': JSON.stringify({
+          rules: [tenantRule],
+        }),
+      },
+    });
+  }
+
+  it('FALSIFIABILITY: a tenant pack redefining a Core rule id yields ONE rule, carrying the tenant delta', async () => {
+    const fs = corpusWithTenantPack({
+      id: 'ACL-02',
+      severity: 'SHOULD',
+      blocking: false,
+      enabled: false,
+      title: 'Validate inbound payloads',
+      description: 'Accepted risk at Acme.',
+      rationale: 'Acme validates at the gateway.',
+      approvedBy: 'cto@acme.example',
+      expiresOn: '2099-12-31',
+    });
+    const rules = await new DiskRulesetRepository(fs, makeLogger()).loadAllRulesets('/core');
+
+    const copies = rules.filter((r) => r.id === 'ACL-02');
+    // The line that was RED: two copies, the Core one still blocking.
+    // eslint-disable-next-line no-console
+    console.log(
+      `TOTAL RULES LOADED: ${rules.length}\n` +
+        copies
+          .map((r) =>
+            JSON.stringify({
+              id: r.id,
+              severity: r.severity,
+              blocking: r.blocking,
+              enabled: r.enabled,
+              src: r.sourceFile,
+            }),
+          )
+          .join('\n'),
+    );
+    expect(copies).toHaveLength(1);
+
+    // The Core copy is the one that survives — its check, title and file — and
+    // the tenant's authored delta rides on it for the engine to apply under the
+    // blocking-criterion policy. The loader has no clock, so it does not decide
+    // whether the waiver is still in force; it records what was asked.
+    const [rule] = copies;
+    expect(rule.sourceFile).toMatch(/acl\/anti-corruption-layer\.rules\.json$/);
+    expect(rule.corpusOverride).toEqual({
+      source: 'src/rulesets/tenants/acme/pack.rules.json',
+      delta: {
+        severity: 'SHOULD',
+        blocking: false,
+        enabled: false,
+        rationale: 'Acme validates at the gateway.',
+        approvedBy: 'cto@acme.example',
+        expiresOn: '2099-12-31',
+      },
+    });
+    // Untouched neighbours are untouched.
+    expect(rules.find((r) => r.id === 'ACL-03')?.corpusOverride).toBeUndefined();
+  });
+
+  it('honours an authored `enabled: false` on a Core rule instead of dropping it', async () => {
+    const fs = makeFs({
+      dirs: new Set(['/core/src/rulesets', '/core/src/rulesets/schema', '/core/src/rulesets/acl']),
+      files: {
+        '/core/src/rulesets/schema/ruleset-standard.schema.json': require('fs').readFileSync(
+          REAL_SCHEMA_PATH,
+          'utf-8',
+        ),
+        '/core/src/rulesets/acl/anti-corruption-layer.rules.json': JSON.stringify({
+          rules: [
+            { id: 'ACL-02', severity: 'MUST', blocking: true, title: 'T', description: 'D' },
+            { id: 'ACL-03', severity: 'SHOULD', blocking: false, enabled: false, title: 'T', description: 'D' },
+          ],
+        }),
+      },
+    });
+
+    const rules = await new DiskRulesetRepository(fs, makeLogger()).loadAllRulesets('/core');
+    const acl03 = rules.find((r) => r.id === 'ACL-03');
+    expect(acl03).toBeDefined();
+    // RED before the fix: `enabled` was undefined — accepted by the schema,
+    // discarded by the loader.
+    expect(acl03!.enabled).toBe(false);
+    expect(rules.find((r) => r.id === 'ACL-02')!.enabled).toBeUndefined();
+  });
+
+  it('rejects a rule with an unknown key, naming the key and the file, and keeps loading the rest', async () => {
+    const logger = makeLogger();
+    const fs = corpusWithTenantPack({
+      id: 'ACL-77',
+      severity: 'SHOULD',
+      title: 'Typo carrier',
+      description: 'Carries a misspelt key.',
+      enabeld: false,
+    });
+    const repo = new DiskRulesetRepository(fs, logger);
+    const rules = await repo.loadAllRulesets('/core');
+
+    // The Core file still loads; only the offending document is rejected.
+    expect(rules.map((r) => r.id).sort()).toEqual(['ACL-02', 'ACL-03']);
+    const rejected = repo.describeLastLoad().filter((o) => o.outcome === 'rejected');
+    expect(rejected).toHaveLength(1);
+    expect(rejected[0].file).toBe('tenants/acme/pack.rules.json');
+    // RED before the fix: the schema had no `additionalProperties: false` on a
+    // rule, so `enabeld` validated and vanished.
+    expect(rejected[0].detail).toMatch(/enabeld/);
+    expect(rejected[0].detail).toMatch(/ACL-77/);
+  });
+
+  it('refuses a corpus in which two NON-tenant files declare the same rule id', async () => {
+    const fs = makeFs({
+      dirs: new Set(['/core/src/rulesets', '/core/src/rulesets/schema', '/core/src/rulesets/a', '/core/src/rulesets/b']),
+      files: {
+        '/core/src/rulesets/schema/ruleset-standard.schema.json': require('fs').readFileSync(
+          REAL_SCHEMA_PATH,
+          'utf-8',
+        ),
+        '/core/src/rulesets/a/one.rules.json': JSON.stringify({
+          rules: [{ id: 'DUP-1', severity: 'MUST', title: 'A', description: 'a' }],
+        }),
+        '/core/src/rulesets/b/two.rules.json': JSON.stringify({
+          rules: [{ id: 'DUP-1', severity: 'SHOULD', title: 'B', description: 'b' }],
+        }),
+      },
+    });
+    const load = new DiskRulesetRepository(fs, makeLogger()).loadAllRulesets('/core');
+    await expect(load).rejects.toThrow(DuplicateRuleIdError);
+    await expect(load).rejects.toThrow(/DUP-1/);
+    await expect(load).rejects.toThrow(/a\/one\.rules\.json/);
+    await expect(load).rejects.toThrow(/b\/two\.rules\.json/);
   });
 });

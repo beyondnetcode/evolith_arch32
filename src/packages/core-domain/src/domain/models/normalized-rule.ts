@@ -30,6 +30,42 @@ export interface EnforceDescriptor {
   readonly severityMap?: Readonly<Record<string, string>>;
 }
 
+/**
+ * GT-678 — the per-rule delta a second party may author over a Core rule.
+ *
+ * The same shape whether it arrives from a `tenants/**` copy of the rule inside
+ * the corpus or from a satellite's `rule-overrides` document: one model, one
+ * policy (`applyRuleOverrides`), so the two entry paths cannot drift apart in
+ * what they let through. Every field is what the author WROTE — a defaulted
+ * value never appears here, because applying a default on top of the Core rule
+ * would be a downgrade nobody asked for.
+ */
+export interface AuthoredRuleOverride {
+  readonly enabled?: boolean;
+  /** Corpus vocabulary; `SHOULD NOT` collapses to `SHOULD` exactly as the loader does. */
+  readonly severity?: string;
+  readonly blocking?: boolean;
+  readonly rationale?: string;
+  readonly approvedBy?: string;
+  /** ISO date, inclusive, UTC. */
+  readonly expiresOn?: string;
+}
+
+/**
+ * GT-678 — a `tenants/**` copy's delta, attached to the Core rule it redefines.
+ *
+ * The loader used to push both copies additively, so a corpus with one tenant
+ * pack produced two `ACL-02`s at two severities and the Core one still blocking.
+ * Now it keeps the Core copy and hangs the tenant's AUTHORED delta here; the
+ * engine applies it under the blocking-criterion policy, with the clock the
+ * loader deliberately does not have (a cached corpus must not freeze an expiry).
+ */
+export interface CorpusRuleOverride {
+  /** The tenant pack's `sourceFile`, e.g. `src/rulesets/tenants/acme/pack.rules.json`. */
+  readonly source: string;
+  readonly delta: AuthoredRuleOverride;
+}
+
 export interface NormalizedRule {
   id: string;
   severity: 'MUST' | 'SHOULD' | 'COULD' | 'MUST NOT';
@@ -41,4 +77,14 @@ export interface NormalizedRule {
   sourceFile: string;
   /** Optional enforcer routing (GT-514). Absent ⇒ evaluated by the native engine. */
   enforce?: EnforceDescriptor;
+  /**
+   * GT-678 — `false` when the rule's OWN file declares `enabled: false`. Absent
+   * means active. The engine removes such a rule before evaluation and reports
+   * it as disabled with its source; it used to be accepted by the schema and
+   * discarded by the loader, which is worse than a rejection because it looks
+   * like configuration.
+   */
+  enabled?: boolean;
+  /** GT-678 — a tenant pack's delta over this rule, applied by the engine. */
+  corpusOverride?: CorpusRuleOverride;
 }

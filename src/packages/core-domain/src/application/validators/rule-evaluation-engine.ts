@@ -20,6 +20,7 @@ import {
 } from './rule-applicability';
 import { selectRules, RulesetSelection, SelectionOutcome } from './ruleset-selection';
 import { buildRulesetCatalog, RulesetCatalog } from './ruleset-catalog';
+import { applyRuleOverrides, OverridesReport, RuleOverridesInput } from './rule-overrides';
 
 export interface NormalizedRule {
   id: string;
@@ -216,6 +217,14 @@ export interface CorpusEvaluation {
    * NOTHING so the caller can refuse instead of returning an empty pass.
    */
   readonly selection?: SelectionOutcome;
+  /**
+   * GT-678 — every per-rule delta this run applied (from -> to, approver,
+   * expiry, source) and every one it could not honour, by code. Sibling of
+   * `selection`, and unlike it ALWAYS present: a clean run reports
+   * `{ applied: [], rejected: [] }`, never nothing, so "no override changed this
+   * verdict" is a statement the report makes rather than one a reader infers.
+   */
+  readonly overrides: OverridesReport;
 }
 
 /** The applicability decision, injected so the engine stays free of I/O. */
@@ -335,6 +344,13 @@ export class RuleEvaluationEngine {
    * this path had not, which is why they reached one half of the engine only.
    *
    * Absent ⇒ byte-for-byte the pre-GT-688 input document.
+   *
+   * GT-678 — `overrides` is the satellite's per-rule delta document, applied
+   * AFTER selection (a delta over a rule the caller did not select changes
+   * nothing and is reported as such) and BEFORE applicability (a rule the tenant
+   * disabled is `notApplicable: disabled`, counted in `corpusTotal` and named,
+   * never silently absent). `now` is injected so the expiry of a waiver is a
+   * decision a test can move and a cached corpus cannot freeze.
    */
   async discoverAndEvaluate(
     satellitePath: string,
@@ -342,6 +358,8 @@ export class RuleEvaluationEngine {
     filter?: RuleApplicabilityFilter,
     selection?: RulesetSelection,
     facts?: EvaluationFacts,
+    overrides?: RuleOverridesInput,
+    now: Date = new Date(),
   ): Promise<CorpusEvaluation> {
     const rules = await this.rulesetRepo.loadAllRulesets(corePath);
     const ctx: WorkspaceEvaluationContext = { satellitePath, corePath, ...(facts ? { facts } : {}) };
@@ -356,13 +374,24 @@ export class RuleEvaluationEngine {
     // No selection ⇒ the whole corpus, byte-for-byte the previous behaviour.
     const chosen = selectRules(rules, selection);
 
-    const { applicable, notApplicable } = partitionByApplicability(chosen.selected, filter);
+    // GT-678 — the tenant's softening, under the blocking-criterion policy. The
+    // whole corpus is passed alongside so "unknown rule" is judged against what
+    // the Core carries, not against what this run selected.
+    const softened = applyRuleOverrides(chosen.selected, overrides, now, { corpus: rules });
+
+    const { applicable, notApplicable } = partitionByApplicability(softened.rules, filter);
+    for (const rule of softened.disabled) notApplicable.push({ rule, reason: 'disabled' });
     const results = await this.strategy.evaluateAll(applicable, ctx);
 
     return {
       results,
       notApplicable,
       ...(chosen.unrestricted ? {} : { selection: chosen }),
+      overrides: {
+        applied: softened.applied,
+        rejected: softened.rejected,
+        ...(overrides ? { source: overrides.source } : {}),
+      },
     };
   }
 

@@ -3,6 +3,7 @@ import { ICatalogLoader, IFileSystem } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
 import { InitProjectInput, InitProjectResult } from '../services/use-case.types';
 import { ProjectScaffolderService } from '../services/project-scaffolder.service';
+import { recordScaffoldedFiles, SCAFFOLD_MANIFEST_RELATIVE_PATH, ScaffoldedFile } from '../upgrade/scaffold-manifest';
 
 /**
  * The project name becomes the directory under `cwd` (and a path prefix on every
@@ -122,11 +123,35 @@ export class InitializeProjectUseCase {
         warnings.push(`Platform ${input.runtime} not detected. ${platformCheck.installHint || ''}`);
       }
 
+      // GT-673: fingerprint every file this scaffold wrote, so a later
+      // `evolith upgrade` can tell the tenant's edits from upstream changes.
+      // Read back rather than hashed on the way out: package.json is written
+      // twice above, and the manifest must record what is on disk.
+      await this.recordScaffoldManifest(name, projectDir, artifacts);
+      artifacts.push(`${name}/${SCAFFOLD_MANIFEST_RELATIVE_PATH}`);
+
       return { success: true, artifacts, warnings, errors };
     } catch (error: unknown) {
       const err = error as { message?: string };
       errors.push(err.message || 'Unknown error');
       return { success: false, artifacts, warnings, errors };
     }
+  }
+
+  /**
+   * The Core version recorded is the one the scaffolded `evolith.yaml` pins in
+   * `coreRef.version` — the same value `upgrade` later reads as the satellite's
+   * current version — so the manifest and the config never disagree.
+   */
+  private async recordScaffoldManifest(name: string, projectDir: string, artifacts: readonly string[]): Promise<void> {
+    const files: ScaffoldedFile[] = [];
+    for (const artifact of artifacts) {
+      const relativePath = artifact.startsWith(`${name}/`) ? artifact.slice(name.length + 1) : artifact;
+      const absolutePath = `${projectDir}/${relativePath}`;
+      if (!await this.fs.exists(absolutePath)) continue;
+      files.push({ relativePath, content: await this.fs.readFile(absolutePath) });
+    }
+    const config = await this.fs.readJson<{ coreRef?: { version?: string } }>(`${projectDir}/evolith.yaml`);
+    await recordScaffoldedFiles(this.fs, projectDir, config.coreRef?.version ?? 'unknown', files);
   }
 }

@@ -22,14 +22,16 @@ const ENVELOPE_SCHEMA_VERSION = '1.0.0';
  * changing it, not assumed — the earlier worry that "the probes are configured
  * against a shape" was wrong.
  */
-function envelope(command: string, data: Record<string, unknown>) {
+// GT-686 — `startedAt` is captured by the handler before it gathers the data it
+// reports, so durationMs is the probe's own wall clock rather than a literal.
+function envelope(command: string, data: Record<string, unknown>, startedAt: number) {
   return {
     success: true,
     data,
     meta: {
       command,
       executedAt: new Date().toISOString(),
-      durationMs: 0,
+      durationMs: Date.now() - startedAt,
       correlationId: `evl-${randomUUID()}`,
       schemaVersion: ENVELOPE_SCHEMA_VERSION,
     },
@@ -47,26 +49,29 @@ export class HealthController {
   @Public()
   @Get('health')
   health() {
+    const requestStartedAt = Date.now();
     return envelope('http GET /health', {
       status: 'OK',
       service: 'agent-runtime-api',
       version: process.env.npm_package_version ?? '0.1.0',
       uptimeSeconds: Math.round((Date.now() - this.startedAt) / 1000),
-    });
+    }, requestStartedAt);
   }
 
   /** Liveness probe — the process is up (always ok while serving). */
   @Public()
   @Get('health/live')
   live() {
-    return envelope('http GET /health/live', { status: 'OK', probe: 'live', service: 'agent-runtime-api' });
+    const requestStartedAt = Date.now();
+    return envelope('http GET /health/live', { status: 'OK', probe: 'live', service: 'agent-runtime-api' }, requestStartedAt);
   }
 
   /** Readiness probe — the app is ready to accept traffic. */
   @Public()
   @Get('health/ready')
   ready() {
-    return envelope('http GET /health/ready', { status: 'OK', probe: 'ready', service: 'agent-runtime-api' });
+    const requestStartedAt = Date.now();
+    return envelope('http GET /health/ready', { status: 'OK', probe: 'ready', service: 'agent-runtime-api' }, requestStartedAt);
   }
 
   @Public()

@@ -35,6 +35,7 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-fixtures` | Fixtures | Seed reproducible fixtures and sample data (evolith.yaml, ADRs, rul… | Yes |
 | `evolith-upgrade-apply` | Governance | Apply a satellite upgrade from the upstream Evolith core. Writes fi… | Yes |
 | `evolith-upgrade-plan` | Governance | Plan a satellite upgrade against the upstream Evolith core (read-on… | Yes |
+| `evolith-history` | History | Read the CLI command history (list, get, search, stats) from the same store `evolith history` reads. | No |
 | `evolith-init-batch` | Init | Non-interactive (batch/CI) initialization of an Evolith satellite. … | Yes |
 | `evolith-knowledge-search` | Knowledge | Search the Evolith architecture knowledge corpus (ADRs, rulesets, s… | No |
 | `evolith-metrics` | Metrics.tool | Get MCP server metrics (per-tool call counts, latency, failures) | No |
@@ -46,6 +47,7 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-moscow-report` | Planning | Generate a markdown report of a MoSCoW analysis | No |
 | `evolith-moscow-update` | Planning | Update a specific item in a MoSCoW analysis | Yes |
 | `evolith-moscow-validate` | Planning | Validate a MoSCoW analysis rules (e.g. 60/20/20 split) | No |
+| `evolith-profile` | Profile | Read the active CLI profile (`current`) or every profile name (`list`) from the same store `evolith profile` uses. | No |
 | `evolith-ruleset-list` | Ruleset-catalog.tool | List the ruleset packs this Core can evaluate. Returns the canonica… | No |
 | `evolith-satellite-adopt` | Satellite-adopt.tool | Adopt an existing GitHub repository as an Evolith satellite. Return… | Yes |
 | `evolith-satellite-create` | Satellite-create.tool | Create a new satellite repository on GitHub and register it with Ev… | Yes |
@@ -57,9 +59,10 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | `evolith-sdlc-handoff` | SDLC | Perform a phase gate handoff (e.g. phase-0 to phase-1) | Yes |
 | `evolith-sdlc-status` | SDLC | Get the current SDLC phase status | No |
 | `evolith-sdlc-generate` | Sdlc-generate.tool | Generate a Hexagonal Architecture scaffold from a Mermaid classDiag… | Yes |
+| `evolith-standards` | Standards | List the corporate standards under `<path>/reference/standards` (optional category filter) or get one by id. | No |
 | `evolith-validate` | Validate.tool | Validate a satellite repository against Evolith rules. Supports end… | No |
 
-> **Derived from source (GT-445).** The inventory above is the complete set of **52** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
+> **Derived from source (GT-445).** The inventory above is the complete set of **55** governance MCP tools, reconciled from the canonical registration sources under `src/packages/mcp-server/src/tools/` (name + description) — it is the authoritative surface alongside the generated [Product Surface Inventory](../../../../../../product/products/smart-cli/product-inventory.md) and the live MCP registry. Category is derived from the tool source file; *Mutative* is a verb heuristic. Regenerate when tools change.
 
 ---
 

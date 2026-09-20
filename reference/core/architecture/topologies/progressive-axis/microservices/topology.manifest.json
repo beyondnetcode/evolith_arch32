@@ -36,7 +36,7 @@
         "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "reference/core/architecture/topologies/progressive-axis/microservices/microservices.rules.json"
+        "src/rulesets/topologies/progressive-axis/microservices/microservices.rules.json"
       ],
       "opaPolicies": [
         "reference/core/architecture/topologies/progressive-axis/microservices/microservices.rego"

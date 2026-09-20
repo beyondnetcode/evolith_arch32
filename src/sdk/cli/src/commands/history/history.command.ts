@@ -2,7 +2,7 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { randomUUID } from 'node:crypto';
 import { CommandHistoryService } from '@beyondnet/evolith-core-domain/application/services/services/command-history.service';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface HistoryCommandOptions {
@@ -34,7 +34,6 @@ export class HistoryCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith history',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       startedAt,
@@ -58,7 +57,7 @@ export class HistoryCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         throw error;
       }
@@ -69,7 +68,7 @@ export class HistoryCommand extends BaseEvolithCommand {
     const entries = await this.historyService.list(limit);
 
     if (json) {
-      console.log(JSON.stringify(createSuccessEnvelope(entries, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(entries, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 
@@ -119,7 +118,7 @@ export class HistoryCommand extends BaseEvolithCommand {
     if (!entry) {
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', `Entry not found: ${id}`, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', `Entry not found: ${id}`, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         this.promptService.showError(`Entry not found: ${id}`);
       }
@@ -127,7 +126,7 @@ export class HistoryCommand extends BaseEvolithCommand {
     }
 
     if (json) {
-      console.log(JSON.stringify(createSuccessEnvelope(entry, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(entry, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 
@@ -149,7 +148,7 @@ export class HistoryCommand extends BaseEvolithCommand {
     const entries = await this.historyService.search(query);
 
     if (json) {
-      console.log(JSON.stringify(createSuccessEnvelope(entries, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(entries, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 
@@ -177,7 +176,7 @@ export class HistoryCommand extends BaseEvolithCommand {
     const stats = await this.historyService.stats();
 
     if (json) {
-      console.log(JSON.stringify(createSuccessEnvelope(stats, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(stats, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 
@@ -199,7 +198,7 @@ export class HistoryCommand extends BaseEvolithCommand {
   private async clearHistory(json = false, meta?: any): Promise<void> {
     if (json) {
       await this.historyService.clear();
-      console.log(JSON.stringify(createSuccessEnvelope({ cleared: true }, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope({ cleared: true }, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 
@@ -222,7 +221,7 @@ export class HistoryCommand extends BaseEvolithCommand {
     if (!replay) {
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', `Entry not found: ${id}`, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', `Entry not found: ${id}`, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       } else {
         console.log(chalk.red(`\nEntry not found: ${id}\n`));
       }
@@ -230,7 +229,7 @@ export class HistoryCommand extends BaseEvolithCommand {
     }
 
     if (json) {
-      console.log(JSON.stringify(createSuccessEnvelope(replay, { ...meta, durationMs: Date.now() - meta.startedAt }), null, 2));
+      console.log(JSON.stringify(createSuccessEnvelope(replay, { ...meta, durationMs: elapsedMsSince(meta.startedAt) }), null, 2));
       return;
     }
 

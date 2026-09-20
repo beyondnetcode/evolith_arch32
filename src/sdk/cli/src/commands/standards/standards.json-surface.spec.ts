@@ -175,7 +175,7 @@ describe('StandardsCommand — ADR-0073 JSON surface', () => {
       // so the option path routes to interactive mode and never reaches this
       // guard. Interactive selection is the only caller that can supply an empty
       // code, and an empty validation reporting "0 failed" would read as a pass.
-      await command['validateStandards']({} as IFileSystem, '', true, { command: 'evolith standards' }, Date.now());
+      await command['validateStandards']({} as IFileSystem, '', true, { command: 'evolith standards' });
 
       expect(mockValidate).not.toHaveBeenCalled();
       expect(process.exitCode).toBe(1);

@@ -343,6 +343,16 @@ Modes are enabled by combining fields. Several of them can be used in a single c
 |---|---|---|
 | `evolith-metrics` | Returns internal MCP Gateway metrics (calls, latency, errors) | No |
 
+### CLI parity reads (GT-682)
+
+Three CLI commands that had no MCP counterpart, ported as read-only tools over the CLI's own readers in core-domain. Their write modes (`history --clear/--replay`, `profile create/switch/delete`, `standards --init/--validate/--export`) stay on the CLI.
+
+| Tool | Description | Mutative |
+|---|---|---|
+| `evolith-history` | Reads the CLI command history (`$HOME/.evolith/history.jsonl`): `list`, `get`, `search`, `stats` | No |
+| `evolith-profile` | Reads the CLI profile store: `current` (active profile and its values) or `list` | No |
+| `evolith-standards` | Reads the standards under `<path>/reference/standards`: `list` (optional `category`) or `get` | No |
+
 ---
 
 ## Available resources (9 + dynamic)

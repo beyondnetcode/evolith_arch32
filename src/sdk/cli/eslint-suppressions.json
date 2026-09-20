@@ -17,7 +17,7 @@
       "count": 1
     },
     "max-params": {
-      "count": 6
+      "count": 4
     }
   },
   "src/commands/agents/agents.command.spec.ts": {
@@ -216,7 +216,7 @@
       "count": 1
     },
     "max-params": {
-      "count": 6
+      "count": 4
     }
   },
   "src/commands/topology/phase-artifacts.command.spec.ts": {

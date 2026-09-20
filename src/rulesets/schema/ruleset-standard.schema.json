@@ -106,9 +106,18 @@
     },
     "rule": {
       "type": "object",
+      "description": "A single rule. GT-678 — CLOSED: any key not listed here is rejected with a schema error naming the key and the file, instead of being accepted and silently discarded by the loader (which is how an authored `enabled: false`, or a typo such as `enabeld`, used to produce an unchanged run that looked configured). Add a key here, with its real type, before authoring it.",
       "properties": {
         "id": { "type": "string" },
-        "severity": { "type": "string" },
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "GT-678 — `false` means the rule is NOT evaluated and the run reports it as disabled with its source (a `notApplicable` entry with reason `disabled` and an `overrides.applied` record). Absent means `true`. Before GT-678 this key was accepted here and silently dropped by the loader, so a tenant that wrote it saw an unchanged run and nothing told them the key was discarded. On a `tenants/**` copy of a Core rule it is part of the per-rule delta (see `approvedBy`/`expiresOn`)."
+        },
+        "severity": {
+          "type": "string",
+          "description": "MUST | SHOULD | MUST NOT | SHOULD NOT (the loader also accepts COULD/MAY). Absent: derived from `blocking`/`enforcement`."
+        },
         "category": { "type": "string" },
         "title": { "type": "string" },
         "principle": { "type": "string" },
@@ -130,8 +139,53 @@
         "structure": {
           "type": "array",
           "items": { "type": "string" }
+        },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Documents, ADRs or standards the rule cites."
+        },
+        "metrics": { "type": "object", "description": "Metric definitions for scorecard rules (executive-scorecards)." },
+        "assurance": { "type": "string", "description": "How the rule is assured on a topology (topology rulesets)." },
+        "checklistItem": { "type": "string", "description": "Definition-of-Done checklist wording for the rule." },
+        "evidenceRequired": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Evidence a satellite must present for the rule (CLI rulesets)."
+        },
+        "sourceFile": {
+          "type": "string",
+          "description": "Authored provenance when the rule was lifted from a source document (security rulesets). Not the loader's `sourceFile`, which is always the ruleset path."
+        },
+        "scenario": { "type": "string" },
+        "workload": { "type": "string" },
+        "runtime": { "type": "string" },
+        "autoFixStrategy": { "type": "string" },
+        "appliesTo": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sla": { "type": "object" },
+        "target": { "type": "object" },
+        "threshold": { "type": "number" },
+        "layerThresholds": { "type": "object" },
+        "protectedBranches": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pattern": { "type": "string" },
+        "baseline": { "type": "object" },
+        "approvedBy": {
+          "type": "string",
+          "description": "GT-678 — who approved this rule's delta. Only meaningful on a `tenants/**` copy of a Core rule: waiving a blocking criterion (`enabled: false` or `blocking: false` on a `blocking: true` Core rule) is rejected with `OVR-BLOCKING-REMOVED` unless BOTH `approvedBy` and `expiresOn` are present; downgrading its severity needs `approvedBy`."
+        },
+        "expiresOn": {
+          "type": "string",
+          "format": "date",
+          "description": "GT-678 — the last day a `tenants/**` delta over a Core rule is in force (inclusive, UTC). After it the delta is ignored and reported as `OVR-EXPIRED`. Required, with `approvedBy`, to waive a blocking criterion."
         }
       },
+      "additionalProperties": false,
       "anyOf": [
         { "required": ["id", "title", "description"] },
         { "required": ["id", "principle", "statement"] },

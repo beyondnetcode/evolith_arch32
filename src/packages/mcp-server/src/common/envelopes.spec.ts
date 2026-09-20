@@ -72,5 +72,13 @@ describe('envelopes', () => {
       expect(envelope.success).toBe(false);
       expect(envelope.error.message).toBe('string error');
     });
+
+    it('GT-678: maps an invalid rule-overrides document to SCHEMA_INVALID, by name, like the CLI and REST', () => {
+      const err = new Error('governance/rule-overrides.json does not satisfy rule-overrides.schema.json');
+      err.name = 'RuleOverridesInvalidError';
+      const envelope = toErrorEnvelope(err, meta);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('SCHEMA_INVALID');
+    });
   });
 });

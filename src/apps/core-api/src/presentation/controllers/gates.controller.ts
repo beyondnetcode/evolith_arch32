@@ -41,7 +41,8 @@ export class GatesController {
     return createSuccessEnvelope(result, {
       command: 'evolith gate evaluate',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
+      // GT-686 — the same clock the latency metric reads.
+      durationMs: Date.now() - start,
       correlationId: `api-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });

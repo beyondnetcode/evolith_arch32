@@ -14,6 +14,7 @@ import {
   OUTPUT_ENVELOPE_SCHEMA_VERSION,
   type ErrorCode,
   type OutputMeta,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import {
   DEFAULT_WAIVER_STORE_RELPATH,
@@ -91,7 +92,7 @@ export class WaiverCommand extends BaseEvolithCommand {
     const meta = (): OutputMeta => ({
       command: `evolith waiver ${action}`,
       executedAt: new Date().toISOString(),
-      durationMs: Date.now() - startedAt,
+      durationMs: elapsedMsSince(startedAt),
       // GT-618: when the caller names the verdict being waived, the waiver
       // inherits ITS correlationId. That is the whole point — a waiver with a
       // fresh random id cannot be joined to the decision it cancels.

@@ -145,6 +145,18 @@ jobs:
       - name: Deployable images ship no build tree (GT-692)
         run: node .harness/scripts/ci/70-validate-runtime-image-shape.mjs --verbose
 
+      # GT-686 — `meta.durationMs` is a clock reading, never a literal.
+      #
+      # Forty-seven envelopes shipped `durationMs: 0` as a constant while the schema
+      # declared a wall-clock measurement. The static half rejects the literal in any
+      # non-spec source; the executed half runs the CLI dist this job just built and
+      # rejects a zero VALUE from a run whose wall clock moved — so a helper that
+      # merely satisfied the text check would still fail here.
+      - name: Envelope durations are measured, not literals (GT-686)
+        run: |
+          node --test .harness/scripts/ci/72-validate-measured-duration.test.mjs
+          node .harness/scripts/ci/72-validate-measured-duration.mjs --verbose
+
       # CD gate = the evolith-cli unit suite (fast, deterministic). The full e2e
       # (env-sensitive: spawns servers, loads rulesets) is covered by the
       # dedicated sdk-cli-ci.yml e2e job + the per-flow E2E playbooks, not here.

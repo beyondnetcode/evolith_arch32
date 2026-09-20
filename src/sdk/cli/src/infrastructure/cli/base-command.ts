@@ -4,7 +4,14 @@ import { randomUUID } from 'node:crypto';
 import { PromptService } from '../prompts/prompt.service';
 import { ConfigService, ProfileConfig } from '../config/config.service';
 import { UserCancelledError } from '@beyondnet/evolith-core-domain/domain/errors';
-import { createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, type ErrorCode } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import {
+  createErrorEnvelope,
+  measuredMeta,
+  startEnvelopeClock,
+  type EnvelopeClock,
+  type ErrorCode,
+  type OutputMeta,
+} from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { CLI_EXIT_CODES, carriesCliExitCode, resolveExitCode, setExitCode } from './exit-codes';
 
 export abstract class BaseEvolithCommand extends CommandRunner {
@@ -27,7 +34,39 @@ export abstract class BaseEvolithCommand extends CommandRunner {
     return this.configService.getProfile();
   }
 
+  /**
+   * GT-686 — the command's wall clock. Started by {@link run} before any work,
+   * and lazily on first use for callers (specs) that invoke `executeCommand`
+   * directly, so `durationMs` is a reading of THIS invocation either way.
+   */
+  private clock?: EnvelopeClock;
+
+  protected get envelopeClock(): EnvelopeClock {
+    this.clock ??= startEnvelopeClock();
+    return this.clock;
+  }
+
+  /** Whole milliseconds since this command started — the only source of `durationMs` here. */
+  protected elapsedMs(): number {
+    return this.envelopeClock.elapsedMs();
+  }
+
+  /**
+   * GT-686 — an ADR-0073 `meta` whose `executedAt` and `durationMs` are read from
+   * the command's clock at the moment the envelope is built. Build it WHEN you
+   * emit, not when you start; a meta built at start and emitted at the end
+   * reports the setup, not the work.
+   */
+  protected envelopeMeta(command: string, extra?: Partial<Pick<OutputMeta, 'correlationId' | 'context'>>): OutputMeta {
+    return measuredMeta(this.envelopeClock, {
+      command,
+      correlationId: extra?.correlationId ?? randomUUID(),
+      ...(extra?.context ? { context: extra.context } : {}),
+    });
+  }
+
   async run(inputs: string[], options?: Record<string, unknown>): Promise<void> {
+    this.clock = startEnvelopeClock();
     try {
       await this.executeCommand(inputs, options);
     } catch (error: unknown) {
@@ -58,21 +97,21 @@ export abstract class BaseEvolithCommand extends CommandRunner {
     this.logger.error(`Command execution failed: ${message}`, error instanceof Error ? error.stack : undefined);
 
     if (isJsonFormat) {
-      const meta = {
-        command: this.constructor.name,
-        executedAt: new Date().toISOString(),
-        durationMs: 0,
-        correlationId: randomUUID(),
-        schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-      };
+      // GT-686 — even a failure reports how long it took to fail.
+      const meta = this.envelopeMeta(this.constructor.name);
       // Classify a missing ruleset corpus consistently across every command
       // (and with MCP/REST) instead of collapsing it to INTERNAL_ERROR. Matched
       // by name to avoid importing the infra error type into this base class.
+      // GT-678: an invalid rule-overrides document is SCHEMA_INVALID on every
+      // surface (MCP and REST match the same name), so a consumer reading the
+      // envelope sees the same code whichever interface it asked.
       const code = carriesCliExitCode(error) && error.envelopeErrorCode
         ? error.envelopeErrorCode
         : error instanceof Error && error.name === 'RulesetsNotFoundError'
           ? 'RULESET_NOT_FOUND'
-          : 'INTERNAL_ERROR';
+          : error instanceof Error && error.name === 'RuleOverridesInvalidError'
+            ? 'SCHEMA_INVALID'
+            : 'INTERNAL_ERROR';
       console.log(JSON.stringify(createErrorEnvelope(code as ErrorCode, message, meta), null, 2));
       // In JSON mode, emit envelope and set exit code; don't re-throw
       setExitCode(exitCode);

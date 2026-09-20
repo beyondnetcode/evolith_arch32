@@ -86,13 +86,8 @@ export class EvaluateCommand extends BaseEvolithCommand {
       // internal failure — emit a VALIDATION_FAILED envelope (not INTERNAL_ERROR
       // with a raw stack) so callers can distinguish their mistake from a bug.
       if (err instanceof EvaluateInputError) {
-        const meta = {
-          command: 'evolith evaluate',
-          executedAt: new Date().toISOString(),
-          durationMs: 0,
-          correlationId: randomUUID(),
-          schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-        };
+        // GT-686 — measured, even for a refused input.
+        const meta = this.envelopeMeta('evolith evaluate');
         console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', err.message, meta), null, 2));
         process.exit(1);
       }
@@ -147,7 +142,8 @@ export class EvaluateCommand extends BaseEvolithCommand {
     const envelope = createSuccessEnvelope(result, {
       command: 'evolith evaluate',
       executedAt: result.evaluatedAt,
-      durationMs: 0,
+      // GT-686 — the command's clock, started before the orchestrator ran.
+      durationMs: this.elapsedMs(),
       correlationId: result.correlationId ?? `cli-eval-${result.evaluatedAt}`,
       // GT-688 — the ENVELOPE version, not the result's. Copying
       // `result.schemaVersion` made this one command claim `2.0.0` while its ten
@@ -175,7 +171,7 @@ export class EvaluateCommand extends BaseEvolithCommand {
             createErrorEnvelope('VALIDATION_FAILED', err.message, {
               command: 'evolith evaluate',
               executedAt: result.evaluatedAt,
-              durationMs: 0,
+              durationMs: this.elapsedMs(),
               correlationId: result.correlationId ?? `cli-eval-${result.evaluatedAt}`,
               // GT-688 — the ENVELOPE version, not the result's. Copying
       // `result.schemaVersion` made this one command claim `2.0.0` while its ten
@@ -295,6 +291,8 @@ export class EvaluateCommand extends BaseEvolithCommand {
       // The SAME id the success envelope carries, so the local artifact and the
       // ledger row join on one key instead of on two that look alike.
       correlationId: input.correlationId,
+      // GT-686 — the ledger row carries the duration this command MEASURED.
+      durationMs: this.elapsedMs(),
     });
   }
 

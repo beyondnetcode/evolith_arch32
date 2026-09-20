@@ -123,8 +123,19 @@ export const EXPECTED_CAPABILITY_MANIFEST: CapabilityManifestShape = Object.free
   // Both values below were read off a FRESH build (every `tsconfig.tsbuildinfo` deleted,
   // then `tsc -b`, then `node .harness/scripts/generate-capability-operations.mjs`): this
   // suite is green against a stale `dist` and red against a rebuilt one.
-  operationsSha256: 'ad8b3dc9424cbbdabba1c752ff2248fcef38de88d37a89c5aac5c900b4bf91dc',
-  sha256: 'fbeadd89523a2011e40a7bbbebf6f231f014e537448e650f3d1883f6f71b948e',
+  // GT-682 (#759 #760 #761) + GT-673 — re-pinned for THREE NEW OPERATIONS and one
+  // grown schema: `evolith-history`, `evolith-profile` and `evolith-standards` take
+  // the count 52 -> 55, and `evolith-upgrade-plan`/`-apply` gained `overwriteLocal` /
+  // `acceptLocal` (the three-way classification a tenant edit survives).
+  //
+  // Previous, for the record: GT-676 pinned
+  //   operations ad8b3dc9…, manifest fbeadd89…
+  // when `evolith-validate` gained `maxSkippedFraction`.
+  //
+  // Both values below were read off a FRESH build (every `tsconfig.tsbuildinfo` deleted,
+  // then `tsc -b`, then `node .harness/scripts/generate-capability-operations.mjs`).
+  operationsSha256: '6a72e9839285ce6605d6fcddfdd43bf99dbffe7b089a16a088697423d4153c12',
+  sha256: '20060e89ad9f811b9f0cc6c7ecb2b40835498b9b130c82bc924e53651f344ff1',
 }) as CapabilityManifestShape;
 
 /**

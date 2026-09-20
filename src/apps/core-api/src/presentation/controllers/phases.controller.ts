@@ -19,6 +19,8 @@ export class PhasesController {
   @ApiBody({ type: TransitionPhaseDto })
   @ApiEnvelopeResponse(undefined, { description: 'Transition results' })
   async transition(@Body() body: TransitionPhaseDto) {
+    // GT-686 — started before the use case so durationMs is a measurement.
+    const start = Date.now();
     const result = await this.phaseTransitionUseCase.execute(
       body.from,
       body.to,
@@ -29,7 +31,7 @@ export class PhasesController {
     return createSuccessEnvelope(result, {
       command: 'evolith phase transition',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
+      durationMs: Date.now() - start,
       correlationId: `api-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
     });

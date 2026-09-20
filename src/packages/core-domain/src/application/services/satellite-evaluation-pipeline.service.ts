@@ -86,6 +86,8 @@ export class SatelliteEvaluationPipeline {
     manifest: SatelliteManifest,
     plan?: PipelineExecutionPlan,
   ): Promise<PipelineVerdict> {
+    // GT-686 — the pipeline's own wall clock; its envelope used to ship a literal 0.
+    const pipelineStartedAt = Date.now();
     const corePath = manifest.corePath || this.discoverCorePath(manifest.satellitePath);
 
     // Step 1: Resolve topology
@@ -180,7 +182,7 @@ export class SatelliteEvaluationPipeline {
       {
         command: 'evolith validate',
         executedAt: evaluatedAt,
-        durationMs: 0,
+        durationMs: Date.now() - pipelineStartedAt,
         correlationId: `ev-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         schemaVersion: '1.0.0',
       },

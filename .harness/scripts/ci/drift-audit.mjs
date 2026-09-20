@@ -82,8 +82,19 @@ export function auditTopology(manifest, exists, dir) {
   const status = manifest?.metadata?.status;
   if (!id || status !== 'accepted') return findings;
 
+  // GT-690 — the Native ruleset lives where the manifest DECLARES it, which for
+  // the progressive axis is the corpus root (`src/rulesets/topologies/...`), not
+  // a sibling of the manifest. Checking the sibling convention against a
+  // manifest that names another path is how a second copy of each ruleset was
+  // kept alive next to the one the engine loads. The sibling is only the
+  // expectation when the manifest declares nothing.
+  const declaredRulesets = manifest?.spec?.artifacts?.rulesets;
+  const nativeRulesets = Array.isArray(declaredRulesets) && declaredRulesets.length > 0
+    ? declaredRulesets.map((rel) => ({ rel, what: 'Native ruleset (declared by the manifest)' }))
+    : [{ rel: `${dir}/${id}.rules.json`, what: 'Native ruleset' }];
+
   const required = [
-    { rel: `${dir}/${id}.rules.json`, what: 'Native ruleset' },
+    ...nativeRulesets,
     { rel: `${dir}/${id}.rego`, what: 'OPA policy' },
     { rel: `${dir}/README.md`, what: 'README' },
     { rel: `${dir}/README.es.md`, what: 'bilingual README' },

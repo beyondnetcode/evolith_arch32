@@ -33,27 +33,26 @@ describe('CoreReferenceQueryService against the real Core checkout', () => {
     return out;
   }
 
-  describe('the doc-side topology corpus', () => {
+  describe('the doc-side topology tree (GT-690: narrative only, no second corpus)', () => {
     const topologyDocs = path.join(REPO_ROOT, 'reference', 'core', 'architecture', 'topologies');
 
-    it('exists where the service looks for it', () => {
+    it('still exists — the narrative pages, manifests and OPA policies live there', () => {
       expect(fs.existsSync(topologyDocs)).toBe(true);
     });
 
-    it('contributes every one of its rulesets to the reference listing', async () => {
-      const docSideFiles = rulesFilesUnder(topologyDocs);
-      // Anti-vacuous: if the doc tree ever stops carrying rulesets, this test
-      // must fail rather than assert nothing about an empty set.
-      expect(docSideFiles.length).toBeGreaterThan(0);
+    it('carries NO rulesets any more: each progressive-axis ruleset exists in exactly one place', () => {
+      // GT-690's falsifier, checked with `ls` rather than an import graph: a
+      // second copy reappearing under the doc tree turns this red.
+      expect(rulesFilesUnder(topologyDocs)).toEqual([]);
+    });
 
-      const expectedIds = docSideFiles.map(
-        (file) => (JSON.parse(fs.readFileSync(file, 'utf8')) as { $id?: string }).$id,
-      );
-      expect(expectedIds.every((id) => typeof id === 'string' && id.length > 0)).toBe(true);
-
+    it('the surviving copies are listed from the corpus root under their canonical $id', async () => {
       const listedIds = (await service.listRulesets(REPO_ROOT)).map((r) => r.id);
-      for (const id of expectedIds) {
-        expect(listedIds).toContain(id);
+      for (const topology of ['modular-monolith', 'distributed-modules', 'microservices']) {
+        const file = path.join(REPO_ROOT, 'src', 'rulesets', 'topologies', 'progressive-axis', topology, `${topology}.rules.json`);
+        const { $id } = JSON.parse(fs.readFileSync(file, 'utf8')) as { $id?: string };
+        expect(typeof $id).toBe('string');
+        expect(listedIds).toContain($id);
       }
     });
   });
@@ -83,17 +82,13 @@ describe('CoreReferenceQueryService against the real Core checkout', () => {
     });
   });
 
-  it('lists rulesets from both the corpus root and the doc-side topologies', async () => {
+  it('lists exactly the corpus root — one summary per ruleset file, no second tree (GT-690)', async () => {
     const corpusFiles = rulesFilesUnder(path.join(REPO_ROOT, 'src', 'rulesets'));
-    const docSideFiles = rulesFilesUnder(
-      path.join(REPO_ROOT, 'reference', 'core', 'architecture', 'topologies'),
-    );
     expect(corpusFiles.length).toBeGreaterThan(0);
 
     const summaries = await service.listRulesets(REPO_ROOT);
-    // One summary per file, both trees included. `>` the corpus alone is the
-    // load-bearing part: it is exactly what the broken doc path silently lost.
-    expect(summaries.length).toBeGreaterThan(corpusFiles.length);
-    expect(summaries.length).toBeGreaterThanOrEqual(docSideFiles.length);
+    // Equality is the load-bearing part now: the doc tree used to add three
+    // duplicates with a different `$id`, so `>` here would mean a copy came back.
+    expect(summaries.length).toBe(corpusFiles.length);
   });
 });

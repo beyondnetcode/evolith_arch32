@@ -64,7 +64,7 @@ Los contratos de entrada/salida del Core de Evaluación stateless (ADR-0101). Re
 | [evolith-yaml.schema.json](./evolith-yaml.schema.json) | Contrato de Satélite Evolith (`evolith.yaml`) | Gobernanza de satélites |
 | [satellite-record.schema.json](./satellite-record.schema.json) | Registro de Satélite | Aprovisionamiento de satélites |
 | [tenant.schema.json](./tenant.schema.json) | Tenant Evolith | Multi-tenancy |
-| [tenant-override.schema.json](./tenant-override.schema.json) | Override de Tenant Evolith | Multi-tenancy |
+| [rule-overrides.schema.json](./rule-overrides.schema.json) | Overrides de reglas Evolith | Suavizado por regla y por tenant (`spec.rulesets.overrides` en `evolith.yaml`, GT-678) |
 | [topology-manifest.schema.json](./topology-manifest.schema.json) | Manifiesto de Topología Evolith | Eje de topologías (resolución de manifiesto) |
 | [topology-composition.schema.json](./topology-composition.schema.json) | Composición de Topologías | Eje de topologías (composición multi-topología) |
 | [blueprint.schema.json](./blueprint.schema.json) | Blueprint Evolith | Blueprints de arquitectura |

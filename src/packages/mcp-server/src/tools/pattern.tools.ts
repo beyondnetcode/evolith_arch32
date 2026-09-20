@@ -2,7 +2,8 @@ import { resolveCorePath } from '../mcp/core-path';
 import type { IFileSystem, ILogger } from '@beyondnet/evolith-core';
 import { PatternCatalogService } from '@beyondnet/evolith-core';
 import type { PatternCatalogFilters, PatternCategory, PatternKind } from '@beyondnet/evolith-core';
-import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain';
+import { createSuccessEnvelope, measuredMeta, startEnvelopeClock } from '@beyondnet/evolith-core-domain';
+import type { EnvelopeClock } from '@beyondnet/evolith-core-domain';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { McpTool } from '../mcp/tool.interface';
 
@@ -30,15 +31,12 @@ function corePathFor(args: Record<string, unknown>): string {
   return resolveCorePath(args.corePath as string | undefined);
 }
 
-function envelope<T>(command: string, data: T) {
-  const executedAt = new Date().toISOString();
-  return createSuccessEnvelope(data, {
-    command,
-    executedAt,
-    durationMs: 0,
-    correlationId: `mcp-${command}-${executedAt}`,
-    schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
-  });
+// GT-686 — `durationMs` is read from the clock the tool started, never a literal.
+function envelope<T>(command: string, clock: EnvelopeClock, data: T) {
+  return createSuccessEnvelope(
+    data,
+    measuredMeta(clock, { command, correlationId: `mcp-${command}-${clock.executedAt}` }),
+  );
 }
 
 /**
@@ -88,6 +86,7 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
         },
       },
       execute: async (args) => {
+        const clock = startEnvelopeClock();
         const category = args.category as PatternCategory | undefined;
         const kind = args.kind as PatternKind | undefined;
         if (category && !PATTERN_CATEGORIES.includes(category)) {
@@ -113,7 +112,7 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
           // that holds no corpus, so its throw would otherwise mask the real error.
           const corePath = corePathFor(args);
           const patterns = await catalog.list(corePath, hasFilters ? filters : undefined);
-          return envelope('evolith-pattern-list', {
+          return envelope('evolith-pattern-list', clock, {
             count: patterns.length,
             filters: hasFilters ? filters : undefined,
             patterns,
@@ -140,6 +139,7 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
         },
       },
       execute: async (args) => {
+        const clock = startEnvelopeClock();
         const id = args.id as string;
         if (!id) throw new DomainException(ErrorCodes.VALIDATION_FAILED, 'id is required');
         const corePath = corePathFor(args);
@@ -153,7 +153,7 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
         if (!pattern) {
           throw new DomainException(ErrorCodes.PATH_NOT_FOUND, `Canonical pattern not found: ${id}`);
         }
-        return envelope('evolith-pattern-get', { id: pattern.id, pattern });
+        return envelope('evolith-pattern-get', clock, { id: pattern.id, pattern });
       },
     },
     {
@@ -173,13 +173,14 @@ export function createPatternTools(fs: IFileSystem, logger: ILogger): McpTool[] 
         },
       },
       execute: async (args) => {
+        const clock = startEnvelopeClock();
         const topology = args.topology as string;
         if (!topology) throw new DomainException(ErrorCodes.VALIDATION_FAILED, 'topology is required');
         const corePath = corePathFor(args);
 
         try {
           const applications = await catalog.listByTopology(corePath, topology);
-          return envelope('evolith-pattern-list-by-topology', {
+          return envelope('evolith-pattern-list-by-topology', clock, {
             topology,
             count: applications.length,
             applications,

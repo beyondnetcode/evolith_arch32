@@ -8,9 +8,9 @@ F1, F2 y F3 permanecen soportados como aliases de compatibilidad para CLI, MCP, 
 
 | Fase | Archivo de Reglas | Descripción |
 |---|---|---|
-| **F1 — Monolito Modular** | [f1-modular-monolith.rules.json](../../../reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json) | Topología canónica de inicio; gates de preparación para extracción |
-| **F2 — Módulos Distribuidos** | [f2-distributed-modules.rules.json](../../../reference/core/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json) | Límites de módulos formalizados; contratos inter-módulo establecidos |
-| **F3 — Microservicios** | [f3-microservices.rules.json](../../../reference/core/architecture/topologies/progressive-axis/microservices/microservices.rules.json) | Desplegabilidad autónoma; preparación para service mesh |
+| **F1 — Monolito Modular** | [f1-modular-monolith.rules.json](../topologies/progressive-axis/modular-monolith/modular-monolith.rules.json) | Topología canónica de inicio; gates de preparación para extracción |
+| **F2 — Módulos Distribuidos** | [f2-distributed-modules.rules.json](../topologies/progressive-axis/distributed-modules/distributed-modules.rules.json) | Límites de módulos formalizados; contratos inter-módulo establecidos |
+| **F3 — Microservicios** | [f3-microservices.rules.json](../topologies/progressive-axis/microservices/microservices.rules.json) | Desplegabilidad autónoma; preparación para service mesh |
 
 | Alias de Compatibilidad | Topologia Canonica |
 |---|---|

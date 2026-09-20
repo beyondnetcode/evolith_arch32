@@ -3,6 +3,7 @@ import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
 import { TopologyCatalogService } from '../services/topology-catalog.service';
 import type { IProcessRunner } from './enforcement/enforcer.types';
 import type { IEnforcerMetrics } from './enforcement/enforcer-metrics';
+import type { OverridesReport } from './rule-overrides';
 
 /**
  * GT-569 — the denominator a coverage claim is meaningless without.
@@ -152,6 +153,19 @@ export interface ValidationResult {
    * `RulesetValidatorService.validate` always populates it.
    */
   selection?: SelectionReport;
+  /**
+   * GT-678 — every per-rule delta that changed this run, and every one that
+   * could not be honoured. Sibling of `selection`: that field says WHICH packs
+   * were in scope, this one says which single rules inside them were softened,
+   * from what to what, by whom and until when. `rejected` names the deltas the
+   * policy refused — an `OVR-BLOCKING-REMOVED` there is also a blocking issue,
+   * so the verdict is `failed`, never a quietly unchanged green.
+   *
+   * Optional for the same additive wire reason as the GT-569 counters;
+   * `RulesetValidatorService.validate` ALWAYS populates it — `{ applied: [],
+   * rejected: [] }` for a clean run, empty rather than absent.
+   */
+  overrides?: OverridesReport;
   issues: ValidationIssue[];
   coreRef: {
     version: string | null;
@@ -221,6 +235,18 @@ export interface ValidationIssue {
   evaluated?: boolean;
 }
 
+/**
+ * GT-678 — the satellite's ruleset configuration block.
+ *
+ * `overrides` is the path, relative to the satellite root, of the per-rule
+ * override document (`rule-overrides.schema.json`). The canonical contract keeps
+ * it at `spec.rulesets.overrides`; the legacy `evolith init` shape (no `spec`)
+ * carries it at the top level. `readRuleOverridesRef` reads either.
+ */
+export interface EvolithYamlRulesets {
+  overrides?: string;
+}
+
 export interface EvolithYaml {
   coreRef?: {
     version?: string;
@@ -233,6 +259,13 @@ export interface EvolithYaml {
   product?: {
     name?: string;
     type?: string;
+  };
+  /** GT-678 — legacy (top-level) shape. */
+  rulesets?: EvolithYamlRulesets;
+  /** GT-678 — canonical `apiVersion`/`kind`/`metadata`/`spec` shape (mirrors `evolith-yaml.schema.json`). */
+  spec?: {
+    rulesets?: EvolithYamlRulesets;
+    [key: string]: unknown;
   };
 }
 

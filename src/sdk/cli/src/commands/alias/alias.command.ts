@@ -3,7 +3,7 @@ import { Command, Option } from 'nest-commander';
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { AliasService } from '../../config/alias.service';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION, elapsedMsSince } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { exitCodeForErrorCode } from '../../infrastructure/cli/exit-codes';
 
@@ -27,7 +27,6 @@ export class AliasCommand extends BaseEvolithCommand {
     const meta = {
       command: 'evolith alias',
       executedAt: new Date().toISOString(),
-      durationMs: 0,
       correlationId: randomUUID(),
       schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       startedAt,
@@ -40,7 +39,7 @@ export class AliasCommand extends BaseEvolithCommand {
           const message = 'Usage: evolith alias --add <alias>=<command>';
           if (json) {
             process.exitCode = exitCodeForErrorCode('VALIDATION_FAILED');
-            console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           } else {
             this.promptService.showError(message);
           }
@@ -49,7 +48,7 @@ export class AliasCommand extends BaseEvolithCommand {
         try {
           this.aliasService.add(alias.trim(), cmd.trim());
           if (json) {
-            console.log(JSON.stringify(createSuccessEnvelope({ alias: alias.trim(), command: cmd.trim() }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createSuccessEnvelope({ alias: alias.trim(), command: cmd.trim() }, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           } else {
             this.promptService.showSuccess(`Alias \"${alias}\" → \"${cmd}\" added.`);
           }
@@ -57,7 +56,7 @@ export class AliasCommand extends BaseEvolithCommand {
           const message = e instanceof Error ? e.message : String(e);
           if (json) {
             process.exitCode = 1;
-            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           } else {
             this.promptService.showError(message);
           }
@@ -66,7 +65,7 @@ export class AliasCommand extends BaseEvolithCommand {
         try {
           this.aliasService.remove(options.remove);
           if (json) {
-            console.log(JSON.stringify(createSuccessEnvelope({ alias: options.remove }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createSuccessEnvelope({ alias: options.remove }, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           } else {
             this.promptService.showSuccess(`Alias \"${options.remove}\" removed.`);
           }
@@ -74,7 +73,7 @@ export class AliasCommand extends BaseEvolithCommand {
           const message = e instanceof Error ? e.message : String(e);
           if (json) {
             process.exitCode = 1;
-            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+            console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
           } else {
             this.promptService.showError(message);
           }
@@ -82,7 +81,7 @@ export class AliasCommand extends BaseEvolithCommand {
       } else if (options?.list) {
         const all = this.aliasService.getAll();
         if (json) {
-          console.log(JSON.stringify(createSuccessEnvelope({ aliases: all }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createSuccessEnvelope({ aliases: all }, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         } else {
           if (Object.keys(all).length === 0) {
             this.promptService.showInfo('No aliases defined.');
@@ -96,7 +95,7 @@ export class AliasCommand extends BaseEvolithCommand {
       } else {
         if (json) {
           process.exitCode = exitCodeForErrorCode('VALIDATION_FAILED');
-          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Use --add, --remove, or --list', { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+          console.log(JSON.stringify(createErrorEnvelope('VALIDATION_FAILED', 'Use --add, --remove, or --list', { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
         } else {
           this.promptService.showInfo('Use --add, --remove, or --list.');
         }
@@ -105,7 +104,7 @@ export class AliasCommand extends BaseEvolithCommand {
       const message = error instanceof Error ? error.message : String(error);
       if (json) {
         process.exitCode = 1;
-        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: elapsedMsSince(startedAt) }), null, 2));
       } else {
         throw error;
       }

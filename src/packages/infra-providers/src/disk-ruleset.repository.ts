@@ -1,8 +1,12 @@
 import * as path from "path";
 import { IFileSystem, ILogger } from "@beyondnet/evolith-core-domain/domain/interfaces";
-import { NormalizedRule } from "@beyondnet/evolith-core-domain/domain/models/normalized-rule";
+import {
+  AuthoredRuleOverride,
+  NormalizedRule,
+} from "@beyondnet/evolith-core-domain/domain/models/normalized-rule";
 import {
   CorpusDocumentOutcome,
+  DuplicateRuleIdError,
   IRulesetRepository,
   RulesetCorpusNotResolvedError,
   RulesetsNotFoundError,
@@ -13,9 +17,37 @@ import {
 } from "@beyondnet/evolith-core-domain/application/paths/rulesets-location";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import { ValidateFunction } from "ajv";
+import { ErrorObject, ValidateFunction } from "ajv";
 
-export { RulesetCorpusNotResolvedError, RulesetsNotFoundError };
+export { DuplicateRuleIdError, RulesetCorpusNotResolvedError, RulesetsNotFoundError };
+
+/**
+ * GT-678 — a rule declared under this corpus-relative prefix is a TENANT's copy.
+ *
+ * When it re-declares a Core rule id it is a per-rule override of that rule
+ * (kept as one rule, the tenant's authored delta attached), not a second copy
+ * of it; when it declares a new id it is the tenant's own rule.
+ */
+const TENANT_PACK_PREFIX = "tenants/";
+
+/** The keys of a tenant copy that constitute its delta over the Core rule. */
+const AUTHORED_OVERRIDE_KEYS = [
+  "enabled",
+  "severity",
+  "blocking",
+  "rationale",
+  "approvedBy",
+  "expiresOn",
+] as const;
+
+/** A normalised rule with where it came from and what its author wrote. */
+interface LoadedRule {
+  readonly rule: NormalizedRule;
+  /** Corpus-relative file, e.g. `tenants/acme/pack.rules.json`. */
+  readonly corpusFile: string;
+  readonly tenant: boolean;
+  readonly authored: AuthoredRuleOverride;
+}
 
 /**
  * GT-649 — document kinds that legitimately live in the corpus tree under the
@@ -77,6 +109,113 @@ function declaredSchemaName(parsed: Record<string, unknown>): string | undefined
   // `$schema` is authored as a relative path (and several are stale after the
   // reference/ reorganisation), so only the filename is trustworthy.
   return raw.split(/[\\/]/).pop();
+}
+
+/**
+ * GT-678 — a schema failure names the KEY and the RULE, not just a JSON pointer.
+ *
+ * With `additionalProperties: false` on a rule, the failure the author most
+ * needs to read is «`enabeld` is not a known rule key», and Ajv's default text
+ * for it is `data/rules/3 must NOT have additional properties` — true and
+ * useless. Resolve the pointer to the rule's id and print the offending key,
+ * so the rejected outcome (#575) tells the author what to fix and where.
+ */
+function describeSchemaErrors(
+  parsed: Record<string, unknown>,
+  errors: readonly ErrorObject[],
+): string {
+  const at = (pointer: string): unknown =>
+    pointer
+      .split("/")
+      .filter((seg) => seg !== "")
+      .reduce<unknown>(
+        (node, seg) =>
+          node && typeof node === "object"
+            ? (node as Record<string, unknown>)[seg.replace(/~1/g, "/").replace(/~0/g, "~")]
+            : undefined,
+        parsed,
+      );
+  const where = (pointer: string): string => {
+    const rule = at(pointer);
+    const id =
+      rule && typeof rule === "object" && (rule as Record<string, unknown>)["id"];
+    return id ? `${pointer} (rule ${String(id)})` : pointer || "/";
+  };
+
+  return errors
+    .map((e) => {
+      if (e.keyword === "additionalProperties") {
+        const key = String((e.params as { additionalProperty?: unknown }).additionalProperty);
+        return `${where(e.instancePath)}: unknown key "${key}" is not allowed by definitions.rule of ruleset-standard.schema.json (a key that is not declared there is rejected, not silently dropped)`;
+      }
+      return `${where(e.instancePath)} ${e.message ?? "is invalid"}`;
+    })
+    .join("; ");
+}
+
+/** The override keys an author actually wrote, verbatim. */
+function authoredOverride(raw: Record<string, unknown>): AuthoredRuleOverride {
+  const out: Record<string, unknown> = {};
+  for (const key of AUTHORED_OVERRIDE_KEYS) {
+    if (raw[key] !== undefined) out[key] = raw[key];
+  }
+  return out as AuthoredRuleOverride;
+}
+
+/**
+ * GT-678 — one rule id, one rule.
+ *
+ *  - Two NON-tenant declarations of an id: {@link DuplicateRuleIdError}. The
+ *    corpus is corrupt and the report must not count a rule twice.
+ *  - Two tenant declarations of an id: the same error — two packs contradicting
+ *    each other is not something to choose between silently.
+ *  - One Core + one tenant declaration: the Core rule survives — its check, its
+ *    title, its file — with the tenant's AUTHORED delta attached as
+ *    `corpusOverride`. The engine applies it, with a clock and under the
+ *    blocking-criterion policy; the loader records what was asked and decides
+ *    nothing, so a cached corpus never freezes a waiver's expiry.
+ *  - A tenant-only id is the tenant's own rule and loads as any other.
+ *
+ * Corpus order is preserved: a merge changes WHAT a rule says, never where it
+ * is reported.
+ */
+function mergeByRuleId(loaded: readonly LoadedRule[]): NormalizedRule[] {
+  const groups = new Map<string, LoadedRule[]>();
+  for (const entry of loaded) {
+    groups.set(entry.rule.id, [...(groups.get(entry.rule.id) ?? []), entry]);
+  }
+
+  const merged = new Map<string, NormalizedRule>();
+  for (const [id, entries] of groups) {
+    const core = entries.filter((e) => !e.tenant);
+    const tenant = entries.filter((e) => e.tenant);
+    if (core.length > 1) {
+      throw new DuplicateRuleIdError(id, core.map((e) => e.corpusFile));
+    }
+    if (tenant.length > 1) {
+      throw new DuplicateRuleIdError(id, tenant.map((e) => e.corpusFile));
+    }
+    if (core.length === 1 && tenant.length === 1) {
+      // `source` is the pack's `sourceFile` — the same identifier every other
+      // provenance field in a report uses (`perRuleset[].sourceFile`, selection
+      // refs), so an auditor joins them without translating path conventions.
+      merged.set(id, {
+        ...core[0].rule,
+        corpusOverride: { source: tenant[0].rule.sourceFile, delta: tenant[0].authored },
+      });
+      continue;
+    }
+    merged.set(id, entries[0].rule);
+  }
+
+  const seen = new Set<string>();
+  const out: NormalizedRule[] = [];
+  for (const entry of loaded) {
+    if (seen.has(entry.rule.id)) continue;
+    seen.add(entry.rule.id);
+    out.push(merged.get(entry.rule.id)!);
+  }
+  return out;
 }
 
 /**
@@ -160,7 +299,7 @@ export class DiskRulesetRepository implements IRulesetRepository {
     const rulesetsDir = await this.resolveRulesetsDir(corePath);
 
     const files = await this.findRulesetFiles(rulesetsDir);
-    const rules: NormalizedRule[] = [];
+    const loaded: LoadedRule[] = [];
     const outcomes: CorpusDocumentOutcome[] = [];
 
     for (const filePath of files) {
@@ -209,12 +348,16 @@ export class DiskRulesetRepository implements IRulesetRepository {
         const valid = this.validateSchema(parsed);
         if (!valid) {
           throw new Error(
-            `Schema validation failed: ${this.ajv.errorsText(this.validateSchema.errors)}`,
+            `Schema validation failed: ${describeSchemaErrors(parsed, this.validateSchema.errors ?? [])}`,
           );
         }
 
         const relative = filePath.replace(corePath + path.sep, "");
-        rules.push(...this.normalizeRuleset(parsed, relative));
+        const corpusFile = relativeToCorpus(filePath, rulesetsDir);
+        const tenant = corpusFile.startsWith(TENANT_PACK_PREFIX);
+        for (const { rule, authored } of this.normalizeRuleset(parsed, relative)) {
+          loaded.push({ rule, corpusFile, tenant, authored });
+        }
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err);
         // GT-456: a single VALID-but-non-standard `*.rules.json` (e.g. a
@@ -238,6 +381,10 @@ export class DiskRulesetRepository implements IRulesetRepository {
         continue;
       }
     }
+
+    // GT-678: one id, one rule. Core-vs-Core duplicates are a corrupt corpus
+    // and throw; a tenant copy over a Core rule becomes that rule's delta.
+    const rules = mergeByRuleId(loaded);
 
     // GT-474: the rulesets root exists but yielded nothing — an empty corpus, a
     // wrong `--core`, or every ruleset skipped as non-standard. Whatever the
@@ -320,10 +467,17 @@ export class DiskRulesetRepository implements IRulesetRepository {
     return files;
   }
 
+  /**
+   * Normalise one document's rules, keeping beside each rule what its author
+   * WROTE for the override keys. The normalised rule always carries a severity
+   * and a blocking flag — defaulted when absent — but a default must never be
+   * applied on top of a Core rule as if a tenant had asked for it, so the
+   * authored subset travels separately (GT-678).
+   */
   private normalizeRuleset(
     parsed: Record<string, unknown>,
     sourceFile: string,
-  ): NormalizedRule[] {
+  ): Array<{ rule: NormalizedRule; authored: AuthoredRuleOverride }> {
     const rawList = (parsed["rules"] ?? parsed["principles"]) as
       | Array<Record<string, unknown>>
       | undefined;
@@ -335,17 +489,24 @@ export class DiskRulesetRepository implements IRulesetRepository {
     return rawList
       .filter((r) => Boolean(r["id"]))
       .map((r) => ({
-        id: String(r["id"]),
-        severity: this.normalizeSeverity(r),
-        category: this.deriveCategory(r),
-        title: String(r["title"] ?? r["principle"] ?? r["id"]),
-        description: String(r["description"] ?? r["statement"] ?? ""),
-        blocking: Boolean(r["blocking"] ?? this.defaultBlocking(r)),
-        validationQuery: r["validationQuery"]
-          ? String(r["validationQuery"])
-          : undefined,
-        enforce: this.normalizeEnforce(r["enforce"]),
-        sourceFile,
+        rule: {
+          id: String(r["id"]),
+          severity: this.normalizeSeverity(r),
+          category: this.deriveCategory(r),
+          title: String(r["title"] ?? r["principle"] ?? r["id"]),
+          description: String(r["description"] ?? r["statement"] ?? ""),
+          blocking: Boolean(r["blocking"] ?? this.defaultBlocking(r)),
+          validationQuery: r["validationQuery"]
+            ? String(r["validationQuery"])
+            : undefined,
+          enforce: this.normalizeEnforce(r["enforce"]),
+          sourceFile,
+          // GT-678: an authored `enabled: false` is HONOURED — it used to pass
+          // the schema and vanish here. Only the authored `false` is carried;
+          // absent stays absent so the rule's shape is unchanged otherwise.
+          ...(r["enabled"] === false ? { enabled: false } : {}),
+        },
+        authored: authoredOverride(r),
       }));
   }
 

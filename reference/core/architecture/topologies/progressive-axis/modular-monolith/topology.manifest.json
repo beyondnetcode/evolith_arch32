@@ -35,7 +35,7 @@
         "reference/core/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json"
+        "src/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json"
       ],
       "opaPolicies": [
         "reference/core/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"

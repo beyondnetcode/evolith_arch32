@@ -119,6 +119,7 @@ export {
   isKnownIngestEngine,
   resolveIngestCorrelationId,
   toEvaluationIngestPayload,
+  toIngestTiming,
   type EvaluationIngestInput,
   type EvaluationIngestPayload,
   type EvaluationIngestSurface,
@@ -130,6 +131,7 @@ export {
   type IngestRuleExecution,
   type IngestSourceResult,
   type IngestSourceViolation,
+  type IngestTiming,
   type IngestViolation,
   type KnownIngestEngine,
 } from './ingest/evaluation-ingest';

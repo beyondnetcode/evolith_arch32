@@ -64,7 +64,7 @@ The stateless Core Evaluation Engine's input/output contracts (ADR-0101). Mirror
 | [evolith-yaml.schema.json](./evolith-yaml.schema.json) | Evolith Satellite Contract (`evolith.yaml`) | Satellite governance |
 | [satellite-record.schema.json](./satellite-record.schema.json) | Satellite Record | Satellite provisioning |
 | [tenant.schema.json](./tenant.schema.json) | Evolith Tenant | Multi-tenancy |
-| [tenant-override.schema.json](./tenant-override.schema.json) | Evolith Tenant Override | Multi-tenancy |
+| [rule-overrides.schema.json](./rule-overrides.schema.json) | Evolith Rule Overrides | Per-rule tenant softening (`spec.rulesets.overrides` in `evolith.yaml`, GT-678) |
 | [topology-manifest.schema.json](./topology-manifest.schema.json) | Evolith Topology Manifest | Topology axis (manifest resolution) |
 | [topology-composition.schema.json](./topology-composition.schema.json) | Topology Composition | Topology axis (multi-topology composition) |
 | [blueprint.schema.json](./blueprint.schema.json) | Evolith Blueprint | Architecture blueprints |

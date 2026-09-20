@@ -12,6 +12,7 @@ import {
   isGatePhase,
   GATE_PHASES,
   ErrorCode,
+  elapsedMsSince,
 } from '@beyondnet/evolith-core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
@@ -62,7 +63,7 @@ export class GateCommand extends BaseEvolithCommand {
       const base: OutputMeta = {
         command,
         executedAt: new Date().toISOString(),
-        durationMs: Date.now() - startedAt,
+        durationMs: elapsedMsSince(startedAt),
         correlationId: randomUUID(),
         schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       };

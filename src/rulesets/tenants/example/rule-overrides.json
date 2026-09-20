@@ -1,0 +1,29 @@
+{
+  "$schema": "../../schema/rule-overrides.schema.json",
+  "tenantId": "example-corp",
+  "version": "1.0.0",
+  "effectiveDate": "2026-09-01",
+  "approvedBy": "Head of Engineering, Example Corp",
+  "rules": {
+    "ACL-02": {
+      "severity": "SHOULD",
+      "blocking": false,
+      "rationale": "Inbound payloads are validated at the API gateway, outside this repository; the rule stays as a reminder while the gateway contract is migrated in. A waiver of a blocking criterion: approver AND expiry are required.",
+      "approvedBy": "cto@example.com",
+      "expiresOn": "2026-12-31"
+    },
+    "ACL-04": {
+      "severity": "SHOULD",
+      "rationale": "ACL versioning is tracked in the platform release train, not per repository. A severity downgrade of a blocking rule: an approver is required, no expiry.",
+      "approvedBy": "platform-lead@example.com"
+    },
+    "TAX-04": {
+      "enabled": false,
+      "rationale": "This repository is generated code where the naming convention is the generator's. A non-blocking rule: a rationale is enough."
+    },
+    "SSDF-PS.3.2": {
+      "blocking": true,
+      "rationale": "Example Corp publishes an SBOM for every release and holds itself to it. Hardening is always allowed."
+    }
+  }
+}

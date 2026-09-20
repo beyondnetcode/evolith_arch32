@@ -10,4 +10,8 @@ export * from './ruleset-validator.rebuild';
 // them without reaching into core-domain source across a package boundary.
 export * from './rule-applicability';
 export * from './rule-evaluation-engine';
+// GT-678: the per-rule override policy and the document loader are part of the
+// validation contract — the surfaces name the loader's error and the reports.
+export * from './rule-overrides';
+export * from './rule-overrides.loader';
 export * from './modes';

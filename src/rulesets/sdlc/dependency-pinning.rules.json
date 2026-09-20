@@ -12,6 +12,10 @@
   "rules": [
     {
       "id": "DEP-01",
+      "facts": [
+        "repository",
+        "satellite.packageJson"
+      ],
       "severity": "MUST NOT",
       "category": "version-pinning",
       "title": "No caret (^) range specifiers in package.json",
@@ -30,6 +34,10 @@
     },
     {
       "id": "DEP-02",
+      "facts": [
+        "repository",
+        "satellite.packageJson"
+      ],
       "severity": "MUST NOT",
       "category": "version-pinning",
       "title": "No tilde (~) range specifiers in package.json",
@@ -48,6 +56,10 @@
     },
     {
       "id": "DEP-03",
+      "facts": [
+        "repository",
+        "satellite.packageJson"
+      ],
       "severity": "MUST NOT",
       "category": "version-pinning",
       "title": "No wildcard (*) or latest-tag version specifiers",
@@ -59,6 +71,11 @@
     },
     {
       "id": "DEP-04",
+      "facts": [
+        "core.hasPackageLock",
+        "repository",
+        "satellite.hasPackageLock"
+      ],
       "severity": "MUST",
       "category": "lock-file",
       "title": "package-lock.json (or equivalent) must be committed",
@@ -70,6 +87,10 @@
     },
     {
       "id": "DEP-05",
+      "facts": [
+        "repository",
+        "satellite.workflows"
+      ],
       "severity": "MUST",
       "category": "ci-installation",
       "title": "CI pipelines use 'npm ci' not 'npm install'",
@@ -81,6 +102,10 @@
     },
     {
       "id": "DEP-06",
+      "facts": [
+        "repository",
+        "satellite.workflows"
+      ],
       "severity": "MUST",
       "category": "security-audit",
       "title": "CI pipeline runs npm audit at high severity level",
@@ -92,6 +117,10 @@
     },
     {
       "id": "DEP-07",
+      "facts": [
+        "repository",
+        "satellite.workflows"
+      ],
       "severity": "MUST",
       "category": "security-audit",
       "title": "Zero High or Critical CVEs in production dependencies",
@@ -107,6 +136,11 @@
     },
     {
       "id": "DEP-08",
+      "facts": [
+        "repository",
+        "satellite.overridesRationaleDocumented",
+        "satellite.packageJson"
+      ],
       "severity": "SHOULD",
       "category": "overrides",
       "title": "npm overrides entries must be documented with CVE reference",
@@ -118,6 +152,12 @@
     },
     {
       "id": "DEP-09",
+      "facts": [
+        "core.hasDependabot",
+        "repository",
+        "satellite.hasDependabot",
+        "satellite.hasRenovate"
+      ],
       "severity": "SHOULD",
       "category": "bot-policy",
       "title": "Automated dependency update bot configured",
@@ -129,6 +169,10 @@
     },
     {
       "id": "DEP-10",
+      "facts": [
+        "repository",
+        "satellite.workspacePackageJsons"
+      ],
       "severity": "MUST",
       "category": "version-pinning",
       "title": "Workspaces inherit the exact-version policy",

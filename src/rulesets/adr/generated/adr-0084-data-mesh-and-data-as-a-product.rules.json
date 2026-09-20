@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0084-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0084: Data Mesh and Data as a Product",

@@ -259,6 +259,10 @@ function buildRuleset(adr) {
     const signalList = signals.slice(0, 6).join(', ');
     rules.push({
       id: `${prefix}-01`,
+      // GT-716 AC2 — a generated conformance rule states no machine-checkable fact: its
+      // validationQuery is the placeholder below, so it declares `facts: []` and both
+      // engines read it as documentation until a check is authored.
+      facts: [],
       severity: 'MUST',
       category: 'adr-conformance',
       title: `Conform to ${adr.adrId}: ${adr.title}`,
@@ -292,6 +296,10 @@ function buildRuleset(adr) {
   } else {
     rules.push({
       id: `${prefix}-01`,
+      // GT-716 AC2 — a generated conformance rule states no machine-checkable fact: its
+      // validationQuery is the placeholder below, so it declares `facts: []` and both
+      // engines read it as documentation until a check is authored.
+      facts: [],
       severity: 'SHOULD',
       category: 'adr-conformance',
       title: `Honor design decision in ${adr.adrId}: ${adr.title}`,

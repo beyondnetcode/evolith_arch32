@@ -11,6 +11,7 @@
   "rules": [
     {
       "id": "SV-SEC-01",
+      "facts": [],
       "severity": "MUST",
       "category": "execution-security",
       "title": "Network Security Profile",
@@ -20,6 +21,7 @@
     },
     {
       "id": "SV-SEC-02",
+      "facts": [],
       "severity": "MUST",
       "category": "execution-mtls",
       "title": "mTLS Enforcement",
@@ -29,6 +31,9 @@
     },
     {
       "id": "SV-R01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "serverless-config",
       "title": "Declared Serverless Contract",
@@ -38,6 +43,9 @@
     },
     {
       "id": "SV-R02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "serverless-stateless",
       "title": "Stateless Execution",
@@ -47,6 +55,9 @@
     },
     {
       "id": "SV-R03",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "serverless-package",
       "title": "Bounded Deployment Package",
@@ -56,6 +67,9 @@
     },
     {
       "id": "SV-R04",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "serverless-cold-start",
       "title": "Cold-Start Readiness",

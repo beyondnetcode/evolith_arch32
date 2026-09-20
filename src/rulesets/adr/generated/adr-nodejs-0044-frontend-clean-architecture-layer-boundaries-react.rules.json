@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0044-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0044: Frontend Clean Architecture Layer Boundaries (React)",

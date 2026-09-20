@@ -8,6 +8,9 @@
   "rules": [
     {
       "id": "TAX-01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "naming-conventions",
       "title": "File names use kebab-case",
@@ -22,6 +25,9 @@
     },
     {
       "id": "TAX-02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "naming-conventions",
       "title": "Class and type names use PascalCase",
@@ -37,6 +43,9 @@
     },
     {
       "id": "TAX-03",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "naming-conventions",
       "title": "Variable and function names use camelCase",
@@ -52,6 +61,9 @@
     },
     {
       "id": "TAX-04",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "naming-conventions",
       "title": "Constants use UPPER_SNAKE_CASE",
@@ -65,6 +77,10 @@
     },
     {
       "id": "TAX-05",
+      "facts": [
+        "core.directories",
+        "repository"
+      ],
       "audience": "core",
       "severity": "MUST",
       "category": "directory-structure",
@@ -83,6 +99,13 @@
     },
     {
       "id": "TAX-06",
+      "facts": [
+        "corePath",
+        "repository",
+        "satellite.directories",
+        "satellite.packageJson",
+        "satellitePath"
+      ],
       "audience": "satellite",
       "appliesFromSdlcPhase": 1,
       "severity": "MUST",
@@ -101,6 +124,10 @@
     },
     {
       "id": "TAX-07",
+      "facts": [
+        "core.adrs",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "adr-naming",
       "title": "ADR files named with zero-padded ID",
@@ -115,6 +142,10 @@
     },
     {
       "id": "TAX-08",
+      "facts": [
+        "core.adrs",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "adr-naming",
       "title": "Bilingual ADR files use .es.md suffix",
@@ -125,6 +156,9 @@
     },
     {
       "id": "TAX-09",
+      "facts": [
+        "repository"
+      ],
       "audience": "core",
       "severity": "MUST",
       "category": "artifact-classification",
@@ -136,6 +170,9 @@
     },
     {
       "id": "TAX-10",
+      "facts": [
+        "repository"
+      ],
       "audience": "core",
       "severity": "MUST",
       "category": "artifact-classification",
@@ -147,6 +184,10 @@
     },
     {
       "id": "TAX-11",
+      "facts": [
+        "core.directories",
+        "repository"
+      ],
       "audience": "core",
       "severity": "MUST",
       "category": "directory-structure",

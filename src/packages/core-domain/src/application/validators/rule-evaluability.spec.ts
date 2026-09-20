@@ -13,8 +13,8 @@
  */
 
 import {
-  RULE_TRIAGE,
   classifyRule,
+  evaluabilityOfFacts,
   hasNoAuthoredCheck,
   isNonExecutable,
   summarizeEvaluability,
@@ -38,6 +38,20 @@ const fsMock = (): IFileSystem =>
     stat: jest.fn().mockResolvedValue({ isDirectory: () => true, isFile: () => false }),
   }) as unknown as IFileSystem;
 
+/**
+ * GT-716 AC2 — what the corpus declares for the ids these tests lean on, so the
+ * fixtures classify the way the real rules do: KI-R* declare no fact and no query
+ * (underspecified), PROT-03 declares no fact behind a judgement (documentation),
+ * GIT-02 reads the forge (external).
+ */
+const DECLARED: Readonly<Record<string, Partial<NormalizedRule>>> = {
+  'KI-R01': { facts: [] },
+  'KI-R02': { facts: [] },
+  'KI-R03': { facts: [] },
+  'PROT-03': { facts: [], validationQuery: 'Board judgement: REST primary, GraphQL targeted.' },
+  'GIT-02': { facts: [{ facet: 'satellite.git', provenance: 'external' }] },
+};
+
 const rule = (over: Partial<NormalizedRule> & { id: string }): NormalizedRule =>
   ({
     severity: 'MUST',
@@ -46,25 +60,42 @@ const rule = (over: Partial<NormalizedRule> & { id: string }): NormalizedRule =>
     description: '',
     blocking: true,
     sourceFile: 'src/rulesets/test.rules.json',
+    ...(DECLARED[over.id] ?? {}),
     ...over,
   }) as NormalizedRule;
 
 describe('GT-595 · classifyRule', () => {
-  it('calls a rule a handler evaluates `native-handler`, whatever the triage table says', () => {
-    // GIT-02 is triaged `needs-external-system`; if a handler ever runs it, the
-    // outcome wins over the table. The table describes rules nobody evaluated.
-    expect(classifyRule(rule({ id: 'GIT-02' }), true).evaluability).toBe('native-handler');
-    expect(RULE_TRIAGE['GIT-02'].evaluability).toBe('needs-external-system');
+  const forge = { facet: 'forge', provenance: 'external' as const, why: 'lives in the VCS host' };
+  const files = { facet: 'satellite.files', provenance: 'observed' as const };
+  const traces = { facet: 'traces', provenance: 'runtime' as const };
+  const posture = { facet: 'satellite.multiTenancy', provenance: 'supplied' as const };
+
+  it('calls a rule a handler evaluates `native-handler`, whatever it declares', () => {
+    // GIT-02 declares a forge fact (external); if a handler ever runs it, the outcome
+    // wins over the declaration, which describes rules nobody evaluated.
+    expect(classifyRule(rule({ id: 'GIT-02', facts: [forge] }), true).evaluability).toBe('native-handler');
   });
 
-  it('reads the triage table for an unhandled rule', () => {
-    expect(classifyRule(rule({ id: 'GIT-02' }), false).evaluability).toBe('needs-external-system');
-    expect(classifyRule(rule({ id: 'OBS-EVD-01' }), false).evaluability).toBe('needs-runtime');
-    expect(classifyRule(rule({ id: 'KI-R01' }), false).evaluability).toBe('underspecified');
-    expect(classifyRule(rule({ id: 'PROT-03' }), false).evaluability).toBe('documentation-only');
+  it('derives the class of an unhandled rule from its declared facts — most demanding wins (GT-716 AC2)', () => {
+    expect(classifyRule(rule({ id: 'GIT-02', facts: [forge] }), false).evaluability).toBe('needs-external-system');
+    expect(classifyRule(rule({ id: 'OBS-EVD-01', facts: [files, traces] }), false).evaluability).toBe('needs-runtime');
+    expect(classifyRule(rule({ id: 'INH-06', facts: [files] }), false).evaluability).toBe('unimplemented-native');
+    expect(classifyRule(rule({ id: 'MTN-01', facts: [posture] }), false).evaluability).toBe('needs-supplied-facts');
+    // the ranking, stated: runtime > external > supplied > observed
+    expect(evaluabilityOfFacts([files, posture, forge, traces], {}).evaluability).toBe('needs-runtime');
+    expect(evaluabilityOfFacts([files, posture, forge], {}).evaluability).toBe('needs-external-system');
+    expect(evaluabilityOfFacts([files, posture], {}).evaluability).toBe('needs-supplied-facts');
+    // and the why names what was declared
+    expect(evaluabilityOfFacts([forge], {}).why).toMatch(/forge \(external\).*lives in the VCS host/);
   });
 
-  it('defaults an UNKNOWN rule to `unimplemented-native` — never out of the denominator', () => {
+  it('reads `facts: []` as "no machine-checkable fact": underspecified without a query, documentation with one', () => {
+    expect(classifyRule(rule({ id: 'KI-R01', facts: [] }), false).evaluability).toBe('underspecified');
+    expect(classifyRule(rule({ id: 'PROT-03', facts: [], validationQuery: 'Board judgement.' }), false).evaluability).toBe('documentation-only');
+  });
+
+  it('defaults a rule with NO declaration to `unimplemented-native` — never out of the denominator', () => {
+    // A tenant pack or a fixture that predates GT-716: the pre-declaration defaults.
     const c = classifyRule(rule({ id: 'BRAND-NEW-01' }), false);
     expect(c.evaluability).toBe('unimplemented-native');
     expect(isNonExecutable(c.evaluability)).toBe(false);

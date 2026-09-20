@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0076-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0076: Domain-Oriented Microservice Architecture (DOMA)",

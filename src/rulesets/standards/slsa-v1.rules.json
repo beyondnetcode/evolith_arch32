@@ -46,6 +46,9 @@
   "rules": [
     {
       "id": "SLSA-PROV-L1",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "slsa-build",
       "blocking": false,
@@ -56,6 +59,9 @@
     },
     {
       "id": "SLSA-BUILD-L1",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "slsa-build",
       "blocking": false,
@@ -66,6 +72,9 @@
     },
     {
       "id": "SLSA-AUTH-L2",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "slsa-build",
       "blocking": false,
@@ -76,6 +85,9 @@
     },
     {
       "id": "SLSA-HOSTED-L2",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "slsa-build",
       "blocking": false,

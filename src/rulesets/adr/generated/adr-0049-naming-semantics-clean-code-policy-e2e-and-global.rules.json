@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0049-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0049: Naming Semantics & Clean Code Policy (E2E and Global)",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "AI-0004-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0004: AGENTS.md as Mandatory Repository Artifact",

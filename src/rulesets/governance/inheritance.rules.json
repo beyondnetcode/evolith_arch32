@@ -8,6 +8,7 @@
   "principles": [
     {
       "id": "INH-01",
+      "facts": ["corePath","repository","satellite.directories","satellitePath"],
       "principle": "Core Immutability",
       "statement": "Evolith Core rulesets are immutable once published. Satellites inherit rules; they do not fork, modify, or override Core rules.",
       "rationale": "If satellites could modify Core rules, the corporate governance baseline would fragment. Federated governance requires a single source of truth.",
@@ -15,6 +16,7 @@
     },
     {
       "id": "INH-02",
+      "facts": ["corePath","repository","satellite.contracts","satellitePath"],
       "principle": "Version Pinning",
       "statement": "Satellites MUST pin to a specific Core version (coreRef.version) in their evolith.yaml. Unpinned or 'latest' references are prohibited.",
       "rationale": "Version pinning ensures reproducible governance. 'Latest' creates drift where different satellites run different rule versions.",
@@ -22,6 +24,7 @@
     },
     {
       "id": "INH-03",
+      "facts": ["corePath","satellite.contracts","satellitePath"],
       "principle": "Upgrade Only, Never Downgrade",
       "statement": "Satellite governance version can only increase. Downgrading to an older version requires Architecture Board exception.",
       "rationale": "Governance downgrade creates compliance gaps. Exception process ensures downgrade is deliberate and documented.",
@@ -29,6 +32,7 @@
     },
     {
       "id": "INH-04",
+      "facts": ["corePath","satellite.contracts","satellite.files","satellitePath"],
       "principle": "Satellite Extension via Local ADRs",
       "statement": "Satellites can define local ADRs for decisions not yet promoted to Core. These are tracked in evolith.yaml compliance.adrRegistry.",
       "rationale": "Not every decision needs to be corporate. Satellites have local autonomy for product-specific choices, tracked separately from Core ADRs.",
@@ -36,6 +40,7 @@
     },
     {
       "id": "INH-05",
+      "facts": ["corePath","satellite.contracts","satellitePath"],
       "principle": "Promotion via Architecture Board",
       "statement": "Local ADR promotion to Core requires Architecture Board review. Evidence from satellite implementation is required.",
       "rationale": "Core ADRs must be validated across multiple contexts before being elevated. Single-satellite evidence is insufficient.",
@@ -43,6 +48,7 @@
     },
     {
       "id": "INH-06",
+      "facts": ["corePath","repository","satellite.files","satellitePath"],
       "principle": "Mandatory Architecture Tracker",
       "statement": "Satellite repositories MUST contain a DECISIONS.md file in their root directory to explicitly declare their architecture inheritance contract.",
       "rationale": "Without DECISIONS.md, architectural divergences and adoption of Core rules remain invisible, creating hidden technical debt.",

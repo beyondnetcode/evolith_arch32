@@ -11,6 +11,10 @@
   "rules": [
     {
       "id": "EVD-01",
+      "facts": [
+        "core.evidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "identity",
       "title": "Evidence Has Stable Identity",
@@ -20,6 +24,10 @@
     },
     {
       "id": "EVD-02",
+      "facts": [
+        "core.evidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "traceability",
       "title": "Evidence Links to Source Artifact",
@@ -29,6 +37,10 @@
     },
     {
       "id": "EVD-03",
+      "facts": [
+        "core.evidence",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "integrity",
       "title": "Evidence Captures Validation Outcome",
@@ -38,6 +50,10 @@
     },
     {
       "id": "EVD-04",
+      "facts": [
+        "core.evidence",
+        "repository"
+      ],
       "severity": "SHOULD",
       "category": "retention",
       "title": "Evidence Declares Retention Expectation",

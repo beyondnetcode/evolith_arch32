@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0077-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0077: MassTransit v9 Commercial Pivot — Stay on v8, Monitor OpenTransit",

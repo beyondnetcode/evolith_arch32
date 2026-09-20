@@ -10,6 +10,10 @@
   "principles": [
     {
       "id": "ACL-01",
+      "facts": [
+        "adapter",
+        "repository"
+      ],
       "principle": "Schema Validation Before Ingestion",
       "statement": "All external data ingested into a satellite product MUST be validated against Evolith Core schemas before entering the governance model. Unvalidated data MUST be rejected.",
       "rationale": "Without schema validation, external systems can introduce non-compliant entities that violate Core definitions. ACL acts as the gatekeeper.",
@@ -22,6 +26,10 @@
     },
     {
       "id": "ACL-02",
+      "facts": [
+        "adapter",
+        "repository"
+      ],
       "principle": "Transformation Traceability",
       "statement": "Every transformation applied to external data MUST preserve traceability to the original external source entity. Audit trail MUST be maintained.",
       "rationale": "When data is normalized, the original source must remain traceable for debugging, compliance, and impact analysis. Transformations without traceability create invisible data mutations.",
@@ -34,6 +42,10 @@
     },
     {
       "id": "ACL-03",
+      "facts": [
+        "adapter",
+        "repository"
+      ],
       "principle": "Reject Non-Compliant Data",
       "statement": "Non-compliant data MUST be rejected, not normalized or silently adapted. ACL implementations MUST NOT perform silent data transformation to make external data fit Core schemas.",
       "rationale": "Silent normalization hides governance gaps and creates technical debt. Rejection forces upstream systems to fix data quality at the source.",
@@ -46,6 +58,10 @@
     },
     {
       "id": "ACL-04",
+      "facts": [
+        "adapter",
+        "repository"
+      ],
       "principle": "ACL Version Synchronization with Core",
       "statement": "ACL implementations MUST be versioned alongside Evolith Core evolution. When Core schemas change, all ACL implementations MUST update before or at the same release.",
       "rationale": "Version drift between ACL and Core creates incompatibility where external data appears valid but fails governance rules. ACL and Core must evolve in lock-step.",
@@ -58,6 +74,10 @@
     },
     {
       "id": "ACL-05",
+      "facts": [
+        "adapter",
+        "repository"
+      ],
       "principle": "Explicit Contract Required",
       "statement": "Integration with external systems MUST use explicit contracts (API specs, webhook payloads, export schemas) documented and reviewed against Core definitions before implementation.",
       "rationale": "Ad-hoc integrations without contracts create implicit dependencies that break silently when external systems change.",
@@ -70,6 +90,10 @@
     },
     {
       "id": "ACL-06",
+      "facts": [
+        "adapter",
+        "repository"
+      ],
       "principle": "Isolate External Dependencies",
       "statement": "ACL implementations MUST be isolated from domain logic. ACL code lives in Infrastructure/Adapters layer, never in Domain entities or application services.",
       "rationale": "Domain purity requires zero external system references. ACL is the translation layer that keeps the Domain clean.",

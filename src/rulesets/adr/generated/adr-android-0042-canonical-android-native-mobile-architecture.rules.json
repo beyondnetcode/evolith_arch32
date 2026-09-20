@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "AND-0042-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0042: Canonical Android Native Mobile Architecture",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0129-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0129: The Tenant Master Is UMS, and the Suite Projects a Versioned Snapshot",

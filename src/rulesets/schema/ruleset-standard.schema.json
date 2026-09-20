@@ -4,25 +4,55 @@
   "title": "Standard Ruleset Schema",
   "type": "object",
   "properties": {
-    "$schema": { "type": "string" },
-    "$id": { "type": "string", "format": "uri" },
-    "title": { "type": "string" },
-    "description": { "type": "string" },
-    "version": { "type": "string" },
-    "effectiveDate": { "type": "string", "format": "date" },
-    "audience": { "$ref": "#/definitions/audience" },
-    "topologies": { "$ref": "#/definitions/topologies" },
-    "appliesFromSdlcPhase": { "$ref": "#/definitions/appliesFromSdlcPhase" },
-    "adrId": { "type": "string" },
-    "adrTitle": { "type": "string" },
-    "status": { "type": "string" },
-    "date": { "type": "string" },
+    "$schema": {
+      "type": "string"
+    },
+    "$id": {
+      "type": "string",
+      "format": "uri"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "effectiveDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "audience": {
+      "$ref": "#/definitions/audience"
+    },
+    "topologies": {
+      "$ref": "#/definitions/topologies"
+    },
+    "appliesFromSdlcPhase": {
+      "$ref": "#/definitions/appliesFromSdlcPhase"
+    },
+    "adrId": {
+      "type": "string"
+    },
+    "adrTitle": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
     "exitCriteria": {
       "type": "object"
     },
     "references": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "rules": {
       "type": "array",
@@ -38,19 +68,33 @@
     }
   },
   "anyOf": [
-    { "required": ["rules"] },
-    { "required": ["principles"] }
+    {
+      "required": [
+        "rules"
+      ]
+    },
+    {
+      "required": [
+        "principles"
+      ]
+    }
   ],
   "definitions": {
     "audience": {
       "type": "string",
-      "enum": ["core", "satellite", "both"],
+      "enum": [
+        "core",
+        "satellite",
+        "both"
+      ],
       "default": "both",
       "description": "GT-571 — WHO the rule is addressed to. 'core' means the rule only makes sense against the Evolith Core monorepo itself (e.g. CLI-RR-01 'run npm run build in sdk/cli', TAX-05 'top-level sdk/, rulesets/') and MUST NOT be evaluated against a satellite; 'satellite' is the mirror image; 'both' (the default, and the reading of any rule that omits the field) keeps the pre-GT-571 behaviour. Declared at ruleset level as the default for its rules, and overridable per rule. A rule excluded by audience is NOT APPLICABLE — it is filtered out before evaluation and is never counted as skipped/checked/errored."
     },
     "topologies": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "minItems": 1,
       "description": "GT-571 — topology ids this rule belongs to (e.g. 'serverless', 'event-driven', 'modular-monolith'). A repository is evaluated against a topology-bound rule only when it declares that topology (metadata.phase F1/F2/F3 or spec.design.topology.confirmed in evolith.yaml). Absent ⇒ topology-agnostic: the rule always applies. Declared at ruleset level as the default for its rules, and overridable per rule."
     },
@@ -66,7 +110,11 @@
       "properties": {
         "engine": {
           "type": "string",
-          "enum": ["native", "opa", "enforcer"],
+          "enum": [
+            "native",
+            "opa",
+            "enforcer"
+          ],
           "description": "'enforcer' routes to an adapter; 'native'/'opa' stay on their own engine."
         },
         "tool": {
@@ -79,7 +127,14 @@
         },
         "runtime": {
           "type": "string",
-          "enum": ["node", "dotnet", "php", "python", "iac", "shell"],
+          "enum": [
+            "node",
+            "dotnet",
+            "php",
+            "python",
+            "iac",
+            "shell"
+          ],
           "description": "Runtime ecosystem the analyzer needs (selects the adapter / gates fallback)."
         },
         "config": {
@@ -92,23 +147,47 @@
         },
         "severityMap": {
           "type": "object",
-          "additionalProperties": { "type": "string", "enum": ["error", "warning", "info"] },
+          "additionalProperties": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ]
+          },
           "description": "Maps the tool's own severity vocabulary onto canonical violation severities."
         },
         "mode": {
           "type": "string",
-          "enum": ["warn", "block"],
+          "enum": [
+            "warn",
+            "block"
+          ],
           "description": "Enforcement strength. Defaults from the rule's blocking flag when omitted."
         }
       },
-      "required": ["engine", "tool"],
+      "required": [
+        "engine",
+        "tool"
+      ],
       "additionalProperties": false
     },
     "rule": {
       "type": "object",
       "description": "A single rule. GT-678 — CLOSED: any key not listed here is rejected with a schema error naming the key and the file, instead of being accepted and silently discarded by the loader (which is how an authored `enabled: false`, or a typo such as `enabeld`, used to produce an unchanged run that looked configured). Add a key here, with its real type, before authoring it.",
       "properties": {
-        "id": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
+        "facts": {
+          "type": "array",
+          "description": "GT-716 AC2 — the facets this rule's check reads, by id from src/rulesets/schema/facets.json. One declaration both engines derive from: the native triage class comes from the facets' provenance (runtime > external > supplied > observed), and the OPA bundle build fails when a policy reads a facet its rule does not declare. An empty array means the rule states no machine-checkable fact (documentation, or a check nobody authored yet).",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)?$"
+          },
+          "uniqueItems": true
+        },
         "enabled": {
           "type": "boolean",
           "default": true,
@@ -118,63 +197,132 @@
           "type": "string",
           "description": "MUST | SHOULD | MUST NOT | SHOULD NOT (the loader also accepts COULD/MAY). Absent: derived from `blocking`/`enforcement`."
         },
-        "category": { "type": "string" },
-        "title": { "type": "string" },
-        "principle": { "type": "string" },
-        "description": { "type": "string" },
-        "statement": { "type": "string" },
-        "rationale": { "type": "string" },
-        "validationQuery": { "type": "string" },
-        "blocking": { "type": "boolean" },
-        "audience": { "$ref": "#/definitions/audience" },
-        "topologies": { "$ref": "#/definitions/topologies" },
-        "appliesFromSdlcPhase": { "$ref": "#/definitions/appliesFromSdlcPhase" },
-        "enforcement": { "type": "string" },
-        "enforce": { "$ref": "#/definitions/enforce" },
-        "layer": { "type": "string" },
+        "category": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "principle": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "statement": {
+          "type": "string"
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "validationQuery": {
+          "type": "string"
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "audience": {
+          "$ref": "#/definitions/audience"
+        },
+        "topologies": {
+          "$ref": "#/definitions/topologies"
+        },
+        "appliesFromSdlcPhase": {
+          "$ref": "#/definitions/appliesFromSdlcPhase"
+        },
+        "enforcement": {
+          "type": "string"
+        },
+        "enforce": {
+          "$ref": "#/definitions/enforce"
+        },
+        "layer": {
+          "type": "string"
+        },
         "examples": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "structure": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "references": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Documents, ADRs or standards the rule cites."
         },
-        "metrics": { "type": "object", "description": "Metric definitions for scorecard rules (executive-scorecards)." },
-        "assurance": { "type": "string", "description": "How the rule is assured on a topology (topology rulesets)." },
-        "checklistItem": { "type": "string", "description": "Definition-of-Done checklist wording for the rule." },
+        "metrics": {
+          "type": "object",
+          "description": "Metric definitions for scorecard rules (executive-scorecards)."
+        },
+        "assurance": {
+          "type": "string",
+          "description": "How the rule is assured on a topology (topology rulesets)."
+        },
+        "checklistItem": {
+          "type": "string",
+          "description": "Definition-of-Done checklist wording for the rule."
+        },
         "evidenceRequired": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Evidence a satellite must present for the rule (CLI rulesets)."
         },
         "sourceFile": {
           "type": "string",
           "description": "Authored provenance when the rule was lifted from a source document (security rulesets). Not the loader's `sourceFile`, which is always the ruleset path."
         },
-        "scenario": { "type": "string" },
-        "workload": { "type": "string" },
-        "runtime": { "type": "string" },
-        "autoFixStrategy": { "type": "string" },
+        "scenario": {
+          "type": "string"
+        },
+        "workload": {
+          "type": "string"
+        },
+        "runtime": {
+          "type": "string"
+        },
+        "autoFixStrategy": {
+          "type": "string"
+        },
         "appliesTo": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
-        "sla": { "type": "object" },
-        "target": { "type": "object" },
-        "threshold": { "type": "number" },
-        "layerThresholds": { "type": "object" },
+        "sla": {
+          "type": "object"
+        },
+        "target": {
+          "type": "object"
+        },
+        "threshold": {
+          "type": "number"
+        },
+        "layerThresholds": {
+          "type": "object"
+        },
         "protectedBranches": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
-        "pattern": { "type": "string" },
-        "baseline": { "type": "object" },
+        "pattern": {
+          "type": "string"
+        },
+        "baseline": {
+          "type": "object"
+        },
         "approvedBy": {
           "type": "string",
           "description": "GT-678 — who approved this rule's delta. Only meaningful on a `tenants/**` copy of a Core rule: waiving a blocking criterion (`enabled: false` or `blocking: false` on a `blocking: true` Core rule) is rejected with `OVR-BLOCKING-REMOVED` unless BOTH `approvedBy` and `expiresOn` are present; downgrading its severity needs `approvedBy`."
@@ -187,9 +335,26 @@
       },
       "additionalProperties": false,
       "anyOf": [
-        { "required": ["id", "title", "description"] },
-        { "required": ["id", "principle", "statement"] },
-        { "required": ["title", "description"] }
+        {
+          "required": [
+            "id",
+            "title",
+            "description"
+          ]
+        },
+        {
+          "required": [
+            "id",
+            "principle",
+            "statement"
+          ]
+        },
+        {
+          "required": [
+            "title",
+            "description"
+          ]
+        }
       ]
     }
   }

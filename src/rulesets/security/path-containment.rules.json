@@ -5,6 +5,9 @@
   "rules": [
     {
       "id": "SEC-PATH-01",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "Path input sanitization",
@@ -15,6 +18,9 @@
     },
     {
       "id": "SEC-PATH-02",
+      "facts": [
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "Base directory containment",

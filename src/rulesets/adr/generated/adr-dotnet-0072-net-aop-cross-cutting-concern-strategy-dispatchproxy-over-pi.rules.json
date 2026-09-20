@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0072-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0072: .NET AOP Cross-Cutting Concern Strategy — DispatchProxy over Pipeline Behaviors",

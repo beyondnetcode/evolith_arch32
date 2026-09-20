@@ -10,6 +10,7 @@
   "rules": [
     {
       "id": "MS-R01",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "autonomous-deployment",
       "title": "True Independent Deployability",
@@ -20,6 +21,7 @@
     },
     {
       "id": "MS-R02",
+      "facts": ["deployedInfrastructure"],
       "severity": "MUST",
       "category": "service-mesh",
       "title": "Service Mesh Readiness",
@@ -30,6 +32,7 @@
     },
     {
       "id": "MS-R03",
+      "facts": ["executionMetrics"],
       "severity": "MUST",
       "category": "failure-isolation",
       "title": "Bulkhead Pattern per Service",
@@ -40,6 +43,7 @@
     },
     {
       "id": "MS-R04",
+      "facts": ["testExecution"],
       "severity": "MUST",
       "category": "graceful-degradation",
       "title": "Fallback Behavior for All External Calls",
@@ -50,6 +54,7 @@
     },
     {
       "id": "MS-R05",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "contract-testing",
       "title": "Contract Tests for All Inter-Service Contracts",
@@ -60,6 +65,7 @@
     },
     {
       "id": "MS-R06",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "data-sovereignty",
       "title": "Service Owns Its Data — No Shared Persistence",
@@ -70,6 +76,7 @@
     },
     {
       "id": "MS-R07",
+      "facts": ["repository"],
       "severity": "MUST",
       "category": "observability",
       "title": "Service-Level Observability with SLOs",
@@ -80,6 +87,7 @@
     },
     {
       "id": "MS-R08",
+      "facts": ["deployedInfrastructure"],
       "severity": "MUST",
       "category": "on-call",
       "title": "Service-Level On-Call Ownership",

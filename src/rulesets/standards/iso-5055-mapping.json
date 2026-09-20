@@ -93,19 +93,19 @@
       "src/packages/core-domain/src/application/validators/evaluators/handlers/**/*.ts (canHandle predicates)",
       "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, classification and this renderer)"
     ],
-    "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, and the two adapter classes are closed by the enforcer seam rather than by a rule handler.",
-    "realBacklogSize": 52,
+    "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, the two adapter classes are closed by the enforcer seam rather than by a rule handler, and `needs-supplied-facts` (GT-716) is closed by the caller declaring the posture through `facts.satellite`.",
+    "realBacklogSize": 21,
     "adoptableFromAnalyser": 9,
-    "adoptableFromAnalyserIncludingPartial": 14,
-    "adoptedFractionOfBacklog": 0.1731,
-    "adoptedFractionOfBacklogIncludingPartial": 0.2692,
-    "remainderToAuthor": 38,
+    "adoptableFromAnalyserIncludingPartial": 11,
+    "adoptedFractionOfBacklog": 0.4286,
+    "adoptedFractionOfBacklogIncludingPartial": 0.5238,
+    "remainderToAuthor": 10,
     "byEvaluabilityClass": {
       "unimplemented-native": {
-        "rules": 52,
-        "mappedToIso5055": 6,
+        "rules": 21,
+        "mappedToIso5055": 5,
         "analyserAdoptable": 9,
-        "analyserAdoptablePartial": 5,
+        "analyserAdoptablePartial": 2,
         "adoptableRuleIds": [
           "HXA-03",
           "SEC-INJ-01",
@@ -118,35 +118,45 @@
           "ISO5055-SEC"
         ],
         "adoptablePartialRuleIds": [
-          "CICD-01",
-          "CICD-02",
-          "MTN-01",
           "SEC-INJ-02",
           "SEC-TIMING-02"
         ]
       },
       "needs-external-system": {
-        "rules": 20,
+        "rules": 27,
         "mappedToIso5055": 1,
         "analyserAdoptable": 3,
-        "analyserAdoptablePartial": 0,
+        "analyserAdoptablePartial": 2,
         "adoptableRuleIds": [
           "CICD-03",
           "GIT-01",
           "GIT-04"
         ],
-        "adoptablePartialRuleIds": []
+        "adoptablePartialRuleIds": [
+          "CICD-01",
+          "CICD-02"
+        ]
       },
       "needs-runtime": {
-        "rules": 17,
+        "rules": 23,
         "mappedToIso5055": 2,
         "analyserAdoptable": 0,
         "analyserAdoptablePartial": 0,
         "adoptableRuleIds": [],
         "adoptablePartialRuleIds": []
       },
+      "needs-supplied-facts": {
+        "rules": 31,
+        "mappedToIso5055": 1,
+        "analyserAdoptable": 0,
+        "analyserAdoptablePartial": 1,
+        "adoptableRuleIds": [],
+        "adoptablePartialRuleIds": [
+          "MTN-01"
+        ]
+      },
       "documentation-only": {
-        "rules": 141,
+        "rules": 138,
         "mappedToIso5055": 9,
         "analyserAdoptable": 6,
         "analyserAdoptablePartial": 7,
@@ -169,7 +179,7 @@
         ]
       },
       "underspecified": {
-        "rules": 14,
+        "rules": 4,
         "mappedToIso5055": 0,
         "analyserAdoptable": 0,
         "analyserAdoptablePartial": 0,
@@ -542,7 +552,7 @@
           "workflow inspection"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "A property of the development process (pipeline, branch, review, test strategy), which is outside the scope of a source-code measure."
     },
     {
@@ -563,7 +573,7 @@
           "workflow inspection"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "A property of the development process (pipeline, branch, review, test strategy), which is outside the scope of a source-code measure."
     },
     {
@@ -624,7 +634,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "A property of the development process (pipeline, branch, review, test strategy), which is outside the scope of a source-code measure."
     },
     {
@@ -690,7 +700,7 @@
           "CAST ASCPEM/ASCSM data-access-outside-manager"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Data access outside the expected data manager is the structural half of \"filtering happens in one layer\"."
     },
     {
@@ -735,7 +745,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -817,7 +827,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -836,7 +846,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -893,7 +903,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-runtime",
       "note": "A property of the development process (pipeline, branch, review, test strategy), which is outside the scope of a source-code measure."
     },
     {
@@ -912,7 +922,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-runtime",
       "note": "A property of the development process (pipeline, branch, review, test strategy), which is outside the scope of a source-code measure."
     },
     {
@@ -950,7 +960,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-runtime",
       "note": "A property of the development process (pipeline, branch, review, test strategy), which is outside the scope of a source-code measure."
     },
     {
@@ -1007,7 +1017,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1026,7 +1036,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "documentation-only",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1045,7 +1055,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1064,7 +1074,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1083,7 +1093,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "documentation-only",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1102,7 +1112,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1121,7 +1131,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1140,7 +1150,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1159,7 +1169,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1178,7 +1188,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1197,7 +1207,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1216,7 +1226,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1235,7 +1245,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -1254,7 +1264,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "Conformance to a recorded architecture decision. ISO/IEC 5055 measures source structure, not whether a decision was honoured."
     },
     {
@@ -4194,7 +4204,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-runtime",
       "note": "A CLI / MCP surface contract. Specific to this product; no standards analyser models it."
     },
     {
@@ -4213,7 +4223,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-runtime",
       "note": "A CLI / MCP surface contract. Specific to this product; no standards analyser models it."
     },
     {
@@ -4251,7 +4261,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-runtime",
       "note": "A CLI / MCP surface contract. Specific to this product; no standards analyser models it."
     },
     {
@@ -5691,7 +5701,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-external-system",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5710,7 +5720,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-external-system",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5729,7 +5739,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-external-system",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5767,7 +5777,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5786,7 +5796,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5805,7 +5815,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5824,7 +5834,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5843,7 +5853,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5862,7 +5872,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5881,7 +5891,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "underspecified",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5919,7 +5929,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5938,7 +5948,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5957,7 +5967,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5976,7 +5986,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -5995,7 +6005,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -6014,7 +6024,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "documentation-only",
+      "nativeEvaluability": "needs-supplied-facts",
       "note": "A governance invariant over Evolith artifacts (inheritance, open-core boundary, satellites, evidence). No international structural equivalent."
     },
     {
@@ -6356,7 +6366,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "An operational telemetry expectation, evaluated from runtime evidence rather than source structure."
     },
     {

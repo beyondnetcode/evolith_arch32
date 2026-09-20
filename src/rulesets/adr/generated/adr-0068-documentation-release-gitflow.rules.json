@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0068-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0068: Documentation Release GitFlow",

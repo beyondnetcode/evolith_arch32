@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0117-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0117: Bilingual Parity Applies to Authored Sources, Not Generated Projections",

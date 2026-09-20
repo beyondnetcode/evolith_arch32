@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0069-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0069: AI Agent Context Protocol Integration",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0123-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0123: Timing-Safe Comparison Standard",

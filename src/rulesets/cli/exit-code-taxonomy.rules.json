@@ -11,6 +11,10 @@
   "rules": [
     {
       "id": "CLI-EXIT-01",
+      "facts": [
+        "core.cli",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "cli-exit-taxonomy",
       "title": "No CLI Command May Exit Outside The Published Taxonomy",
@@ -24,6 +28,10 @@
     },
     {
       "id": "CLI-EXIT-02",
+      "facts": [
+        "core.cli",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "cli-exit-taxonomy",
       "title": "The Taxonomy Scan Must Be Non-Vacuous",
@@ -37,6 +45,10 @@
     },
     {
       "id": "CLI-EXIT-03",
+      "facts": [
+        "core.cli",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "cli-exit-taxonomy",
       "title": "The Published Taxonomy Must Not Be Widened",

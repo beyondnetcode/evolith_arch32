@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0080-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0080: Remote Repository Reference Contract",

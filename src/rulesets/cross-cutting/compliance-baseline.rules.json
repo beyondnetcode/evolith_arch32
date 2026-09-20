@@ -17,6 +17,10 @@
   "rules": [
     {
       "id": "CB-01",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "Agnostic Baseline",
       "title": "Technology selection respects Agnostic Baseline",
@@ -26,6 +30,10 @@
     },
     {
       "id": "CB-02",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "Reference Architecture (Blueprint)",
       "title": "Product architecture traceable to Reference Blueprint",
@@ -35,6 +43,10 @@
     },
     {
       "id": "CB-03",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "Engineering Manifesto",
       "title": "Engineering Manifesto principles enforced",
@@ -44,6 +56,10 @@
     },
     {
       "id": "CB-04",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "Definition of Done",
       "title": "Definition of Done satisfied before story closure",
@@ -53,6 +69,10 @@
     },
     {
       "id": "CB-05",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "Repository Taxonomy",
       "title": "Repository structure follows Taxonomy",
@@ -62,6 +82,10 @@
     },
     {
       "id": "CB-VAL-01",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "validation",
       "title": "All 5 baseline pillars must be present in evolith.yaml spec.compliance",
@@ -71,6 +95,10 @@
     },
     {
       "id": "CB-VAL-02",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "validation",
       "title": "Baseline references must point to existing Evolith Core documents",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0104-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0104: Topology-Driven Advisory Design-Phase Governance (Blueprint as Composable Development Guide)",

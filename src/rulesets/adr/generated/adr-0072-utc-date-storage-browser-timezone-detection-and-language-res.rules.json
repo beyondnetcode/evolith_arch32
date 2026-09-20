@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0072-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0072: UTC Date Storage, Browser Timezone Detection, and Language Resolution",

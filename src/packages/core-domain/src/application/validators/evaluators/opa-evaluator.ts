@@ -32,23 +32,22 @@ export const RULE_INPUT_PATHS_ENTRYPOINT = 'evolith/manifest/rule_input_paths';
  * that read them, so a rule reading only these is evaluated rather than skipped when
  * they are missing.
  *
- * `qualityEvidence` / `qualityAdmissibilityPolicy` / `evaluationDate`: ADR-0111 — "the
- * consumer presented no evidence" and "presented an empty set" are the same verdict,
- * and both engines already agree on it (`PEA-01..04` pass on a bare run, natively and
- * in Rego). `evidence` / `waiver`: phase gates — nothing presented and nothing waived
- * are exactly what the gate must fail on, not a reason to abstain. `tenantId`: an audit
- * echo, never a premise.
+ * `qualityEvidence` / `evaluationDate`: ADR-0111 — "the consumer presented no
+ * evidence" and "presented an empty set" are the same verdict, and both engines
+ * already agree on it (`PEA-01..04` pass on a bare run, natively and in Rego).
+ * `evidence` / `waiver`: phase gates — nothing presented and nothing waived are
+ * exactly what the gate must fail on, not a reason to abstain.
  *
- * This is the one hand-kept list AC1 tolerates; GT-716 AC2 moves the declaration into
- * each rule's own file and this set goes with it.
+ * GT-716 AC2 put every fact a rule reads into the rule's own file and
+ * `src/rulesets/schema/facets.json` (their provenance); this set is the one
+ * judgement that stays in code — WHICH absences are facts — and the vocabulary's
+ * `why` for each of the four says the same thing.
  */
 export const ABSENCE_IS_A_FACT: ReadonlySet<string> = new Set([
   'input.qualityEvidence',
-  'input.qualityAdmissibilityPolicy',
   'input.evaluationDate',
   'input.evidence',
   'input.waiver',
-  'input.tenantId',
 ]);
 
 /**

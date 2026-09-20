@@ -8,6 +8,10 @@
   "rules": [
     {
       "id": "DOD-01",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "code",
       "title": "Code implemented and reviewed",
@@ -18,6 +22,10 @@
     },
     {
       "id": "DOD-02",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "testing",
       "title": "Unit tests meet coverage threshold",
@@ -28,6 +36,10 @@
     },
     {
       "id": "DOD-03",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "testing",
       "title": "All acceptance criteria verified",
@@ -38,6 +50,10 @@
     },
     {
       "id": "DOD-04",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "documentation",
       "title": "Documentation updated",
@@ -48,6 +64,10 @@
     },
     {
       "id": "DOD-05",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "observability",
       "title": "Observability instrumentation added",
@@ -58,6 +78,10 @@
     },
     {
       "id": "DOD-06",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "security",
       "title": "Security gates passed",
@@ -68,6 +92,10 @@
     },
     {
       "id": "DOD-07",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "architecture",
       "title": "ADR created if architectural decision made",
@@ -78,6 +106,10 @@
     },
     {
       "id": "DOD-08",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "integration",
       "title": "Integration tests pass",
@@ -88,6 +120,10 @@
     },
     {
       "id": "DOD-09",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "lint",
       "title": "Linting and formatting passed",
@@ -98,6 +134,10 @@
     },
     {
       "id": "DOD-10",
+      "facts": [
+        "context",
+        "repository"
+      ],
       "severity": "MUST",
       "category": "ci",
       "title": "CI pipeline green on target branch",

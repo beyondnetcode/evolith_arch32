@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0041-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0041: Dual-Engine Policy Evaluation (Native + OPA)",

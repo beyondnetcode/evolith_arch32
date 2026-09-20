@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0096-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0096: Edge Computing Architecture Governance",

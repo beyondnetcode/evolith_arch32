@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0046-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0046: Prohibition of Raw Technical Identifiers in User Interfaces",

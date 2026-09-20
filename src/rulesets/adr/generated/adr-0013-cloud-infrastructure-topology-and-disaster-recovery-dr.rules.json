@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0013-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0013: Cloud Infrastructure Topology and Disaster Recovery (DR)",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "DOT-0070-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0070: .NET API Endpoint Strategy",

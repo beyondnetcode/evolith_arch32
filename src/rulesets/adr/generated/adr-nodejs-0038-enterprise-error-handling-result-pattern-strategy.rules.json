@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0038-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0038: Enterprise Error Handling & Result Pattern Strategy",

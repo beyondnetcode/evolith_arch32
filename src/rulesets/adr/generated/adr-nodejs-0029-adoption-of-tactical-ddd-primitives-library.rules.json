@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0029-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0029: Adoption of Tactical DDD Primitives Library",

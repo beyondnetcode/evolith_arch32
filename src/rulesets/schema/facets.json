@@ -1,0 +1,354 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/facets.json",
+  "title": "Evolith fact vocabulary — what a rule may declare it needs, and where the truth of it lives",
+  "description": "GT-716 AC2. Every rule in `*.rules.json` declares `facts`: the facets its check reads, by id from this vocabulary. Both engines derive what they can decide from that one declaration — the native triage class from the facets' provenance, the OPA bundle's reach from the facets its policies read (checked against the declaration at build time). A facet's `provenance` names where the truth of it lives, not how it reaches an engine: an `external` or `supplied` facet under `satellite.*` reaches the OPA engine through `facts.satellite` (GT-694) and never the native one. Provenance rank, most demanding first: runtime > external > supplied > observed — a rule's native class is that of its most demanding facet.",
+  "provenances": {
+    "observed": "Readable from the repository tree. The Core derives it: a native handler reads the files, or the OPA input builder emits it. Class when no handler exists yet: `unimplemented-native`.",
+    "supplied": "A declaration only the satellite's owners hold — a posture, an intent, a contract nobody else can observe. Reaches OPA through `facts.satellite`; the native engine cannot obtain it. Class: `needs-supplied-facts`.",
+    "external": "Held by a system outside the repository — the forge, the issue tracker, a registry, a live database, deployed infrastructure, a telemetry backend. Class: `needs-external-system`.",
+    "runtime": "Observable only from the running system or an executed suite — traces, timings, coverage, test results, per-call decisions. Class: `needs-runtime`."
+  },
+  "facets": {
+    "repository": {
+      "provenance": "observed",
+      "why": "The working tree as a native handler reads it — files, directories, manifests, workflows."
+    },
+    "staticAnalysis": {
+      "provenance": "observed",
+      "why": "A property of the source an analyser derives (module graph, import edges, SARIF findings) — observed, through an enforcer adapter rather than a file read."
+    },
+    "satellitePath": {
+      "provenance": "observed",
+      "why": "The satellite root the run was pointed at."
+    },
+    "corePath": {
+      "provenance": "observed",
+      "why": "The Core checkout the run resolved."
+    },
+    "satellite.files": {
+      "provenance": "observed",
+      "why": "The satellite's top-level file listing, emitted by the input builder."
+    },
+    "satellite.directories": {
+      "provenance": "observed",
+      "why": "The satellite's top-level directories."
+    },
+    "satellite.packageJson": {
+      "provenance": "observed",
+      "why": "The satellite's root package manifest, or null when there is none."
+    },
+    "satellite.workspacePackageJsons": {
+      "provenance": "observed",
+      "why": "The workspace members' package manifests."
+    },
+    "satellite.workflows": {
+      "provenance": "observed",
+      "why": "The satellite's CI workflow files as read from `.github/workflows`."
+    },
+    "satellite.hasPackageLock": {
+      "provenance": "observed",
+      "why": "Whether a lockfile sits in the tree."
+    },
+    "satellite.hasDependabot": {
+      "provenance": "observed",
+      "why": "Whether `.github/dependabot.yml` exists."
+    },
+    "satellite.hasRenovate": {
+      "provenance": "observed",
+      "why": "Whether a Renovate configuration exists."
+    },
+    "satellite.eventDriven": {
+      "provenance": "observed",
+      "why": "The event-driven configuration file, read from the tree."
+    },
+    "satellite.layers": {
+      "provenance": "observed",
+      "why": "Layer structure — framework and infrastructure imports per layer. Static analysis, which belongs to the enforcer seam; the OPA channel receives its result."
+    },
+    "core.adrs": {
+      "provenance": "observed",
+      "why": "The Core's decision records, listed from its checkout."
+    },
+    "core.cli": {
+      "provenance": "observed",
+      "why": "The Core CLI's build artifacts, tests and documents, as found in the checkout."
+    },
+    "core.directories": {
+      "provenance": "observed",
+      "why": "The Core checkout's top-level directories."
+    },
+    "core.evidence": {
+      "provenance": "observed",
+      "why": "The Core's evidence documents, read from the checkout."
+    },
+    "core.hasPackageLock": {
+      "provenance": "observed",
+      "why": "Whether the Core checkout has a lockfile."
+    },
+    "core.hasDependabot": {
+      "provenance": "observed",
+      "why": "Whether the Core checkout has `.github/dependabot.yml`."
+    },
+    "satellite.multiTenancy": {
+      "provenance": "supplied",
+      "why": "Whether queries filter by tenant and whether RLS is enabled are not visible in a listing — the owners declare the posture."
+    },
+    "satellite.runtime": {
+      "provenance": "supplied",
+      "why": "Runtime selection rationale is a declaration about intent, not an observable."
+    },
+    "satellite.protocol": {
+      "provenance": "supplied",
+      "why": "Which calls use gRPC or REST needs call-graph analysis nobody performs here; the owners declare it."
+    },
+    "satellite.openCore": {
+      "provenance": "supplied",
+      "why": "The open-core boundary is a declared commercial boundary, not a file fact."
+    },
+    "satellite.overridesRationaleDocumented": {
+      "provenance": "supplied",
+      "why": "Whether a dependency override carries a written rationale is declared by the owners."
+    },
+    "adapter": {
+      "provenance": "supplied",
+      "why": "The anti-corruption adapter's contract — schema validation, traceability, compatibility version — is declared by the integration's owners."
+    },
+    "context": {
+      "provenance": "supplied",
+      "why": "The evaluation context a caller declares for context-aware policies (Definition of Done, compliance baseline, phase)."
+    },
+    "gate": {
+      "provenance": "supplied",
+      "why": "The phase gate under evaluation — its mandatory evidence and blocking criteria — handed in by the pipeline."
+    },
+    "evidence": {
+      "provenance": "supplied",
+      "why": "The artifacts a caller presents to a phase gate. Nothing presented is a fact the gate fails on, not a reason to abstain."
+    },
+    "waiver": {
+      "provenance": "supplied",
+      "why": "Waivers a caller presents to a phase gate. None presented is itself the fact."
+    },
+    "evaluationDate": {
+      "provenance": "supplied",
+      "why": "The date a caller evaluates at, for waiver expiry and evidence age; absent means the age is unknown, which the policies handle."
+    },
+    "qualityEvidence": {
+      "provenance": "supplied",
+      "why": "ADR-0111 quality evidence a caller presents inline. Nothing presented and an empty set are the same verdict, on both engines."
+    },
+    "promotion": {
+      "provenance": "supplied",
+      "why": "A knowledge-intake promotion request, declared by the workflow that runs it."
+    },
+    "knowledge_id": {
+      "provenance": "supplied",
+      "why": "The knowledge candidate under intake, declared by the workflow."
+    },
+    "source": {
+      "provenance": "supplied",
+      "why": "The knowledge candidate's source class, locator, retrieval date and rights, declared at intake."
+    },
+    "source_registry_id": {
+      "provenance": "supplied",
+      "why": "The knowledge candidate's registry entry, declared at intake."
+    },
+    "review": {
+      "provenance": "supplied",
+      "why": "The knowledge candidate's review record, declared at intake."
+    },
+    "assessment": {
+      "provenance": "supplied",
+      "why": "The knowledge candidate's assessment record, declared at intake."
+    },
+    "infrastructure": {
+      "provenance": "supplied",
+      "why": "A Helm or sidecar deployment description the caller hands to the infrastructure policies."
+    },
+    "origin": {
+      "provenance": "supplied",
+      "why": "The origin a caller declares for an infrastructure evaluation."
+    },
+    "satellite.git": {
+      "provenance": "external",
+      "why": "Branch protection, review counts and push history live in the forge, not in the working tree."
+    },
+    "satellite.ci": {
+      "provenance": "external",
+      "why": "Pipeline configuration lives in the CI system, not in the repository tree."
+    },
+    "satellite.findings": {
+      "provenance": "external",
+      "why": "Scanner findings and their ages come from the scanners, not from a directory listing."
+    },
+    "satellite.scorecards": {
+      "provenance": "external",
+      "why": "DORA and SPACE figures come from the delivery pipeline and surveys."
+    },
+    "satellite.contracts": {
+      "provenance": "external",
+      "why": "Satellite contracts mix file facts with governance state — phase approval, deprecation, registered names and Core versions — that the registry holds."
+    },
+    "forge": {
+      "provenance": "external",
+      "why": "Acceptance lives in the VCS host: branch protection, approvals, tags, merge strategy."
+    },
+    "issueTracker": {
+      "provenance": "external",
+      "why": "Acceptance is an issue-tracker state — age, SLA — outside the repository."
+    },
+    "registry": {
+      "provenance": "external",
+      "why": "Acceptance is a record in an external catalog, registry or lineage store."
+    },
+    "database": {
+      "provenance": "external",
+      "why": "Acceptance is a property of a live database — RLS, schema-per-tenant."
+    },
+    "deployedInfrastructure": {
+      "provenance": "external",
+      "why": "Acceptance is a property of deployed infrastructure — service mesh, mTLS, on-call."
+    },
+    "telemetryBackend": {
+      "provenance": "external",
+      "why": "Acceptance is a query against a telemetry or metrics backend."
+    },
+    "satellite.testing": {
+      "provenance": "runtime",
+      "why": "Test-mix percentages and coverage come from a test run, not from source on disk."
+    },
+    "satellite.coreParity": {
+      "provenance": "runtime",
+      "why": "It compares the vendor CLI against the Core by running both; not a fact about the tree."
+    },
+    "satellite.releaseReadiness": {
+      "provenance": "runtime",
+      "why": "Build passes, tests pass and the MCP smoke passes require RUNNING them."
+    },
+    "traces": {
+      "provenance": "runtime",
+      "why": "Acceptance is an observation of the running system — traces, logs, per-call decisions."
+    },
+    "executionMetrics": {
+      "provenance": "runtime",
+      "why": "Acceptance is a measured execution property — durations, coverage, isolation at run time."
+    },
+    "testExecution": {
+      "provenance": "runtime",
+      "why": "Acceptance requires executing the suite or fixtures and comparing outcomes."
+    },
+    "user": {
+      "provenance": "runtime",
+      "why": "The principal of an MCP tool call, known only at dispatch."
+    },
+    "tool_name": {
+      "provenance": "runtime",
+      "why": "The MCP tool being called, known only at dispatch."
+    },
+    "environment": {
+      "provenance": "runtime",
+      "why": "The environment an MCP tool call runs in, known only at dispatch."
+    },
+    "coverage_percentage": {
+      "provenance": "runtime",
+      "why": "A test-run figure the SDLC coverage policy reads."
+    },
+    "maxCyclomaticComplexity": {
+      "provenance": "runtime",
+      "why": "An analysis figure a metrics run supplies to the SDLC coverage and engineering-manifesto policies."
+    },
+    "criticalCveCount": {
+      "provenance": "runtime",
+      "why": "A scanner figure a security scan supplies."
+    },
+    "highCveCount": {
+      "provenance": "runtime",
+      "why": "A scanner figure a security scan supplies."
+    },
+    "technicalDebtRatio": {
+      "provenance": "runtime",
+      "why": "A metrics-run figure."
+    },
+    "technicalDebtRemediationPlanExists": {
+      "provenance": "runtime",
+      "why": "Declared alongside the debt metrics of a metrics run."
+    },
+    "behaviorChangedWithoutDocUpdate": {
+      "provenance": "runtime",
+      "why": "A change-analysis figure a pipeline supplies."
+    },
+    "apiPathsWithoutObservability": {
+      "provenance": "runtime",
+      "why": "A metrics-run figure over the deployed API."
+    },
+    "breakingContractChange": {
+      "provenance": "runtime",
+      "why": "A contract-diff result a pipeline supplies."
+    },
+    "contractTestsPassed": {
+      "provenance": "runtime",
+      "why": "A contract-test result a pipeline supplies."
+    },
+    "classLineCount": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "classMethodCount": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "openClosedViolations": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "liskovViolations": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "interfaceSegregationViolations": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "domainImportsInfrastructure": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "duplicateCodeRatio": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "duplicateConfigCount": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "yagniViolations": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "circularDependencies": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "magicNumbersCount": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "prematureAbstractionSignals": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "shotgunSurgeryClassCount": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "shotgunSurgerySignals": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    },
+    "spaghettiCodeSignals": {
+      "provenance": "runtime",
+      "why": "An engineering-manifesto metric a metrics run supplies."
+    }
+  }
+}

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0109-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0109: Multi-Project Satellite Governance (Monorepo Satellites)",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "NODE-0045-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0045: Frontend State Management — Zustand + TanStack Query Dual Strategy",

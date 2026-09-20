@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0019-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0019: Tactical Design Patterns for Future-Proofing",

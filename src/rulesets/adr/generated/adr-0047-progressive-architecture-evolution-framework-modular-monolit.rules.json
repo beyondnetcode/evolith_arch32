@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0047-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0047: Progressive Architecture Evolution Framework: Modular Monolith → Microservices",

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0110-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0110: Stay on MassTransit v8 (Apache-2.0); v9 Is Commercial and Non-Sublicensable",

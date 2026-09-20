@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0033-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0033: Transactional Outbox Pattern for Async Messaging",

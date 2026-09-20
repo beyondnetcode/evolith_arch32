@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0035-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0035: Distributed Saga Pattern Implementation Strategy",

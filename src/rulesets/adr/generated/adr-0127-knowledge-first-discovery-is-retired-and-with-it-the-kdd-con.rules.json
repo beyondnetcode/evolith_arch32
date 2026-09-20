@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0127-01",
+      "facts": [],
       "severity": "SHOULD",
       "category": "adr-conformance",
       "title": "Honor design decision in ADR-0127: Knowledge-First Discovery Is Retired, and With It the KDD Concept",

@@ -66,6 +66,26 @@ export interface CorpusRuleOverride {
   readonly delta: AuthoredRuleOverride;
 }
 
+/**
+ * GT-716 AC2 — where the truth of a declared fact lives. Not how it reaches an
+ * engine: an `external` or `supplied` facet under `satellite.*` reaches the OPA
+ * engine through `facts.satellite` (GT-694) and never the native one.
+ *
+ * Ranked, most demanding first — `runtime` > `external` > `supplied` > `observed` —
+ * because a rule's native class is that of its most demanding fact.
+ */
+export type FactProvenance = 'observed' | 'supplied' | 'external' | 'runtime';
+
+/**
+ * One fact a rule declares it reads, resolved by the loader against the vocabulary
+ * in `src/rulesets/schema/facets.json`. `why` is the vocabulary's own sentence.
+ */
+export interface DeclaredFact {
+  readonly facet: string;
+  readonly provenance: FactProvenance;
+  readonly why?: string;
+}
+
 export interface NormalizedRule {
   id: string;
   severity: 'MUST' | 'SHOULD' | 'COULD' | 'MUST NOT';
@@ -74,6 +94,16 @@ export interface NormalizedRule {
   description: string;
   blocking: boolean;
   validationQuery?: string;
+  /**
+   * GT-716 AC2 — the facts this rule's check reads: the ONE declaration both engines
+   * derive from. The native triage class comes from the facets' provenance; the OPA
+   * bundle build fails when a policy reads a facet the rule did not declare.
+   *
+   * `[]` says the rule states no machine-checkable fact (documentation, or a check
+   * nobody authored yet). Absent means the pack predates the declaration — a tenant
+   * pack, a fixture — and the engine falls back to the pre-GT-716 defaults.
+   */
+  facts?: readonly DeclaredFact[];
   sourceFile: string;
   /** Optional enforcer routing (GT-514). Absent ⇒ evaluated by the native engine. */
   enforce?: EnforceDescriptor;

@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0088-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0088: Sovereign Identity for Agentic AI",

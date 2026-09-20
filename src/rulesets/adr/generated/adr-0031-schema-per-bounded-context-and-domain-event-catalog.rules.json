@@ -12,6 +12,7 @@
   "rules": [
     {
       "id": "CORE-0031-01",
+      "facts": [],
       "severity": "MUST",
       "category": "adr-conformance",
       "title": "Conform to ADR-0031: Schema-per-Bounded-Context and Domain Event Catalog",

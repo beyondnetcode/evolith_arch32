@@ -11,6 +11,10 @@
   "rules": [
     {
       "id": "GIT-01",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "branch-naming",
       "title": "Branch names follow pattern: type/ticket-id-description",
@@ -26,6 +30,10 @@
     },
     {
       "id": "GIT-02",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "branch-naming",
       "title": "Protected branches enforce direct push prohibition",
@@ -43,6 +51,10 @@
     },
     {
       "id": "GIT-03",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "code-review",
       "title": "PR requires minimum 1 approved review",
@@ -53,6 +65,10 @@
     },
     {
       "id": "GIT-04",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "release-tagging",
       "title": "Release tags follow semver format",
@@ -63,6 +79,10 @@
     },
     {
       "id": "GIT-05",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "merge-policy",
       "title": "Feature branches merge via squash or rebase",
@@ -73,6 +93,10 @@
     },
     {
       "id": "GIT-06",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "hotfix-flow",
       "title": "Hotfixes follow expedited merge path",
@@ -83,6 +107,10 @@
     },
     {
       "id": "GIT-07",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST NOT",
       "category": "branch-lifetime",
       "title": "Stale branches must be deleted after merge",
@@ -93,6 +121,10 @@
     },
     {
       "id": "GIT-08",
+      "facts": [
+        "repository",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "commit-messages",
       "title": "Commit messages follow Conventional Commits",
@@ -104,6 +136,10 @@
     },
     {
       "id": "GIT-09",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "promotion-policy",
       "title": "Environment promotion follows develop to qa to uat to main",
@@ -114,6 +150,10 @@
     },
     {
       "id": "GIT-10",
+      "facts": [
+        "forge",
+        "satellite.git"
+      ],
       "severity": "MUST",
       "category": "code-review",
       "title": "Higher environments require stronger approval",

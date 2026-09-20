@@ -10843,6 +10843,40 @@
         "EXPECTED OF THE PREVIOUS COMMAND: 0"
       ],
       "dependencyRationale": "No dependency. The REST controllers use Date.now() differences (the pattern the row itself blesses); the clock helper rounds up so only the CLI and MCP surfaces carry the ≥1 guarantee, which the executed check exercises on the CLI."
+    },
+    {
+      "id": "GT-685",
+      "closedAt": "2026-09-19",
+      "closureCommit": "fdcdf15f",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "reference/core/architecture/adrs/core/0112-rag-embedding-and-vector-store-platform.md",
+        ".harness/scripts/ci/rag-pgvector.schema.sql",
+        ".harness/scripts/ci/rag-pgvector.mjs",
+        ".harness/scripts/ci/rag-sync.mjs",
+        ".harness/scripts/ci/15-rag-index-backfill.mjs",
+        "product/infra/docker-compose.fullstack.yml",
+        "product/infra/rag-seed.Dockerfile",
+        "src/packages/agent-runtime/src/adapters/knowledge/pgvector-knowledge.adapter.ts",
+        "src/packages/agent-runtime/package.json",
+        "product/infra/README.md"
+      ],
+      "validationCommands": [
+        "MEASURED BEFORE DECIDING: the EN corpus is 527 files / 5 698 chunks / 1.35 M tokens (dry-run receipt of 15-rag-index-backfill.mjs); the text-embeddings-inference CPU images are amd64-only (cpu-1.5 dies with 'relative URL without a base', cpu-1.8 needs --auto-truncate and was OOM-killed at warm-up under emulation after 8 min); Ollama arm64 (qwen3-embedding:0.6b, 1024 dims) embedded 10 chunks in 413 s. A dense seed inside the deployment is tens of CPU-hours; ADR-0112 section 4 forbids a hosted embeddings API. So the store may hold the corpus without vectors: ADR-0112 section 6.",
+        "OBSERVED ON THE BUILT IMAGES (docker compose -f product/infra/docker-compose.fullstack.yml up rag-postgres rag-seed mcp): rag-seed indexed '527 file(s) · 5701 chunk(s) upserted · provider [pgvector] durable=true mode=lexical' in 46 s and exited 0; SELECT count(*), count(embedding), count(content_tsv), min(corpus_version) -> 5680 | 0 | 5680 | unknown+lexical. tools/call evolith-knowledge-search {query:'ADR-0112 pgvector embedding dimension', maxResults:3} over HTTP (initialize + mcp-session-id + Bearer) -> success true, retrievalMode lexical-only, returned 3, totalChunks 5680, first chunk sourceFile reference/core/architecture/adrs/core/0112-rag-embedding-and-vector-store-platform.md retrievedBy [bm25], meta.durationMs 1429.",
+        "FALSIFIED WITH THE STORE STOPPED: docker compose stop rag-postgres; same session, same call -> isError true, success false, error INTERNAL_ERROR 'getaddrinfo ENOTFOUND rag-postgres'. A surfaced connection error, not a zero-result success.",
+        "FOUND BY THE E2E, NOT BY ANY SPEC: the first call against the seeded store answered \"Cannot find package 'pg' imported from /repo/src/packages/agent-runtime/dist/adapters/knowledge/pg-lexical-index.adapter.js\" — pg was only a root devDependency and `npm prune --omit=dev` (GT-692) stripped it from the runtime image, so the tool could never have answered even with a store. Now a pinned dependency of @beyondnet/evolith-agent-runtime; the image rebuilt and the call above succeeded.",
+        "node --test .harness/scripts/ci/rag-pgvector.test.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 14 pass — lexical mode tags the corpus 'lexical', has no embedder, stores embedding = NULL and refuses a vector; dense mode refuses NULL; the DDL is nullable and lifts the old NOT NULL",
+        "node --test .harness/scripts/ci/rag-sync.test.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 10 pass — a lexical-only adapter is synced with zero embed calls, NULL vectors and corpus_version '<rev>+lexical'",
+        "npx jest --config src/packages/agent-runtime/jest.config.js src/packages/agent-runtime/src/adapters/knowledge",
+        "EXPECTED OF THE PREVIOUS COMMAND: the dense adapter's SQL carries 'embedding IS NOT NULL'",
+        "node .harness/scripts/ci/rag-eval.mjs",
+        "node .harness/scripts/ci/56-validate-docker-workspace-closure.mjs",
+        "grep -rn \"mcp start\" docs/guides"
+      ],
+      "dependencyRationale": "No dependency. Dense reranking is an upgrade performed by a re-index with a configured sidecar (docker-compose.yml --profile rag), not a precondition; the amd64-only sidecar and its CPU cost are recorded on the row and in ADR-0112 section 6."
     }
   ]
 }

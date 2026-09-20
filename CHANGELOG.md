@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-20
+
+**Which packages this version covers.** All eight, because all eight changed
+since the version each one has on the registry, and the security wave of
+2026-09-19 (#725: CWE-78/22/1321, ReDoS, workflow token permissions) touched
+`agent-runtime` and `infra-providers`, which were still serving pre-wave builds.
+Published in dependency order by `npm-release.yml` with provenance:
+
+| Package | Version | Why |
+| :--- | :--- | :--- |
+| `@beyondnet/evolith-core-domain` | 1.3.2 → **1.4.0** | envelope clock (`startEnvelopeClock`/`measuredMeta`/`elapsedMsSince`, GT-686), per-rule tenant overrides and `enabled` (GT-678), upgrade fingerprints and three-way classification (GT-673), the profile-store reader both surfaces share (GT-682) |
+| `@beyondnet/evolith-contracts` | 1.2.0 → **1.3.0** | `timing` on the deposit contract, handed over never synthesized (GT-686); capability manifest re-pinned for 55 operations |
+| `@beyondnet/evolith-infra-providers` | 1.2.1 → **1.3.0** | loader: a tenant pack's delta attached to ONE rule, Core-vs-Core duplicate ids refused, unknown rule keys rejected by name (GT-678); security fixes from #725 |
+| `@beyondnet/evolith-core` | 1.2.0 → **1.3.0** | the composable surface evaluates or refuses (GT-701) |
+| `@beyondnet/evolith-agent-runtime` | 1.2.0 → **1.3.0** | LLM provider registry and per-call usage (ADR-0128), verifiable approval grants (GT-679), knowledge adapters with `pg` declared as the runtime dependency it always was (GT-685), the dense reader ignoring lexical-only rows; security fixes from #725 |
+| `@beyondnet/evolith-sdk` | 2.0.0 → **2.0.1** | `EVOLITH_API_TIMEOUT_MS` honoured for the REST client timeout |
+| `@beyondnet/evolith-mcp` | 1.3.3 → **1.4.0** | `evolith-history`, `evolith-profile`, `evolith-standards` (GT-682 slices, 55 tools), every inner envelope measured (GT-686), rule overrides on `evolith-validate`/`evolith-evaluate` (GT-678), `evolith-upgrade-*` classification (GT-673) |
+| `@beyondnet/evolith-cli` | 1.3.2 → **1.4.0** | everything above on the reference surface; exact pins moved to the versions that carry it |
+
+The sections below were written under `[Unreleased]` and ship with this
+version.
+
+
 ### Release process — the CLI releases on `cli-vX.Y.Z`, not on the monorepo tag (#707)
 
 `sdk-cli-release.yml` no longer runs on `v*` tags. A `vX.Y.Z` tag names the

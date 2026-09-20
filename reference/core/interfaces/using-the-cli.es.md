@@ -144,7 +144,7 @@ evolith-cli validate --satellite . --core ../evolith-core
 | `-p, --phase <fase>` | Valida contra una fase concreta: `discovery`, `design`, `construction`, `qa`, `release`. |
 | `-t, --topology <id>` | Valida contra una topología: `modular-monolith`, `distributed-modules`, `microservices`. |
 | `-a, --arch` | Valida la arquitectura sobre todo el eje de madurez. |
-| `-e, --engine <motor>` | Motor de reglas: `native` (default) u `opa`. |
+| `-e, --engine <motor>` | Motor de reglas: `native` (default) u `opa`. `opa` decide una regla solo cuando la ejecución lleva los hechos que lee su política; el resto vuelven `skipped` (`supplied-facet-absent`, GT-716) — ver [`src/rulesets/opa/README.es.md`](../../../src/rulesets/opa/README.es.md). |
 | `--composable` | Usa el motor "composable" (resuelve varios modos automáticamente — ver 3.2). |
 | `--file <ruta>` | Valida un único archivo (modo ad-hoc). |
 

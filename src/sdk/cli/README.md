@@ -346,7 +346,7 @@ The `rulesets` enum in `reference/config/evolith.config.schema.json` additionall
 
 **Validation engines:**
 - `native` — built-in TypeScript engine (default, no external dependencies)
-- `opa` — Open Policy Agent WebAssembly modules
+- `opa` — the compiled Rego bundle (Open Policy Agent, WebAssembly). Most of its policies read facts a caller supplies through the evaluation context (`facts.satellite`, GT-694): a rule whose fact the run does not carry is reported `skipped` with the class `supplied-facet-absent` and the facet it lacks, never decided on absent input (GT-716). On a bare run it therefore decides only the rules whose facts the input builder observes in the tree; the two engines are held to agreement on the verdicts they both reach, not to equal reach.
 
 **Composable engine (GT-312):**  
 When `--composable` is set, the CLI auto-resolves which validation modes to activate based on the provided context:

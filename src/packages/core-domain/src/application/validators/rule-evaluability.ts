@@ -59,7 +59,20 @@ export type RuleEvaluability =
    * 241, and answered `passed` on two security packs where native failed with two
    * blocking issues each.
    */
-  | 'no-policy-in-bundle';
+  | 'no-policy-in-bundle'
+  /**
+   * GT-716 AC1 — the policy that decides this rule reads a fact this run did not
+   * supply, so the bundle was NOT asked for a verdict.
+   *
+   * A Rego body whose fact is absent is undefined: `not input.adapter.schemaValidated`
+   * fires and `input.satellite.git.branchNameInvalid` never matches, and both used to
+   * come back as verdicts. On a fresh satellite 73 of the 76 rules only the OPA engine
+   * decided were exactly that. Like `no-policy-in-bundle` this is a statement the OPA
+   * path makes at evaluation time; the native triage never produces it. It stays in
+   * the denominator: supplying the fact through `facts.satellite` (GT-694) makes the
+   * rule run.
+   */
+  | 'supplied-facet-absent';
 
 /**
  * Classes that must LEAVE the coverage denominator: no engine, adapter or budget
@@ -267,6 +280,8 @@ function emptyByClass(): Record<RuleEvaluability, number> {
     // produces it, so it stays 0 on every native run and the six existing
     // figures are unchanged.
     'no-policy-in-bundle': 0,
+    // GT-716: the same — reported by the OPA path only.
+    'supplied-facet-absent': 0,
   };
 }
 

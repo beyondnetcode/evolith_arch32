@@ -147,3 +147,75 @@ describe('a supplied fact reaches the policy · GT-694 AC1', () => {
     expect(result.result).toBe('passed');
   }, 60000);
 });
+
+/**
+ * GT-716 AC1 — the same defect one level down, against the real bundle.
+ *
+ * GT-694 fixed the GATE rule: a category whose schema requires a facet now reaches its
+ * policy once the caller supplies it. The CORPUS rule never went through that schema —
+ * `MTN-01` is category `filtering-layer`, which has no input schema — so on a bare run
+ * the policy was reached with `input.satellite.multiTenancy` absent, `not …applicationFiltering`
+ * fired, and the rule came back `failed` about a repository nobody had looked at. It is
+ * now `skipped` and says which facet is missing; supplying the facet is what turns it
+ * into a verdict — in either direction, which is what proves it is an evaluation.
+ */
+function corpusRule(file: string, id: string): NormalizedRule {
+  const pack = JSON.parse(readFileSync(path.join(CORE, 'src', 'rulesets', file), 'utf8')) as { rules?: NormalizedRule[] };
+  const found = (pack.rules ?? []).find((r) => r.id === id);
+  if (!found) throw new Error(`${id} is not in ${file}`);
+  return { ...found, sourceFile: file } as NormalizedRule;
+}
+
+const evaluateRules = (rules: NormalizedRule[], satellite: string, facts?: Record<string, unknown>) =>
+  new OpaEvaluator(realFs, silentLogger).evaluateAll(rules, {
+    satellitePath: satellite,
+    corePath: CORE,
+    ...(facts ? { facts } : {}),
+  } as any);
+
+describe('an absent supplied facet is skipped, a supplied one is decided · GT-716 AC1', () => {
+  const mtn01 = () => corpusRule('adr/adr-0010-multi-tenancy.rules.json', 'MTN-01');
+  // `inheritance.rules.json` carries its rules as `principles` (no severity, no category of
+  // its own); this is the shape the loader normalises INH-06 to, as `validate` reports it.
+  const inh06 = (): NormalizedRule => ({
+    id: 'INH-06',
+    severity: 'MUST',
+    category: 'inheritance',
+    title: 'Mandatory Architecture Tracker',
+    description: 'Satellite repositories MUST contain a DECISIONS.md file in their root directory.',
+    blocking: false,
+    sourceFile: 'governance/inheritance.rules.json',
+  } as NormalizedRule);
+
+  it('MTN-01 on a bare satellite is SKIPPED and names the facet nobody supplied', async () => {
+    const [result] = await evaluateRules([mtn01()], bareSatellite());
+
+    expect(result.result).toBe('skipped');
+    expect(result.evaluability).toBe('supplied-facet-absent');
+    expect(result.message).toMatch(/`input\.satellite\.multiTenancy`/);
+  }, 60000);
+
+  it('the same MTN-01 with the facet supplied is a real verdict: failed on applicationFiltering:false', async () => {
+    const [result] = await evaluateRules([mtn01()], bareSatellite(), {
+      satellite: { multiTenancy: { applicationFiltering: false } },
+    });
+
+    expect(result.result).toBe('failed');
+    expect(result.message).toMatch(/tenant_id filter/);
+  }, 60000);
+
+  it('…and passed on applicationFiltering:true — the run evaluates, it does not answer a fixed thing', async () => {
+    const [result] = await evaluateRules([mtn01()], bareSatellite(), {
+      satellite: { multiTenancy: { applicationFiltering: true } },
+    });
+
+    expect(result.result).toBe('passed');
+  }, 60000);
+
+  it('INH-06 reads an OBSERVED facet (satellite.files) and is decided on the same bare satellite', async () => {
+    const [result] = await evaluateRules([inh06()], bareSatellite());
+
+    expect(result.result).toBe('failed');
+    expect(result.message).toMatch(/DECISIONS\.md/);
+  }, 60000);
+});

@@ -195,10 +195,11 @@ export const SNAPSHOT_SHAPE_VERSION = '1.1.0';
 /**
  * One reading order for the six NATIVE classes, shared by `counts` and `validation`.
  *
- * GT-675's `no-policy-in-bundle` is deliberately absent: this triage classifies the
- * corpus against the native handler table, and that class is a statement the OPA
- * bundle makes about itself at evaluation time. Adding it here would invent a
- * seventh native category that no rule in the table can ever have.
+ * GT-675's `no-policy-in-bundle` and GT-716's `supplied-facet-absent` are deliberately
+ * absent: this triage classifies the corpus against the native handler table, and both
+ * classes are statements the OPA path makes at evaluation time — about the bundle's
+ * scope and about the input it was given. Adding them here would invent native
+ * categories that no rule in the table can ever have.
  */
 export const CLASS_ORDER: readonly RuleEvaluability[] = [
   'native-handler',

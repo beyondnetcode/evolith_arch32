@@ -157,7 +157,9 @@ function pinnedByCore() {
   // a capture of the native triage. Comparing them would fail forever on a key that
   // is 0 on one side and absent on the other, and the fix would be to weaken one of
   // the two honest artifacts.
-  const OPA_ONLY_CLASSES = new Set(['no-policy-in-bundle']);
+  // GT-716 added `supplied-facet-absent` on the same terms: the OPA path's statement
+  // about the input it was given, pinned at 0 in the native triage.
+  const OPA_ONLY_CLASSES = new Set(['no-policy-in-bundle', 'supplied-facet-absent']);
 
   const counts = {};
   for (const line of literal[1].split('\n')) {

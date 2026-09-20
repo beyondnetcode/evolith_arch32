@@ -243,6 +243,7 @@ function classificationChanged(previous, triage) {
   //
   //   previous.counts (rendered, on disk)  6 keys
   //   triage.counts   (raw)                7 keys, incl. "no-policy-in-bundle": 0
+  //                                        (8 since GT-716's "supplied-facet-absent": 0)
   //
   // `sameMap` requires equal key counts, so `changed` was ALWAYS true, the date was
   // rewritten on every run, and `--check` went red on every day except the one the

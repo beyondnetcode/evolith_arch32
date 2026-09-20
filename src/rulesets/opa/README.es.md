@@ -14,7 +14,7 @@ En resumen: Markdown explica, los `*.rules.json` Native definen, y OPA + el eval
 
 - Script: [`.harness/scripts/compile-opa-wasm.mjs`](../../../.harness/scripts/compile-opa-wasm.mjs), invocado vía `npm run build:policy`.
 - Descarga OPA `v1.19.0` y luego ejecuta `opa build -t wasm` sobre `rulesets/opa/` con `--ignore=schemas`.
-- **Entrypoints Wasm:** `evolith/main/violations` y `evolith/abac/violations`.
+- **Entrypoints Wasm:** `evolith/main/violations` y `evolith/abac/violations`, más dos documentos de manifiesto que el build genera desde el AST de las políticas: `evolith/manifest/declared_rule_ids` (GT-675 — los ids de regla que una política alcanzable puede decidir) y `evolith/manifest/rule_input_paths` (GT-716 — por id de regla, las rutas `input.…` que lee su política, para que `OpaEvaluator` reporte una regla cuyo hecho la ejecución no suministró como `skipped` / `supplied-facet-absent` en vez de como veredicto).
 - El `policy.wasm` extraído se instala en `sdk/cli/rulesets/opa/policy.wasm` para el evaluador del Evolith CLI.
 - `evolith.main` ([main.rego](./main.rego)) agrega los conjuntos `violations` de las políticas individuales. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) se **publica de forma dual**: se importa y se une en `evolith/main/violations` (`main.rego` línea 10 importa `data.evolith.abac.violations` y la línea 62 lo une), *y además* se expone como el entrypoint dedicado `evolith/abac/violations` para decisiones de acceso a herramientas MCP en runtime.
 

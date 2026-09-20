@@ -14,8 +14,8 @@ Desacopla el servidor MCP del CLI. Es un producto de primera clase que expone la
 2. [Transportes](#transportes)
 3. [Instalación y configuración](#instalación-y-configuración)
 4. [Autenticación](#autenticación)
-5. [Herramientas disponibles (47)](#herramientas-disponibles-27)
-6. [Resources disponibles (9 + dinámicos)](#resources-disponibles-9--dinámicos)
+5. [Herramientas disponibles (55)](#herramientas-disponibles-55)
+6. [Resources disponibles (12 + dinámicos)](#resources-disponibles-12--dinámicos)
 7. [Prompts disponibles (8)](#prompts-disponibles-8)
 8. [Operaciones mutativas](#operaciones-mutativas)
 9. [Arquitectura interna](#arquitectura-interna)
@@ -204,9 +204,11 @@ El `AbacEvaluator` controla qué tools puede invocar cada usuario según sus rol
 
 ---
 
-## Herramientas disponibles (47)
+## Herramientas disponibles (55)
 
 Las tools se obtienen en runtime via `tools/list`. Todas retornan datos crudos que el Gateway envuelve en `SuccessEnvelope` o `ErrorEnvelope`.
+
+> El conteo se deriva de las fuentes de registro por el [Inventario de Superficie de Producto](../../../product/products/smart-cli/product-inventory.es.md) generado (`tools/*.ts`, `resources.service.ts`, `prompts.service.ts`); las tablas de abajo nombran cada tool, agrupadas por área. Cuando discrepen, mandan `tools/list` y el inventario.
 
 ### Validación
 
@@ -234,12 +236,33 @@ Los modos se activan combinando campos. Se pueden usar varios en una sola llamad
 
 ---
 
+### Evaluación (ADR-0101)
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-evaluate` | Evalúa un `EvaluationContext` canónico (gates, artefactos, reglas, compliance) y devuelve un `EvaluationResult` en el envelope ADR-0073. Stateless: producto, tenant e iniciativa son contexto opaco | No |
+| `evolith-ruleset-list` | Lista los packs de rulesets que este Core puede evaluar — las refs canónicas que acepta el `select` de `evolith-validate`, con el número de reglas por pack | No |
+
+---
+
 ### Arquitectura
 
 | Tool | Descripción | Mutativa |
 |---|---|---|
 | `evolith-architecture-validate` | Valida un proyecto satelital contra las reglas de arquitectura | No |
 | `evolith-drift-detect` | Detecta drift entre la arquitectura declarada y la real | No |
+| `evolith-topology-recommend` | Recomienda una composición de topología a partir de señales técnicas (advisory, ADR-0104): el Core recomienda, el tenant confirma | No |
+| `evolith-phase-artifacts-evaluate` | Mide la completitud de artefactos de fases posteriores para una composición de topología confirmada (advisory, ADR-0104) | No |
+
+---
+
+### Patrones
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-pattern-list` | Lista los patrones y anti-patrones canónicos (`PAT-NNNN`), con filtro opcional por categoría, tipo o topología aplicable | No |
+| `evolith-pattern-get` | Obtiene un patrón por id: problema, fuerzas, solución, aplicabilidad por topología, ADRs que lo gobiernan | No |
+| `evolith-pattern-list-by-topology` | Lista los patrones que aplican a una topología, con qué fuerza (required → recommended → optional) y qué reglas impone cada uno | No |
 
 ---
 
@@ -289,6 +312,7 @@ Los modos se activan combinando campos. Se pueden usar varios en una sola llamad
 | `evolith-sdlc-status` | Obtiene el estado actual de la fase SDLC del repositorio | No |
 | `evolith-sdlc-handoff` | Ejecuta el handoff de fase generando el manifiesto de evidencia | **Sí** |
 | `evolith-dora-metrics` | Aproxima métricas DORA desde el historial de Git: deployment frequency, lead time (aprox.), total y merge commits en la ventana (`days`, default 90) | No |
+| `evolith-sdlc-generate` | Genera un scaffold de Arquitectura Hexagonal a partir de un `classDiagram` Mermaid en un modelo DDD en Markdown (paridad con `sdlc generate`) | **Sí** |
 
 ---
 
@@ -296,15 +320,27 @@ Los modos se activan combinando campos. Se pueden usar varios en una sola llamad
 
 | Tool | Descripción | Mutativa |
 |---|---|---|
-| `evolith-moscow-create` | Crea una matriz MoSCoW para una fase del proyecto | No² |
+| `evolith-moscow-create` | Crea una matriz MoSCoW para una fase del proyecto | **Sí** |
 | `evolith-moscow-load` | Carga una matriz MoSCoW existente | No |
-| `evolith-moscow-update` | Actualiza ítems en la matriz MoSCoW | No² |
-| `evolith-moscow-remove` | Elimina ítems de la matriz | No² |
+| `evolith-moscow-update` | Actualiza ítems en la matriz MoSCoW | **Sí** |
+| `evolith-moscow-remove` | Elimina ítems de la matriz | **Sí** |
 | `evolith-moscow-list` | Lista las matrices MoSCoW del proyecto | No |
 | `evolith-moscow-validate` | Valida que la matriz está bien formada | No |
 | `evolith-moscow-report` | Genera un reporte de priorización MoSCoW | No |
 
-> ² Las tools MoSCoW escriben en `.evolith/moscow/{phase}.json` pero **no** declaran `mutative: true` en el código (`moscow.tools.ts`), por lo que el dispatcher **no** exige `apply`/`approvalToken`. Trátalas como operaciones de escritura no protegidas por el guard mutativo.
+> ² Las tres tools MoSCoW que escriben en `.evolith/moscow/{phase}.json` (`create`, `update`, `remove`) declaran `mutative: true` en `moscow.tools.ts` desde 2026-07-11, por lo que el dispatcher les exige `apply`/`approvalToken`; `load`, `list`, `validate` y `report` son lecturas.
+
+---
+
+### ADRs
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-adr-list` | Lista todos los Architecture Decision Records (id, título, estado, fecha) | No |
+| `evolith-adr-get` | Obtiene el detalle completo de un ADR por id (`ADR-0001`) o número | No |
+| `evolith-adr-matrix` | Obtiene el resumen de la matriz de ADRs (totales por estado, ADRs recientes) | No |
+| `evolith-adr-create` | Crea un ADR: escribe `reference/architecture/adrs/<id>.md` y actualiza la matriz | **Sí** |
+| `evolith-adr-update` | Actualiza el estado de un ADR (Proposed, Accepted, Deprecated, Superseded, Amended) | **Sí** |
 
 ---
 
@@ -317,6 +353,46 @@ Los modos se activan combinando campos. Se pueden usar varios en una sola llamad
 | `evolith-agent-validate` | Valida la configuración de un agente | No |
 | `evolith-agent-upgrade` | Actualiza un agente a la última versión del template | **Sí** |
 | `evolith-agent-remove` | Elimina un agente del repositorio | **Sí** |
+| `evolith-agent-run` | Ejecuta un intent a través del pipeline del Agent Runtime | **Sí** |
+
+---
+
+### Satélites
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-satellite-list` | Lista los satélites registrados en el `satellite-registry.json` local | No |
+| `evolith-satellite-status` | Obtiene el estado y el detalle de un satélite registrado por id | No |
+| `evolith-satellite-create` | Crea un repositorio satélite en GitHub y lo registra (envelope ADR-0073) | **Sí** |
+| `evolith-satellite-adopt` | Adopta un repositorio GitHub existente como satélite (envelope ADR-0073) | **Sí** |
+
+---
+
+### Scaffolding e inicialización
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-init-batch` | Inicialización no interactiva (batch/CI) de un satélite; paridad con `init --config <json>` / `init --yes`, sin prompts | **Sí** |
+| `evolith-scaffold` | Genera un satélite a lo largo del eje progresivo de madurez (fase 1 modular-monolith → 2 distributed-modules → 3 microservices) | **Sí** |
+| `evolith-docs-scaffold` | Genera la documentación base que Evolith exige (`README.md`, `AGENTS.md`, `MASTER_INDEX.md`, `evolith.yaml`); espejo del comando `docs` | **Sí** |
+| `evolith-fixtures` | Siembra fixtures reproducibles y datos de ejemplo (`evolith.yaml`, ADRs, rulesets) para demos y tests | **Sí** |
+
+---
+
+### Upgrades
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-upgrade-plan` | Planifica una actualización del satélite contra el Core upstream (dry-run): plan de cambios, breaking changes, riesgo estimado, sin escribir nada | No |
+| `evolith-upgrade-apply` | Aplica una actualización del satélite desde el Core upstream; se escriben solo los cambios upstream, nunca los locales | **Sí** |
+
+---
+
+### Conocimiento
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-knowledge-search` | Busca en el corpus de conocimiento de arquitectura (ADRs, rulesets, estándares) con recuperación híbrida BM25-first; chunks rankeados con citas | No |
 
 ---
 
@@ -355,7 +431,7 @@ Tres comandos de la CLI que no tenían contraparte MCP, portados como tools de s
 
 ---
 
-## Resources disponibles (9 + dinámicos)
+## Resources disponibles (12 + dinámicos)
 
 Los resources se obtienen via `resources/list` y se leen via `resources/read`.
 
@@ -372,6 +448,9 @@ Los resources se obtienen via `resources/list` y se leen via `resources/read`.
 | `evolith://repository/config` | Repository Config | Contenido del `evolith.yaml` del repositorio actual |
 | `evolith://moscow/phase-0` | MoSCoW Phase 0 | Matriz MoSCoW para la fase de discovery |
 | `evolith://architecture/topologies` | Architecture Topologies | Lista de todas las topologías disponibles |
+| `evolith://architecture/patterns` | Architecture Patterns | Patrones y anti-patrones canónicos (`PAT-NNNN`) con su aplicabilidad y las reglas que los hacen cumplir |
+| `evolith://capabilities` | Capability Manifest | Manifiesto de capacidades versionado del motor de evaluación (`evaluationKinds`, engines, surfaces, `supportedConsumers`) |
+| `evolith://contracts` | Machine Contracts | Conjunto de schemas/contratos legibles por máquina que el Core publica para consumidores externos |
 
 ### URIs dinámicos (accesibles via `resources/read`)
 
@@ -428,11 +507,18 @@ Las tools marcadas como mutativas (`mutative: true`) requieren **aprobación exp
 | `evolith-agent-install` | Escribe archivos del agente en el repositorio |
 | `evolith-agent-upgrade` | Sobrescribe la configuración del agente |
 | `evolith-agent-remove` | Elimina el directorio del agente |
+| `evolith-agent-run` | Ejecuta un intent por el Agent Runtime (las skills pueden escribir) |
 | `evolith-config-set` | Modifica `evolith.yaml` |
 | `evolith-sdlc-handoff` | Genera el manifiesto de handoff y escribe estado |
+| `evolith-sdlc-generate` | Escribe un scaffold hexagonal a partir de un modelo DDD |
 | `evolith-auto-fix` | Aplica correcciones automáticas al código |
+| `evolith-adr-create` / `evolith-adr-update` | Escriben un fichero de ADR y la matriz de ADRs |
+| `evolith-moscow-create` / `evolith-moscow-update` / `evolith-moscow-remove` | Escriben `.evolith/moscow/{phase}.json` |
+| `evolith-satellite-create` / `evolith-satellite-adopt` | Crean o enlazan un repositorio GitHub y escriben el registro local de satélites |
+| `evolith-init-batch` / `evolith-scaffold` / `evolith-docs-scaffold` / `evolith-fixtures` | Escriben los ficheros de un satélite, su documentación base o fixtures |
+| `evolith-upgrade-apply` | Escribe los cambios upstream en el satélite |
 
-> Exactamente **6** tools declaran `mutative: true` en el código (`config-set`, `sdlc-handoff`, `agent-install`, `agent-upgrade`, `agent-remove`, `auto-fix`). Las tools MoSCoW escriben en disco pero **no** están marcadas como mutativas, por lo que el guard `apply`/`approvalToken` **no** aplica a ellas.
+> Exactamente **20** tools declaran `mutative: true` en el código (2026-09-20; las otras 35 son lecturas). El conjunto es el que el dispatcher protege por construcción — una tool está guardada porque es mutativa, no porque esté listada aquí. `evolith-upgrade-plan` y `evolith-phase-advance` son lecturas a propósito: calculan y proponen, no escriben.
 
 ---
 
@@ -464,7 +550,7 @@ El Gateway es una aplicación **NestJS** (módulos + inyección de dependencias)
 │   │   ├── prompts.service.ts          ← serve prompts/list y prompts/get
 │   │   └── resources.service.ts        ← serve resources/list y resources/read
 │   ├── tools/
-│   │   ├── tools.module.ts             ← registra todas las 47 tools
+│   │   ├── tools.module.ts             ← registra todas las tools
 │   │   ├── validate.tool.ts            ← evolith-validate
 │   │   ├── composable-validate.tool.ts ← evolith-composable-validate (GT-312)
 │   │   ├── architecture.tools.ts       ← evolith-architecture-validate, drift-detect
@@ -612,7 +698,7 @@ curl -X POST http://localhost:49100/mcp \
 | Auth | Sin auth | ABAC + API keys en HTTP |
 | Caché | Sin caché | Redis opcional |
 | Observabilidad | Logs básicos | Pino + OTEL + audit logger |
-| Tools | Subconjunto | 47 tools completas |
+| Tools | Subconjunto | 55 tools completas |
 
 ---
 

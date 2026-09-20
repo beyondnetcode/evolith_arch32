@@ -16,11 +16,11 @@ The exact, installable surface is generated from the CLI sources and must not be
 
 | Capability | Count | Examples |
 |---|:---:|---|
-| **Tools** | 27 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
-| **Resources** | 9 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://core/version` |
+| **Tools** | 55 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
+| **Resources** | 12 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://capabilities`, `evolith://contracts` |
 | **Prompts** | 8 | `evolith/validate-repository`, `evolith/architecture-review`, `evolith/sdlc-handoff`, `evolith/moscow-prioritization` |
 
-> Counts are verified against the generated [Product Surface Inventory](../smart-cli/product-inventory.md) and the MCP server sources (`tools/*.tool.ts`, `resources.service.ts`, `prompts.service.ts`); do not edit them by hand without re-deriving from those sources.
+> Counts are verified against the generated [Product Surface Inventory](../smart-cli/product-inventory.md) and the MCP server sources (`tools/*.ts`, `resources.service.ts`, `prompts.service.ts`); do not edit them by hand without re-deriving from those sources. Last re-derived 2026-09-20 (the previous 27 / 9 was the surface of 2026-07-17).
 
 ### GT-312: Composable Validation Engine
 

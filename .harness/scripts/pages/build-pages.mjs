@@ -53,6 +53,9 @@ function fail(message, details = []) {
 
 const readJson = (root, rel) => JSON.parse(fs.readFileSync(path.join(root, rel), 'utf8'));
 
+/** JSON as a JavaScript literal inside a <script>: nothing may close the tag or break the parse. */
+const jsLiteral = (json) => json.replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+
 /** The newest date any printed number carries: the build is reproducible for a given tree. */
 function latestDate(metrics) {
   const dates = [metrics.corpus.inventoryDate, metrics.governance.gaps.asOf, metrics.governance.scorecard.observedOn];
@@ -130,9 +133,9 @@ function writeSite(root, outDir, built) {
   }
   const json = JSON.stringify(map);
   const index = fs.readFileSync(path.join(root, DEMOS, 'index.html'), 'utf8');
-  const slot = /<script type="application\/json" id="atlas-data">[\s\S]*?<\/script>/;
-  if (!slot.test(index)) fail('index.html has no <script type="application/json" id="atlas-data"> slot');
-  fs.writeFileSync(path.join(outDir, 'index.html'), index.replace(slot, `<script type="application/json" id="atlas-data">${json.replace(/<\//g, '<\\/')}</script>`));
+  const slot = /<script id="atlas-data">[\s\S]*?<\/script>/;
+  if (!slot.test(index)) fail('index.html has no <script id="atlas-data"> slot');
+  fs.writeFileSync(path.join(outDir, 'index.html'), index.replace(slot, `<script id="atlas-data">window.__ATLAS_DATA__=${jsLiteral(json)};</script>`));
   fs.writeFileSync(path.join(outDir, 'architecture-map.json'), `${JSON.stringify(map, null, 2)}\n`);
   fs.writeFileSync(path.join(outDir, 'metrics.json'), `${JSON.stringify(map.meta.metrics, null, 2)}\n`);
   fs.writeFileSync(path.join(outDir, 'tokens.css'), tokensCss);

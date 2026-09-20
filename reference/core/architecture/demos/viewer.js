@@ -17,7 +17,8 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const isField = (el) => Boolean(el && el.closest && el.closest('input, select, textarea, [contenteditable="true"]'));
 
 function readData() {
-  try { return JSON.parse($('#poster-data').textContent); } catch (err) { console.error('[viewer] poster-data unreadable', err); return null; }
+  // Inlined by the build as a JS value, never parsed out of the document as text.
+  return globalThis.__POSTER_DATA__ || null;
 }
 
 const data = readData() || { chapters: [], ui: {}, meta: {} };

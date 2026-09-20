@@ -6,7 +6,7 @@
  * guided-tour drawer, the caption strip and a generated "read the poster as text"
  * transcript. Behaviour lives in `reference/core/architecture/demos/viewer.js`, styling
  * in `viewer.css`; this template only lays the DOM out and embeds the data the page
- * needs (`chapters[]`, `i18n.ui`, meta) as `<script type="application/json" id="poster-data">`.
+ * needs (`chapters[]`, `i18n.ui`, meta) as a JS value in `<script id="poster-data">` (never DOM text).
  *
  *   renderViewer(svg, map) → string
  *
@@ -122,7 +122,7 @@ export function renderViewer(svg, map) {
 </main>
 <footer class="status-strip poster-strip"><span class="caption" id="caption"></span><a href="${esc(meta.repoUrl || 'https://github.com/beyondnetcode/evolith_arch32')}" rel="noopener" data-i18n="openRepo">${esc(t('openRepo'))}</a></footer>
 ${transcriptHtml(svg, t)}
-<script type="application/json" id="poster-data">${JSON.stringify(posterData).replace(/<\//g, '<\\/')}</script>
+<script id="poster-data">window.__POSTER_DATA__=${JSON.stringify(posterData).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')};</script>
 <script type="module" src="./viewer.js"></script>
 </body>
 </html>

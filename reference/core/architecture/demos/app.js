@@ -10,7 +10,7 @@
  */
 
 import {
-  readPrefs, setPref, applyTheme, reducedMotion, createI18n, daysSince, pageUrl, renderHeader,
+  readPrefs, setPref, applyTheme, reducedMotion, createI18n, daysSince, renderHeader,
   toast, trapFocus, LEVELS, REPO_URL, PREF_KEY,
 } from './shared.js';
 import { computeLayout, nodesBounds, laneBounds, unionBounds, mapBounds, nearestNode, chevronPath, truncate } from './layout.js';
@@ -28,7 +28,6 @@ const svg = (tag, attrs = {}, text) => {
 };
 /** SVG elements have no `hidden` IDL property: toggle the real attribute (spec §7). */
 const setHidden = (el, on) => { if (on) el.setAttribute('hidden', ''); else el.removeAttribute('hidden'); };
-const isHidden = (el) => el.hasAttribute('hidden');
 const EDGE_KINDS = ['call', 'verdict', 'read', 'drive', 'gate', 'inherit', 'propose', 'evidence', 'ship', 'orthogonal'];
 const PHONE = 759;
 
@@ -48,8 +47,9 @@ const app = {
 
 // ---------------------------------------------------------------- data
 async function loadMap() {
-  const raw = $('atlas-data')?.textContent?.trim();
-  if (raw) return JSON.parse(raw);
+  // The build inlines the published map as a JS value (`window.__ATLAS_DATA__`), not as
+  // DOM text: nothing on this page is ever parsed out of the document and re-rendered.
+  if (globalThis.__ATLAS_DATA__) return globalThis.__ATLAS_DATA__;
   const res = await fetch('./architecture-map.json', { cache: 'no-cache' });
   if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { status: res.status });
   return res.json();

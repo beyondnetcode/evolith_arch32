@@ -4,19 +4,19 @@
 
 **Classification:** Product-Specific Design  
 **Product:** Evolith Tracker  
-**Status:** Conceptual / design-stage — **not yet implemented**. No Evolith Tracker source code or `evolith_tracker` repository exists in this corpus today; this folder holds the target design only.  
+**Status:** Built, in UAT, **not launched**. The source lives in the private `beyondnetcode/evolith_tracker` repository (a .NET 10 API, a React 19 web app and a NestJS gateway, with PostgreSQL); its images are public on GHCR and this repository's [UAT compose](../../infra/docker-compose.uat.yml) runs them next to the Core. This folder holds the design that preceded it — read it as intent, and where it disagrees with the product, the product wins.  
 **Parent Suite:** [Evolith Product Suite](../../suite/README.md)  
 **Governing Core:** [Evolith Core](../../../reference/core/README.md)
 
-> **Implementation status.** Everything below describes the *intended* product role and design target, not shipped behavior. The authoritative interface design ([Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md)) is explicitly marked *Proposed Design — Pending Architecture Board Review* with *no source-code change authorized*. Read every present-tense statement here as "will own / is designed to own".
+> **Implementation status (2026-09-20).** The Tracker exists and runs: initiatives through the five phases, type-derived gate criteria, product-owner approval chains, phase-gate evaluation with a Core verdict, evidence, audit — the [front page](../../../README.md#the-phase-gate-in-the-cli-and-in-the-tracker) carries a capture of its UAT environment governing this very repository. What is **not** true yet: a launch, a public repository, and a passing repository-conformance call in UAT (the Core's 100 KB body ceiling rejected it — GT-715, fixed in the Core, awaiting the next promotion). The [Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md) below predates the implementation and is still marked *Proposed Design*; it is not a description of the shipped product.
 
 ---
 
 ## 1. Product Role (target)
 
-Evolith Tracker is designed to be the runtime governance product of the Evolith Product Suite.
+Evolith Tracker is the runtime governance product of the Evolith Product Suite.
 
-As designed, it will implement Core and SDLC Governance by owning:
+It implements Core and SDLC Governance by owning:
 
 - tenant, product, process, and phase runtime state;
 - canonical Gate Decisions and Phase Transitions;
@@ -25,9 +25,9 @@ As designed, it will implement Core and SDLC Governance by owning:
 - audit history and unified product experience;
 - plugin, adapter, and provider administration.
 
-By design, Tracker does not redefine Core rules or SDLC Governance — it executes them.
+Tracker does not redefine Core rules or SDLC Governance — it executes them. Its own manual states the split as two planes: process governance (phases, gates, criteria, approvals, audit — always on, no repository needed) and technical-architecture conformance (the Core evaluating a satellite repository — opt-in, per gate, through `requiresCoreVerdict`).
 
-> **Integration boundary (ADR-0074 + ADR-0075).** Tracker reaches Core strictly as an **external client** of the **Core API Exposure Layer** (`src/apps/core-api`, **REST-only** under `/api/v1` — no GraphQL and no SSE — plus the MCP gateway) defined in [ADR-0074](../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md). The composition/adaptation logic for web and mobile lives in Tracker's **BFF / Application Gateway** ([ADR-0075](../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), NestJS). ADR-0075 motivates that gateway by *seamless integration with the existing Node.js monorepo ecosystem*; the future Tracker codebase (working name `evolith_tracker`) does not exist in this corpus yet, so its repository location is design intent, not a shipped fact. See the [Product Vision — Technical Interface Layer](../../suite/vision/evolith-product-vision-master.md) for the layered diagram.
+> **Integration boundary (ADR-0074 + ADR-0075).** Tracker reaches Core strictly as an **external client** of the **Core API Exposure Layer** (`src/apps/core-api`, **REST-only** under `/api/v1` — no GraphQL and no SSE — plus the MCP gateway) defined in [ADR-0074](../../../reference/core/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md). The composition/adaptation logic for web and mobile lives in Tracker's **BFF / Application Gateway** ([ADR-0075](../../../reference/core/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), NestJS). ADR-0075 motivates that gateway by *seamless integration with the existing Node.js monorepo ecosystem*; the shipped Tracker keeps the gateway (`tracker-gateway`, NestJS) and puts the domain in a .NET API behind it. Its calls to the Core are REST-only as designed, and for repository conformance it **sends the repository inline** (`evaluationInput.files`, assembled from the product's repository access) rather than handing the Core a path — the Core stays stateless and never reads a filesystem or the network on the Tracker's behalf. See the [Product Vision — Technical Interface Layer](../../suite/vision/evolith-product-vision-master.md) for the layered diagram.
 
 ---
 
@@ -59,7 +59,7 @@ By design, Tracker does not redefine Core rules or SDLC Governance — it execut
 
 ## 3.1 What Exists Today vs. the Target
 
-No Tracker application or `evolith_tracker` repository ships in this corpus. The only **real, shipped** code touchpoints that prepare for Tracker are Core-side enabling seams, tracked in [gap-tracking](../../../reference/core/control-center/gaps/gap-tracking.md):
+The Tracker ships from its own private repository, not from this corpus. What this corpus holds are the Core-side seams it consumes, tracked in [gap-tracking](../../../reference/core/control-center/gaps/gap-tracking.md) — several of them written before the Tracker existed and since overtaken (the opaque `workspaceRef` is kept for compatibility; the inline context is the canonical path):
 
 | Real seam shipping today | Where | Tracking | Relation to target design |
 |---|---|---|---|
@@ -70,7 +70,7 @@ No Tracker application or `evolith_tracker` repository ships in this corpus. The
 | Redis caching layer for Core-API / MCP / Tracker consumption | `src/apps/core-api` | [GT-249](../../../reference/core/control-center/gaps/gap-tracking.md) | Shared infrastructure prepared for Tracker reads. |
 | End-to-end Core + Tracker + agents integration validation | `src/packages/core-domain` e2e | [GT-326](../../../reference/core/control-center/gaps/gap-tracking.md) | Cross-cutting integration seam. |
 
-Everything in the [Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md) (REST endpoints under `tracker.evolith.io`, the `evolith criterion evaluate` / `evolith gate assess` tools, provider ports, Evidence Graph, Gate Decision Engine) is **target design** with **no implementation**.
+The [Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md) (REST endpoints under `tracker.evolith.io`, the `evolith criterion evaluate` / `evolith gate assess` tools, provider ports, Evidence Graph, Gate Decision Engine) is the design the product was started from, **not a description of what it exposes today**; the shipped surface is documented in the Tracker's own repository.
 
 ### Output and error contract (target)
 
@@ -114,9 +114,9 @@ Content migration into these folders must preserve bilingual parity and legacy-l
 
 ## 6. Install, Run, and Contribution
 
-There is **no installable or runnable Tracker artifact yet** — no package, binary, container image, environment variables, or commands exist. Install / prerequisites / local-run / troubleshooting guidance will be authored alongside the first implementation increment once the [Pre-Code Approval Checklist](./sdlc-tracker-technical-interfaces.md#12-pre-code-approval-checklist) clears the Architecture Board. To exercise the **Core-side seams Tracker will consume today**, use the running [Core API](../core-api/README.md) (`POST /api/v1/phases/transition`, the validation endpoints) and the [MCP services](../mcp-services/README.md).
+The Tracker is **not launched and not open source**: no npm package, and the source repository is private. What is public are its container images (`ghcr.io/beyondnetcode/evolith-tracker-{api,gateway,web}`), which this repository's [UAT compose](../../infra/docker-compose.uat.yml) runs next to `core-api`, `mcp` and `agent-runtime` — that file is the closest thing to install instructions until the launch, and it is what the UAT environment on the front page runs. The Core-side seams it consumes are exercised through the running [Core API](../core-api/README.md) (`POST /api/v1/evaluate` with an inline context, `POST /api/v1/phases/transition`) and the [MCP services](../mcp-services/README.md).
 
-Contribution standards for this repository (clone/dev-setup, test commands, branch/commit conventions, doc/schema/ruleset/OPA authoring) live in the repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md); Tracker-specific contribution rules will be added when the codebase exists.
+Contribution standards for this repository (clone/dev-setup, test commands, branch/commit conventions, doc/schema/ruleset/OPA authoring) live in the repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md); the Tracker's own rules live with its source.
 
 ---
 

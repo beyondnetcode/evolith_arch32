@@ -10877,6 +10877,30 @@
         "grep -rn \"mcp start\" docs/guides"
       ],
       "dependencyRationale": "No dependency. Dense reranking is an upgrade performed by a re-index with a configured sidecar (docker-compose.yml --profile rag), not a precondition; the amd64-only sidecar and its CPU cost are recorded on the row and in ADR-0112 section 6."
+    },
+    {
+      "id": "GT-715",
+      "closedAt": "2026-09-20",
+      "closureCommit": "3b276c9a",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/apps/core-api/src/main.ts",
+        "src/apps/core-api/src/infrastructure/config/env.validation.ts",
+        "src/apps/core-api/src/infrastructure/filters/http-exception.filter.ts",
+        "src/apps/core-api/src/infrastructure/filters/http-exception.filter.spec.ts",
+        "src/apps/core-api/README.md",
+        "docs/known-limitations.md"
+      ],
+      "validationCommands": [
+        "MEASURED FIRST, 2026-09-20, on ghcr.io/beyondnetcode/evolith-core-api:latest (main@142b8324, the UAT image), run locally with EVOLITH_API_KEY set: the Tracker-shaped inline payload POST /api/v1/evaluate with 14 files / 99,797 bytes -> 200; 15 files / 101,578 bytes -> 500 INTERNAL_ERROR 'An unexpected error occurred'; a synthetic 92,956-byte body -> 200 and 126,556 bytes -> 500; no SecurityAudit line and no stack in `docker logs` for the 500s. The same call from the UAT Tracker (POST /products/{id}/evaluate-architecture, 150 files) had recorded provenance:synthetic, resultDecision:BLOCKED, CoreEvaluation.HttpError 'Core evaluation failed with HTTP 500.'",
+        "OBSERVED RED FIRST: http-exception.filter.spec.ts against the previous filter (git show HEAD:src/apps/core-api/src/infrastructure/filters/http-exception.filter.ts swapped in) -> 4 failed / 3 passed of 7: a PayloadTooLargeError answered 500 not 413, a parse error answered 500 not 400, a parser error whose message says 'invalid' was reclassified, and nothing was logged for a 5xx. After 3b276c9a -> 7 passed.",
+        "npx jest --config src/apps/core-api/jest.config.js src/apps/core-api/src/infrastructure/filters",
+        "EXPECTED OF THE PREVIOUS COMMAND: 7 passed — GT-678's two plus GT-715's five: 413 PAYLOAD_TOO_LARGE naming 126556 received / 102400 limit / EVOLITH_MAX_BODY_BYTES, a parse error kept at 400 BAD_REQUEST, message matchers not reclassifying a parser error, Logger.prototype.error called once for a 500 with the stack, and not called for a 413",
+        "END TO END ON THE BUILT core-api (npm run build in src/apps/core-api; NODE_ENV=production PORT=3011 EVOLITH_API_KEY=… CORE_PATH=<checkout> node dist/main.js): the identical 150-file / 1,118,034-byte payload -> 200 with overallVerdict FAIL and gate-f1's six missing artifacts; a 3,146,294-byte body -> 413 PAYLOAD_TOO_LARGE 'Request body too large: 3146294 bytes received, the limit is 2097152 bytes (EVOLITH_MAX_BODY_BYTES).' with X-Problem-Format rfc9457.",
+        "grep -n 'EVOLITH_MAX_BODY_BYTES' src/apps/core-api/src/infrastructure/config/env.validation.ts src/apps/core-api/src/main.ts src/apps/core-api/README.md",
+        "EXPECTED OF THE PREVIOUS COMMAND: the variable declared once with a 2 MiB default, read once at bootstrap into useBodyParser('json') and useBodyParser('urlencoded'), and documented in the README's variable table",
+        "NOT CLAIMED: the UAT Tracker's evaluate-architecture returning a real verdict — the deployed image predates this commit until main is promoted and Coolify redeploys (the deploy job is off); the front page therefore shows the Tracker's phase gate, which never touches this path."
+      ]
     }
   ]
 }

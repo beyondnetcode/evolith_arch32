@@ -2,7 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1936" role="img" aria-labelledby="mvTitle mvDesc" font-family="'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
 <!-- port-inventory: 11 hot / 21 declared -->
 <!-- GT-621 — the split above is what .harness/scripts/ci/45-validate-port-inventory-honesty.mjs checks against the tree: 21 port interfaces are declared, 11 are reachable from AgentRuntimeService (7 required + 4 optional). A port count is a surface, not a capability claim; the band-4 sentence prints the same numbers. -->
-<title id="mvTitle">Evolith — E2E Product Vision (numbers as of 2026-09-20)</title>
+<title id="mvTitle">Evolith — E2E Product Vision (numbers as of 2026-09-21)</title>
 <desc id="mvDesc">Band 1, four doors: the CLI, the GitHub Action, the MCP server and the REST Core API apply the same rules and return the same envelope. Band 2, the Core: a stateless evaluation engine that turns an EvaluationContext into an EvaluationResult, beside the Constitution of 144 ADRs, 184 rule packs and 50 schemas, and the strip of who can say yes. Band 3, Evolith Tracker: the commercial control plane that decides gates and owns state, with the five SDLC phases and their gates and the topology axis beside them. Band 4, governed agents: the experimental agent runtime with 21 declared port interfaces of which 11 are on the hot path, the LLM providers a tenant chooses, and the governed-composition rail of ports, adapters and anti-corruption layers. Band 5, federated governance: the Core as level 0, satellites as level 1 inheritors, and the Architecture Board approving upstream proposals. Band 6, evidence: eight generated, dated and linked tiles on how honest this picture is.</desc>
 <defs>
 <marker id="arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B6B7B"/></marker>
@@ -17,7 +17,7 @@
 <text x="108" y="52" font-size="34" fill="#14212E" font-weight="800" letter-spacing="1" data-role="title">EVOLITH</text>
 <text x="271.94" y="52" font-size="30" fill="#3D4E5F" font-weight="300" letter-spacing="0.5">·  E2E PRODUCT VISION</text>
 <text x="110" y="80" font-size="13.5" fill="#8A2A4C" font-weight="600">Governed Composition  ·  Stateless Evaluation Core  ·  Federated Five-Phase SDLC</text>
-<text x="1560" y="52" font-size="13" fill="#3D4E5F" font-weight="600" text-anchor="end">repo · evolith_arch32 · numbers as of 2026-09-20</text>
+<text x="1560" y="52" font-size="13" fill="#3D4E5F" font-weight="600" text-anchor="end">repo · evolith_arch32 · numbers as of 2026-09-21</text>
 <text x="1560" y="72" font-size="12" fill="#5B6B7B" font-weight="600" text-anchor="end">ADR-0101 · ADR-0074 · ADR-0102 · ADR-0116 · ADR-0125 · ADR-0128 · ADR-0129</text>
 </g>
 <g id="band-1" data-band="doors" data-bbox="36 108 1528 296">
@@ -432,7 +432,7 @@
 <rect x="56" y="1796" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
 <text x="64" y="1810" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Gap board 688 / 715 · 27 not done</text>
 <text x="64" y="1824" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">P0 GT-435 · NO-GO</text>
-<text x="64" y="1838" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">generated 2026-09-20</text>
+<text x="64" y="1838" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">generated 2026-09-21</text>
 <rect x="430" y="1796" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
 <text x="438" y="1810" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">10 required checks · 18 workflows</text>
 <text x="438" y="1824" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">74 guards + 32 self-tests</text>
@@ -448,7 +448,7 @@
 <rect x="56" y="1848" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
 <text x="64" y="1862" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Tests 107 suites · 1,492 tests</text>
 <text x="64" y="1876" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">87.33% statements · 87.68% lines</text>
-<text x="64" y="1890" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">(2026-09-20)</text>
+<text x="64" y="1890" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">(2026-09-21)</text>
 <rect x="430" y="1848" width="366" height="46" rx="8" fill="#FFFFFF" stroke="#BDBDBD" stroke-width="1"/>
 <text x="438" y="1862" font-size="12" fill="#14212E" font-weight="600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">Engines on this repo: opa 133/159</text>
 <text x="438" y="1876" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">native 41/159</text>
@@ -463,7 +463,7 @@
 <text x="1186" y="1890" font-size="12" fill="#3D4E5F" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace">7/8 packages attested (2026-07-30)</text>
 </g>
 <g id="footer">
-<text x="1564" y="1914" font-size="12" fill="#5B6B7B" text-anchor="end" font-style="italic">Source of truth: product/suite/vision/evolith-product-vision-master.md · counts from generated inventories (inventory-summary.md 2026-09-01 · product-inventory.md · maturity-reconciliation.json 2026-09-20)</text>
-<text x="1564" y="1928" font-size="12" fill="#5B6B7B" text-anchor="end" font-style="italic">and tree measurements · rendered 2026-09-20</text>
+<text x="1564" y="1914" font-size="12" fill="#5B6B7B" text-anchor="end" font-style="italic">Source of truth: product/suite/vision/evolith-product-vision-master.md · counts from generated inventories (inventory-summary.md 2026-09-01 · product-inventory.md · maturity-reconciliation.json 2026-09-21)</text>
+<text x="1564" y="1928" font-size="12" fill="#5B6B7B" text-anchor="end" font-style="italic">and tree measurements · rendered 2026-09-21</text>
 </g>
 </svg>

@@ -65,6 +65,15 @@ export interface RuleCoverage {
   blockingSkippedRuleIds?: string[];
   /** GT-595 AC3 — `handled / executable / total` per ruleset file. */
   perRuleset?: RulesetCoverageRatio[];
+
+  /**
+   * GT-716 AC5 — `rulesSkipped`, split by WHY: the evaluability class each skipped
+   * rule states (a posture nobody supplied, an adapter nobody wrote, documentation,
+   * a missing handler or policy). The report and the known-limitations page state
+   * coverage per engine in these terms; a bare "skipped N" was the number the front
+   * page misread as reach. Sums to `rulesSkipped`; classes with zero skips are absent.
+   */
+  skippedByEvaluability?: Record<string, number>;
 }
 
 /** GT-595 AC3 — the coverage of one `*.rules.json`, so the ratio is per ruleset. */
@@ -138,6 +147,8 @@ export interface ValidationResult {
   /** GT-595 AC2 — blocking rules that did not run. Non-empty ⇒ `status: 'failed'`. */
   blockingSkippedRuleIds?: string[];
   perRuleset?: RulesetCoverageRatio[];
+  /** GT-716 AC5 — the run's skips by evaluability class; see `RuleCoverage.skippedByEvaluability`. */
+  skippedByEvaluability?: Record<string, number>;
   /**
    * GT-661 — WHY these rules were evaluated, not just how many.
    *

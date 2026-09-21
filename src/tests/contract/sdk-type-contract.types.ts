@@ -369,6 +369,13 @@ export const WIRE_VALIDATION_RESULT: WireCheck<SdkValidationResult> = {
   // verdict is entitled to the ids behind it without parsing issue text.
   blockingSkippedRuleIds: { required: false, declaredAs: 'string[]', accepts: isArray },
   perRuleset: { required: false, declaredAs: 'RulesetCoverageRatio[]', accepts: isArray },
+  // GT-716 AC5: `rulesSkipped` split by the evaluability class each skipped rule
+  // states — a posture nobody supplied, an adapter nobody wrote, documentation, a
+  // missing handler or policy. The reporter's GOV-ENGINE-COVERAGE row and the
+  // known-limitations table state coverage per engine in these terms; a consumer
+  // reading `rulesSkipped` alone reads reach it cannot attribute. Sums to
+  // `rulesSkipped`; classes with zero skips are absent.
+  skippedByEvaluability: { required: false, declaredAs: 'Record<string, number>', accepts: isObject },
   // GT-661: the SCOPE of the verdict. A consumer that reads `status: 'failed'`
   // without this cannot tell "the packs I adopted failed" from "the Core
   // evaluated all 402 of its own opinions and something failed" — measured on

@@ -10,12 +10,22 @@ Full audit of our own claims, with what blocks each pending item and who can unb
 
 ## The two engines do not cover the same ground
 
-`evolith validate` runs the native evaluator by default; `--engine opa` evaluates with the compiled Rego bundle. On this very repository, measured on 2026-08-21 with `@beyondnet/evolith-cli@1.3.2`:
+`evolith validate` runs the native evaluator by default; `--engine opa` evaluates with the compiled Rego bundle. They decide different parts of the same corpus and neither is a superset of the other. What each one decides, and why it skips the rest, is measured by CI on every run — `73-validate-engine-coverage-parity.mjs`, on an export of the tracked tree and on a satellite fresh from `init` — and the table below is written by that guard, not by hand: when the numbers move, CI fails until the guard rewrites them (GT-716 AC5).
 
-| Engine | Evaluates | Skips |
-|---|---|---|
-| `--engine opa` | 133 of 159 | 26 |
-| native (default) | 41 of 159 | 118 |
+<!-- engine-coverage:begin -->
+_Measured 2026-09-21 by `73-validate-engine-coverage-parity.mjs --write` — one `evolith validate --engine <e> --format json` per engine and scenario, on an export of the tracked tree and on a satellite fresh from `evolith init`. CI regenerates this table and fails when it differs from the measurement; edit the guard, not the table._
+
+| Scenario | Engine | In scope | Decided | Skipped | …fact not supplied | …adapter needed | …documentation | …engine debt | Not applicable |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| this repository | native (default) | 355 | 109 | 246 | 37 | 65 | 138 | 6 | 60 |
+| this repository | `--engine opa` | 355 | 28 | 327 | 146 | 1 | 138 | 42 | 60 |
+| satellite fresh from `init` | native (default) | 151 | 50 | 101 | 30 | 61 | 4 | 6 | 264 |
+| satellite fresh from `init` | `--engine opa` | 151 | 2 | 149 | 117 | 1 | 0 | 31 | 264 |
+<!-- engine-coverage:end -->
+
+**How to read it.** *Fact not supplied* is a posture only the repository's owners can declare — tenant filtering, the runtime intent, the CI system's findings; the OPA policies decide those when the caller supplies them through `facts.satellite` (GT-694), and the native engine never does. That is the one reason left to run `--engine opa`, and it is not coverage: on a bare run the default decides more, on both rows. *Adapter needed* is an external or running system nobody has wired through the enforcer seam yet. *Documentation* is a rule with no check as written — mostly the generated ADR-conformance placeholders, `documentation-only` on both engines by decision. *Engine debt* is a handler or a policy nobody wrote; every one carries a recorded decision in [`engine-coverage-decisions.json`](../.harness/scripts/ci/engine-coverage-decisions.json), and the OPA-only side of the [coverage baseline](../.harness/scripts/ci/engine-coverage-parity.baseline.json) is empty. The report says the same thing in the same groups: when an engine skips more than it checks, its `GOV-ENGINE-COVERAGE` row states that run's split.
+
+**The published CLI is older than all of this.** `@beyondnet/evolith-cli@1.3.2` — what `npx -y @beyondnet/evolith-cli` installs today — predates GT-716. Measured on 2026-08-21 on this repository it decided 133 of 159 with `--engine opa` and 41 of 159 natively, and most of that difference was verdicts on facts nobody supplied. That is why the front page still says `--engine opa`, and says for which CLI; the next release inverts it.
 
 CI holds them to agreement over **facts**, not over coverage; that part is by design — and since GT-716 AC3 every rule only one engine decides is registered per rule, in both directions, on this repository and on a satellite fresh from `init` (`73-validate-engine-coverage-parity.mjs`), so a coverage difference is a diff somebody reads rather than a number nobody does. Since AC4 (2026-09-21) nothing in that register is there by omission: every debt entry carries a recorded decision (`engine-coverage-decisions.json`) the guard holds to the runs, and the OPA-only side is empty on both scenarios — the last rules only `--engine opa` decided from the tree (`OBS-EVD-01..03`, `MCP-05`) have native twins of their policies. That the default command never says so is not ([#628](https://github.com/beyondnetcode/evolith_arch32/issues/628)). That is why the front page uses `--engine opa` everywhere. Measured again on 2026-09-20 with the CLI built from this tree: the default decides 56 of the same 159, and of the 76 rules only `--engine opa` decides, 73 are verdicts on facets a bare run never supplies — so most of that extra coverage is not coverage. Tracked as GT-716 in the [Gap Tracking Board](../reference/core/control-center/gaps/gap-tracking.md). Since `b2840947` (in the tree, not yet in a published CLI) the OPA engine reports those rules as `skipped` with the facet it lacks: on the same satellite it decides 10 of 159 from what a bare run observes, and the rest only when the caller supplies the facts through `facts.satellite`.
 

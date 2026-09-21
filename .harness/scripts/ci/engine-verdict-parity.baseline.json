@@ -22,34 +22,24 @@
     "run the native engine resolves the corpus to the CLI's bundled copy and FAILS the 138 generated ADR-conformance rules (their referenced",
     "ADRs are not in the copy — the false failures guard 73 moved to an export to escape), so it counts 0 non-executable and never emits the",
     "row. The OPA engine, since AC4, states `documentation-only` for a policy-less rule whose declaration says there is nothing to check, counts",
-    "the 138 as non-executable and emits the row (COULD, non-blocking). With `--core .` both engines count 138 and emit the identical row."
+    "the 138 as non-executable and emits the row (COULD, non-blocking). With `--core .` both engines count 138 and emit the identical row.",
+    "2026-09-21 (GT-716 AC5): the guard now runs both engines on an EXPORT of the tracked tree with `--core` pointed at it (the export guard 73",
+    "measures, `lib/core-export.mjs`), so what remains here is a disagreement about a rule and not about where a run found its corpus. Three",
+    "entries left as stale on that run: CLI-EXIT-01 and CLI-EXIT-03 (the doubled scan root does not happen when `corePath` is a resolvable root —",
+    "the handler reads the real CLI tree and passes, as OPA does) and GOV-RULE-NON-EXECUTABLE (both engines now count the 138 generated ADR-conformance",
+    "rules as non-executable and emit the identical row). One entry arrived: CLI-EXIT-02. GOV-ENGINE-COVERAGE agrees since the advisory speaks",
+    "for either engine that skips more than it checks."
   ],
   "measuredOn": "2026-09-21",
-  "method": "evolith validate --engine {native,opa} --format json over the whole corpus, both from the repository root; only rules BOTH engines decided are compared.",
+  "method": "evolith validate --engine {native,opa} --format json over the whole corpus, both on an export of the tracked tree (git ls-files + policy.wasm) with --core pointed at it; only rules BOTH engines decided are compared.",
   "conflicts": [
     {
-      "ruleId": "CLI-EXIT-01",
-      "native": "failed",
-      "opa": "passed",
-      "family": "native-context-assumption",
-      "reason": "The most defect-shaped of the eleven. `cli-exit-taxonomy-rule.handler.ts:132` builds its scan root as `path.join(ctx.corePath, 'src', 'sdk', 'cli', 'src')`, and in a CLI run `ctx.corePath` already resolves to `.../src/sdk/cli`, so the root becomes `.../src/sdk/cli/src/sdk/cli/src` — a path that does not exist. The handler reports a missing tree as `failed` deliberately (a skip on a blocking rule would be the silent pass it exists to prevent), so the verdict is about a doubled path and not about exit codes. OPA decides the same id from the fact document `exit-code-taxonomy-facts.mjs` emits and finds no offender.",
-      "followUp": "Resolve the CLI source root from the CLI package rather than by re-appending its own path to `corePath`. That deletes this entry and CLI-EXIT-03 together."
-    },
-    {
-      "ruleId": "CLI-EXIT-03",
-      "native": "failed",
-      "opa": "passed",
-      "family": "native-context-assumption",
-      "reason": "Same doubled root as CLI-EXIT-01, reported through the other branch of the same handler: 'exit-code taxonomy not declared: .../src/sdk/cli/src/sdk/cli/src/infrastructure/cli/exit-codes.ts not found'. Registered separately because a partial fix that repaired only the scan and not the taxonomy read is a real state, and the guard should be able to say which half moved.",
-      "followUp": "Same fix as CLI-EXIT-01."
-    },
-    {
-      "ruleId": "GOV-RULE-NON-EXECUTABLE",
+      "ruleId": "CLI-EXIT-02",
       "native": "passed",
       "opa": "failed",
-      "family": "corpus-resolution-artifact",
-      "reason": "The synthetic row counts rules whose evaluability is `documentation-only` or `underspecified`. On this guard's run (repository root, no `--core`) the native engine resolves the corpus to the CLI's bundled rulesets copy and fails the 138 generated ADR-conformance rules — `CORE-0001-01: the ruleset cites 1 decision record(s) that do not exist: reference/core/architecture/adrs/core/0001-…` — so `rulesNonExecutable` is 0 and the row is absent (`passed` by 68's default). The OPA engine states the declaration's class for a policy-less rule with `facts: []` since GT-716 AC4, counts 138 non-executable and emits the row: `138 corpus rules are not executable by any engine` (COULD, non-blocking). Measured with `--core .` on 2026-09-21: both engines count 138 and emit the identical row — the disagreement is the corpus each run found, not the rule.",
-      "followUp": "Run this guard with `--core` at the repository root (or on the export guard 73 measures), which makes the two runs read the same corpus — and re-baseline CLI-EXIT-01/03, which pass once `corePath` is a resolvable root, plus whatever the same-corpus run disagrees on (measured 2026-09-21: GOV-ENGINE-COVERAGE and CLI-EXIT-02). GT-716 AC5 territory: the report saying the same thing on both engines."
+      "family": "fact-document-not-in-tree",
+      "reason": "`cli-exit-code-taxonomy.rego` decides CLI-EXIT-02 from a fact document — `input.core.cli.exitCodes`, emitted by `src/sdk/cli/scripts/exit-code-taxonomy-facts.mjs` — and, by its own non-vacuity clause, FAILS the rule when the document is absent: 'no exit-code taxonomy facts were supplied at input.core.cli.exitCodes — the rule cannot be evaluated, and an unevaluated blocking rule is not a pass'. On the export nothing runs that script, so the policy fails on absence. The native handler (`cli-exit-taxonomy-rule.handler.ts`) reads the CLI's exit-code source directly and passes. GT-716 AC1's absent-facet skip does not reach this: the facet `core.cli` IS present (the builder emits it); `exitCodes` is a missing key inside a present facet, and the policy chose to treat that as a verdict.",
+      "followUp": "Make both engines read the same source: have the OPA input builder emit `core.cli.exitCodes` from the CLI tree (or run the facts script on the way in), or declare `exitCodes` as a facet of its own so its absence is a `supplied-facet-absent` skip under AC1 rather than a failure. Either deletes this entry."
     }
   ]
 }

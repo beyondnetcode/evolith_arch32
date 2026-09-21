@@ -168,6 +168,13 @@ Response shape (captured live):
       "source": "<string>",
       "unmatched": []
     },
+    "skippedByEvaluability": {
+      "documentation-only": "<number>",
+      "needs-external-system": "<number>",
+      "needs-runtime": "<number>",
+      "needs-supplied-facts": "<number>",
+      "unimplemented-native": "<number>"
+    },
     "skippedRuleIds": [
       "<string>"
     ],
@@ -269,6 +276,13 @@ Response shape (captured live):
       "source": "<string>",
       "unmatched": []
     },
+    "skippedByEvaluability": {
+      "documentation-only": "<number>",
+      "needs-external-system": "<number>",
+      "needs-runtime": "<number>",
+      "needs-supplied-facts": "<number>",
+      "unimplemented-native": "<number>"
+    },
     "skippedRuleIds": [
       "<string>"
     ],
@@ -363,6 +377,13 @@ Response shape (captured live):
       "rulesSelected": "<number>",
       "source": "<string>",
       "unmatched": []
+    },
+    "skippedByEvaluability": {
+      "documentation-only": "<number>",
+      "needs-external-system": "<number>",
+      "needs-runtime": "<number>",
+      "needs-supplied-facts": "<number>",
+      "unimplemented-native": "<number>"
     },
     "skippedRuleIds": [
       "<string>"

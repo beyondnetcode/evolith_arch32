@@ -54,6 +54,19 @@
  * divergence) and equally when a baselined id no longer conflicts (a stale
  * exemption, which is how a baseline rots into permission).
  *
+ * ## The tree that is measured is the COMMITTED one (GT-716 AC5)
+ *
+ * Until AC5 this guard ran the CLI from the repository root without `--core`. On
+ * that run the native engine resolved the corpus to the CLI's bundled copy and
+ * FAILED the 138 generated ADR-conformance rules (their referenced ADRs are not in
+ * the copy), the exit-code handler doubled its own root (CLI-EXIT-01/03), and the
+ * baseline registered those artifacts as verdict conflicts. Both engines now read
+ * the Core from an export of the tracked files plus the compiled bundle
+ * (`lib/core-export.mjs`, the same export guard 73 measures) with `--core`
+ * pointed at it — the same corpus, on every machine, for both engines. What
+ * remains in the baseline is a disagreement about a rule, not about where a run
+ * found its corpus.
+ *
  * ## Anti-vacuous pass
  *
  * Both engine runs are asserted through `assertScannedPerSource`, so an engine that
@@ -70,20 +83,19 @@
  *   1 - a new conflict, a stale baseline entry, or an engine that produced nothing
  */
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { REPO_ROOT } from '../lib/paths.mjs';
+import { CLI_ENTRY, WASM_CANDIDATES, exportCore } from '../lib/core-export.mjs';
 import { assertScannedPerSource, ZeroCoverageError } from '../lib/coverage.mjs';
 import { diffDecisions } from './parity-gate.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
 export const BASELINE_PATH = resolve(HERE, 'engine-verdict-parity.baseline.json');
-const CLI_ENTRY = 'src/sdk/cli/dist/main.js';
-const WASM_CANDIDATES = ['src/rulesets/opa/policy.wasm', 'src/sdk/cli/rulesets/opa/policy.wasm'];
 const ENGINES = ['native', 'opa'];
 
 /** Outcomes that mean "this engine reached a verdict about the rule". */
@@ -173,12 +185,12 @@ export function reconcileBaseline(conflicts, baseline) {
 }
 
 /** Run one engine over the whole corpus and return its parsed report. */
-function runEngine(engine, root) {
+function runEngine(engine, root, core) {
   const started = Date.now();
   const proc = spawnSync(
     process.execPath,
-    [CLI_ENTRY, 'validate', '--engine', engine, '--format', 'json'],
-    { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
+    [resolve(root, CLI_ENTRY), 'validate', '--engine', engine, '--format', 'json', '--core', core],
+    { cwd: core, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
   );
 
   if (proc.error) throw new Error(`could not spawn the CLI for engine '${engine}': ${proc.error.message}`);
@@ -235,14 +247,17 @@ async function main() {
     process.exit(1);
   }
 
+  // GT-716 AC5 — both engines read the Core as committed, through `--core`.
   const runs = {};
-  for (const engine of ENGINES) {
-    try {
-      runs[engine] = runEngine(engine, root);
-    } catch (err) {
-      console.error(`❌ ${err.message}`);
-      process.exit(1);
-    }
+  let core = null;
+  try {
+    core = exportCore(root, 'evolith-verdict-parity-core-');
+    for (const engine of ENGINES) runs[engine] = runEngine(engine, root, core);
+  } catch (err) {
+    console.error(`❌ ${err.message}`);
+    process.exit(1);
+  } finally {
+    if (core) rmSync(core, { recursive: true, force: true });
   }
 
   const outcomes = Object.fromEntries(ENGINES.map((e) => [e, deriveOutcomes(runs[e].data)]));

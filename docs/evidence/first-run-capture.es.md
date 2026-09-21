@@ -148,7 +148,10 @@ el mismo corpus no cubre lo mismo:
 
 CI exige que los dos motores coincidan sobre fixtures. No exige que tengan la
 misma cobertura sobre un repositorio real, y hoy no la tienen. Por eso la portada
-usa `--engine opa` en todas partes.
+usa `--engine opa` en todas partes. (Medido en 1.3.2. Desde GT-716 — en el
+árbol, aún no en una CLI publicada — el motor por defecto decide más en una ejecución
+a secas, CI registra cada regla que solo un motor decide, y la tabla por motor
+vigente está en la página de [estado real](../known-limitations.es.md).)
 
 ```
 **Status:** failed

@@ -10936,6 +10936,50 @@
         "grep -n 'build-pages' .github/workflows/docs.yml && grep -n 'branches\\|permissions\\|contents:' .github/workflows/pages.yml",
         "EXPECTED OF THE PREVIOUS COMMAND: docs.yml runs `node .harness/scripts/pages/build-pages.mjs --check` and `node --test .harness/scripts/pages/build-pages.test.mjs` inside the `validate` job (name: Validate documentation, required); pages.yml triggers on push to main with `contents: read` at the top and `contents: write` only on the publish job"
       ]
+    },
+    {
+      "id": "GT-716",
+      "closedAt": "2026-09-21",
+      "closureCommit": "e5b4701c",
+      "dependencyDisposition": "none",
+      "evidence": [
+        "src/packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        ".harness/scripts/lib/rego-rule-inputs.mjs",
+        ".harness/scripts/compile-opa-wasm.mjs",
+        "src/rulesets/schema/facets.json",
+        "src/packages/core-domain/src/domain/models/declared-facts.ts",
+        "src/packages/core-domain/src/application/validators/rule-evaluability.ts",
+        ".harness/scripts/lib/rule-facts.mjs",
+        ".harness/scripts/ci/73-validate-engine-coverage-parity.mjs",
+        ".harness/scripts/ci/engine-coverage-parity.baseline.json",
+        ".harness/scripts/ci/engine-coverage-decisions.json",
+        ".harness/scripts/ci/68-validate-engine-verdict-parity.mjs",
+        ".harness/scripts/ci/engine-verdict-parity.baseline.json",
+        ".harness/scripts/lib/core-export.mjs",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/telemetry-evidence-rule.handler.ts",
+        "src/packages/core-domain/src/application/validators/evaluators/handlers/mcp-rule.handler.ts",
+        "src/packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "docs/known-limitations.md",
+        "README.md",
+        "src/rulesets/opa/README.md"
+      ],
+      "validationCommands": [
+        "MEASURED FIRST (RED), 2026-09-20, on develop 2e2a5527's ancestor b3df7e96 with the CLI built from the tree, satellite fresh from `evolith init` (159 rules in scope): `evolith validate --engine opa --format json` decided 133 and skipped 26; the default decided 56 and skipped 103. Crossed rule by rule against the `.rego` bodies: 73 of the 76 rules only OPA decided read a facet a bare run never sends (`input.satellite.{git,runtime,testing,multiTenancy,ci,findings,protocol,scorecards,layers,contracts}`, `input.adapter`, `input.context.dod`, `input.user`, the `QT-*` metrics) — verdicts on absent input, the same `supplied-facet-absent` family GT-704's baseline already named. Guard 68 printed both counts as `coverageOnly` and gated neither.",
+        "RED → GREEN, AC1 (b2840947): `MTN-01` on a bare satellite came back `failed` ('tenant_id filter') about a repository nobody had looked at; after the bundle manifest `evolith/manifest/rule_input_paths` and `OpaEvaluator.skippedForAbsentFacets`, the same run is `skipped` / `supplied-facet-absent` naming `input.satellite.multiTenancy`, and with the facet supplied it is `failed` on applicationFiltering:false and `passed` on true (src/packages/core-domain/src/application/validators/evaluators/opa-supplied-facts.spec.ts, against the real policy.wasm). On the fresh satellite `--engine opa` went from 133 decided to 10.",
+        "RED → GREEN, AC2 (3d76f4a6): declaring `facts: []` for the twelve rules the triage table called non-executable while Rego decided them (KI-R01..07, INH-03..05, PROT-03/06) turned `npm run build:policy` red with twelve findings naming the facets each policy reads; declaring what the policies read turned it green. 44 of 415 rules changed class with nothing implemented; unimplemented-native 52 → 21.",
+        "node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 'repository: native-only 81, opa-only 0; 0 unregistered, 0 stale, 0 changed class' and 'init-satellite: native-only 48, opa-only 0; 0 unregistered, 0 stale, 0 changed class', then '✓ 73-validate-engine-coverage-parity: every coverage-only rule is registered with its reason and every debt entry with a decision, in both directions, on both scenarios; the coverage tables on the page are the measured ones.' (observed 2026-09-21 on e5b4701c, exit 0). The baseline's coverage block: this repository native 109 decided / 246 skipped (37 fact not supplied, 65 adapter, 138 documentation, 6 debt), `--engine opa` 28 / 327 (146, 1, 138, 42); satellite fresh from `init` native 50 / 101 (30, 61, 4, 6), `--engine opa` 2 / 149 (117, 1, 0, 31).",
+        "OBSERVED RED BEFORE TRUSTED, guard 73: (AC3, 29c8a4ba) renaming `OBS-EVD-03` in telemetry-evidence.rego → red on both scenarios naming the id, green once restored; (AC4, ea736a75) the first run of the decisions register → '❌ repository: 1 decided rule(s) are decided by BOTH engines now — retire the decision: MM-R03 (decision modular-monolith-native-only)', green once the id left the decision; (AC5, e5b4701c) one number edited in docs/known-limitations.md's table → '❌ 1 page(s) do not say what the baseline measured (GT-716 AC5) — re-run with --write: docs/known-limitations.md: its table differs from the render of the registered coverage', `--write` restored it and the guard went green.",
+        "node .harness/scripts/ci/68-validate-engine-verdict-parity.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: 'corpus 415 rule(s); 15 decided by BOTH engines; 1 verdict conflict(s), 1 of them registered.' and '✓ 68-validate-engine-verdict-parity: 15 jointly-decided rule(s), 1 conflict(s), all registered with an individual reason.' — the one conflict is CLI-EXIT-02 (the policy fails on an absent fact document the tracked tree does not carry; the native handler reads the source), measured on the export with --core (observed 2026-09-21 on e5b4701c, exit 0).",
+        "node --test .harness/scripts/ci/73-validate-engine-coverage-parity.test.mjs && node --test .harness/scripts/ci/68-validate-engine-verdict-parity.test.mjs && node --test .harness/scripts/lib/rego-rule-inputs.test.mjs && node --test .harness/scripts/lib/rule-facts.test.mjs",
+        "EXPECTED OF THE PREVIOUS COMMAND: tests 24 / pass 24; tests 9 / pass 9; tests 10 / pass 10; the rule-facts suite green — the decisions register refuses a malformed entry, a debt entry without a decision is 'coverage-only by omission', a `neither` decision is contradicted by any engine deciding one of its rules, and the page table is rendered deterministically in both languages.",
+        "npm run build:policy",
+        "EXPECTED OF THE PREVIOUS COMMAND: 'OPA manifest: every policy read is declared by its rule (415 corpus rules checked, 84 facets in the vocabulary).' and 'OPA manifest: 238 rule id(s) declared by reachable policies; 203 of them state which input paths they read.' before 'Successfully compiled and installed policy.wasm' (observed 2026-09-21).",
+        "cd src/packages/core-domain && npx jest --config jest.config.js --runInBand src/application/validators/rule-corpus-triage.spec.ts src/application/validators/engine-coverage-advisory.spec.ts src/application/validators/evaluators/handlers/telemetry-evidence-rule.handler.spec.ts src/application/validators/evaluators/handlers/mcp-rule.handler.spec.ts",
+        "EXPECTED OF THE PREVIOUS COMMAND: all green — the corpus pins read native-handler 173 · unimplemented-native 14 · needs-external-system 33 · needs-runtime 22 · needs-supplied-facts 31 · documentation-only 138 · underspecified 4, blocking rules that do not run 71 (5 handlers, 21 adapters, 14 runtime, 27 postures, 4 authoring); the advisory fires on either engine that skips more than it checks and states the per-class split; OBS-EVD-01..03 decided from the satellite's dependencies; MCP-01..03 FAIL on absent smoke evidence with mcp.rego's words.",
+        "OBSERVED RED BEFORE TRUSTED, CI on #797 (Test infra-providers, GT-571 invariant): the native twins failed a freshly initialised satellite on OBS-EVD-01..03 (a6a415b8: the rules declare `appliesFromSdlcPhase: 3`, Construction — their text speaks of production paths) and, on a checkout without the gitignored `.harness/evidence/`, on MCP-01..03 (076efb60: the MCP pack declares `audience: core` — its rules judge the Core's server); both engines exclude them on a scaffold before running."
+      ]
     }
   ]
 }

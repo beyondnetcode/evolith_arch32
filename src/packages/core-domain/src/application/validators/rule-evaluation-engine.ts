@@ -71,6 +71,14 @@ export function summarizeRuleCoverage(results: readonly RuleEvaluationResult[]):
 
   const evaluability = summarizeEvaluability(results.map(classifyResult));
 
+  // GT-716 AC5 — the skips, by the class each one states.
+  const skippedByEvaluability: Record<string, number> = {};
+  for (const r of results) {
+    if (r.result !== 'skipped') continue;
+    const cls = classifyResult(r).evaluability;
+    skippedByEvaluability[cls] = (skippedByEvaluability[cls] ?? 0) + 1;
+  }
+
   return {
     rulesChecked,
     rulesSkipped: skippedRuleIds.length,
@@ -87,6 +95,7 @@ export function summarizeRuleCoverage(results: readonly RuleEvaluationResult[]):
     // not run, whether or not anything could ever run it.
     blockingSkippedRuleIds,
     perRuleset: evaluability.perRuleset.map(r => ({ ...r })),
+    skippedByEvaluability,
   };
 }
 

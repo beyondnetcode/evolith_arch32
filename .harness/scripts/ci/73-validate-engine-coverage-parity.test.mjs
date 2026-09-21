@@ -6,21 +6,28 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { deriveOutcomes } from './68-validate-engine-verdict-parity.mjs';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
+  COVERAGE_PAGES,
   FOLLOW_UP,
   classFromReport,
+  coverageFragmentOf,
+  coverageOf,
   coverageOnly,
   decisionIndex,
   nativeReason,
   opaReason,
   readDecisions,
   reconcileCoverage,
+  reconcileCoverageTotals,
   reconcileDecisions,
+  renderCoverageTable,
   rulesOf,
   toBaselineScenario,
   unknownDecisionRules,
   validateDecisions,
+  withCoverageFragment,
 } from './73-validate-engine-coverage-parity.mjs';
 import { REPO_ROOT } from '../lib/paths.mjs';
 import { readCorpusFacts } from '../lib/rule-facts.mjs';
@@ -213,4 +220,58 @@ test('the committed register is well-formed and every rule it names exists in th
   const missing = decisions.flatMap((d) => (d.rules ?? []).filter((id) => !ids.has(id)));
   assert.deepEqual(missing, [], 'decision rule ids must be corpus rule ids');
   assert.ok(decisions.some((d) => d.kind === 'neither' && d.pattern), 'the ADR-conformance decision is a pattern over the generated id shape');
+});
+
+// ---------------------------------------------------------------------------
+// GT-716 AC5 — the page says what the report says: the coverage block and its render
+// ---------------------------------------------------------------------------
+
+const report = (over) => ({ rulesTotal: 159, rulesChecked: 56, rulesSkipped: 103, rulesErrored: 0, rulesNotApplicable: 30, skippedByEvaluability: { 'needs-supplied-facts': 31, 'needs-external-system': 20, 'needs-runtime': 14, 'documentation-only': 30, 'unimplemented-native': 8 }, ...over });
+
+test('coverage is read from the report and grouped the way the reporter groups it', () => {
+  const c = coverageOf(report({}));
+  assert.deepEqual([c.inScope, c.decided, c.skipped, c.notApplicable], [159, 56, 103, 30]);
+  assert.deepEqual(c.grouped, { supplied: 31, adapter: 34, documentation: 30, debt: 8, other: 0 });
+  const withOther = coverageOf(report({ skippedByEvaluability: { 'no-policy-in-bundle': 25, 'supplied-facet-absent': 34, mystery: 2 } }));
+  assert.deepEqual(withOther.grouped, { supplied: 34, adapter: 0, documentation: 0, debt: 25, other: 2 });
+  assert.deepEqual(coverageOf(undefined).grouped, { supplied: 0, adapter: 0, documentation: 0, debt: 0, other: 0 });
+});
+
+test('coverage that moved is named field by field, class by class — and an unregistered engine is a move too', () => {
+  const measured = { native: coverageOf(report({})), opa: coverageOf(report({ rulesChecked: 7, rulesSkipped: 152, skippedByEvaluability: { 'supplied-facet-absent': 120 } })) };
+  const same = reconcileCoverageTotals(measured, JSON.parse(JSON.stringify(measured)));
+  assert.deepEqual(same, []);
+  const registered = JSON.parse(JSON.stringify(measured));
+  registered.native.decided = 55; registered.native.byClass['needs-runtime'] = 15; delete registered.opa;
+  const moved = reconcileCoverageTotals(measured, registered);
+  assert.deepEqual(moved.map((e) => `${e.engine}.${e.field}:${e.from}→${e.to}`), ['native.decided:55→56', 'native.byClass.needs-runtime:15→14', 'opa.(all):null→measured']);
+});
+
+test('the rendered table is deterministic, bilingual, and carries the measurement date and the four groups', () => {
+  const coverage = { repository: { native: coverageOf(report({})), opa: coverageOf(report({ rulesChecked: 7, rulesSkipped: 152, skippedByEvaluability: { 'supplied-facet-absent': 120, 'no-policy-in-bundle': 25, mystery: 7 } })) }, 'init-satellite': {} };
+  const en = renderCoverageTable(coverage, '2026-09-21', 'en');
+  assert.match(en, /^_Measured 2026-09-21 by `73-validate-engine-coverage-parity\.mjs --write`/);
+  assert.match(en, /\| this repository \| native \(default\) \| 159 \| 56 \| 103 \| 31 \| 34 \| 30 \| 8 \| 30 \|/);
+  assert.match(en, /\| this repository \| `--engine opa` \| 159 \| 7 \| 152 \| 120 \| 0 \| 0 \| 25 \(\+7\) \| 30 \|/);
+  assert.equal(en, renderCoverageTable(coverage, '2026-09-21', 'en'));
+  const es = renderCoverageTable(coverage, '2026-09-21', 'es');
+  assert.match(es, /^_Medido el 2026-09-21/);
+  assert.match(es, /\| este repositorio \| nativo \(por defecto\) \| 159 \| 56 \| 103 \|/);
+  assert.notEqual(en, es);
+});
+
+test('the fragment is replaced between its markers and read back verbatim; a page without markers is null, not silently skipped', () => {
+  const page = '# Page\n\nintro\n\n<!-- engine-coverage:begin -->\nold table\n<!-- engine-coverage:end -->\n\noutro\n';
+  const next = withCoverageFragment(page, 'NEW');
+  assert.equal(next, '# Page\n\nintro\n\n<!-- engine-coverage:begin -->\nNEW\n<!-- engine-coverage:end -->\n\noutro\n');
+  assert.equal(coverageFragmentOf(next), 'NEW');
+  assert.equal(withCoverageFragment('no markers here', 'NEW'), null);
+  assert.equal(coverageFragmentOf('no markers here'), null);
+});
+
+test('the committed pages carry the markers, in both languages', () => {
+  for (const rel of Object.values(COVERAGE_PAGES)) {
+    const text = readFileSync(resolve(REPO_ROOT, rel), 'utf8');
+    assert.notEqual(coverageFragmentOf(text), null, `${rel} carries the engine-coverage markers`);
+  }
 });

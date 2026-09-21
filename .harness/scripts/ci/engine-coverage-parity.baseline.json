@@ -1,0 +1,749 @@
+{
+  "$comment": [
+    "GT-716 AC3 — every rule ONE engine decides and the other does not, per scenario, with the reason the other engine gave.",
+    "Written by `73-validate-engine-coverage-parity.mjs --write` and compared by default: an unregistered rule, a stale entry or a",
+    "changed class fails. ADR-0041 never promised equal coverage; this file makes every coverage difference a diff somebody reads.",
+    "`why` is measured — the class the report states, the facets the policy reads — and `followUp` says what would REMOVE the entry."
+  ],
+  "measuredOn": "2026-09-20",
+  "method": "evolith validate --engine {native,opa} --format json, on an export of the tracked tree (git ls-files + policy.wasm) and on a satellite fresh from `evolith init` with --core pointed at that export; outcomes per 68-validate-engine-verdict-parity.mjs.",
+  "scenarios": {
+    "repository": {
+      "nativeOnly": {
+        "ACL-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads adapter this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "ACL-04": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads adapter this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "ACL-06": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads adapter this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CB-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CB-02": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CB-03": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CB-04": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CB-05": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CB-VAL-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CB-VAL-02": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CLI-RR-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads satellite.releaseReadiness this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CLI-RR-02": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads satellite.releaseReadiness this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CLI-RR-03": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads satellite.releaseReadiness this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CLI-RR-04": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads satellite.releaseReadiness this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "CLI-RR-05": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.releaseReadiness, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-03": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-04": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-05": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-06": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-07": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads context, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-09": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-10": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DORA-01": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.scorecards, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-D-01": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads duplicateCodeRatio, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-D-02": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads duplicateConfigCount, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-K-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads maxCyclomaticComplexity this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-K-02": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads prematureAbstractionSignals, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-01": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads classLineCount, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-02": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads openClosedViolations, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-03": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads liskovViolations this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-04": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads interfaceSegregationViolations, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-05": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads domainImportsInfrastructure this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "GIT-08": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads satellite.git this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "HXA-01": {
+          "class": "opa-gave-no-reason",
+          "why": "The OPA path skipped without stating why — the reporter fell back to the declaration's `unimplemented-native`; the row says: Enforcer 'dependency-cruiser' failed to run: dependency-cruiser cannot certify these rules: no compiled config was materialized for 6 routed rule(s) (HXA-01, HX",
+          "followUp": "Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class)."
+        },
+        "HXA-02": {
+          "class": "opa-gave-no-reason",
+          "why": "The OPA path skipped without stating why — the reporter fell back to the declaration's `unimplemented-native`; the row says: Enforcer 'dependency-cruiser' failed to run: dependency-cruiser cannot certify these rules: no compiled config was materialized for 6 routed rule(s) (HXA-01, HX",
+          "followUp": "Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class)."
+        },
+        "HXA-04": {
+          "class": "opa-gave-no-reason",
+          "why": "The OPA path skipped without stating why — the reporter fell back to the declaration's `unimplemented-native`; the row says: Enforcer 'dependency-cruiser' failed to run: dependency-cruiser cannot certify these rules: no compiled config was materialized for 6 routed rule(s) (HXA-01, HX",
+          "followUp": "Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class)."
+        },
+        "HXA-05": {
+          "class": "opa-gave-no-reason",
+          "why": "The OPA path skipped without stating why — the reporter fell back to the declaration's `unimplemented-native`; the row says: Enforcer 'dependency-cruiser' failed to run: dependency-cruiser cannot certify these rules: no compiled config was materialized for 6 routed rule(s) (HXA-01, HX",
+          "followUp": "Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class)."
+        },
+        "INH-02": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "MM-R01": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R02": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R04": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R05": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R06": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R07": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R08": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R09": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R10": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R11": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "MM-R12": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "OCB-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads satellite.openCore this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "QT-05": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "QT-06": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads behaviorChangedWithoutDocUpdate this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SEC-RL-01": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SEC-RL-02": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SLSA-AUTH-L2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SLSA-BUILD-L1": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SLSA-HOSTED-L2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SLSA-PROV-L1": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SPACE-04": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.scorecards, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SPACE-05": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.scorecards, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SSDF-PO.3.1": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PS.3.2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PW.4.1": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PW.4.4": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PW.6.1": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PW.7.2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-RV.1.2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-RV.1.3": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SVC-01": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SVC-03": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SVC-04": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-02": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-03": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-04": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads repository, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-05": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-07": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-08": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-09": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-10": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-11": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        }
+      },
+      "opaOnly": {
+        "MCP-01": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
+        "MCP-02": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
+        "MCP-03": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
+        "MCP-05": {
+          "class": "handler-declined",
+          "why": "The declaration gives `handler-declined`; declared facts: core.cli, repository.",
+          "followUp": "The native handler found nothing to judge here; a fixture with the subject would decide it."
+        },
+        "OBS-EVD-01": {
+          "class": "needs-runtime",
+          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
+          "followUp": "An adapter that observes the running system, through the enforcer seam."
+        },
+        "OBS-EVD-02": {
+          "class": "needs-runtime",
+          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
+          "followUp": "An adapter that observes the running system, through the enforcer seam."
+        },
+        "OBS-EVD-03": {
+          "class": "needs-external-system",
+          "why": "The report states `needs-external-system`; declared facts: satellite.packageJson, telemetryBackend.",
+          "followUp": "An adapter over the external system, through the enforcer seam."
+        }
+      }
+    },
+    "init-satellite": {
+      "nativeOnly": {
+        "ACL-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads adapter this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "ACL-04": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads adapter this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "ACL-06": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads adapter this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-03": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-04": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-05": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-06": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-07": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads context, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-09": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "DOD-10": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads context this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-D-01": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads duplicateCodeRatio, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-D-02": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads duplicateConfigCount, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-K-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads maxCyclomaticComplexity this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-K-02": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads prematureAbstractionSignals, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-01": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads classLineCount, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-02": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads openClosedViolations, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-03": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads liskovViolations this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-04": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads interfaceSegregationViolations, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "EM-S-05": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads domainImportsInfrastructure this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "GIT-08": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads satellite.git this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "HXA-01": {
+          "class": "opa-gave-no-reason",
+          "why": "The OPA path skipped without stating why — the reporter fell back to the declaration's `unimplemented-native`; the row says: Enforcer 'dependency-cruiser' failed to run: dependency-cruiser cannot certify these rules: no compiled config was materialized for 6 routed rule(s) (HXA-01, HX",
+          "followUp": "Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class)."
+        },
+        "HXA-02": {
+          "class": "opa-gave-no-reason",
+          "why": "The OPA path skipped without stating why — the reporter fell back to the declaration's `unimplemented-native`; the row says: Enforcer 'dependency-cruiser' failed to run: dependency-cruiser cannot certify these rules: no compiled config was materialized for 6 routed rule(s) (HXA-01, HX",
+          "followUp": "Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class)."
+        },
+        "HXA-04": {
+          "class": "opa-gave-no-reason",
+          "why": "The OPA path skipped without stating why — the reporter fell back to the declaration's `unimplemented-native`; the row says: Enforcer 'dependency-cruiser' failed to run: dependency-cruiser cannot certify these rules: no compiled config was materialized for 6 routed rule(s) (HXA-01, HX",
+          "followUp": "Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class)."
+        },
+        "HXA-05": {
+          "class": "opa-gave-no-reason",
+          "why": "The OPA path skipped without stating why — the reporter fell back to the declaration's `unimplemented-native`; the row says: Enforcer 'dependency-cruiser' failed to run: dependency-cruiser cannot certify these rules: no compiled config was materialized for 6 routed rule(s) (HXA-01, HX",
+          "followUp": "Make the OPA path state why it declined (an enforcer route that failed, a strategy that returned skipped without a class)."
+        },
+        "INH-02": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "QT-05": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "QT-06": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads behaviorChangedWithoutDocUpdate this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SEC-RL-01": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SEC-RL-02": {
+          "class": "no-policy-in-bundle",
+          "why": "The report states `no-policy-in-bundle`.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SLSA-HOSTED-L2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SPACE-04": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.scorecards, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SPACE-05": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.scorecards, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SSDF-PO.3.1": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PS.3.2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PW.4.1": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PW.4.4": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-PW.7.2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-RV.1.2": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SSDF-RV.1.3": {
+          "class": "no-policy-in-bundle",
+          "why": "No reachable policy in the compiled bundle emits this id.",
+          "followUp": "Author the Rego twin, or record that the rule is native-only."
+        },
+        "SVC-01": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SVC-03": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "SVC-04": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-01": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-02": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-03": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-04": {
+          "class": "supplied-facet-absent",
+          "why": "The policy reads repository, which the input builder does not emit on a bare run.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-07": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        },
+        "TAX-08": {
+          "class": "supplied-facet-absent",
+          "why": "The report states the policy reads repository this run did not supply.",
+          "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
+        }
+      },
+      "opaOnly": {
+        "MCP-01": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
+        "MCP-02": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
+        "MCP-03": {
+          "class": "unimplemented-native",
+          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
+          "followUp": "Write the native handler — the rule declares an observed fact."
+        },
+        "MCP-05": {
+          "class": "handler-declined",
+          "why": "The declaration gives `handler-declined`; declared facts: core.cli, repository.",
+          "followUp": "The native handler found nothing to judge here; a fixture with the subject would decide it."
+        },
+        "OBS-EVD-01": {
+          "class": "needs-runtime",
+          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
+          "followUp": "An adapter that observes the running system, through the enforcer seam."
+        },
+        "OBS-EVD-02": {
+          "class": "needs-runtime",
+          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
+          "followUp": "An adapter that observes the running system, through the enforcer seam."
+        },
+        "OBS-EVD-03": {
+          "class": "needs-external-system",
+          "why": "The report states `needs-external-system`; declared facts: satellite.packageJson, telemetryBackend.",
+          "followUp": "An adapter over the external system, through the enforcer seam."
+        }
+      }
+    }
+  }
+}

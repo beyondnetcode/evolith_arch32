@@ -13,6 +13,7 @@
       "facts": [
         "satellite.packageJson"
       ],
+      "appliesFromSdlcPhase": 3,
       "severity": "MUST",
       "category": "tracing",
       "title": "Production Paths Emit Trace Context",
@@ -25,6 +26,7 @@
       "facts": [
         "satellite.packageJson"
       ],
+      "appliesFromSdlcPhase": 3,
       "severity": "MUST",
       "category": "logging",
       "title": "Structured Logs Carry Request Context",
@@ -37,6 +39,7 @@
       "facts": [
         "satellite.packageJson"
       ],
+      "appliesFromSdlcPhase": 3,
       "severity": "MUST",
       "category": "metrics",
       "title": "Service Health Metrics Are Reported",

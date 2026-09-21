@@ -94,51 +94,50 @@
       "src/packages/core-domain/test/rule-corpus-triage.ts (corpus loader, classification and this renderer)"
     ],
     "note": "The handler backlog is the `unimplemented-native` class only. `documentation-only` and `underspecified` rules are not handler work at all, the two adapter classes are closed by the enforcer seam rather than by a rule handler, and `needs-supplied-facts` (GT-716) is closed by the caller declaring the posture through `facts.satellite`.",
-    "realBacklogSize": 21,
-    "adoptableFromAnalyser": 9,
-    "adoptableFromAnalyserIncludingPartial": 11,
-    "adoptedFractionOfBacklog": 0.4286,
-    "adoptedFractionOfBacklogIncludingPartial": 0.5238,
-    "remainderToAuthor": 10,
+    "realBacklogSize": 14,
+    "adoptableFromAnalyser": 5,
+    "adoptableFromAnalyserIncludingPartial": 5,
+    "adoptedFractionOfBacklog": 0.3571,
+    "adoptedFractionOfBacklogIncludingPartial": 0.3571,
+    "remainderToAuthor": 9,
     "byEvaluabilityClass": {
       "unimplemented-native": {
-        "rules": 21,
-        "mappedToIso5055": 5,
-        "analyserAdoptable": 9,
-        "analyserAdoptablePartial": 2,
+        "rules": 14,
+        "mappedToIso5055": 1,
+        "analyserAdoptable": 5,
+        "analyserAdoptablePartial": 0,
         "adoptableRuleIds": [
           "HXA-03",
-          "SEC-INJ-01",
-          "SEC-PATH-01",
-          "SEC-PATH-02",
-          "SEC-TIMING-01",
           "ISO5055-MAINT",
           "ISO5055-PERF",
           "ISO5055-REL",
           "ISO5055-SEC"
         ],
+        "adoptablePartialRuleIds": []
+      },
+      "needs-external-system": {
+        "rules": 33,
+        "mappedToIso5055": 5,
+        "analyserAdoptable": 7,
+        "analyserAdoptablePartial": 4,
+        "adoptableRuleIds": [
+          "CICD-03",
+          "GIT-01",
+          "GIT-04",
+          "SEC-INJ-01",
+          "SEC-PATH-01",
+          "SEC-PATH-02",
+          "SEC-TIMING-01"
+        ],
         "adoptablePartialRuleIds": [
+          "CICD-01",
+          "CICD-02",
           "SEC-INJ-02",
           "SEC-TIMING-02"
         ]
       },
-      "needs-external-system": {
-        "rules": 27,
-        "mappedToIso5055": 1,
-        "analyserAdoptable": 3,
-        "analyserAdoptablePartial": 2,
-        "adoptableRuleIds": [
-          "CICD-03",
-          "GIT-01",
-          "GIT-04"
-        ],
-        "adoptablePartialRuleIds": [
-          "CICD-01",
-          "CICD-02"
-        ]
-      },
       "needs-runtime": {
-        "rules": 23,
+        "rules": 22,
         "mappedToIso5055": 2,
         "analyserAdoptable": 0,
         "analyserAdoptablePartial": 0,
@@ -187,7 +186,7 @@
         "adoptablePartialRuleIds": []
       },
       "native-handler": {
-        "rules": 171,
+        "rules": 173,
         "mappedToIso5055": 19,
         "analyserAdoptable": 28,
         "analyserAdoptablePartial": 11,
@@ -6309,7 +6308,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "needs-runtime",
+      "nativeEvaluability": "native-handler",
       "note": "An operational telemetry expectation, evaluated from runtime evidence rather than source structure."
     },
     {
@@ -6328,7 +6327,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "needs-runtime",
+      "nativeEvaluability": "native-handler",
       "note": "An operational telemetry expectation, evaluated from runtime evidence rather than source structure."
     },
     {
@@ -6347,7 +6346,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "needs-external-system",
+      "nativeEvaluability": "native-handler",
       "note": "An operational telemetry expectation, evaluated from runtime evidence rather than source structure."
     },
     {
@@ -6704,7 +6703,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "native-handler",
+      "nativeEvaluability": "needs-runtime",
       "note": "Code-adjacent convention with no ISO/IEC 5055 weakness, though a linter may still decide it."
     },
     {
@@ -6795,7 +6794,7 @@
           "SonarQube S2076"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "Shell execution with interpolated user input is OS command injection verbatim."
     },
     {
@@ -6824,7 +6823,7 @@
           "CodeQL taint tracking to child_process sinks"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "Taint analysis proves the sink is unsanitised; it cannot prove an allowlist exists, which is what the rule actually demands."
     },
     {
@@ -6857,7 +6856,7 @@
           "SonarQube S2083"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "Structural rule with no counterpart among the 138 weaknesses."
     },
     {
@@ -6884,7 +6883,7 @@
           "CodeQL js/path-injection"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "Structural rule with no counterpart among the 138 weaknesses."
     },
     {
@@ -6951,7 +6950,7 @@
         "adoptable": "no",
         "examples": []
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "HTTP server timeout configuration has no 5055 weakness and no off-the-shelf check."
     },
     {
@@ -6973,7 +6972,7 @@
           "CodeQL js/timing-attack"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "CWE-208 (observable timing discrepancy) is NOT one of the 138, so this is adoptable from an analyser but not countable against 5055."
     },
     {
@@ -6994,7 +6993,7 @@
           "Semgrep timing-attack rules"
         ]
       },
-      "nativeEvaluability": "unimplemented-native",
+      "nativeEvaluability": "needs-external-system",
       "note": "Same as SEC-TIMING-01; the early-length-rejection variant needs a bespoke pattern."
     },
     {

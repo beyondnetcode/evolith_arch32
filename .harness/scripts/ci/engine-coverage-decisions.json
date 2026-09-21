@@ -1,0 +1,120 @@
+{
+  "$comment": [
+    "GT-716 AC4 — the recorded decision behind every coverage difference that is DEBT rather than a declaration of the rule itself.",
+    "Read by `73-validate-engine-coverage-parity.mjs`: a baseline entry whose class is no-policy-in-bundle, unimplemented-native,",
+    "handler-declined, opa-gave-no-reason or undecided must be covered here, or the guard fails it as coverage-only BY OMISSION.",
+    "`kind` is what was decided — native-only / opa-only (the difference is accepted, with the reason and what would reopen it) or",
+    "neither (no engine decides the rule as written, and the runs must keep agreeing with that). A decision the runs contradict fails:",
+    "its rule is decided by both engines now, or by the engine the decision said would not. Hand-written; `--write` never touches it."
+  ],
+  "decisions": [
+    {
+      "id": "ssdf-native-only",
+      "kind": "native-only",
+      "rules": [
+        "SSDF-PO.3.1",
+        "SSDF-PS.3.2",
+        "SSDF-PW.4.1",
+        "SSDF-PW.4.4",
+        "SSDF-PW.6.1",
+        "SSDF-PW.7.2",
+        "SSDF-RV.1.2",
+        "SSDF-RV.1.3"
+      ],
+      "why": "`SsdfRuleHandler` decides the eight SSDF v1.1 practices from the tree — workflow files, the security policy, lockfiles, signing and review configuration. The OPA input builder projects none of those facts, so a Rego twin would begin by emitting them a second time to reach the same verdict: the same check, twice, with a projection in between. Complementary reach under ADR-0041.",
+      "reopenWhen": "The builder emits the workflow and security-policy facets for another policy; the twin then costs a policy, not a projection.",
+      "recordedOn": "2026-09-21"
+    },
+    {
+      "id": "slsa-native-only",
+      "kind": "native-only",
+      "rules": [
+        "SLSA-BUILD-L1",
+        "SLSA-PROV-L1",
+        "SLSA-HOSTED-L2",
+        "SLSA-AUTH-L2"
+      ],
+      "why": "`SlsaRuleHandler` decides the four SLSA levels from the build configuration in the tree (hosted build, provenance generation, authenticated provenance). As with SSDF, nothing the OPA input builder emits carries those facts; a Rego twin is a second projection of the same files. Complementary reach under ADR-0041.",
+      "reopenWhen": "The builder projects the build/provenance configuration for another policy.",
+      "recordedOn": "2026-09-21"
+    },
+    {
+      "id": "sec-rl-native-only",
+      "kind": "native-only",
+      "rules": [
+        "SEC-RL-01",
+        "SEC-RL-02"
+      ],
+      "why": "`GovernanceRuleHandler` (GT-595) scans the HTTP surface for a rate limit and a body cap read from the environment — a source scan over the tree that the OPA input builder does not project. Native-only; the scan is the check, and the policy would need the scan's result as input.",
+      "reopenWhen": "A scanner presents the finding through the enforcer seam (GT-514) as `satellite.findings`; both engines then read the same fact.",
+      "recordedOn": "2026-09-21"
+    },
+    {
+      "id": "modular-monolith-native-only",
+      "kind": "native-only",
+      "rules": [
+        "MM-R01",
+        "MM-R02",
+        "MM-R04",
+        "MM-R05",
+        "MM-R06",
+        "MM-R07",
+        "MM-R08",
+        "MM-R09",
+        "MM-R10",
+        "MM-R11",
+        "MM-R12"
+      ],
+      "why": "The modular-monolith topology rules are import-graph and AST checks over the satellite's layers, decided natively by `ArchitectureRuleHandler` — its structural, AST and module-boundary rule sets (GT-632). The OPA path has no projection of the module graph — `satellite.layers` belongs to the enforcer (GT-514) and the builder does not emit it — so a generated Rego twin would have nothing to read. Native-only, by decision, rather than a twin that decides from an absent facet. MM-R03 (ports-and-adapters boundary) is not here: `modular-monolith.rego` already decides it, and both engines agree — guard 73 flagged the decision as stale the first time it ran, which is what the register is for.",
+      "reopenWhen": "The enforcer seam feeds `satellite.layers` to the OPA path; the twin is then a translation of the same clauses.",
+      "recordedOn": "2026-09-21"
+    },
+    {
+      "id": "hxa-enforcer-route-native-only",
+      "kind": "native-only",
+      "rules": [
+        "HXA-01",
+        "HXA-02",
+        "HXA-04",
+        "HXA-05"
+      ],
+      "why": "`ArchitectureRuleHandler` decides these hexagonal-architecture clauses natively from the import graph. The OPA path routes them to the dependency-cruiser enforcer, which needs a compiled configuration the tracked tree does not carry — guard 73 measures an export of it — and so reports its failure without a class of its own (`opa-gave-no-reason`). Native-only on the committed tree.",
+      "reopenWhen": "The enforcer route materialises its configuration from the tree, or states a class when it cannot run (FOLLOW_UP for `opa-gave-no-reason`).",
+      "recordedOn": "2026-09-21"
+    },
+    {
+      "id": "adr-conformance-documentation-only-both",
+      "kind": "neither",
+      "pattern": "^[A-Z]{2,4}-\\d{4}-\\d{2}$",
+      "why": "The generated ADR-conformance rules (`generate-adr-rulesets.mjs`; 138 on 2026-09-21) declare `facts: []` — the generator wired no check — so the native engine classes them `documentation-only`, and since GT-716 AC4 the OPA engine states the same class for a policy-less rule whose declaration says there is nothing to check. Neither engine decides them, and a generated Rego twin would decide nothing either: documentation-only on both engines, by decision. The pattern is the generator's id shape; a generated rule some engine starts deciding contradicts this entry and fails the guard.",
+      "reopenWhen": "An ADR's conformance rule gains an authored check (facts and a handler or a policy); it then leaves this decision by leaving the pattern's silence.",
+      "recordedOn": "2026-09-21"
+    },
+    {
+      "id": "source-scan-rules-declared-scanner",
+      "kind": "neither",
+      "rules": [
+        "SEC-INJ-01",
+        "SEC-INJ-02",
+        "SEC-PATH-01",
+        "SEC-PATH-02",
+        "SEC-TIMING-01",
+        "SEC-TIMING-02",
+        "SEC-RL-03"
+      ],
+      "why": "Whether `child_process.exec` receives interpolated input, whether every path argument is sanitised and contained, whether a credential comparison is constant-time, whether the HTTP server sets its timeouts — each is a scanner's finding over the AST, not a regex over the tree; MM-R10 in this same corpus forbids exactly that kind of handler. The seven declare `satellite.findings` (external) since GT-716 AC4 and no engine decides them until an adapter presents the findings through the enforcer seam (GT-514).",
+      "reopenWhen": "A SAST adapter supplies `satellite.findings`; the native handler and the policy then read the same finding.",
+      "recordedOn": "2026-09-21"
+    },
+    {
+      "id": "qt-05-declared-runtime",
+      "kind": "neither",
+      "rules": [
+        "QT-05"
+      ],
+      "why": "`SdlcRuleHandler` used to return `passed` for QT-05 with the message 'requires runtime analysis' — a fixed answer, not a verdict, and the only reason the rule was native-only. The testing-pyramid distribution is a test run's fact: QT-05 declares `satellite.testing` (runtime) since GT-716 AC4, no handler claims it, and neither engine decides it until a run supplies the mix.",
+      "reopenWhen": "A test-run adapter supplies `satellite.testing`; `testing-pyramid.rego` and a native handler then decide it from the same numbers.",
+      "recordedOn": "2026-09-21"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "domain": "sdlc-quality-thresholds",
-  "description": "SDLC quality threshold rule evaluator parity — QT rules",
+  "description": "SDLC quality threshold rule evaluator parity — QT rules. GT-716 AC4: QT-05 (testing-pyramid distribution) is unclaimed — it declares a runtime fact, and \"always passes\" was a fixed answer — so it is skipped in every scenario.",
   "rules": [
     { "id": "QT-01", "severity": "MUST", "category": "testing", "title": "Code Coverage", "description": "Coverage below 80% on business logic blocks merge", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
     { "id": "QT-02", "severity": "MUST", "category": "code-quality", "title": "Cyclomatic Complexity", "description": "Methods exceeding cyclomatic complexity of 15 block merge", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
@@ -36,7 +36,7 @@
         { "ruleId": "QT-02", "result": "passed" },
         { "ruleId": "QT-03", "result": "passed" },
         { "ruleId": "QT-04", "result": "passed" },
-        { "ruleId": "QT-05", "result": "passed" },
+        { "ruleId": "QT-05", "result": "skipped" },
         { "ruleId": "QT-06", "result": "passed" },
         { "ruleId": "QT-07", "result": "passed" },
         { "ruleId": "QT-08", "result": "passed" }
@@ -54,7 +54,7 @@
         { "ruleId": "QT-02", "result": "skipped" },
         { "ruleId": "QT-03", "result": "skipped" },
         { "ruleId": "QT-04", "result": "skipped" },
-        { "ruleId": "QT-05", "result": "passed" },
+        { "ruleId": "QT-05", "result": "skipped" },
         { "ruleId": "QT-06", "result": "skipped" },
         { "ruleId": "QT-07", "result": "skipped" },
         { "ruleId": "QT-08", "result": "skipped" }
@@ -82,7 +82,7 @@
         { "ruleId": "QT-02", "result": "passed" },
         { "ruleId": "QT-03", "result": "passed" },
         { "ruleId": "QT-04", "result": "passed" },
-        { "ruleId": "QT-05", "result": "passed" },
+        { "ruleId": "QT-05", "result": "skipped" },
         { "ruleId": "QT-06", "result": "skipped" },
         { "ruleId": "QT-07", "result": "passed" },
         { "ruleId": "QT-08", "result": "passed" }
@@ -100,7 +100,7 @@
         { "ruleId": "QT-02", "result": "skipped" },
         { "ruleId": "QT-03", "result": "skipped" },
         { "ruleId": "QT-04", "result": "skipped" },
-        { "ruleId": "QT-05", "result": "passed" },
+        { "ruleId": "QT-05", "result": "skipped" },
         { "ruleId": "QT-06", "result": "passed" },
         { "ruleId": "QT-07", "result": "skipped" },
         { "ruleId": "QT-08", "result": "skipped" }

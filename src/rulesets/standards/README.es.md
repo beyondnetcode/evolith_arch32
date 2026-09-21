@@ -132,7 +132,7 @@ Las ocho reglas del SSDF y las cuatro de SLSA se quedan en `no`, y eso es un ver
 
 El enunciado del gap dimensionaba el beneficio contra "~240 handlers por escribir". **Esa cifra ya está
 retirada.** GT-595 hizo el triage del corpus y el backlog real, decidible desde el repositorio, es la
-clase `unimplemented-native`: **52 reglas** cuando se escribió esta sección, **21** desde el 2026-09-20
+clase `unimplemented-native`: **52 reglas** cuando se escribió esta sección, **21** el 2026-09-20 y **14** desde 2026-09-21
 (ver más abajo). De las 410 reglas que cargaba entonces el triage del Core, 170 ya se ejecutaban y las
 otras 188 eran 137 placeholders de generador solo documentales, 14 reglas sin check redactado, 20 que
 requerían un sistema externo y 17 que requerían uno en ejecución.
@@ -155,28 +155,43 @@ triaje explícito. Las políticas que deciden 25 de esas filas leen una postura 
 satélite pueden declarar (21, la nueva clase `needs-supplied-facts`), el sistema de CI o el almacén de
 hallazgos (4), o una ejecución de tests (6 — más 3 desde otras clases). No se implementó nada entre las
 dos cifras: 31 filas que nunca fueron trabajo de handler dejaron de contarse como tal. Los conteos por
-clase ahora: 171 se ejecutan, 21 por escribir, 27 necesitan un sistema externo, 23 uno en ejecución, 31
-una postura declarada, 138 son documentación, 4 están sin especificar.
+clase tras el AC2: 171 se ejecutan, 21 por escribir, 27 necesitan un sistema externo, 23 uno en ejecución,
+31 una postura declarada, 138 son documentación, 4 están sin especificar.
+
+21 → 14 el 2026-09-21 (AC4 de GT-716): las siete que salieron de esta clase tampoco se implementaron.
+`SEC-INJ-01/02`, `SEC-PATH-01/02`, `SEC-TIMING-01/02` y `SEC-RL-03` declaran ahora `satellite.findings` —
+si `child_process.exec` recibe input interpolado o si una comparación de credenciales es en tiempo
+constante es el hallazgo de un escáner sobre el AST, no una regex sobre el árbol (`MM-R10`, en este mismo
+corpus, prohíbe esa clase de handler) — y cuentan en `needs-external-system`, donde los analizadores a los
+que esta tabla las apuntaba son el adaptador que la regla declara necesitar. Lo que SÍ se implementó salió
+del conjunto no ejecutable por completo: `OBS-EVD-01..03` se deciden desde las dependencias del satélite,
+como ya hacía su política. `QT-05` fue en sentido contrario — `SdlcRuleHandler` la respondía `passed` con
+«requiere análisis en runtime», una respuesta fija y no un veredicto; declara `satellite.testing` y cuenta
+como `needs-runtime`. Los conteos por clase ahora: 173 se ejecutan, 14 por escribir, 33 necesitan un
+sistema externo, 22 uno en ejecución, 31 una postura declarada, 138 son documentación, 4 están sin
+especificar.
 
 Proyectar este mapeo sobre esa clase es la cifra que importa:
 
-| Del backlog de 21 handlers | Cantidad |
+| Del backlog de 14 handlers | Cantidad |
 |---|---|
-| Decidibles hoy por un analizador estándar | 9 |
-| Decidibles parcialmente (señal necesaria pero no suficiente) | 2 |
-| Que hay que escribir de verdad | 10 |
+| Decidibles hoy por un analizador estándar | 5 |
+| Decidibles parcialmente (señal necesaria pero no suficiente) | 0 |
+| Que hay que escribir de verdad | 9 |
 
-Las 9 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
-`SEC-PATH-02` (consultas de inyección y path traversal de CodeQL/Semgrep), `SEC-TIMING-01` (comparación
-en tiempo constante) y las cuatro reglas `ISO5055-*`, que declaran ellas mismas su analizador. Las 2
-parciales (`SEC-INJ-02`, `SEC-TIMING-02`) están listadas en `handlerBacklog.byEvaluabilityClass` del JSON
-de mapeo; las otras tres parciales de antes salieron de la clase con GT-716, al decidirse sobre una postura
-declarada.
+Las 5 son `HXA-03` (estructura de capas — dependency-cruiser o ArchUnit) y las cuatro reglas `ISO5055-*`,
+que declaran ellas mismas su analizador. Las reglas de seguridad que esta lista solía llevar — `SEC-INJ-01`,
+`SEC-PATH-01`, `SEC-PATH-02`, `SEC-TIMING-01` adoptables, `SEC-INJ-02` y `SEC-TIMING-02` parciales — están
+en `needs-external-system` desde el AC4 de GT-716 (7 adoptables y 4 parciales allí, listadas bajo esa clase
+en `handlerBacklog.byEvaluabilityClass` del JSON de mapeo): el analizador ya no es una forma de evitar
+escribir un handler, es el adaptador que la regla declara necesitar. Las otras tres parciales de antes se
+deciden sobre una postura declarada.
 
-Es decir, adoptar vale **42,9% del backlog por completo, 52,4% incluyendo parciales** — 11 de 21 reglas
-que no necesitan handlers a medida. (Antes de GT-716 las mismas 11 se leían como 14 de 52 — 17,3% / 26,9%
-— contra un backlog inflado por filas que nunca fueron trabajo de handler; la proporción se movió porque
-se corrigió el denominador, no porque se adoptara nada.)
+Es decir, adoptar vale **35,7% del backlog** — 5 de 14 reglas que no necesitan handlers a medida, sin
+parciales en la clase. (El 2026-09-20 la misma lectura era 11 de 21 — 42,9%, 52,4% incluyendo parciales —
+y antes de GT-716, 14 de 52 — 17,3% / 26,9%. Cada paso corrigió el denominador, y el último movió seis
+reglas con forma de analizador fuera de él, a la clase de adaptadores, donde cuentan los mismos
+analizadores; entre ninguna de las cifras se adoptó nada.)
 
 5 → 9 el 2026-08-09 (GT-667): las cuatro reglas de ISO/IEC 5055 se contaban como trabajo por escribir
 mientras las decidía un analizador, así que `remainderToAuthor` exageraba el backlog real en cuatro. **La

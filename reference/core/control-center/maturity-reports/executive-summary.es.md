@@ -41,7 +41,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Indicador | Valor |
 |---|---:|
-| Fecha canónica del tablero | 2026-09-20 |
+| Fecha canónica del tablero | 2026-09-21 |
 | Gaps totales | 715 |
 | Gaps cerrados | 688 |
 | Gaps pendientes | 27 |

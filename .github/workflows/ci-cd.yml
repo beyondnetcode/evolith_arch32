@@ -113,6 +113,16 @@ jobs:
           node --test .harness/scripts/ci/68-validate-engine-verdict-parity.test.mjs
           node .harness/scripts/ci/68-validate-engine-verdict-parity.mjs --verbose --json
 
+      # GT-716 AC3 — what only ONE engine decides is registered per rule, with the
+      # reason the other engine gave, in both directions and on both scenarios (this
+      # repository, and a satellite fresh from `init`). 68 gates the verdicts both
+      # engines reach; this gates the reach itself becoming a diff nobody read.
+      # Same job for the same reason: it needs dist/main.js and policy.wasm.
+      - name: Every coverage difference between the engines is registered (GT-716 AC3)
+        run: |
+          node --test .harness/scripts/ci/73-validate-engine-coverage-parity.test.mjs
+          node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --json
+
       # GT-588, criterion 3 — the transparency rule is RUN, not merely declared.
       #
       # `AUD-TRANSP-01…04` and their negative tests existed while

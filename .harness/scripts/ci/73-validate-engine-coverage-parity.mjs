@@ -50,6 +50,21 @@
  * machine alike. A rule whose native verdict needs one of those is skipped identically
  * everywhere, which is the fact the baseline should carry.
  *
+ * ## Nothing is coverage-only by omission (GT-716 AC4)
+ *
+ * A registered entry whose class is DEBT — no policy in the bundle, no native handler,
+ * a handler that declined, an OPA path that gave no reason — must carry a recorded
+ * decision in `engine-coverage-decisions.json`: `native-only` / `opa-only` (the
+ * difference is accepted, and the entry says why and what would reopen it) or
+ * `neither` (no engine decides the rule as written, e.g. the generated ADR-conformance
+ * rules, documentation on both sides). An entry with no decision fails: the debt is
+ * real, but it has to be somebody's. A decision that no longer describes the runs fails
+ * too — its rule is decided by both engines now (stale), or by the engine the decision
+ * said would not (contradicted) — so the register cannot outlive what it decided.
+ * Entries whose class is already a declaration of the rule itself (`supplied-facet-absent`,
+ * `needs-supplied-facts`, `needs-external-system`, `needs-runtime`, `documentation-only`,
+ * `underspecified` — GT-716 AC2) need no second one.
+ *
  * ## Anti-vacuous pass
  *
  * Both engine runs of both scenarios go through `assertScannedPerSource`; a missing
@@ -63,8 +78,8 @@
  *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --write   # regenerate the baseline (review the diff)
  *
  * Exit codes:
- *   0 - every coverage-only rule is registered with its reason, and every entry still holds
- *   1 - an unregistered rule, a stale entry, a changed reason, or an engine that produced nothing
+ *   0 - every coverage-only rule is registered with its reason, every debt entry carries a decision, and every entry still holds
+ *   1 - an unregistered rule, a stale entry, a changed reason, a debt entry nobody decided, a decision the runs contradict, or an engine that produced nothing
  */
 
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -107,6 +122,111 @@ export const FOLLOW_UP = Object.freeze({
   'handler-declined': 'The native handler found nothing to judge here; a fixture with the subject would decide it.',
   undecided: 'The report states no class for the skip — make the engine say why.',
 });
+
+export const DECISIONS_PATH = resolve(HERE, 'engine-coverage-decisions.json');
+
+/**
+ * Classes that are debt until somebody decides (GT-716 AC4). A baseline entry in one
+ * of these without a recorded decision is coverage-only BY OMISSION and fails. The
+ * other classes are the rule's own declaration (AC2) and need no second one.
+ */
+export const DECISION_REQUIRED = new Set(['no-policy-in-bundle', 'unimplemented-native', 'handler-declined', 'opa-gave-no-reason', 'undecided']);
+
+/** The kinds a decision can take, and the baseline direction each one accepts. */
+export const DECISION_KINDS = Object.freeze({ 'native-only': 'nativeOnly', 'opa-only': 'opaOnly', neither: null });
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Validate the register's shape: every decision has an id, a kind, a dated
+ * rationale and the rules it covers (ids, a pattern, or both). Malformed is a throw,
+ * not a warning — a register that cannot be read must not pass as "nothing decided".
+ */
+export function validateDecisions(decisions) {
+  if (!Array.isArray(decisions)) throw new Error('engine-coverage-decisions.json: `decisions` must be an array');
+  const ids = new Set();
+  for (const d of decisions) {
+    const at = `decision ${JSON.stringify(d?.id ?? '(no id)')}`;
+    if (typeof d?.id !== 'string' || d.id.length === 0) throw new Error(`${at}: \`id\` is required`);
+    if (ids.has(d.id)) throw new Error(`${at}: duplicate id`);
+    ids.add(d.id);
+    if (!(d.kind in DECISION_KINDS)) throw new Error(`${at}: \`kind\` must be one of ${Object.keys(DECISION_KINDS).join(', ')}`);
+    if (typeof d.why !== 'string' || d.why.trim().length < 20) throw new Error(`${at}: \`why\` must say why (20+ characters)`);
+    if (typeof d.recordedOn !== 'string' || !ISO_DATE.test(d.recordedOn)) throw new Error(`${at}: \`recordedOn\` must be YYYY-MM-DD`);
+    const hasRules = Array.isArray(d.rules) && d.rules.length > 0 && d.rules.every((r) => typeof r === 'string' && r.length > 0);
+    const hasPattern = typeof d.pattern === 'string' && d.pattern.length > 0;
+    if (!hasRules && !hasPattern) throw new Error(`${at}: \`rules\` (ids) or \`pattern\` (a regex over rule ids) is required`);
+    if (hasPattern) new RegExp(d.pattern); // throws on a bad pattern
+  }
+  return decisions;
+}
+
+export function readDecisions(path = DECISIONS_PATH) {
+  if (!existsSync(path)) return [];
+  return validateDecisions(JSON.parse(readFileSync(path, 'utf8')).decisions ?? []);
+}
+
+/** The rule ids a decision covers within a universe: its explicit ids plus every id its pattern matches. */
+export function rulesOf(decision, universe) {
+  const out = new Set(decision.rules ?? []);
+  if (decision.pattern) {
+    const re = new RegExp(decision.pattern);
+    for (const id of universe) if (re.test(id)) out.add(id);
+  }
+  return out;
+}
+
+/** ruleId → decision, over a universe. Two decisions on one id is a contradiction in the register itself. */
+export function decisionIndex(decisions, universe) {
+  const index = new Map();
+  for (const d of decisions) {
+    for (const id of rulesOf(d, universe)) {
+      const prior = index.get(id);
+      if (prior && prior.id !== d.id) throw new Error(`rule ${id} is covered by two decisions: ${prior.id} and ${d.id}`);
+      index.set(id, d);
+    }
+  }
+  return index;
+}
+
+/**
+ * Hold the measured entries and the register to each other.
+ *  - undecided:    a coverage-only entry of a DEBT class with no decision — by omission.
+ *  - mismatched:   the decision accepts the other direction (a \`native-only\` rule that OPA alone decides).
+ *  - stale:        a decided rule both engines now decide — the decision outlived its difference.
+ *  - contradicted: a \`neither\` rule some engine decided, or a one-engine decision whose engine is the other one.
+ * `measured.decided` is ruleId → Set of the engines that decided it in this scenario.
+ */
+export function reconcileDecisions(measured, decisions) {
+  const universe = new Set(measured.decided.keys());
+  const index = decisionIndex(decisions, universe);
+  const out = { undecided: [], mismatched: [], stale: [], contradicted: [] };
+  for (const direction of ['nativeOnly', 'opaOnly']) {
+    for (const e of measured[direction] ?? []) {
+      if (!DECISION_REQUIRED.has(e.reason.class)) continue;
+      const d = index.get(e.ruleId);
+      if (!d) out.undecided.push({ direction, ruleId: e.ruleId, class: e.reason.class });
+      else if (DECISION_KINDS[d.kind] !== direction) out.mismatched.push({ direction, ruleId: e.ruleId, decision: d.id, kind: d.kind });
+    }
+  }
+  const decidedOnly = { 'native-only': 'native', 'opa-only': 'opa' };
+  for (const d of decisions) {
+    for (const id of rulesOf(d, universe)) {
+      const engines = measured.decided.get(id) ?? new Set();
+      if (engines.size === 0) continue;
+      if (d.kind === 'neither') out.contradicted.push({ ruleId: id, decision: d.id, decidedBy: [...engines].sort() });
+      else if (engines.size === 2) out.stale.push({ ruleId: id, decision: d.id });
+      else if (!engines.has(decidedOnly[d.kind])) out.contradicted.push({ ruleId: id, decision: d.id, decidedBy: [...engines] });
+    }
+  }
+  return out;
+}
+
+/** Decision ids that name a rule no scenario saw at all: a typo, or a rule that left the corpus. */
+export function unknownDecisionRules(decisions, universes) {
+  const seen = new Set(universes.flatMap((u) => [...u]));
+  return decisions.flatMap((d) => (d.rules ?? []).filter((id) => !seen.has(id)).map((ruleId) => ({ decision: d.id, ruleId })));
+}
 
 /**
  * Rule ids decided by exactly one engine, with the OTHER engine's outcome.
@@ -308,9 +428,11 @@ function measureScenario(name, runs, manifest, snapshot, corpus, vocabulary, emi
   );
   const universe = new Set([...outcomes.native.keys(), ...outcomes.opa.keys()]);
   const { nativeOnly, opaOnly } = coverageOnly(outcomes.native, outcomes.opa, universe);
+  const decided = new Map([...universe].map((id) => [id, new Set(ENGINES.filter((e) => DECIDED.has(outcomeOf(outcomes[e], id))))]));
   return {
     nativeOnly: nativeOnly.map((e) => ({ ...e, reason: opaReason(e.ruleId, manifest, corpus, vocabulary, runs.opa, emitted) })),
     opaOnly: opaOnly.map((e) => ({ ...e, reason: nativeReason(e.ruleId, runs.native, snapshot, corpus) })),
+    decided,
   };
 }
 
@@ -335,6 +457,7 @@ async function main() {
   const corpus = readCorpusFacts(resolve(root, 'src/rulesets'), root);
   const vocabulary = readVocabulary(root);
   const emitted = builderEmits(root);
+  const decisions = readDecisions();
 
   const measured = {};
   let satellite = null;
@@ -381,6 +504,10 @@ async function main() {
     for (const s of SCENARIOS) {
       console.log(`   ${s}: native-only ${measured[s].nativeOnly.length}, opa-only ${measured[s].opaOnly.length} (${measured[s].durationMs} ms)`);
     }
+    for (const s of SCENARIOS) {
+      const { undecided } = reconcileDecisions(measured[s], decisions);
+      if (undecided.length > 0) console.log(`   ${s}: ${undecided.length} debt entry(ies) carry no decision yet — record them in ${DECISIONS_PATH.replace(`${root}/`, '')}: ${undecided.map((e) => e.ruleId).join(', ')}`);
+    }
     console.log(`✓ baseline written to ${BASELINE_PATH.replace(`${root}/`, '')} — review the diff before committing it.`);
     return;
   }
@@ -422,6 +549,37 @@ async function main() {
       console.error(`❌ ${s}: ${changed.length} entry(ies) changed class — the same id, a different debt:`);
       for (const e of changed) console.error(`   - ${e.direction} ${e.ruleId}: ${e.from} → ${e.to}`);
     }
+
+    const decided = reconcileDecisions(measured[s], decisions);
+    report.scenarios[s].decisions = Object.fromEntries(Object.entries(decided).map(([k, v]) => [k, v.map((e) => e.ruleId)]));
+    if (decided.undecided.length > 0) {
+      failed = true;
+      console.error(`❌ ${s}: ${decided.undecided.length} debt entry(ies) carry no recorded decision — coverage-only by omission (GT-716 AC4):`);
+      for (const e of decided.undecided) console.error(`   - ${e.direction} ${e.ruleId} (${e.class}): implement it, or record a decision in ${DECISIONS_PATH.replace(`${root}/`, '')}`);
+    }
+    if (decided.mismatched.length > 0) {
+      failed = true;
+      console.error(`❌ ${s}: ${decided.mismatched.length} entry(ies) sit in the direction their decision does not accept:`);
+      for (const e of decided.mismatched) console.error(`   - ${e.direction} ${e.ruleId}: decision ${e.decision} says ${e.kind}`);
+    }
+    if (decided.stale.length > 0) {
+      failed = true;
+      console.error(`❌ ${s}: ${decided.stale.length} decided rule(s) are decided by BOTH engines now — retire the decision:`);
+      for (const e of decided.stale) console.error(`   - ${e.ruleId} (decision ${e.decision})`);
+    }
+    if (decided.contradicted.length > 0) {
+      failed = true;
+      console.error(`❌ ${s}: ${decided.contradicted.length} decision(s) are contradicted by the runs:`);
+      for (const e of decided.contradicted) console.error(`   - ${e.ruleId}: decision ${e.decision} — decided by ${e.decidedBy.join(' and ')}`);
+    }
+  }
+
+  const unknown = unknownDecisionRules(decisions, SCENARIOS.map((s) => new Set(measured[s].decided.keys())));
+  report.unknownDecisionRules = unknown.map((e) => e.ruleId);
+  if (unknown.length > 0) {
+    failed = true;
+    console.error(`❌ ${unknown.length} decision rule id(s) were seen by no scenario — a typo, or a rule that left the corpus:`);
+    for (const e of unknown) console.error(`   - ${e.ruleId} (decision ${e.decision})`);
   }
 
   if (asJson) console.log(`ENGINE_COVERAGE_PARITY ${JSON.stringify(report)}`);
@@ -430,7 +588,7 @@ async function main() {
     console.error('   A coverage difference is legitimate (ADR-0041); an unregistered one is not. Register it with its reason, or fix it.');
     process.exit(1);
   }
-  console.log('✓ 73-validate-engine-coverage-parity: every coverage-only rule is registered with its reason, in both directions, on both scenarios.');
+  console.log('✓ 73-validate-engine-coverage-parity: every coverage-only rule is registered with its reason and every debt entry with a decision, in both directions, on both scenarios.');
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {

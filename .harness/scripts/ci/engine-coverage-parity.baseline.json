@@ -5,7 +5,7 @@
     "changed class fails. ADR-0041 never promised equal coverage; this file makes every coverage difference a diff somebody reads.",
     "`why` is measured — the class the report states, the facets the policy reads — and `followUp` says what would REMOVE the entry."
   ],
-  "measuredOn": "2026-09-20",
+  "measuredOn": "2026-09-21",
   "method": "evolith validate --engine {native,opa} --format json, on an export of the tracked tree (git ls-files + policy.wasm) and on a satellite fresh from `evolith init` with --core pointed at that export; outcomes per 68-validate-engine-verdict-parity.mjs.",
   "scenarios": {
     "repository": {
@@ -265,11 +265,6 @@
           "why": "The report states the policy reads satellite.openCore this run did not supply.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         },
-        "QT-05": {
-          "class": "no-policy-in-bundle",
-          "why": "The report states `no-policy-in-bundle`.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
         "QT-06": {
           "class": "supplied-facet-absent",
           "why": "The report states the policy reads behaviorChangedWithoutDocUpdate this run did not supply.",
@@ -421,43 +416,7 @@
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         }
       },
-      "opaOnly": {
-        "MCP-01": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
-        },
-        "MCP-02": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
-        },
-        "MCP-03": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
-        },
-        "MCP-05": {
-          "class": "handler-declined",
-          "why": "The declaration gives `handler-declined`; declared facts: core.cli, repository.",
-          "followUp": "The native handler found nothing to judge here; a fixture with the subject would decide it."
-        },
-        "OBS-EVD-01": {
-          "class": "needs-runtime",
-          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
-          "followUp": "An adapter that observes the running system, through the enforcer seam."
-        },
-        "OBS-EVD-02": {
-          "class": "needs-runtime",
-          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
-          "followUp": "An adapter that observes the running system, through the enforcer seam."
-        },
-        "OBS-EVD-03": {
-          "class": "needs-external-system",
-          "why": "The report states `needs-external-system`; declared facts: satellite.packageJson, telemetryBackend.",
-          "followUp": "An adapter over the external system, through the enforcer seam."
-        }
-      }
+      "opaOnly": {}
     },
     "init-satellite": {
       "nativeOnly": {
@@ -591,11 +550,6 @@
           "why": "The policy reads satellite.contracts, which the input builder does not emit on a bare run.",
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         },
-        "QT-05": {
-          "class": "no-policy-in-bundle",
-          "why": "The report states `no-policy-in-bundle`.",
-          "followUp": "Author the Rego twin, or record that the rule is native-only."
-        },
         "QT-06": {
           "class": "supplied-facet-absent",
           "why": "The report states the policy reads behaviorChangedWithoutDocUpdate this run did not supply.",
@@ -707,43 +661,7 @@
           "followUp": "Supply the facet through `facts.satellite` (GT-694), or stop reading it in the policy."
         }
       },
-      "opaOnly": {
-        "MCP-01": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
-        },
-        "MCP-02": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
-        },
-        "MCP-03": {
-          "class": "unimplemented-native",
-          "why": "The report states `unimplemented-native`; declared facts: core.evidence, repository.",
-          "followUp": "Write the native handler — the rule declares an observed fact."
-        },
-        "MCP-05": {
-          "class": "handler-declined",
-          "why": "The declaration gives `handler-declined`; declared facts: core.cli, repository.",
-          "followUp": "The native handler found nothing to judge here; a fixture with the subject would decide it."
-        },
-        "OBS-EVD-01": {
-          "class": "needs-runtime",
-          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
-          "followUp": "An adapter that observes the running system, through the enforcer seam."
-        },
-        "OBS-EVD-02": {
-          "class": "needs-runtime",
-          "why": "The report states `needs-runtime`; declared facts: satellite.packageJson, traces.",
-          "followUp": "An adapter that observes the running system, through the enforcer seam."
-        },
-        "OBS-EVD-03": {
-          "class": "needs-external-system",
-          "why": "The report states `needs-external-system`; declared facts: satellite.packageJson, telemetryBackend.",
-          "followUp": "An adapter over the external system, through the enforcer seam."
-        }
-      }
+      "opaOnly": {}
     }
   }
 }

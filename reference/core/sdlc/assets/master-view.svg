@@ -108,7 +108,7 @@
 <text x="1064" y="552" font-size="12" fill="#9EC5D6" text-anchor="end">never persists tenant · product · initiative</text>
 </g>
 <rect x="56" y="572" width="326" height="70" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.2"/>
-<text x="68" y="594" font-size="15" fill="#155E78" font-weight="700">Native TS · 18 handlers</text>
+<text x="68" y="594" font-size="15" fill="#155E78" font-weight="700">Native TS · 19 handlers</text>
 <text x="68" y="610" font-size="12" fill="#3D4E5F">handler throw → errored</text>
 <rect x="405" y="572" width="326" height="70" rx="10" fill="#FFFFFF" stroke="#9EC5D6" stroke-width="1.2"/>
 <text x="417" y="594" font-size="15" fill="#155E78" font-weight="700">OPA → Wasm · 35 policies</text>

@@ -130,8 +130,8 @@ The eight SSDF and four SLSA rules stay at `no`, and that is a verdict rather th
 
 The gap statement sized the payoff against "~240 handlers to write". **That figure is already
 retired.** GT-595 triaged the corpus and the real, decidable-from-the-repository backlog is the
-`unimplemented-native` class: **52 rules** when this section was written, **21** since 2026-09-20 (see
-below). Of the 410 rules Core's triage loaded then, 170 already ran and the other 188 were 137
+`unimplemented-native` class: **52 rules** when this section was written, **21** on 2026-09-20 and **14**
+since 2026-09-21 (see below). Of the 410 rules Core's triage loaded then, 170 already ran and the other 188 were 137
 documentation-only generator placeholders, 14 underspecified rules with no authored check, 20 that
 needed an external system and 17 that needed a running one.
 
@@ -151,28 +151,43 @@ not read from a table keyed by rule id, and the table had defaulted every un-tri
 from the tree". The policies that decide 25 of those rows read a posture only the satellite's owners
 can declare (21, the new `needs-supplied-facts` class), the CI system or the findings store (4), or a
 test run (6 — with 3 more from elsewhere). Nothing was implemented between the two figures: 31 rows
-that were never handler work stopped being counted as handler work. The counts per class now: 171
+that were never handler work stopped being counted as handler work. The counts per class after AC2: 171
 run, 21 to author, 27 need an external system, 23 need a running one, 31 need a declared posture, 138
 are documentation, 4 are underspecified.
 
+21 → 14 on 2026-09-21 (GT-716 AC4): the seven that left this class were not implemented either.
+`SEC-INJ-01/02`, `SEC-PATH-01/02`, `SEC-TIMING-01/02` and `SEC-RL-03` declare `satellite.findings` now —
+whether `child_process.exec` receives interpolated input or a credential comparison is constant-time is a
+scanner's finding over the AST, not a regex over the tree (`MM-R10` in this same corpus forbids that kind
+of handler) — and count under `needs-external-system`, where the analysers this table pointed them at are
+the adapter the rule declares it needs. What WAS implemented left the non-executable set altogether:
+`OBS-EVD-01..03` are decided from the satellite's dependencies, as their policy already did. `QT-05` went
+the other way — `SdlcRuleHandler` answered it `passed` with "requires runtime analysis", a fixed answer
+rather than a verdict; it declares `satellite.testing` and counts as `needs-runtime`. The counts per class
+now: 173 run, 14 to author, 33 need an external system, 22 need a running one, 31 need a declared
+posture, 138 are documentation, 4 are underspecified.
+
 Folding this mapping onto that class is the number that matters:
 
-| Of the 21-rule handler backlog | Count |
+| Of the 14-rule handler backlog | Count |
 |---|---|
-| Decidable today by an off-the-shelf analyser | 9 |
-| Decidable partially (analyser gives a necessary-but-not-sufficient signal) | 2 |
-| Genuinely has to be authored | 10 |
+| Decidable today by an off-the-shelf analyser | 5 |
+| Decidable partially (analyser gives a necessary-but-not-sufficient signal) | 0 |
+| Genuinely has to be authored | 9 |
 
-The 9 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit), `SEC-INJ-01`, `SEC-PATH-01`,
-`SEC-PATH-02` (CodeQL/Semgrep injection and path-traversal queries), `SEC-TIMING-01` (timing-safe
-comparison) and the four `ISO5055-*` rules, which declare their analyser themselves. The 2 partials
-(`SEC-INJ-02`, `SEC-TIMING-02`) are listed in `handlerBacklog.byEvaluabilityClass` in the mapping JSON;
-the other three former partials left the class with GT-716, being decided over a declared posture.
+The 5 are `HXA-03` (layer structure — dependency-cruiser or ArchUnit) and the four `ISO5055-*` rules,
+which declare their analyser themselves. The security rules this list used to carry — `SEC-INJ-01`,
+`SEC-PATH-01`, `SEC-PATH-02`, `SEC-TIMING-01` adoptable, `SEC-INJ-02` and `SEC-TIMING-02` partial — sit in
+`needs-external-system` since GT-716 AC4 (7 adoptable and 4 partial there, listed under that class in
+`handlerBacklog.byEvaluabilityClass` in the mapping JSON): the analyser is no longer a way to avoid
+writing a handler, it is the adapter the rule declares it needs. The three former partials that left
+earlier are decided over a declared posture.
 
-So adoption is worth **42.9% of the backlog outright, 52.4% including partials** — 11 of 21 rules that
-do not need bespoke handlers. (Before GT-716 the same 11 read as 14 of 52 — 17.3% / 26.9% — against a
-backlog inflated by rows that were never handler work; the share moved because the denominator was
-corrected, not because anything was adopted.)
+So adoption is worth **35.7% of the backlog** — 5 of 14 rules that do not need bespoke handlers, with no
+partials left in the class. (On 2026-09-20 the same reading was 11 of 21 — 42.9%, 52.4% including
+partials — and before GT-716, 14 of 52 — 17.3% / 26.9%. Each step corrected the denominator, and the last
+one moved six analyser-shaped rules out of it into the adapter class, where the same analysers count;
+nothing was adopted between any two figures.)
 
 5 → 9 on 2026-08-09 (GT-667): the four ISO/IEC 5055 rules were counted as work to author while being
 decided by an analyser, so `remainderToAuthor` overstated the real backlog by four. **The share moved

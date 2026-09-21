@@ -16,9 +16,15 @@
     "over the in-scope rules the triage table called non-executable on this repository — KI-R01..07 (no validationQuery) and",
     "PROT-03/06 (judgement) — while the OPA engine decided them. With the class derived from each rule's `facts`, those rules",
     "declare the facets their policies read and are executable (`needs-supplied-facts`); nothing non-executable remains in scope",
-    "here, the row no longer fires, and the two engines stop disagreeing about it. CLI-EXIT-01/03 are the conflicts that remain."
+    "here, the row no longer fires, and the two engines stop disagreeing about it. CLI-EXIT-01/03 are the conflicts that remain.",
+    "2026-09-21 (GT-716 AC4): GOV-RULE-NON-EXECUTABLE is back, for a different reason than the one removed above, and it is a reason about",
+    "WHERE each run found its corpus rather than about the rule. This guard runs the CLI from the repository root without `--core`; on that",
+    "run the native engine resolves the corpus to the CLI's bundled copy and FAILS the 138 generated ADR-conformance rules (their referenced",
+    "ADRs are not in the copy — the false failures guard 73 moved to an export to escape), so it counts 0 non-executable and never emits the",
+    "row. The OPA engine, since AC4, states `documentation-only` for a policy-less rule whose declaration says there is nothing to check, counts",
+    "the 138 as non-executable and emits the row (COULD, non-blocking). With `--core .` both engines count 138 and emit the identical row."
   ],
-  "measuredOn": "2026-09-20",
+  "measuredOn": "2026-09-21",
   "method": "evolith validate --engine {native,opa} --format json over the whole corpus, both from the repository root; only rules BOTH engines decided are compared.",
   "conflicts": [
     {
@@ -36,6 +42,14 @@
       "family": "native-context-assumption",
       "reason": "Same doubled root as CLI-EXIT-01, reported through the other branch of the same handler: 'exit-code taxonomy not declared: .../src/sdk/cli/src/sdk/cli/src/infrastructure/cli/exit-codes.ts not found'. Registered separately because a partial fix that repaired only the scan and not the taxonomy read is a real state, and the guard should be able to say which half moved.",
       "followUp": "Same fix as CLI-EXIT-01."
+    },
+    {
+      "ruleId": "GOV-RULE-NON-EXECUTABLE",
+      "native": "passed",
+      "opa": "failed",
+      "family": "corpus-resolution-artifact",
+      "reason": "The synthetic row counts rules whose evaluability is `documentation-only` or `underspecified`. On this guard's run (repository root, no `--core`) the native engine resolves the corpus to the CLI's bundled rulesets copy and fails the 138 generated ADR-conformance rules — `CORE-0001-01: the ruleset cites 1 decision record(s) that do not exist: reference/core/architecture/adrs/core/0001-…` — so `rulesNonExecutable` is 0 and the row is absent (`passed` by 68's default). The OPA engine states the declaration's class for a policy-less rule with `facts: []` since GT-716 AC4, counts 138 non-executable and emits the row: `138 corpus rules are not executable by any engine` (COULD, non-blocking). Measured with `--core .` on 2026-09-21: both engines count 138 and emit the identical row — the disagreement is the corpus each run found, not the rule.",
+      "followUp": "Run this guard with `--core` at the repository root (or on the export guard 73 measures), which makes the two runs read the same corpus — and re-baseline CLI-EXIT-01/03, which pass once `corePath` is a resolvable root, plus whatever the same-corpus run disagrees on (measured 2026-09-21: GOV-ENGINE-COVERAGE and CLI-EXIT-02). GT-716 AC5 territory: the report saying the same thing on both engines."
     }
   ]
 }

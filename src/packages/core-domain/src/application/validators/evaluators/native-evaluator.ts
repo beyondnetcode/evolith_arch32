@@ -20,6 +20,7 @@ import { AclRuleHandler } from './handlers/acl-rule.handler';
 import { AdrConformanceRuleHandler } from './handlers/adr-conformance-rule.handler';
 import { ModuleBoundaryRuleHandler } from './handlers/module-boundary-rule.handler';
 import { ProbabilisticEvidenceRuleHandler } from './handlers/probabilistic-evidence-rule.handler';
+import { TelemetryEvidenceRuleHandler } from './handlers/telemetry-evidence-rule.handler';
 import { classifyRule } from '../rule-evaluability';
 
 export class NativeEvaluator implements IRuleEvaluatorStrategy {
@@ -60,6 +61,11 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       // projected facts and delegates to the same admissibility function, so the
       // two engines cannot drift by construction.
       new ProbabilisticEvidenceRuleHandler(),
+      // GT-716 AC4: OBS-EVD-01..03 — the native twin of `telemetry-evidence.rego`,
+      // deciding from the satellite's declared dependencies exactly as the policy
+      // does, so the same repository no longer gets a verdict on one engine and a
+      // `needs-runtime` skip on the other.
+      new TelemetryEvidenceRuleHandler(fs),
       // GT-632: rules that author their own `from`/`to` module-graph clause
       // (HXA-01/02/04/05). Registered BEFORE the ADR-conformance catch-all and
       // after the id-specific handlers: it claims by clause, so an existing

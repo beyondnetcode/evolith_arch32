@@ -4,6 +4,7 @@ import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResult } from './evaluator.interface';
 import { loadPolicy } from '@open-policy-agent/opa-wasm';
 import { OpaInputBuilder } from './opa-input-builder';
+import { classifyRule } from '../rule-evaluability';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import * as crypto from 'crypto';
@@ -190,6 +191,21 @@ function skippedForAbsentFacets(
       + `and this run supplied no such fact${missing.length > 1 ? 's' : ''}. An absent fact is not a verdict `
       + 'about the repository — supply it through the evaluation context (`facts`, GT-694) to have the rule decided.',
   };
+}
+
+/**
+ * GT-716 AC4 — a policy-less rule whose own declaration says there is nothing to
+ * check (`facts: []`: documentation behind a judgement, or a check nobody authored)
+ * is skipped for THAT reason on both engines. "No policy in the bundle" is not news
+ * about such a rule; stating the declaration's class is what makes the recorded
+ * decision "documentation-only on both engines" a fact the reports carry. Null when
+ * the declaration says the rule IS decidable — then the missing policy is the news.
+ */
+function skippedByOwnDeclaration(rule: NormalizedRule): RuleEvaluationResult | null {
+  if (!rule.facts) return null;
+  const own = classifyRule(rule, false);
+  if (own.evaluability !== 'documentation-only' && own.evaluability !== 'underspecified') return null;
+  return { rule, result: 'skipped', evaluability: own.evaluability, message: own.why } as RuleEvaluationResult;
 }
 
 export class OpaEvaluator implements IRuleEvaluatorStrategy {
@@ -459,7 +475,7 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
             };
           }
           if (declared && !declared.has(rule.id)) {
-            return {
+            return skippedByOwnDeclaration(rule) ?? {
               rule,
               result: 'skipped',
               evaluability: 'no-policy-in-bundle',

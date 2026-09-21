@@ -1,0 +1,17 @@
+{
+  "domain": "telemetry-evidence",
+  "description": "GT-716 AC4 — OBS-EVD-01..03 decided natively from the satellite's declared dependencies, the same proxy telemetry-evidence.rego reads: pino present, no tracing, no metrics.",
+  "input": {
+    "satellitePath": "/sat",
+    "corePath": "/core",
+    "existingFiles": ["/sat/package.json"],
+    "fileContents": {
+      "/sat/package.json": "{\"name\":\"sat\",\"dependencies\":{\"pino\":\"9.0.0\",\"express\":\"4.19.0\"}}"
+    }
+  },
+  "expectedNative": [
+    { "ruleId": "OBS-EVD-01", "severity": "MUST", "result": "failed" },
+    { "ruleId": "OBS-EVD-02", "severity": "MUST", "result": "passed" },
+    { "ruleId": "OBS-EVD-03", "severity": "MUST", "result": "failed" }
+  ]
+}

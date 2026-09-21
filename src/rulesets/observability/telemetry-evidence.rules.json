@@ -11,8 +11,7 @@
     {
       "id": "OBS-EVD-01",
       "facts": [
-        "satellite.packageJson",
-        "traces"
+        "satellite.packageJson"
       ],
       "severity": "MUST",
       "category": "tracing",
@@ -24,8 +23,7 @@
     {
       "id": "OBS-EVD-02",
       "facts": [
-        "satellite.packageJson",
-        "traces"
+        "satellite.packageJson"
       ],
       "severity": "MUST",
       "category": "logging",
@@ -37,8 +35,7 @@
     {
       "id": "OBS-EVD-03",
       "facts": [
-        "satellite.packageJson",
-        "telemetryBackend"
+        "satellite.packageJson"
       ],
       "severity": "MUST",
       "category": "metrics",

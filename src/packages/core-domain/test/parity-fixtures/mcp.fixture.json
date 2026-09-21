@@ -1,6 +1,6 @@
 {
   "domain": "mcp",
-  "description": "MCP protocol compliance rule evaluator parity — MCP rules",
+  "description": "MCP protocol compliance rule evaluator parity — MCP rules. GT-716 AC4: absent smoke evidence FAILS MCP-01..03, the same verdict and words as mcp.rego — the evidence is an observed fact of the checkout, and its absence is the finding.",
   "rules": [
     { "id": "MCP-01", "severity": "MUST", "category": "mcp", "title": "Initialize Request Must Return Capabilities", "description": "The MCP server must respond to initialize with protocolVersion, capabilities, and serverInfo", "blocking": true, "sourceFile": "protocol-compliance.rules.json" },
     { "id": "MCP-02", "severity": "MUST", "category": "mcp", "title": "Tools List Must Be Complete and Stable", "description": "tools/list must expose every supported tool with name, description, and inputSchema", "blocking": true, "sourceFile": "protocol-compliance.rules.json" },
@@ -33,9 +33,9 @@
       },
       "context": { "satellitePath": "/sat", "corePath": "/core" },
       "expectedResults": [
-        { "ruleId": "MCP-01", "result": "skipped" },
-        { "ruleId": "MCP-02", "result": "skipped" },
-        { "ruleId": "MCP-03", "result": "skipped" },
+        { "ruleId": "MCP-01", "result": "failed" },
+        { "ruleId": "MCP-02", "result": "failed" },
+        { "ruleId": "MCP-03", "result": "failed" },
         { "ruleId": "MCP-04", "result": "skipped" }
       ]
     },

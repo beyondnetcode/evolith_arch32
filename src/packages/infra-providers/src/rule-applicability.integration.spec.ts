@@ -177,7 +177,13 @@ describe('GT-571 · the first validate of a freshly initialized satellite', () =
     const fired = new Set(result.issues.map(i => i.ruleId));
 
     // The two the audit named by hand, plus the rest of their families.
-    for (const ruleId of ['CLI-RR-01', 'CLI-RR-02', 'CLI-PAR-01', 'TAX-05']) {
+    // MCP-01 joined this list on 2026-09-21 (GT-716 AC4): the pack judges the Core's
+    // MCP server — its smoke evidence, its server source — and once the native
+    // engine decided MCP-01..03 the way the policy did (absent evidence FAILS), a
+    // fresh satellite validated against a Core with no evidence got three blocking
+    // findings addressed to the Core. `scope: core-cli` always said so; `audience:
+    // core` now says it where applicability reads it, for both engines.
+    for (const ruleId of ['CLI-RR-01', 'CLI-RR-02', 'CLI-PAR-01', 'TAX-05', 'MCP-01']) {
       expect(fired.has(ruleId)).toBe(false);
       expect(result.notApplicableRuleIds).toContain(ruleId);
     }

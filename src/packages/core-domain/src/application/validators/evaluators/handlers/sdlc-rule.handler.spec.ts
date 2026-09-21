@@ -40,7 +40,11 @@ describe('SdlcRuleHandler', () => {
     expect((await h.evaluate(rule('QT-03'), ctx)).result).toBe('passed');
   });
 
-  it('QT-05 always passes (runtime analysis)', async () => {
+  it('QT-05 is not claimed — it declares a runtime fact, and "always passes" was a fixed answer (GT-716 AC4)', async () => {
+    expect(new SdlcRuleHandler(fsMock()).canHandle(rule('QT-05'))).toBe(false);
+  });
+
+  it.skip('QT-05 always passes (runtime analysis) — retired by GT-716 AC4', async () => {
     const h = new SdlcRuleHandler(fsMock());
     expect((await h.evaluate(rule('QT-05'), ctx)).result).toBe('passed');
   });

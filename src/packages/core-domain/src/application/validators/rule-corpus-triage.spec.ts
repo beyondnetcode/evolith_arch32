@@ -116,7 +116,16 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   //   unimplemented-native   52 -> 21   needs-external-system 20 -> 27
   //   needs-runtime          17 -> 23   needs-supplied-facts   0 -> 31
   //   documentation-only    141 -> 138  underspecified        14 -> 4
-  'native-handler': 171,
+  // GT-716 AC4 (2026-09-21) — three in, one out: `TelemetryEvidenceRuleHandler` decides
+  // OBS-EVD-01..03 from the satellite's dependencies (the same proxy telemetry-evidence.rego
+  // reads; the rules declare `satellite.packageJson` and nothing they do not read), and
+  // QT-05 left `SdlcRuleHandler`, whose "always passes — requires runtime analysis" was a
+  // fixed answer: it declares `satellite.testing` now. The seven source-scan security rules
+  // (SEC-INJ/PATH/TIMING-01/02, SEC-RL-03) declare `satellite.findings`: a scanner's finding
+  // over the AST, not a regex over the tree (MM-R10), so they are adapter work, not handler work.
+  //   native-handler       171 -> 173   unimplemented-native   21 -> 14
+  //   needs-external-system 27 -> 33   needs-runtime          23 -> 22
+  'native-handler': 173,
   // 137 -> 138 on 2026-08-16: ADR-0126's generated conformance ruleset. An accepted
   // ADR owes one, `generate-adr-rulesets.mjs` wrote it, and it lands here for the same
   // reason every generated ADR ruleset does — its validationQuery says nothing a native
@@ -129,9 +138,9 @@ const PINNED_CLASS_COUNTS: Readonly<Record<RuleEvaluability, number>> = {
   // costs one more rule nothing can run, because the superseding ADR owes a conformance
   // placeholder of its own while the superseded one keeps the placeholder it already had.
   'documentation-only': 138,
-  'unimplemented-native': 21,
-  'needs-external-system': 27,
-  'needs-runtime': 23,
+  'unimplemented-native': 14,
+  'needs-external-system': 33,
+  'needs-runtime': 22,
   'needs-supplied-facts': 31,
   underspecified: 4,
   'no-policy-in-bundle': 0,
@@ -366,7 +375,10 @@ describe('GT-595 · the handler slice that landed', () => {
     // for a capability that was ADDED is the honest reading, and pretending
     // otherwise would be the claim this file exists to prevent.
     const unclaimed = CORPUS.filter(r => !claims(r));
-    expect(unclaimed).toHaveLength(106);
+    // 106 -> 104 on 2026-09-21 (GT-716 AC4): OBS-EVD-01..03 claimed by
+    // `TelemetryEvidenceRuleHandler` (−3); QT-05 released by `SdlcRuleHandler` (+1),
+    // whose "always passes" was never a claim on the rule, only on the reader.
+    expect(unclaimed).toHaveLength(104);
 
     // ...and every one of the 134 ADR-conformance rules is now claimed.
     // 126 -> 133 on 2026-07-28: the committed corpus was seven rulesets behind
@@ -393,7 +405,8 @@ describe('GT-595 · the handler slice that landed', () => {
     // module-boundary (GT-632). Every one of the twelve is `blocking: true`,
     // which is why the whole of each closure lands on this figure.
     const unclaimedBlocking = CORPUS.filter(r => !claims(r) && r.blocking);
-    expect(unclaimedBlocking).toHaveLength(73);
+    // 73 -> 71 on 2026-09-21 (GT-716 AC4): the same movement, blocking rules only.
+    expect(unclaimedBlocking).toHaveLength(71);
   });
 
   it('claims each of the four module-boundary rules closed on 2026-07-29', () => {
@@ -471,15 +484,18 @@ describe('GT-595 AC2 · the corpus rules that still declare `blocking` and canno
     // four were module-boundary clauses the corpus already carried and the
     // engine never read (GT-632). The other three classes are untouched — no
     // adapter was written and no rule was re-authored.
-    expect(offenders).toHaveLength(73);
+    // 73 -> 71 on 2026-09-21 (GT-716 AC4): OBS-EVD-01..03 are decided now (−3); QT-05 joins
+    // as `needs-runtime` (+1) — it was never decided, it was answered. Six blocking source-scan
+    // rules moved from "write the handler" to "write the adapter" (SEC-RL-03 is not blocking).
+    expect(offenders).toHaveLength(71);
     // 2026-09-20 (GT-716 AC2): the 73 are the same 73 — a declaration moves a rule
     // between classes, never in or out of "blocking and did not run" — but what each
     // one costs changed: 25 of the 36 "write the handler" rows were never handler work
     // (a declared posture, the CI system, a test run), and the seven KI-R rows are no
     // longer "author the check" but "supply the intake record".
-    expect(countOf('unimplemented-native')).toBe(11);
-    expect(countOf('needs-external-system')).toBe(16);
-    expect(countOf('needs-runtime')).toBe(15);
+    expect(countOf('unimplemented-native')).toBe(5);
+    expect(countOf('needs-external-system')).toBe(21);
+    expect(countOf('needs-runtime')).toBe(14);
     expect(countOf('needs-supplied-facts')).toBe(27);
     expect(countOf('underspecified')).toBe(4);
 
@@ -502,13 +518,18 @@ describe('GT-595 · the remaining backlog is costed, not a lump', () => {
     // OCB-02 left this list on 2026-09-20 (GT-716 AC2): `open-core-boundary.rego`
     // decides it from a declared boundary, so it is `needs-supplied-facts` — see the
     // vacuity note below, which still holds.
-    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['SEC-INJ-01', 'HXA-03']));
+    // SEC-INJ-01 left this list on 2026-09-21 (GT-716 AC4): it declares `satellite.findings`
+    // — a scanner's finding, not a handler's regex (MM-R10) — so it is adapter work now.
+    expect(of('unimplemented-native')).toEqual(expect.arrayContaining(['HXA-03']));
+    expect(of('unimplemented-native')).not.toContain('SEC-INJ-01');
     expect(of('unimplemented-native')).not.toContain('OCB-02');
     expect(of('needs-supplied-facts')).toEqual(expect.arrayContaining(['OCB-02', 'MTN-01', 'RUNT-01', 'KI-R01', 'PROT-03']));
     expect(of('unimplemented-native')).not.toContain('MTN-05');
     expect(of('unimplemented-native')).not.toContain('HXA-01');
-    expect(of('needs-external-system')).toEqual(expect.arrayContaining(['GIT-02', 'MTN-02', 'OBS-EVD-03']));
-    expect(of('needs-runtime')).toEqual(expect.arrayContaining(['OBS-EVD-01', 'TPY-05', 'ABAC-01']));
+    expect(of('needs-external-system')).toEqual(expect.arrayContaining(['GIT-02', 'MTN-02', 'SEC-INJ-01']));
+    expect(of('needs-runtime')).toEqual(expect.arrayContaining(['QT-05', 'TPY-05', 'ABAC-01']));
+    // OBS-EVD-01..03 are `native-handler` since 2026-09-21 (GT-716 AC4).
+    expect(of('native-handler')).toEqual(expect.arrayContaining(['OBS-EVD-01', 'OBS-EVD-02', 'OBS-EVD-03']));
     expect(of('underspecified')).toEqual(expect.arrayContaining(['EC-SEC-01', 'SV-SEC-01']));
     expect(of('underspecified')).not.toContain('KI-R01');
   });

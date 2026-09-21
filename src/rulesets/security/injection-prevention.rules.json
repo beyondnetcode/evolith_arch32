@@ -6,7 +6,7 @@
     {
       "id": "SEC-INJ-01",
       "facts": [
-        "repository"
+        "satellite.findings"
       ],
       "severity": "MUST",
       "category": "security",
@@ -19,7 +19,7 @@
     {
       "id": "SEC-INJ-02",
       "facts": [
-        "repository"
+        "satellite.findings"
       ],
       "severity": "MUST",
       "category": "security",

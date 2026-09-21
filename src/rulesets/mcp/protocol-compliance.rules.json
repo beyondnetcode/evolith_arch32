@@ -6,6 +6,7 @@
   "version": "1.0.0",
   "effectiveDate": "2026-06-08",
   "scope": "core-cli",
+  "audience": "core",
   "category": "mcp",
   "rules": [
     {

@@ -25,9 +25,13 @@ describe('McpRuleHandler', () => {
     expect(new McpRuleHandler(fsMock()).canHandle(rule('DEP-01'))).toBe(false);
   });
 
-  it('skips when no mcp smoke evidence exists', async () => {
+  it('FAILS when no mcp smoke evidence exists — the same verdict and words as mcp.rego (GT-716 AC4)', async () => {
     const h = new McpRuleHandler(fsMock({ existing: [evDir], dirs: { [evDir]: ['other.json'] } }));
-    expect((await h.evaluate(rule('MCP-01'), ctx)).result).toBe('skipped');
+    for (const id of ['MCP-01', 'MCP-02', 'MCP-03']) {
+      const r = await h.evaluate(rule(id), ctx);
+      expect(r.result).toBe('failed');
+      expect(r.message).toBe('Run .harness/scripts/mcp-smoke.mjs to generate evidence');
+    }
   });
 
   it('MCP-01 fails when initialize is missing and passes when present', async () => {
@@ -61,6 +65,18 @@ describe('McpRuleHandler', () => {
 
     const fail = new McpRuleHandler(fsMock({ existing: [server], files: { [server]: 'const open = true' } }));
     expect((await fail.evaluate(rule('MCP-04'), ctx)).result).toBe('failed');
+  });
+
+  it('MCP-05 reads the server source for the tokens mcp.rego looks for (GT-716 AC4)', async () => {
+    const server = path.join(CORE, 'src', 'packages', 'mcp-server', 'src', 'mcp', 'mcp-server.service.ts');
+    expect((await new McpRuleHandler(fsMock()).evaluate(rule('MCP-05'), ctx)).result).toBe('skipped');
+
+    const pass = new McpRuleHandler(fsMock({ existing: [server], files: { [server]: 'const h = new Histogram(); // latency' } }));
+    expect((await pass.evaluate(rule('MCP-05'), ctx)).result).toBe('passed');
+
+    const fail = await new McpRuleHandler(fsMock({ existing: [server], files: { [server]: 'const open = true' } })).evaluate(rule('MCP-05'), ctx);
+    expect(fail.result).toBe('failed');
+    expect(fail.message).toMatch(/no metrics instrumentation detected/);
   });
 
   it('skips unhandled MCP rules', async () => {

@@ -32,7 +32,7 @@
     {
       "id": "SEC-RL-03",
       "facts": [
-        "repository"
+        "satellite.findings"
       ],
       "severity": "SHOULD",
       "category": "security",

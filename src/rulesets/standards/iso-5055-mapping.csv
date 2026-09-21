@@ -302,9 +302,9 @@ MCP-02,mcp/protocol-compliance.rules.json,platform-surface,,,none,no,native-hand
 MCP-03,mcp/protocol-compliance.rules.json,platform-surface,,,none,no,native-handler
 MCP-04,mcp/protocol-compliance.rules.json,platform-surface,,,none,no,native-handler
 MCP-05,mcp/protocol-compliance.rules.json,platform-surface,,,none,no,native-handler
-OBS-EVD-01,observability/telemetry-evidence.rules.json,operations,,,none,no,needs-runtime
-OBS-EVD-02,observability/telemetry-evidence.rules.json,operations,,,none,no,needs-runtime
-OBS-EVD-03,observability/telemetry-evidence.rules.json,operations,,,none,no,needs-external-system
+OBS-EVD-01,observability/telemetry-evidence.rules.json,operations,,,none,no,native-handler
+OBS-EVD-02,observability/telemetry-evidence.rules.json,operations,,,none,no,native-handler
+OBS-EVD-03,observability/telemetry-evidence.rules.json,operations,,,none,no,native-handler
 OBS-EVD-04,observability/telemetry-evidence.rules.json,operations,,,none,no,needs-external-system
 DEP-01,sdlc/dependency-pinning.rules.json,supply-chain,,,none,yes,native-handler
 DEP-02,sdlc/dependency-pinning.rules.json,supply-chain,,,none,yes,native-handler
@@ -320,19 +320,19 @@ QT-01,sdlc/quality-thresholds.rules.json,code-hygiene,,,none,yes,native-handler
 QT-02,sdlc/quality-thresholds.rules.json,code-hygiene,CWE-1121,Maintainability,direct,yes,native-handler
 QT-03,sdlc/quality-thresholds.rules.json,code-hygiene,CWE-22 CWE-78 CWE-89 CWE-79 CWE-798 CWE-732,Security,partial,yes,native-handler
 QT-04,sdlc/quality-thresholds.rules.json,code-hygiene,,,none,yes,native-handler
-QT-05,sdlc/quality-thresholds.rules.json,code-hygiene,,,none,no,native-handler
+QT-05,sdlc/quality-thresholds.rules.json,code-hygiene,,,none,no,needs-runtime
 QT-06,sdlc/quality-thresholds.rules.json,code-hygiene,,,none,no,native-handler
 QT-07,sdlc/quality-thresholds.rules.json,code-hygiene,,,none,no,native-handler
 QT-08,sdlc/quality-thresholds.rules.json,code-hygiene,,,none,partial,native-handler
-SEC-INJ-01,security/injection-prevention.rules.json,code-structure,CWE-78 CWE-77,Security,direct,yes,unimplemented-native
-SEC-INJ-02,security/injection-prevention.rules.json,code-structure,CWE-77 CWE-88,Security,partial,partial,unimplemented-native
-SEC-PATH-01,security/path-containment.rules.json,code-structure,CWE-22 CWE-23 CWE-36,Security,direct,yes,unimplemented-native
-SEC-PATH-02,security/path-containment.rules.json,code-structure,CWE-22,Security,direct,yes,unimplemented-native
+SEC-INJ-01,security/injection-prevention.rules.json,code-structure,CWE-78 CWE-77,Security,direct,yes,needs-external-system
+SEC-INJ-02,security/injection-prevention.rules.json,code-structure,CWE-77 CWE-88,Security,partial,partial,needs-external-system
+SEC-PATH-01,security/path-containment.rules.json,code-structure,CWE-22 CWE-23 CWE-36,Security,direct,yes,needs-external-system
+SEC-PATH-02,security/path-containment.rules.json,code-structure,CWE-22,Security,direct,yes,needs-external-system
 SEC-RL-01,security/rate-limiting.rules.json,code-structure,,,none,partial,native-handler
 SEC-RL-02,security/rate-limiting.rules.json,code-structure,CWE-789,Security,partial,partial,native-handler
-SEC-RL-03,security/rate-limiting.rules.json,code-structure,,,none,no,unimplemented-native
-SEC-TIMING-01,security/timing-safe-comparison.rules.json,code-structure,,,none,yes,unimplemented-native
-SEC-TIMING-02,security/timing-safe-comparison.rules.json,code-structure,,,none,partial,unimplemented-native
+SEC-RL-03,security/rate-limiting.rules.json,code-structure,,,none,no,needs-external-system
+SEC-TIMING-01,security/timing-safe-comparison.rules.json,code-structure,,,none,yes,needs-external-system
+SEC-TIMING-02,security/timing-safe-comparison.rules.json,code-structure,,,none,partial,needs-external-system
 ISO5055-MAINT,standards/iso-5055.rules.json,international-standard,,,none,yes,unimplemented-native
 ISO5055-PERF,standards/iso-5055.rules.json,international-standard,,,none,yes,unimplemented-native
 ISO5055-REL,standards/iso-5055.rules.json,international-standard,,,none,yes,unimplemented-native

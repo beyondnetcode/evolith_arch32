@@ -8,7 +8,11 @@ export class SdlcRuleHandler implements INativeRuleHandler {
   constructor(private readonly fs: IFileSystem) {}
 
   canHandle(rule: NormalizedRule): boolean {
-    return rule.id.startsWith('QT-');
+    // GT-716 AC4: QT-05 (testing-pyramid distribution) is a test run's fact —
+    // the rule declares `satellite.testing` — and this handler used to answer
+    // `passed` for it with "requires runtime analysis": a fixed answer, not a
+    // verdict. Unclaimed, so the engine reports the declaration's class instead.
+    return rule.id.startsWith('QT-') && rule.id !== 'QT-05';
   }
 
   async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
@@ -17,7 +21,6 @@ export class SdlcRuleHandler implements INativeRuleHandler {
       case 'QT-02': return this.checkForEvidence(rule, ctx, 'complexity report', ['complexity-report.json']);
       case 'QT-03': return this.checkForEvidence(rule, ctx, 'security scan', ['security-scan.json']);
       case 'QT-04': return this.checkForEvidence(rule, ctx, 'debt report', ['debt-report.json']);
-      case 'QT-05': return { rule, result: 'passed', message: 'Testing pyramid distribution requires runtime analysis' };
       case 'QT-06': return this.evalDocumentationDelta(rule, ctx);
       case 'QT-07': return this.checkForEvidence(rule, ctx, 'observability config', [
         'otel.config.js', 'opentelemetry.config.js', 'src/instrumentation.ts',

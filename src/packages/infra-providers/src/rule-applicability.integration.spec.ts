@@ -177,7 +177,13 @@ describe('GT-571 · the first validate of a freshly initialized satellite', () =
     const fired = new Set(result.issues.map(i => i.ruleId));
 
     // The two the audit named by hand, plus the rest of their families.
-    for (const ruleId of ['CLI-RR-01', 'CLI-RR-02', 'CLI-PAR-01', 'TAX-05']) {
+    // MCP-01 joined this list on 2026-09-21 (GT-716 AC4): the pack judges the Core's
+    // MCP server — its smoke evidence, its server source — and once the native
+    // engine decided MCP-01..03 the way the policy did (absent evidence FAILS), a
+    // fresh satellite validated against a Core with no evidence got three blocking
+    // findings addressed to the Core. `scope: core-cli` always said so; `audience:
+    // core` now says it where applicability reads it, for both engines.
+    for (const ruleId of ['CLI-RR-01', 'CLI-RR-02', 'CLI-PAR-01', 'TAX-05', 'MCP-01']) {
       expect(fired.has(ruleId)).toBe(false);
       expect(result.notApplicableRuleIds).toContain(ruleId);
     }
@@ -275,6 +281,38 @@ describe('GT-571 · the Core monorepo keeps its own rules', () => {
     expect(index.get('TAX-01')?.audience).toBe('both');
     expect(index.get('TAX-01')?.topologies).toBeUndefined();
     expect(index.get('TAX-01')?.appliesFromSdlcPhase).toBeUndefined();
+  });
+
+  it('defers OBS-EVD-01..03 to Construction without weakening them (GT-716 AC4)', async () => {
+    // The three telemetry-evidence rules speak of PRODUCTION request paths and
+    // services, and since GT-716 AC4 the native engine decides them the way the
+    // policy always did: from the satellite's declared dependencies. On a phase-0
+    // scaffold that verdict would be "no tracing package" about a repository with
+    // no request path yet — the same kind of finding MTN-05 used to produce, and
+    // the one this suite's first test exists to refuse. `appliesFromSdlcPhase: 3`
+    // (Construction: the first phase at which a codebase with request paths and
+    // dependencies exists) is the applicability fact the rules always stated in
+    // prose, and it excludes them BEFORE either engine runs — so `--engine opa`,
+    // which used to fail all three on every fresh satellite, stops doing so too.
+    // Deferred, not disabled: from Construction on, a satellite without a tracing,
+    // logging or metrics package is failed for exactly the reason the rule states.
+    const fs = new NodeFileSystemProvider() as any;
+    const rules = await new DiskRulesetRepository(fs, silentLogger).loadAllRulesets(CORE);
+    const index = await RuleApplicabilityIndex.load(fs, CORE, path.sep);
+
+    for (const id of ['OBS-EVD-01', 'OBS-EVD-02', 'OBS-EVD-03']) expect(index.get(id)?.appliesFromSdlcPhase).toBe(3);
+
+    const excludedAt = (sdlcPhase: number) => {
+      const ctx: ApplicabilityContext = { audience: 'satellite', declaredTopologies: [], sdlcPhase };
+      const { notApplicable } = partitionByApplicability(rules as NormalizedRule[], { index, context: ctx });
+      const ids = new Set(notApplicable.map(n => n.rule.id));
+      return ['OBS-EVD-01', 'OBS-EVD-02', 'OBS-EVD-03'].every(id => ids.has(id));
+    };
+
+    expect(excludedAt(0)).toBe(true);   // the freshly scaffolded satellite
+    expect(excludedAt(2)).toBe(true);   // Design — nothing is built yet
+    expect(excludedAt(3)).toBe(false);  // Construction — the rules bind, unchanged
+    expect(excludedAt(5)).toBe(false);
   });
 
   it('defers MTN-05 to Design without weakening it', async () => {

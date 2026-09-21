@@ -210,10 +210,6 @@
       "provenance": "external",
       "why": "Acceptance is a property of deployed infrastructure — service mesh, mTLS, on-call."
     },
-    "telemetryBackend": {
-      "provenance": "external",
-      "why": "Acceptance is a query against a telemetry or metrics backend."
-    },
     "satellite.testing": {
       "provenance": "runtime",
       "why": "Test-mix percentages and coverage come from a test run, not from source on disk."

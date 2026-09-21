@@ -11,9 +11,9 @@
     {
       "id": "OBS-EVD-01",
       "facts": [
-        "satellite.packageJson",
-        "traces"
+        "satellite.packageJson"
       ],
+      "appliesFromSdlcPhase": 3,
       "severity": "MUST",
       "category": "tracing",
       "title": "Production Paths Emit Trace Context",
@@ -24,9 +24,9 @@
     {
       "id": "OBS-EVD-02",
       "facts": [
-        "satellite.packageJson",
-        "traces"
+        "satellite.packageJson"
       ],
+      "appliesFromSdlcPhase": 3,
       "severity": "MUST",
       "category": "logging",
       "title": "Structured Logs Carry Request Context",
@@ -37,9 +37,9 @@
     {
       "id": "OBS-EVD-03",
       "facts": [
-        "satellite.packageJson",
-        "telemetryBackend"
+        "satellite.packageJson"
       ],
+      "appliesFromSdlcPhase": 3,
       "severity": "MUST",
       "category": "metrics",
       "title": "Service Health Metrics Are Reported",

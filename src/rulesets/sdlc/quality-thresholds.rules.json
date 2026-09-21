@@ -75,7 +75,7 @@
     {
       "id": "QT-05",
       "facts": [
-        "repository"
+        "satellite.testing"
       ],
       "severity": "MUST",
       "category": "testing",

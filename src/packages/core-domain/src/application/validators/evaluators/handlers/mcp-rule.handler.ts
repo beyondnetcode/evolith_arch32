@@ -4,6 +4,17 @@ import { NormalizedRule } from '../../../../domain/models/normalized-rule';
 import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
+/**
+ * The native twin of `mcp.rego`. GT-716 AC4 aligned the two where they disagreed:
+ *
+ * - MCP-01..03 with no smoke evidence under `<core>/.harness/evidence/` used to be
+ *   `skipped` here and `failed` in Rego. The evidence is an observed fact of the
+ *   checkout (`core.evidence`), and its absence is the policy's finding — "nothing
+ *   proves the server answers `initialize`" — so both engines now fail it, with the
+ *   same message telling the reader how to produce the evidence.
+ * - MCP-05 was "Unhandled" here while Rego decided it from the server source; the
+ *   same token check now runs natively over the same file.
+ */
 export class McpRuleHandler implements INativeRuleHandler {
   constructor(private readonly fs: IFileSystem) {}
 
@@ -18,6 +29,9 @@ export class McpRuleHandler implements INativeRuleHandler {
     if (rule.id === 'MCP-04') {
       return this.evalMcpSecurity(rule, ctx);
     }
+    if (rule.id === 'MCP-05') {
+      return this.evalMcpMetrics(rule, ctx);
+    }
     return { rule, result: 'skipped', message: 'Unhandled MCP rule' };
   }
 
@@ -29,7 +43,8 @@ export class McpRuleHandler implements INativeRuleHandler {
     const smokeFile = files.find(f => f.includes('mcp') && f.endsWith('.json'));
 
     if (!smokeFile) {
-      return { rule, result: 'skipped', message: 'Run .harness/scripts/mcp-smoke.mjs to generate evidence' };
+      // Same verdict and words as `mcp.rego`: absent evidence is the finding.
+      return { rule, result: 'failed', message: 'Run .harness/scripts/mcp-smoke.mjs to generate evidence' };
     }
 
     const evidence = JSON.parse(
@@ -52,8 +67,12 @@ export class McpRuleHandler implements INativeRuleHandler {
     return { rule, result: 'passed' };
   }
 
+  private serverFile(ctx: WorkspaceEvaluationContext): string {
+    return path.join(ctx.corePath, 'src', 'packages', 'mcp-server', 'src', 'mcp', 'mcp-server.service.ts');
+  }
+
   private async evalMcpSecurity(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
-    const serverFile = path.join(ctx.corePath, 'src', 'packages', 'mcp-server', 'src', 'mcp', 'mcp-server.service.ts');
+    const serverFile = this.serverFile(ctx);
     if (!await this.fs.exists(serverFile)) {
       return { rule, result: 'skipped', message: 'MCP server.ts not found' };
     }
@@ -62,5 +81,22 @@ export class McpRuleHandler implements INativeRuleHandler {
       return { rule, result: 'passed' };
     }
     return { rule, result: 'failed', message: 'MCP transport config missing apiKey or local-only restriction' };
+  }
+
+  /** MCP-05, the tokens `mcp.rego` looks for in the same file. */
+  private async evalMcpMetrics(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
+    const serverFile = this.serverFile(ctx);
+    if (!await this.fs.exists(serverFile)) {
+      return { rule, result: 'skipped', message: 'MCP server.ts not found' };
+    }
+    const content = await this.fs.readFile(serverFile);
+    if (['latency', 'metrics', 'histogram', 'counter'].some(token => content.includes(token))) {
+      return { rule, result: 'passed' };
+    }
+    return {
+      rule,
+      result: 'failed',
+      message: 'MCP tool calls SHOULD emit latency, success, failure, and error class metrics — no metrics instrumentation detected in MCP server source',
+    };
   }
 }

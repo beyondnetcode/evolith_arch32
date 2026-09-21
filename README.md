@@ -61,7 +61,7 @@ npx -y @beyondnet/evolith-cli rulesets                        # lists the packs 
 npx -y @beyondnet/evolith-cli validate --engine opa --select rulesets/acl/anti-corruption-layer.rules.json
 ```
 
-`init` writes `evolith.yaml` with the product's name, type and phase and your stack; `--engine opa` picks the engine with the most coverage today (why, in [Known limitations](./docs/known-limitations.md)). What a first run looks like, row by row: [capture](./docs/evidence/first-run-capture.md). Full guide: [Quickstart](./docs/guides/evolith-quickstart.md).
+`init` writes `evolith.yaml` with the product's name, type and phase and your stack; `--engine opa` picks the engine with the most coverage **on the published CLI (1.3.2)**; in this tree the default already decides more on a bare run, and `--engine opa` is for the facts you supply — the measured numbers, per engine and dated, in [Known limitations](./docs/known-limitations.md). What a first run looks like, row by row: [capture](./docs/evidence/first-run-capture.md). Full guide: [Quickstart](./docs/guides/evolith-quickstart.md).
 
 ---
 

@@ -10,12 +10,22 @@ Auditoría completa de nuestras propias afirmaciones, con qué bloquea cada pend
 
 ## Los dos motores no cubren lo mismo
 
-`evolith validate` corre por defecto el evaluador nativo; `--engine opa` evalúa con el bundle Rego compilado. Sobre este mismo repositorio, medido el 2026-08-21 con `@beyondnet/evolith-cli@1.3.2`:
+`evolith validate` corre por defecto el evaluador nativo; `--engine opa` evalúa con el bundle Rego compilado. Deciden partes distintas del mismo corpus y ninguno es superconjunto del otro. Qué decide cada uno, y por qué salta el resto, lo mide CI en cada corrida — `73-validate-engine-coverage-parity.mjs`, sobre una exportación del árbol versionado y sobre un satélite recién salido de `init` — y la tabla de abajo la escribe ese guard, no una mano: cuando las cifras se mueven, CI falla hasta que el guard las reescribe (AC5 de GT-716).
 
-| Motor | Evalúa | Salta |
-|---|---|---|
-| `--engine opa` | 133 de 159 | 26 |
-| nativo (por defecto) | 41 de 159 | 118 |
+<!-- engine-coverage:begin -->
+_Medido el 2026-09-21 por `73-validate-engine-coverage-parity.mjs --write` — un `evolith validate --engine <e> --format json` por motor y escenario, sobre una exportación del árbol versionado y sobre un satélite recién salido de `evolith init`. CI regenera esta tabla y falla cuando difiere de la medición; edita el guard, no la tabla._
+
+| Escenario | Motor | En alcance | Decididas | Saltadas | …hecho no suministrado | …falta adaptador | …documentación | …deuda del motor | No aplicables |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| este repositorio | nativo (por defecto) | 355 | 109 | 246 | 37 | 65 | 138 | 6 | 60 |
+| este repositorio | `--engine opa` | 355 | 28 | 327 | 146 | 1 | 138 | 42 | 60 |
+| satélite recién salido de `init` | nativo (por defecto) | 151 | 50 | 101 | 30 | 61 | 4 | 6 | 264 |
+| satélite recién salido de `init` | `--engine opa` | 151 | 2 | 149 | 117 | 1 | 0 | 31 | 264 |
+<!-- engine-coverage:end -->
+
+**Cómo leerla.** *Hecho no suministrado* es una postura que solo los dueños del repositorio pueden declarar — el filtrado por tenant, la intención de runtime, los hallazgos del sistema de CI; las políticas OPA las deciden cuando el llamador las suministra por `facts.satellite` (GT-694), y el motor nativo nunca. Esa es la única razón que queda para correr `--engine opa`, y no es cobertura: en una ejecución a secas el motor por defecto decide más, en las dos filas. *Falta adaptador* es un sistema externo o en ejecución que nadie ha cableado aún por la costura del enforcer. *Documentación* es una regla sin comprobación tal como está escrita — sobre todo los marcadores ADR-conformance generados, `documentation-only` en ambos motores por decisión. *Deuda del motor* es un handler o una política que nadie escribió; cada una lleva una decisión registrada en [`engine-coverage-decisions.json`](../.harness/scripts/ci/engine-coverage-decisions.json), y el lado solo-OPA de la [línea base de cobertura](../.harness/scripts/ci/engine-coverage-parity.baseline.json) está vacío. El informe dice lo mismo con los mismos grupos: cuando un motor salta más de lo que comprueba, su fila `GOV-ENGINE-COVERAGE` enuncia el desglose de esa corrida.
+
+**La CLI publicada es anterior a todo esto.** `@beyondnet/evolith-cli@1.3.2` — lo que instala hoy `npx -y @beyondnet/evolith-cli` — es anterior a GT-716. Medida el 2026-08-21 sobre este repositorio decidía 133 de 159 con `--engine opa` y 41 de 159 en nativo, y la mayor parte de esa diferencia eran veredictos sobre hechos que nadie suministró. Por eso la portada sigue diciendo `--engine opa`, y dice para qué CLI; la próxima publicación lo invierte.
 
 CI exige que coincidan sobre **hechos**, no sobre cobertura; eso es por diseño — y desde el AC3 de GT-716 cada regla que solo un motor decide queda registrada por regla, en ambas direcciones, sobre este repositorio y sobre un satélite recién salido de `init` (`73-validate-engine-coverage-parity.mjs`), de modo que una diferencia de cobertura es un diff que alguien lee y no un número que nadie lee. Desde el AC4 (2026-09-21) nada en ese registro está por omisión: cada entrada de deuda lleva una decisión registrada (`engine-coverage-decisions.json`) que el guard contrasta con las ejecuciones, y el lado solo-OPA está vacío en ambos escenarios — las últimas reglas que solo `--engine opa` decidía desde el árbol (`OBS-EVD-01..03`, `MCP-05`) tienen gemelos nativos de sus políticas. Que el comando por defecto no lo diga, no lo es ([#628](https://github.com/beyondnetcode/evolith_arch32/issues/628)). Por eso la portada usa `--engine opa` en todas partes. Medido de nuevo el 2026-09-20 con la CLI construida desde este árbol: el motor por defecto decide 56 de las mismas 159, y de las 76 reglas que solo `--engine opa` decide, 73 son veredictos sobre facetas que una ejecución a secas nunca suministra — así que la mayor parte de esa cobertura extra no es cobertura. Se sigue como GT-716 en el [Tablero de Gaps](../reference/core/control-center/gaps/gap-tracking.es.md). Desde `b2840947` (en el árbol, aún no en una CLI publicada) el motor OPA reporta esas reglas como `skipped` con la faceta que le falta: sobre el mismo satélite decide 10 de 159 a partir de lo que una ejecución a secas observa, y el resto solo cuando el llamador suministra los hechos por `facts.satellite`.
 

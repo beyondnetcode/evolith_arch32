@@ -65,6 +65,17 @@
  * `needs-supplied-facts`, `needs-external-system`, `needs-runtime`, `documentation-only`,
  * `underspecified` — GT-716 AC2) need no second one.
  *
+ * ## The page says what the report says (GT-716 AC5)
+ *
+ * Besides the per-rule entries, `--write` records each engine's COVERAGE per
+ * scenario — in scope, decided, skipped by the class each skip states, not
+ * applicable — and renders it as the table inside the `engine-coverage` markers of
+ * `docs/known-limitations.md` / `.es.md`. The default run compares both: coverage
+ * that moved fails until `--write` re-measures it, and a page whose table differs
+ * from the render fails until `--write` rewrites it. The reporter's
+ * `GOV-ENGINE-COVERAGE` states the same split, in the same groups, for the run it
+ * describes — so the report, the page and this baseline cannot say three things.
+ *
  * ## Anti-vacuous pass
  *
  * Both engine runs of both scenarios go through `assertScannedPerSource`; a missing
@@ -75,29 +86,28 @@
  *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs
  *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --verbose
  *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --json
- *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --write   # regenerate the baseline (review the diff)
+ *   node .harness/scripts/ci/73-validate-engine-coverage-parity.mjs --write   # regenerate the baseline AND the page tables (review the diff)
  *
  * Exit codes:
  *   0 - every coverage-only rule is registered with its reason, every debt entry carries a decision, and every entry still holds
  *   1 - an unregistered rule, a stale entry, a changed reason, a debt entry nobody decided, a decision the runs contradict, or an engine that produced nothing
  */
 
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { REPO_ROOT } from '../lib/paths.mjs';
 import { assertScannedPerSource, ZeroCoverageError } from '../lib/coverage.mjs';
+import { CLI_ENTRY, WASM_CANDIDATES, exportCore as exportTrackedCore } from '../lib/core-export.mjs';
 import { facetOfInputPath, readCorpusFacts, readVocabulary } from '../lib/rule-facts.mjs';
 import { deriveOutcomes, outcomeOf } from './68-validate-engine-verdict-parity.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
 export const BASELINE_PATH = resolve(HERE, 'engine-coverage-parity.baseline.json');
-const CLI_ENTRY = 'src/sdk/cli/dist/main.js';
-const WASM_CANDIDATES = ['src/rulesets/opa/policy.wasm', 'src/sdk/cli/rulesets/opa/policy.wasm'];
 const ENGINES = ['native', 'opa'];
 const DECIDED = new Set(['passed', 'failed']);
 export const SCENARIOS = ['repository', 'init-satellite'];
@@ -226,6 +236,103 @@ export function reconcileDecisions(measured, decisions) {
 export function unknownDecisionRules(decisions, universes) {
   const seen = new Set(universes.flatMap((u) => [...u]));
   return decisions.flatMap((d) => (d.rules ?? []).filter((id) => !seen.has(id)).map((ruleId) => ({ decision: d.id, ruleId })));
+}
+
+/** The two pages that carry the measured coverage table (GT-716 AC5). */
+export const COVERAGE_PAGES = Object.freeze({ en: 'docs/known-limitations.md', es: 'docs/known-limitations.es.md' });
+const FRAGMENT_BEGIN = '<!-- engine-coverage:begin -->';
+const FRAGMENT_END = '<!-- engine-coverage:end -->';
+
+/** How the page and the reporter group a skip's class — the same four groups as `describeSkipSplit` in the reporter. */
+export const SKIP_GROUPS = Object.freeze({
+  supplied: ['needs-supplied-facts', 'supplied-facet-absent'],
+  adapter: ['needs-external-system', 'needs-runtime'],
+  documentation: ['documentation-only', 'underspecified'],
+  debt: ['unimplemented-native', 'handler-declined', 'no-policy-in-bundle'],
+});
+
+/** One engine's coverage in one scenario, read from its JSON report. */
+export function coverageOf(data) {
+  const byClass = { ...(data?.skippedByEvaluability ?? {}) };
+  const sum = (keys) => keys.reduce((acc, k) => acc + (byClass[k] ?? 0), 0);
+  const grouped = Object.fromEntries(Object.entries(SKIP_GROUPS).map(([g, keys]) => [g, sum(keys)]));
+  const known = new Set(Object.values(SKIP_GROUPS).flat());
+  grouped.other = Object.entries(byClass).filter(([k]) => !known.has(k)).reduce((acc, [, v]) => acc + v, 0);
+  return {
+    inScope: data?.rulesTotal ?? 0,
+    decided: data?.rulesChecked ?? 0,
+    skipped: data?.rulesSkipped ?? 0,
+    errored: data?.rulesErrored ?? 0,
+    notApplicable: data?.rulesNotApplicable ?? 0,
+    byClass,
+    grouped,
+  };
+}
+
+/** Coverage totals that moved between two measurements of the same scenario. */
+export function reconcileCoverageTotals(measured, registered) {
+  const out = [];
+  for (const engine of ENGINES) {
+    const m = measured?.[engine];
+    const r = registered?.[engine];
+    if (!m) continue;
+    if (!r) { out.push({ engine, field: '(all)', from: null, to: 'measured' }); continue; }
+    for (const field of ['inScope', 'decided', 'skipped', 'errored', 'notApplicable']) {
+      if ((r[field] ?? 0) !== (m[field] ?? 0)) out.push({ engine, field, from: r[field] ?? 0, to: m[field] ?? 0 });
+    }
+    const classes = new Set([...Object.keys(m.byClass ?? {}), ...Object.keys(r.byClass ?? {})]);
+    for (const c of [...classes].sort()) {
+      if ((r.byClass?.[c] ?? 0) !== (m.byClass?.[c] ?? 0)) out.push({ engine, field: `byClass.${c}`, from: r.byClass?.[c] ?? 0, to: m.byClass?.[c] ?? 0 });
+    }
+  }
+  return out;
+}
+
+const PAGE_TEXT = {
+  en: {
+    lead: (date) => `_Measured ${date} by \`73-validate-engine-coverage-parity.mjs --write\` — one \`evolith validate --engine <e> --format json\` per engine and scenario, on an export of the tracked tree and on a satellite fresh from \`evolith init\`. CI regenerates this table and fails when it differs from the measurement; edit the guard, not the table._`,
+    head: '| Scenario | Engine | In scope | Decided | Skipped | …fact not supplied | …adapter needed | …documentation | …engine debt | Not applicable |',
+    scenario: { repository: 'this repository', 'init-satellite': 'satellite fresh from `init`' },
+    engine: { native: 'native (default)', opa: '`--engine opa`' },
+  },
+  es: {
+    lead: (date) => `_Medido el ${date} por \`73-validate-engine-coverage-parity.mjs --write\` — un \`evolith validate --engine <e> --format json\` por motor y escenario, sobre una exportación del árbol versionado y sobre un satélite recién salido de \`evolith init\`. CI regenera esta tabla y falla cuando difiere de la medición; edita el guard, no la tabla._`,
+    head: '| Escenario | Motor | En alcance | Decididas | Saltadas | …hecho no suministrado | …falta adaptador | …documentación | …deuda del motor | No aplicables |',
+    scenario: { repository: 'este repositorio', 'init-satellite': 'satélite recién salido de `init`' },
+    engine: { native: 'nativo (por defecto)', opa: '`--engine opa`' },
+  },
+};
+
+/** The table the page carries, rendered from the baseline's coverage block. Deterministic. */
+export function renderCoverageTable(coverage, measuredOn, lang = 'en') {
+  const t = PAGE_TEXT[lang] ?? PAGE_TEXT.en;
+  const rows = [t.lead(measuredOn), '', t.head, '|---|---|---:|---:|---:|---:|---:|---:|---:|---:|'];
+  for (const scenario of SCENARIOS) {
+    for (const engine of ENGINES) {
+      const c = coverage?.[scenario]?.[engine];
+      if (!c) continue;
+      const g = c.grouped ?? {};
+      const other = g.other ? ` (+${g.other})` : '';
+      rows.push(`| ${t.scenario[scenario] ?? scenario} | ${t.engine[engine] ?? engine} | ${c.inScope} | ${c.decided} | ${c.skipped} | ${g.supplied ?? 0} | ${g.adapter ?? 0} | ${g.documentation ?? 0} | ${g.debt ?? 0}${other} | ${c.notApplicable} |`);
+    }
+  }
+  return rows.join('\n');
+}
+
+/** The page with its fragment replaced; null when the page carries no markers. */
+export function withCoverageFragment(pageText, rendered) {
+  const a = pageText.indexOf(FRAGMENT_BEGIN);
+  const b = pageText.indexOf(FRAGMENT_END);
+  if (a < 0 || b < 0 || b < a) return null;
+  return pageText.slice(0, a + FRAGMENT_BEGIN.length) + '\n' + rendered + '\n' + pageText.slice(b);
+}
+
+/** The fragment a page currently carries, trimmed; null when it carries no markers. */
+export function coverageFragmentOf(pageText) {
+  const a = pageText.indexOf(FRAGMENT_BEGIN);
+  const b = pageText.indexOf(FRAGMENT_END);
+  if (a < 0 || b < 0 || b < a) return null;
+  return pageText.slice(a + FRAGMENT_BEGIN.length, b).trim();
 }
 
 /**
@@ -372,24 +479,9 @@ function runEngine(engine, cwd, extra = []) {
   return parsed.data;
 }
 
-/**
- * The Core as committed: every tracked file (with local modifications), nothing
- * untracked, plus the compiled bundle the evaluator needs. See the header.
- */
+/** The Core as committed — shared with guard 68 since GT-716 AC5 (`lib/core-export.mjs`). */
 function exportCore(root) {
-  const dir = mkdtempSync(join(tmpdir(), 'evolith-coverage-parity-core-'));
-  const listed = execFileSync('git', ['ls-files', '-z'], { cwd: root, maxBuffer: 256 * 1024 * 1024 });
-  const archive = execFileSync('tar', ['-c', '--null', '-T', '-', '-f', '-'], { cwd: root, input: listed, maxBuffer: 1024 * 1024 * 1024 });
-  execFileSync('tar', ['-x', '-f', '-', '-C', dir], { input: archive, maxBuffer: 1024 * 1024 * 1024 });
-  const wasm = WASM_CANDIDATES.find((r) => existsSync(resolve(root, r)));
-  for (const rel of WASM_CANDIDATES) {
-    mkdirSync(dirname(resolve(dir, rel)), { recursive: true });
-    copyFileSync(resolve(root, wasm), resolve(dir, rel));
-  }
-  if (!existsSync(join(dir, 'src', 'rulesets', 'schema', 'facets.json'))) {
-    throw new Error(`the export at ${dir} has no corpus vocabulary — \`git ls-files\` produced an incomplete tree`);
-  }
-  return dir;
+  return exportTrackedCore(root, 'evolith-coverage-parity-core-');
 }
 
 /** A satellite exactly as `evolith init` leaves it, in a temporary directory. */
@@ -429,7 +521,9 @@ function measureScenario(name, runs, manifest, snapshot, corpus, vocabulary, emi
   const universe = new Set([...outcomes.native.keys(), ...outcomes.opa.keys()]);
   const { nativeOnly, opaOnly } = coverageOnly(outcomes.native, outcomes.opa, universe);
   const decided = new Map([...universe].map((id) => [id, new Set(ENGINES.filter((e) => DECIDED.has(outcomeOf(outcomes[e], id))))]));
+  const coverage = Object.fromEntries(ENGINES.map((e) => [e, coverageOf(runs[e])]));
   return {
+    coverage,
     nativeOnly: nativeOnly.map((e) => ({ ...e, reason: opaReason(e.ruleId, manifest, corpus, vocabulary, runs.opa, emitted) })),
     opaOnly: opaOnly.map((e) => ({ ...e, reason: nativeReason(e.ruleId, runs.native, snapshot, corpus) })),
     decided,
@@ -499,8 +593,17 @@ async function main() {
       measuredOn: new Date().toISOString().slice(0, 10),
       method: 'evolith validate --engine {native,opa} --format json, on an export of the tracked tree (git ls-files + policy.wasm) and on a satellite fresh from `evolith init` with --core pointed at that export; outcomes per 68-validate-engine-verdict-parity.mjs.',
       scenarios: Object.fromEntries(SCENARIOS.map((s) => [s, toBaselineScenario(measured[s])])),
+      coverage: Object.fromEntries(SCENARIOS.map((s) => [s, measured[s].coverage])),
     };
     writeFileSync(BASELINE_PATH, JSON.stringify(baseline, null, 2) + '\n');
+    for (const [lang, rel] of Object.entries(COVERAGE_PAGES)) {
+      const page = resolve(root, rel);
+      if (!existsSync(page)) continue;
+      const next = withCoverageFragment(readFileSync(page, 'utf8'), renderCoverageTable(baseline.coverage, baseline.measuredOn, lang));
+      if (next === null) { console.log(`   ${rel}: no ${FRAGMENT_BEGIN} … ${FRAGMENT_END} markers — the page does not carry the table.`); continue; }
+      writeFileSync(page, next);
+      console.log(`   ${rel}: coverage table rewritten.`);
+    }
     for (const s of SCENARIOS) {
       console.log(`   ${s}: native-only ${measured[s].nativeOnly.length}, opa-only ${measured[s].opaOnly.length} (${measured[s].durationMs} ms)`);
     }
@@ -508,7 +611,7 @@ async function main() {
       const { undecided } = reconcileDecisions(measured[s], decisions);
       if (undecided.length > 0) console.log(`   ${s}: ${undecided.length} debt entry(ies) carry no decision yet — record them in ${DECISIONS_PATH.replace(`${root}/`, '')}: ${undecided.map((e) => e.ruleId).join(', ')}`);
     }
-    console.log(`✓ baseline written to ${BASELINE_PATH.replace(`${root}/`, '')} — review the diff before committing it.`);
+    console.log(`✓ baseline and page tables written from ${BASELINE_PATH.replace(`${root}/`, '')} — review the diff before committing it.`);
     return;
   }
 
@@ -574,6 +677,31 @@ async function main() {
     }
   }
 
+  for (const s of SCENARIOS) {
+    const moved = reconcileCoverageTotals(measured[s].coverage, baseline.coverage?.[s]);
+    report.scenarios[s].coverageMoved = moved.map((e) => `${e.engine}.${e.field}`);
+    if (moved.length > 0) {
+      failed = true;
+      console.error(`❌ ${s}: the measured coverage differs from the registered one in ${moved.length} place(s) — re-run with --write (it rewrites the page tables too) and review:`);
+      for (const e of moved) console.error(`   - ${e.engine} ${e.field}: ${e.from} → ${e.to}`);
+    }
+  }
+  const pageDrift = [];
+  for (const [lang, rel] of Object.entries(COVERAGE_PAGES)) {
+    const page = resolve(root, rel);
+    if (!existsSync(page)) { pageDrift.push({ rel, why: 'the page does not exist' }); continue; }
+    const have = coverageFragmentOf(readFileSync(page, 'utf8'));
+    const want = renderCoverageTable(baseline.coverage, baseline.measuredOn, lang);
+    if (have === null) pageDrift.push({ rel, why: `no ${FRAGMENT_BEGIN} … ${FRAGMENT_END} markers` });
+    else if (have !== want) pageDrift.push({ rel, why: 'its table differs from the render of the registered coverage' });
+  }
+  report.pageDrift = pageDrift.map((e) => e.rel);
+  if (pageDrift.length > 0) {
+    failed = true;
+    console.error(`❌ ${pageDrift.length} page(s) do not say what the baseline measured (GT-716 AC5) — re-run with --write:`);
+    for (const e of pageDrift) console.error(`   - ${e.rel}: ${e.why}`);
+  }
+
   const unknown = unknownDecisionRules(decisions, SCENARIOS.map((s) => new Set(measured[s].decided.keys())));
   report.unknownDecisionRules = unknown.map((e) => e.ruleId);
   if (unknown.length > 0) {
@@ -588,7 +716,7 @@ async function main() {
     console.error('   A coverage difference is legitimate (ADR-0041); an unregistered one is not. Register it with its reason, or fix it.');
     process.exit(1);
   }
-  console.log('✓ 73-validate-engine-coverage-parity: every coverage-only rule is registered with its reason and every debt entry with a decision, in both directions, on both scenarios.');
+  console.log('✓ 73-validate-engine-coverage-parity: every coverage-only rule is registered with its reason and every debt entry with a decision, in both directions, on both scenarios; the coverage tables on the page are the measured ones.');
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {

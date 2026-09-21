@@ -42,6 +42,41 @@ export {
   SelectionReport,
 } from './ruleset-validator.types';
 
+/**
+ * GT-716 AC5 — the skips of one run, by the class each rule states, in the words a
+ * reader can act on. Classes are grouped by what closes them: a fact only the caller
+ * can supply (through `facts.satellite`, GT-694), an adapter over an external or
+ * running system, documentation that no engine can run, and the engine's own debt.
+ * The known-limitations table groups them the same way (guard 73's `SKIP_GROUPS`).
+ */
+const SPLIT_GROUPS = [
+  'needs-supplied-facts', 'supplied-facet-absent', 'needs-external-system', 'needs-runtime',
+  'documentation-only', 'underspecified', 'no-policy-in-bundle', 'unimplemented-native', 'handler-declined',
+];
+
+function describeSkipSplit(byClass: Record<string, number> | undefined, opa: boolean): string {
+  if (!byClass || Object.keys(byClass).length === 0) return '. ';
+  const n = (k: string) => byClass[k] ?? 0;
+  const supplied = n('needs-supplied-facts') + n('supplied-facet-absent');
+  const adapters = n('needs-external-system') + n('needs-runtime');
+  const docs = n('documentation-only') + n('underspecified');
+  const debt = opa ? n('no-policy-in-bundle') : n('unimplemented-native') + n('handler-declined');
+  const parts: string[] = [];
+  if (supplied > 0) {
+    parts.push(
+      `${supplied} read a fact this run did not supply (${opa ? 'supplied-facet-absent' : 'needs-supplied-facts'}) — ` +
+        "a posture only the repository's owners can declare; supply it through `facts.satellite` and " +
+        (opa ? 'the policy decides it' : 'the OPA engine decides it'),
+    );
+  }
+  if (adapters > 0) parts.push(`${adapters} need an adapter over an external system or a running one (needs-external-system, needs-runtime)`);
+  if (docs > 0) parts.push(`${docs} carry no check any engine could run (documentation-only, underspecified)`);
+  if (debt > 0) parts.push(`${debt} have no ${opa ? 'policy in the bundle yet (no-policy-in-bundle)' : 'native handler yet (unimplemented-native)'}`);
+  const rest = Object.entries(byClass).filter(([k]) => !SPLIT_GROUPS.includes(k)).map(([k, v]) => `${v} ${k}`);
+  if (rest.length > 0) parts.push(rest.join(', '));
+  return `: ${parts.join('; ')}. `;
+}
+
 @Injectable()
 export class RulesetValidatorService {
   private readonly logger: ILogger;
@@ -313,6 +348,7 @@ export class RulesetValidatorService {
       // without parsing issue text.
       blockingSkippedRuleIds: coverage.blockingSkippedRuleIds,
       perRuleset: coverage.perRuleset,
+      skippedByEvaluability: coverage.skippedByEvaluability,
       // #628 — WHICH engine produced these numbers. Two engines ship and they do
       // not cover the same ground, so a coverage figure without an engine beside
       // it is not readable.
@@ -549,49 +585,50 @@ export class RulesetValidatorService {
   }
 
   /**
-   * #628 -- `evolith validate` with no flag runs the native evaluator, which
-   * decided materially fewer rules than `--engine opa` over the same corpus when
-   * the row was written. (GT-716 later showed most of that extra reach was verdicts
-   * on facts nobody supplied, and the OPA engine now skips those instead; the
-   * advice below says "different", not "more", for that reason.)
-   * Both totals were honest and the skips were all published; what was missing
-   * was the sentence telling the reader that the missing coverage belongs to the
-   * ENGINE THEY DID NOT CHOOSE rather than to their repository.
+   * #628 / GT-716 AC5 -- the row that tells the reader whom the missing coverage
+   * belongs to. Both totals were always honest and every skip was published; what
+   * was missing was the sentence saying that a skip is the ENGINE's reach, not the
+   * repository's failure -- and, since GT-716, WHY each skip happened, because "no
+   * handler" was true of 14 rules and was being said of 240.
    *
-   * Deliberately narrow. It fires only on the native engine and only when skips
-   * outnumber checks, because that is the shape a reader misreads. A run where
-   * the engine decided most of what it was handed needs no explanation, and a
-   * row on every run is noise that teaches people to skim past it.
+   * It fires on either engine, and only when skips outnumber checks: that is the
+   * shape a reader misreads, and a row on every run is noise that teaches people
+   * to skim past it. What it states is this run's own coverage, in the terms the
+   * known-limitations page uses (`skippedByEvaluability`), so the report and the
+   * page say the same thing about the same engine. It cannot know what the other
+   * engine would have decided; it says where that is measured.
    *
    * Non-blocking. The engines are ALLOWED to differ on coverage --
-   * `68-validate-engine-verdict-parity.mjs` holds them to agreement on facts,
-   * not on reach -- so this reports a fact about the run, it does not fail it.
+   * `68-validate-engine-verdict-parity.mjs` holds them to agreement on facts, and
+   * `73-validate-engine-coverage-parity.mjs` registers every rule only one of them
+   * decides -- so this reports a fact about the run, it does not fail it.
    */
   private engineCoverageAdvisory(coverage: RuleCoverage): ValidationIssue | undefined {
-    if (this.engineType !== 'native') return undefined;
     if (coverage.rulesSkipped <= coverage.rulesChecked) return undefined;
+    if (coverage.rulesTotal <= 0) return undefined;
 
-    const share = coverage.rulesTotal > 0
-      ? Math.round((coverage.rulesSkipped / coverage.rulesTotal) * 100)
-      : 0;
+    const opa = this.engineType === 'opa';
+    const engine = opa ? 'OPA' : 'native';
+    const share = Math.round((coverage.rulesSkipped / coverage.rulesTotal) * 100);
+    const split = describeSkipSplit(coverage.skippedByEvaluability, opa);
 
     return {
       ruleId: 'GOV-ENGINE-COVERAGE',
       severity: 'COULD',
       category: 'governance',
       title:
-        `The native engine skipped more rules than it checked ` +
+        `The ${engine} engine skipped more rules than it checked ` +
         `(${coverage.rulesSkipped} of ${coverage.rulesTotal}) — this is the engine, not your repository`,
       description:
-        `This run used the native evaluator, the default when no \`--engine\` is given. It decided ` +
-        `${coverage.rulesChecked} of the ${coverage.rulesTotal} rules in scope and skipped ` +
-        `${coverage.rulesSkipped} (${share}%). A skip here usually means the native evaluator has no ` +
-        'handler for that rule, not that your repository failed to satisfy it. ' +
-        '`--engine opa` evaluates the compiled Rego bundle instead, which decides a DIFFERENT part of the ' +
-        'same corpus: most of its policies read facts a caller supplies (`facts.satellite`, GT-694), and ' +
-        'since GT-716 it reports a rule whose fact the run did not supply as skipped rather than deciding it ' +
-        'on absent input. The two engines are held to agreement on the verdicts they both reach; they are ' +
-        'not held to equal reach.',
+        (opa
+          ? 'This run used the compiled Rego bundle (`--engine opa`). '
+          : 'This run used the native evaluator, the default when no `--engine` is given. ') +
+        `It decided ${coverage.rulesChecked} of the ${coverage.rulesTotal} rules in scope and skipped ` +
+        `${coverage.rulesSkipped} (${share}%)${split}` +
+        'The other engine decides a DIFFERENT part of the same corpus: every rule only one engine decides ' +
+        'is registered per rule by CI (`73-validate-engine-coverage-parity.mjs`), and the two are held to ' +
+        'agreement on the verdicts they both reach, not to equal reach. The measured coverage of each engine, ' +
+        'on this repository and on a fresh satellite, is on the known-limitations page.',
       blocking: false,
     };
   }

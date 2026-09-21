@@ -61,7 +61,7 @@ npx -y @beyondnet/evolith-cli rulesets                        # lista los packs 
 npx -y @beyondnet/evolith-cli validate --engine opa --select rulesets/acl/anti-corruption-layer.rules.json
 ```
 
-`init` escribe `evolith.yaml` con el nombre, tipo y fase del producto y tu stack; `--engine opa` elige el motor con más cobertura hoy (el porqué, en [Estado real](./docs/known-limitations.es.md)). Cómo se ve una primera ejecución, fila por fila: [captura](./docs/evidence/first-run-capture.es.md). Guía completa: [Inicio rápido](./docs/guides/evolith-quickstart.es.md).
+`init` escribe `evolith.yaml` con el nombre, tipo y fase del producto y tu stack; `--engine opa` elige el motor con más cobertura **en la CLI publicada (1.3.2)**; en este árbol el motor por defecto ya decide más en una ejecución a secas, y `--engine opa` es para los hechos que tú suministras — las cifras medidas, por motor y con fecha, en [Estado real](./docs/known-limitations.es.md). Cómo se ve una primera ejecución, fila por fila: [captura](./docs/evidence/first-run-capture.es.md). Guía completa: [Inicio rápido](./docs/guides/evolith-quickstart.es.md).
 
 ---
 

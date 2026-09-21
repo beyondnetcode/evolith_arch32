@@ -663,5 +663,94 @@
       },
       "opaOnly": {}
     }
+  },
+  "coverage": {
+    "repository": {
+      "native": {
+        "inScope": 355,
+        "decided": 109,
+        "skipped": 246,
+        "errored": 0,
+        "notApplicable": 60,
+        "byClass": {
+          "needs-supplied-facts": 37,
+          "unimplemented-native": 6,
+          "needs-external-system": 38,
+          "needs-runtime": 27,
+          "documentation-only": 138
+        },
+        "grouped": {
+          "supplied": 37,
+          "adapter": 65,
+          "documentation": 138,
+          "debt": 6,
+          "other": 0
+        }
+      },
+      "opa": {
+        "inScope": 355,
+        "decided": 28,
+        "skipped": 327,
+        "errored": 0,
+        "notApplicable": 60,
+        "byClass": {
+          "supplied-facet-absent": 146,
+          "documentation-only": 138,
+          "no-policy-in-bundle": 33,
+          "unimplemented-native": 9,
+          "needs-runtime": 1
+        },
+        "grouped": {
+          "supplied": 146,
+          "adapter": 1,
+          "documentation": 138,
+          "debt": 42,
+          "other": 0
+        }
+      }
+    },
+    "init-satellite": {
+      "native": {
+        "inScope": 151,
+        "decided": 50,
+        "skipped": 101,
+        "errored": 0,
+        "notApplicable": 264,
+        "byClass": {
+          "needs-supplied-facts": 30,
+          "unimplemented-native": 6,
+          "needs-external-system": 39,
+          "needs-runtime": 22,
+          "documentation-only": 4
+        },
+        "grouped": {
+          "supplied": 30,
+          "adapter": 61,
+          "documentation": 4,
+          "debt": 6,
+          "other": 0
+        }
+      },
+      "opa": {
+        "inScope": 151,
+        "decided": 2,
+        "skipped": 149,
+        "errored": 0,
+        "notApplicable": 264,
+        "byClass": {
+          "supplied-facet-absent": 117,
+          "no-policy-in-bundle": 22,
+          "unimplemented-native": 9,
+          "needs-runtime": 1
+        },
+        "grouped": {
+          "supplied": 117,
+          "adapter": 1,
+          "documentation": 0,
+          "debt": 31,
+          "other": 0
+        }
+      }
+    }
   }
 }

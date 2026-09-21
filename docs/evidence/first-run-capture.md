@@ -148,7 +148,10 @@ version and the same corpus it does not cover the same ground:
 
 CI holds the two engines to agreement over fixtures. It does not hold them to
 equal coverage over a real repository, and today they do not have it. That is why
-the front page uses `--engine opa` everywhere.
+the front page uses `--engine opa` everywhere. (Measured on 1.3.2. Since GT-716 —
+in the tree, not yet in a published CLI — the default decides more on a bare run,
+CI registers every rule only one engine decides, and the current per-engine table
+is on the [known-limitations](../known-limitations.md) page.)
 
 ```
 **Status:** failed

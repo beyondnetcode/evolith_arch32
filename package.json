@@ -26,7 +26,7 @@
     "@commitlint/config-conventional": "20.5.3",
     "husky": "9.1.7",
     "jest": "30.4.2",
-    "pg": "8.16.3"
+    "pg": "8.23.0"
   },
   "overrides": {
     "multer": "2.3.0",

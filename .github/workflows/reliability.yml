@@ -112,7 +112,7 @@ jobs:
         run: npm run build:policy
 
       - name: Install k6
-        uses: grafana/setup-k6-action@db07bd9765aac508ef18982e52ab937fe633a065 # v1.2.1
+        uses: grafana/setup-k6-action@43b9fc21641a76002687994433dd586f56e791b1 # v1.2.2
 
       # THROTTLE_MAX_REQUESTS is raised deliberately. core-api throttles every
       # route at 100 requests / 60 s by default, so ANY real load run against a
@@ -207,7 +207,7 @@ jobs:
           node-version: '20'
 
       - name: Install k6
-        uses: grafana/setup-k6-action@db07bd9765aac508ef18982e52ab937fe633a065 # v1.2.1
+        uses: grafana/setup-k6-action@43b9fc21641a76002687994433dd586f56e791b1 # v1.2.2
 
       # Engine-only topology: core-api + mcp + redis. The full-stack file is NOT
       # usable here — it has cross-repo build contexts (the Tracker checked out
